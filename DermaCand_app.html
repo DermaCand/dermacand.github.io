@@ -2767,35 +2767,42 @@ general:['Limpiador suave no comedogénico (evitar abrasivos)','Fotoprotección 
 refs:[{t:'Reynolds RV, et al. Guidelines of care for the management of acne vulgaris (AAD). J Am Acad Dermatol. 2024.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=guidelines+of+care+management+acne+vulgaris+2024'},{t:'Zaenglein AL, et al. Guidelines of care for the management of acne vulgaris (AAD). J Am Acad Dermatol. 2016;74(5):945-973.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=Zaenglein+guidelines+care+acne+vulgaris+2016'},{t:'Nast A, et al. European evidence-based (S3) guideline for the treatment of acne — update 2016 (EDF/EADV). J Eur Acad Dermatol Venereol. 2016;30(8):1261-1268.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=Nast+European+S3+guideline+treatment+acne+update+2016'},{t:'Bolognia JL, Schaffer JV, Cerroni L. Dermatology. 5.ª ed. Elsevier; 2024 — cap. «Acne vulgaris».',u:''}]},
 rosacea:{label:'Rosácea',intro:'Tratar según el fenotipo predominante (eritema/flushing, pápulo-pustulosa, fimatosa, ocular).',
 tiers:[
+{sev:'Cuidado base (todos los fenotipos)',rx:[
+{d:'Cuidado de la piel',dose:'limpiador suave sin jabón, hidratante y fotoprotección diaria (preferible mineral)',pauta:'diario',notes:'Base imprescindible. Identificar y evitar desencadenantes (calor, sol, alcohol, picantes, estrés). NO usar corticoides tópicos (empeoran la rosácea).'}]},
 {sev:'Eritema / flushing',rx:[
-{d:'Brimonidina 0,33% gel',dose:'',pauta:'1/día a demanda',notes:'Reduce el eritema persistente de forma transitoria. Alternativa: oximetazolina 1% crema.'},
-{d:'Telangiectasias',dose:'Láser de colorante pulsado o luz pulsada intensa (IPL)',pauta:'',notes:'Para el componente vascular fijo.'}]},
+{d:'Vasoconstrictor tópico',dose:'brimonidina 0,33% gel (o oximetazolina 1% crema)',pauta:'1/día a demanda',notes:'Reduce transitoriamente el eritema persistente; posible efecto rebote.'},
+{d:'Telangiectasias / eritema fijo',dose:'láser de colorante pulsado o luz pulsada intensa (IPL)',pauta:'',notes:'Para el componente vascular fijo.'}]},
 {sev:'Pápulo-pustulosa leve-moderada',rx:[
-{d:'Ivermectina 1% crema',dose:'',pauta:'1/día',notes:'Primera elección tópica.'},
-{d:'Alternativas tópicas',dose:'Metronidazol 0,75% o ácido azelaico 15%',pauta:'1–2/día',notes:''}]},
+{d:'Ivermectina 1% crema',dose:'',pauta:'1/día',notes:'Primera elección tópica (actúa sobre Demodex y la inflamación).'},
+{d:'Alternativas tópicas',dose:'metronidazol 0,75% o ácido azelaico 15%',pauta:'1–2/día',notes:'Combinables con la pauta oral en formas más intensas.'}]},
 {sev:'Pápulo-pustulosa moderada-grave',rx:[
-{d:'Doxiciclina dosis antiinflamatoria',dose:'40 mg/día (liberación modificada)',pauta:'8–12 semanas',notes:'Asociar tratamiento tópico. Si refractaria: isotretinoína a dosis baja (0,25–0,3 mg/kg/día).'}]},
+{d:'Doxiciclina dosis antiinflamatoria',dose:'40 mg/día (liberación modificada)',pauta:'8–12 sem',notes:'Asociar tópico. Dosis subantimicrobiana: efecto antiinflamatorio sin presión selectiva.'},
+{d:'Refractaria',dose:'isotretinoína a dosis baja (0,25–0,3 mg/kg/día)',pauta:'',notes:'Opción en pápulo-pustulosa resistente; programa de prevención de embarazo.'}]},
 {sev:'Fimatosa',rx:[
-{d:'Isotretinoína dosis baja',dose:'0,25–0,3 mg/kg/día',pauta:'',notes:'Frena la progresión en la fase inflamatoria.'},
-{d:'Fima establecido',dose:'Remodelado quirúrgico, electrocirugía o láser CO₂',pauta:'',notes:''}]},
+{d:'Fase inflamatoria',dose:'isotretinoína a dosis baja (0,25–0,3 mg/kg/día)',pauta:'',notes:'Frena la progresión.'},
+{d:'Fima establecido',dose:'remodelado quirúrgico, electrocirugía o láser CO₂',pauta:'',notes:'Tratamiento del componente fibroso.'}]},
 {sev:'Ocular',rx:[
 {d:'Higiene palpebral + lágrimas artificiales',dose:'',pauta:'',notes:'Base del tratamiento.'},
-{d:'Doxiciclina 40–100 mg/día',dose:'',pauta:'',notes:'± ciclosporina oftálmica 0,05%. Valoración oftalmológica si hay afectación corneal.'}]}],
+{d:'Doxiciclina 40–100 mg/día',dose:'± ciclosporina oftálmica 0,05%',pauta:'',notes:'Valoración oftalmológica si hay afectación corneal.'}]}],
 general:['Fotoprotección diaria','Limpiadores suaves','Evitar desencadenantes (calor, alcohol, sol, picantes)','Evitar corticoides tópicos (empeoran la rosácea)'],
 refs:[{t:'Schaller M, et al. Rosacea management: update on the ROSacea COnsensus (ROSCO) 2019 panel recommendations. J Eur Acad Dermatol Venereol. 2020;34(8):1710-1718.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=ROSCO+rosacea+management+update+2019+Schaller'},{t:'Thiboutot D, et al. Standard management options for rosacea: 2019 update (National Rosacea Society). J Am Acad Dermatol. 2020;82(6):1501-1510.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=standard+management+options+rosacea+2019+update'},{t:'Bolognia JL, et al. Dermatology. 5.ª ed. Elsevier; 2024 — cap. «Rosacea».',u:''}]},
 hs:{label:'Hidrosadenitis supurativa',intro:'Estadificar por Hurley. El cese tabáquico y la pérdida de peso son medidas de base.',
 tiers:[
+{sev:'Medidas de base (todos)',rx:[
+{d:'Estilo de vida',dose:'cese del tabaco y pérdida de peso',pauta:'',notes:'Modifican el curso de la enfermedad. Higiene con antisépticos, ropa holgada, evitar la fricción. Manejo del dolor crónico.'},
+{d:'Brote agudo',dose:'infiltración intralesional de triamcinolona; AINE',pauta:'',notes:'Para nódulos o abscesos dolorosos puntuales.'}]},
 {sev:'Hurley I-II leve',rx:[
-{d:'Clindamicina 1% tópica',dose:'',pauta:'cada 12 h',notes:'± lavados con antiséptico (clorhexidina). AINE para el dolor.'}]},
+{d:'Clindamicina 1% tópica',dose:'',pauta:'cada 12 h',notes:'± lavados antisépticos (clorhexidina, peróxido de benzoilo).'},
+{d:'Hormonal (mujer)',dose:'antiandrógeno (espironolactona) o anticonceptivo',pauta:'',notes:'Útil en brotes perimenstruales.'}]},
 {sev:'Hurley I-II moderada',rx:[
-{d:'Tetraciclina oral',dose:'Doxiciclina 100 mg/12 h',pauta:'12 semanas',notes:''},
-{d:'o Clindamicina + Rifampicina',dose:'300 mg/12 h ambas',pauta:'10–12 semanas',notes:'Pauta combinada de rescate.'}]},
+{d:'Tetraciclina oral',dose:'doxiciclina 100 mg/12 h',pauta:'12 sem',notes:'Primera línea sistémica.'},
+{d:'Clindamicina + rifampicina',dose:'300 mg/12 h ambas',pauta:'10–12 sem',notes:'Pauta combinada de rescate.'}]},
 {sev:'Hurley II-III moderada-grave',rx:[
-{d:'Adalimumab',dose:'160 mg (sem 0) → 80 mg (sem 2) → 40 mg/semana',pauta:'inducción y mantenimiento',notes:'Cribado de TBC/VHB previo. Biológico de elección.'},
-{d:'o Secukinumab',dose:'300 mg',pauta:'semanal x5 → cada 4 semanas',notes:'Anti-IL17 aprobado en HS moderada-grave (2023).'},
-{d:'Lesiones concretas',dose:'Infiltración intralesional de triamcinolona; incisión-drenaje o deroofing',pauta:'',notes:'Control sintomático de nódulos/abscesos puntuales.'}]},
+{d:'Adalimumab',dose:'160 mg (sem 0) → 80 mg (sem 2) → 40 mg/sem',pauta:'inducción y mantenimiento',notes:'Cribado de TBC/VHB/VHC previo. Biológico de elección (anti-TNF).'},
+{d:'Secukinumab o bimekizumab',dose:'anti-IL17',pauta:'',notes:'Secukinumab aprobado en HS moderada-grave (2023); bimekizumab como opción más reciente.'},
+{d:'Cirugía dirigida',dose:'deroofing o exéresis local de lesiones recidivantes',pauta:'',notes:'Complementa el tratamiento médico.'}]},
 {sev:'Hurley III',rx:[
-{d:'Biológico + cirugía',dose:'Adalimumab o secukinumab + exéresis amplia / deroofing de trayectos',pauta:'',notes:'La cirugía de las zonas fibrosadas y los trayectos es definitiva; el biológico controla la inflamación activa. Bimekizumab como opción emergente.'}]}],
+{d:'Biológico + cirugía amplia',dose:'adalimumab/secukinumab + exéresis amplia o deroofing de trayectos',pauta:'',notes:'La cirugía de las zonas fibrosadas y los trayectos es definitiva; el biológico controla la inflamación activa.'}]}],
 general:['Cese del tabaco','Pérdida de peso','Higiene con antisépticos','Ropa holgada, evitar fricción','Analgesia y manejo del dolor crónico'],
 refs:[{t:'Zouboulis CC, et al. European S2k guidelines for hidradenitis suppurativa/acne inversa. J Eur Acad Dermatol Venereol. 2015;29(4):619-644.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=European+S2k+guidelines+hidradenitis+suppurativa+Zouboulis'},{t:'Kimball AB, et al. Secukinumab in moderate-to-severe hidradenitis suppurativa (SUNSHINE/SUNRISE). Lancet. 2023;401(10378):747-761.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=secukinumab+hidradenitis+SUNSHINE+SUNRISE+2023'},{t:'Bolognia JL, et al. Dermatology. 5.ª ed. Elsevier; 2024 — cap. «Hidradenitis suppurativa».',u:''}]},
 psoriasis:{label:'Psoriasis en placas',intro:'Clasificar en leve (BSA<10, PASI<10, DLQI<10) frente a moderada-grave. La afectación de zonas especiales o artropatía sube el escalón.',
@@ -2818,16 +2825,20 @@ general:['Emolientes a diario','Evitar desencadenantes (estrés, litio, betabloq
 refs:[{t:'Menter A, et al. Joint AAD–NPF guidelines of care for the management of psoriasis with biologics. J Am Acad Dermatol. 2019;80(4):1029-1072.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=AAD+NPF+guidelines+psoriasis+biologics+2019+Menter'},{t:'Nast A, et al. EuroGuiDerm guideline on the systemic treatment of psoriasis vulgaris (EADV). J Eur Acad Dermatol Venereol. 2021;35(2):281-317 / 35(2):281.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=EuroGuiDerm+systemic+treatment+psoriasis+vulgaris+Nast'},{t:'Bolognia JL, et al. Dermatology. 5.ª ed. Elsevier; 2024 — cap. «Psoriasis».',u:''}]},
 datopica:{label:'Dermatitis atópica',intro:'La base es el emoliente diario. Escalar según gravedad y respuesta.',
 tiers:[
-{sev:'Mantenimiento (todas)',rx:[
-{d:'Emolientes',dose:'',pauta:'abundantes, varias veces al día',notes:'Baños cortos con agua templada; evitar irritantes y jabones agresivos.'}]},
+{sev:'Base / mantenimiento (todas)',rx:[
+{d:'Emolientes',dose:'generosos, ≥2 veces/día y tras el baño',pauta:'continuo',notes:'Pilar del tratamiento. Baños cortos con agua templada, syndet sin jabón, secar sin frotar. Reducen brotes y uso de corticoide.'},
+{d:'Educación y evitación',dose:'evitar desencadenantes (calor, sudor, irritantes, alérgenos relevantes)',pauta:'',notes:'Un plan escrito de manejo de brotes mejora el control.'}]},
 {sev:'Brote leve-moderado',rx:[
-{d:'Corticoide tópico potencia media',dose:'Mometasona',pauta:'1/día en el brote, 1–2 semanas',notes:'En cara y pliegues usar inhibidor de la calcineurina (tacrolimus/pimecrolimus); crisaborol o ruxolitinib tópico como alternativa no corticoidea.'}]},
-{sev:'Moderada recidivante',rx:[
-{d:'Terapia proactiva',dose:'Corticoide o tacrolimus 2 días/semana en zonas problema',pauta:'',notes:'Valorar fototerapia UVB-BE.'}]},
+{d:'Corticoide tópico (potencia según zona)',dose:'baja en cara/pliegues; media-alta (mometasona, metilprednisolona aceponato) en cuerpo',pauta:'1/día en el brote, 1–2 sem',notes:'Dosificar con la regla FTU; descenso progresivo al mejorar.'},
+{d:'Alternativa no corticoidea',dose:'inhibidor de calcineurina (tacrolimus/pimecrolimus), crisaborol o ruxolitinib tópico',pauta:'',notes:'De elección en cara, párpados y pliegues; ahorradores de corticoide.'}]},
+{sev:'Moderada / recidivante',rx:[
+{d:'Terapia proactiva',dose:'corticoide o tacrolimus 2 días/sem en zonas problema',pauta:'mantenido',notes:'Reduce recaídas en la piel ya curada.'},
+{d:'Sobreinfección',dose:'antiséptico (baños diluidos de hipoclorito) ± antibiótico si impétigo',pauta:'',notes:'Eccema que no mejora → sospechar S. aureus. Eccema herpético (vesículas monomorfas, dolor, fiebre) = URGENCIA: aciclovir sistémico.'},
+{d:'Fototerapia',dose:'UVB-BE',pauta:'2–3/sem',notes:'Opción si los tópicos son insuficientes, antes de los sistémicos.'}]},
 {sev:'Moderada-grave / refractaria',rx:[
-{d:'Dupilumab',dose:'600 mg → 300 mg/2 semanas SC',pauta:'',notes:'Primera línea sistémica; vigilar conjuntivitis. Pauta por peso en niños/adolescentes.'},
-{d:'o Anti-IL13',dose:'Tralokinumab o lebrikizumab',pauta:'',notes:''},
-{d:'o Inhibidor JAK oral',dose:'Upadacitinib, abrocitinib o baricitinib',pauta:'',notes:'Acción rápida sobre el prurito; cribado y controles (analítica, TBC/VHB, riesgo CV/tromboembólico). Ciclosporina como puente corto.'}]}],
+{d:'Dupilumab (anti-IL4/13)',dose:'600 mg → 300 mg/2 sem SC (adulto); por peso en pediatría',pauta:'',notes:'Primera línea sistémica por seguridad; vigilar conjuntivitis. No precisa analíticas de control rutinarias.'},
+{d:'Anti-IL13',dose:'tralokinumab o lebrikizumab',pauta:'',notes:'Alternativa biológica.'},
+{d:'Inhibidor JAK oral',dose:'upadacitinib, abrocitinib o baricitinib',pauta:'',notes:'Acción rápida sobre el prurito. Cribado y controles (hemograma, perfil lipídico/hepático, TBC/VHB/VHC); valorar riesgo CV/tromboembólico y edad. Ciclosporina como puente corto.'}]}],
 general:['Educación y manejo del prurito','Identificar y tratar sobreinfección por S. aureus','Evitar desencadenantes'],
 refs:[{t:'Sidbury R, et al. Guidelines of care for the management of atopic dermatitis in adults (AAD). J Am Acad Dermatol. 2023-2024.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=guidelines+care+management+atopic+dermatitis+adults+AAD+2023'},{t:'Wollenberg A, et al. European (EuroGuiDerm) guideline on atopic eczema – parts I & II. J Eur Acad Dermatol Venereol. 2022;36(9):1409-1431.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=EuroGuiDerm+guideline+atopic+eczema+2022+Wollenberg'},{t:'Bolognia JL, et al. Dermatology. 5.ª ed. Elsevier; 2024 — cap. «Atopic dermatitis».',u:''}]},
 dseborreica:{label:'Dermatitis seborreica',intro:'Dermatosis crónica recidivante asociada a Malassezia. Tratamiento del brote + mantenimiento.',
