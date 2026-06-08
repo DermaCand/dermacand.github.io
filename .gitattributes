@@ -1,0 +1,6 @@
+# La app debe quedar LF-only en el repo y en cualquier clon (móvil incluido)
+* text=auto eol=lf
+*.png -text
+*.jpg -text
+*.jpeg -text
+*.ico -text

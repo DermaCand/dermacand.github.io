@@ -1,0 +1,13 @@
+# Scripts de trabajo / temporales (no forman parte de la app)
+_cut.ps1
+_img.ps1
+*.tmp
+
+# Copias de seguridad locales (fuera del repo)
+*.backup-*.html
+DermaCand_app.backup-*.html
+
+# Cruft del SO / editor
+Thumbs.db
+.DS_Store
+desktop.ini
