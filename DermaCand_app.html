@@ -2843,40 +2843,47 @@ general:['Educación y manejo del prurito','Identificar y tratar sobreinfección
 refs:[{t:'Sidbury R, et al. Guidelines of care for the management of atopic dermatitis in adults (AAD). J Am Acad Dermatol. 2023-2024.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=guidelines+care+management+atopic+dermatitis+adults+AAD+2023'},{t:'Wollenberg A, et al. European (EuroGuiDerm) guideline on atopic eczema – parts I & II. J Eur Acad Dermatol Venereol. 2022;36(9):1409-1431.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=EuroGuiDerm+guideline+atopic+eczema+2022+Wollenberg'},{t:'Bolognia JL, et al. Dermatology. 5.ª ed. Elsevier; 2024 — cap. «Atopic dermatitis».',u:''}]},
 dseborreica:{label:'Dermatitis seborreica',intro:'Dermatosis crónica recidivante asociada a Malassezia. Tratamiento del brote + mantenimiento.',
 tiers:[
-{sev:'Cuero cabelludo',rx:[
-{d:'Champú antifúngico',dose:'Ketoconazol 2% o ciclopirox',pauta:'2–3/semana',notes:'Alternar con champú de zinc piritiona o sulfuro de selenio.'}]},
+{sev:'Cuero cabelludo (adulto)',rx:[
+{d:'Champú antifúngico',dose:'ketoconazol 2% o ciclopirox olamina',pauta:'2–3/sem, dejar actuar 3–5 min',notes:'Alternar con champú de piritiona de zinc o sulfuro de selenio. Añadir ác. salicílico/alquitrán si hay placas gruesas.'},
+{d:'Brote inflamatorio',dose:'loción de corticoide de baja-media potencia',pauta:'ciclo corto',notes:'Para prurito o eritema intensos.'}]},
 {sev:'Cara y pliegues',rx:[
-{d:'Ketoconazol 2% crema',dose:'',pauta:'cada 12–24 h',notes:'Corticoide de baja potencia (hidrocortisona 1%) en ciclos cortos si inflamación; o inhibidor de la calcineurina.'}]},
+{d:'Antifúngico tópico',dose:'ketoconazol 2% crema (o ciclopirox)',pauta:'cada 12–24 h',notes:'Base del tratamiento facial.'},
+{d:'Antiinflamatorio',dose:'inhibidor de calcineurina (pimecrolimus/tacrolimus) o corticoide de baja potencia en ciclos cortos',pauta:'',notes:'El inhibidor de calcineurina evita la atrofia en cara y pliegues.'}]},
+{sev:'Lactante (costra láctea)',rx:[
+{d:'Medidas suaves',dose:'emoliente/aceite para reblandecer + cepillado suave; champú suave',pauta:'',notes:'Suele ser autolimitada; antifúngico tópico suave si persiste.'}]},
 {sev:'Mantenimiento',rx:[
-{d:'Antifúngico tópico',dose:'',pauta:'1–2/semana',notes:'Previene recidivas.'}]},
+{d:'Antifúngico tópico',dose:'',pauta:'1–2/sem',notes:'Previene recidivas (enfermedad crónica recurrente).'}]},
 {sev:'Extensa / refractaria',rx:[
-{d:'Antifúngico oral',dose:'Itraconazol 200 mg/día',pauta:'1–2 semanas (o pauta intermitente mensual)',notes:'En formas muy extensas o resistentes a tópicos. Si es atípica, eritrodérmica o muy grave, descartar inmunodepresión (VIH).'}]}],
+{d:'Antifúngico oral',dose:'itraconazol 200 mg/día',pauta:'1–2 sem o pauta intermitente mensual',notes:'En formas muy extensas o resistentes. Si es atípica, eritrodérmica o muy grave, descartar inmunodepresión (VIH).'}]}],
 general:['Brotes recurrentes; empeora con el estrés','Descartar otras dermatosis si atípica o extensa'],
 refs:[{t:'Dessinioti C, Katsambas A. Seborrheic dermatitis: etiology, risk factors, and treatments. Clin Dermatol. 2013;31(4):343-351.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=seborrheic+dermatitis+etiology+risk+factors+treatments+Dessinioti'},{t:'Borda LJ, Wikramanayake TC. Seborrheic dermatitis and dandruff: a comprehensive review. J Clin Investig Dermatol. 2015;3(2).',u:'https://pubmed.ncbi.nlm.nih.gov/?term=seborrheic+dermatitis+dandruff+comprehensive+review'},{t:'Bolognia JL, et al. Dermatology. 5.ª ed. Elsevier; 2024 — cap. «Seborrheic dermatitis».',u:''}]},
 dcontacto:{label:'Dermatitis / eccema de contacto',intro:'Identificar y evitar el agente (irritante o alérgeno). El tratamiento depende de la fase.',
 tiers:[
+{sev:'Base (todas)',rx:[
+{d:'Evitar el agente causal',dose:'identificar y retirar el irritante/alérgeno; protección (guantes adecuados, cremas barrera)',pauta:'',notes:'Medida más importante; sin evitación, el eccema recidiva.'},
+{d:'Reparación de la barrera',dose:'emolientes',pauta:'continuo',notes:'Coadyuvante en todas las fases.'}]},
 {sev:'Agudo / exudativo',rx:[
-{d:'Fomentos secantes',dose:'Sulfato de zinc o permanganato muy diluido',pauta:'',notes:''},
-{d:'Corticoide tópico potente',dose:'',pauta:'1/día, 1–2 semanas',notes:''}]},
+{d:'Fomentos secantes',dose:'sulfato de zinc o permanganato muy diluido',pauta:'',notes:'Para lesiones muy exudativas.'},
+{d:'Corticoide tópico potente',dose:'',pauta:'1/día, 1–2 sem',notes:'Base antiinflamatoria del brote.'}]},
 {sev:'Subagudo / crónico localizado',rx:[
-{d:'Corticoide potencia media-alta',dose:'según zona',pauta:'',notes:'Emolientes y reparación de la barrera.'}]},
+{d:'Corticoide potencia media-alta',dose:'según zona',pauta:'',notes:'Inhibidor de calcineurina como ahorrador en cara/pliegues o en uso prolongado.'}]},
 {sev:'Extenso / grave',rx:[
-{d:'Corticoide oral',dose:'Prednisona 0,5 mg/kg/día',pauta:'pauta corta descendente 1–2 semanas',notes:''}]},
+{d:'Corticoide oral',dose:'prednisona 0,5 mg/kg/día',pauta:'pauta corta descendente 1–2 sem',notes:'Evitar pautas repetidas; tratar la causa.'}]},
 {sev:'Crónico / recidivante / ocupacional',rx:[
-{d:'Pruebas epicutáneas (patch test)',dose:'',pauta:'',notes:'Identifican el alérgeno responsable y guían la evitación; clave en el eccema crónico de manos y en el ocupacional.'},
-{d:'Eccema crónico de manos refractario',dose:'Alitretinoína oral 30 mg/día',pauta:'',notes:'Tras fallo de corticoide tópico potente/ICN. Contraindicada en embarazo.'}]}],
+{d:'Pruebas epicutáneas (patch test)',dose:'',pauta:'',notes:'Identifican el alérgeno y guían la evitación; clave en el eccema crónico de manos y en el ocupacional.'},
+{d:'Eccema crónico de manos refractario',dose:'alitretinoína oral 30 mg/día',pauta:'',notes:'Tras fallo de corticoide potente / inhibidor de calcineurina. Contraindicada en embarazo (anticoncepción).'}]}],
 general:['Protección y barrera (guantes, cremas barrera)','Evitar irritantes','Tratar la causa'],
 refs:[{t:'Johansen JD, et al. European Society of Contact Dermatitis guideline for diagnostic patch testing – recommendations. Contact Dermatitis. 2015;73(4):195-221.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=ESCD+guideline+diagnostic+patch+testing+Johansen+2015'},{t:'Bolognia JL, et al. Dermatology. 5.ª ed. Elsevier; 2024 — cap. «Allergic contact dermatitis / Irritant contact dermatitis».',u:''}]},
 urticaria:{label:'Urticaria crónica espontánea',intro:'Tratamiento escalonado. Objetivo: control completo de habones y prurito (UAS7 ≤ 6).',
 tiers:[
-{sev:'1ª línea',rx:[
-{d:'Antihistamínico H1 de 2ª generación',dose:'Bilastina / cetirizina / desloratadina, dosis estándar',pauta:'diario, pauta continua',notes:'No usar anti-H1 de 1ª generación de forma crónica.'}]},
-{sev:'2ª línea',rx:[
-{d:'Subir el anti-H1 hasta x4 la dosis',dose:'',pauta:'',notes:'Aumento recomendado por guía antes de escalar.'}]},
-{sev:'3ª línea',rx:[
-{d:'Omalizumab',dose:'300 mg/4 semanas SC',pauta:'',notes:'Añadido al anti-H1. Si la respuesta es parcial, acortar el intervalo o subir la dosis.'}]},
-{sev:'4ª línea',rx:[
-{d:'Ciclosporina A',dose:'3–5 mg/kg/día',pauta:'',notes:'En urticaria refractaria a omalizumab. Control de TA y función renal.'}]}],
+{sev:'1.ª línea',rx:[
+{d:'Antihistamínico H1 de 2.ª generación',dose:'bilastina, cetirizina, desloratadina, fexofenadina o rupatadina (dosis estándar)',pauta:'diario, pauta continua (no a demanda)',notes:'No usar anti-H1 de 1.ª generación de forma crónica (sedación, efectos anticolinérgicos).'}]},
+{sev:'2.ª línea',rx:[
+{d:'Subir el anti-H1 hasta ×4 la dosis',dose:'mismo fármaco, hasta cuádruple dosis',pauta:'',notes:'Aumento recomendado por la guía antes de escalar. Reevaluar a las 2–4 sem (UAS7).'}]},
+{sev:'3.ª línea',rx:[
+{d:'Omalizumab (anti-IgE)',dose:'300 mg/4 sem SC',pauta:'',notes:'Añadido al anti-H1. Si la respuesta es parcial, acortar el intervalo o subir la dosis. Buen perfil de seguridad.'}]},
+{sev:'4.ª línea',rx:[
+{d:'Ciclosporina A',dose:'3–5 mg/kg/día',pauta:'',notes:'En refractaria a omalizumab. Controlar TA y función renal; cursos cortos.'}]}],
 general:['Evitar AINE y desencadenantes','Corticoide oral solo en ciclos cortos en brotes graves','Descartar causas/diagnósticos alternativos si datos de alarma'],
 refs:[{t:'Zuberbier T, et al. The international EAACI/GA²LEN/EuroGuiDerm/APAAACI guideline for the definition, classification, diagnosis and management of urticaria. Allergy. 2022;77(3):734-766.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=EAACI+EuroGuiDerm+urticaria+guideline+2022+Zuberbier'},{t:'Bolognia JL, et al. Dermatology. 5.ª ed. Elsevier; 2024 — cap. «Urticaria and angioedema».',u:''}]},
 dermatofitosis:{label:'Dermatofitosis (tiñas)',intro:'Confirmar (KOH/cultivo) antes de tratamiento oral prolongado. La tiña del cuero cabelludo y la onicomicosis requieren tratamiento oral.',
