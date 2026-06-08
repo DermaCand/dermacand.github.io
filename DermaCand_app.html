@@ -2223,7 +2223,7 @@ return;
 }
 try{
 const arrayBuffer=await pdfBlob.arrayBuffer();
-const pdf=await pdfjsLib.getDocument({data:arrayBuffer,isEvalSupported:false}).promise;
+const pdf=await pdfjsLib.getDocument({data:arrayBuffer,isEvalSupported:false,standardFontDataUrl:'standard_fonts/'}).promise;
 container.innerHTML='';
 window._vwPDF=pdf;
 _vwPageInfo={};_vwPageText={};_vwSearch={q:'',raw:'',pages:[],pos:-1};
@@ -4412,7 +4412,7 @@ async function chatIndexGuides(onProgress){
         if(data&&data.blob){
           regName=data.name||null;
           const ab=await (new Blob([data.blob])).arrayBuffer();
-          const pdf=await pdfjsLib.getDocument({data:ab,isEvalSupported:false}).promise;
+          const pdf=await pdfjsLib.getDocument({data:ab,isEvalSupported:false,standardFontDataUrl:'standard_fonts/'}).promise;
           const parts=[],maxP=Math.min(pdf.numPages,80);
           for(let p=1;p<=maxP;p++){const pg=await pdf.getPage(p);const tc=await pg.getTextContent();parts.push(tc.items.map(x=>x.str).join(' '));}
           txt=parts.join(' ').replace(/\s+/g,' ').slice(0,250000);
@@ -5623,7 +5623,7 @@ if(document.readyState!=='loading')init();
    <script>
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').then(function(reg){ if(window.hpSWReady) window.hpSWReady(reg); }).catch(function(){});
+      navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(function(reg){ if(window.hpSWReady) window.hpSWReady(reg); }).catch(function(){});
     });
   }
 </script>
@@ -5662,10 +5662,58 @@ if(document.readyState!=='loading')init();
       if(document.visibilityState === 'visible') reg.update().catch(function(){});
     });
   };
-  // Cuando el nuevo service worker toma el control, recargar para usar la versión nueva
+  // Cuando un nuevo service worker toma el control, recargar para usar la versión nueva.
+  // Recargamos SIEMPRE (no solo si esta pestaña inició la actualización), porque ahora el
+  // SW hace skipWaiting en install y puede activarse por su cuenta. Guarda anti-bucle: como
+  // mucho una recarga por sesión de página.
+  var _hpReloaded = false;
   navigator.serviceWorker.addEventListener('controllerchange', function(){
-    if(_hpUpdating){ try{ sessionStorage.setItem('hp_justUpdated','1'); }catch(e){} window.location.reload(); }
+    if(_hpReloaded) return; _hpReloaded = true;
+    try{ sessionStorage.setItem('hp_justUpdated','1'); }catch(e){}
+    window.location.reload();
   });
+
+  // === Red de seguridad anti-caché/proxy (imprescindible en equipos de hospital) ===
+  // El SW puede no rescatar a un equipo si un proxy/CDN intermedio le sirve un sw.js o HTML
+  // viejos. Pedimos sw.js con un parámetro anti-caché (?ts=) que ningún proxy reutiliza: si
+  // la versión publicada es más nueva que la que corre aquí, limpiamos SW + cachés y recargamos.
+  // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
+  var DC_BUILD = 2;
+  async function hpVersionGuard(){
+    try{
+      if(!navigator.onLine) return;
+      var r = await fetch('sw.js?ts=' + Date.now(), { cache: 'no-store' });
+      if(!r.ok) return;
+      var txt = await r.text();
+      var mm = txt.match(/dermacand-v(\d+)/);
+      if(!mm) return;
+      var netBuild = parseInt(mm[1], 10);
+      if(netBuild > DC_BUILD){
+        if(sessionStorage.getItem('hp_fr') === String(netBuild)) return;
+        try{ sessionStorage.setItem('hp_fr', String(netBuild)); }catch(e){}
+        try{
+          if('serviceWorker' in navigator){
+            var regs = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(regs.map(function(x){ return x.unregister(); }));
+          }
+        }catch(e){}
+        try{
+          if(window.caches){
+            var keys = await caches.keys();
+            await Promise.all(keys.map(function(k){ return caches.delete(k); }));
+          }
+        }catch(e){}
+        location.replace(location.pathname + '?u=' + netBuild + (location.hash || ''));
+      } else {
+        try{ sessionStorage.removeItem('hp_fr'); }catch(e){}
+      }
+    }catch(e){}
+  }
+  var _hpVGlast = 0;
+  function hpVGthrottled(){ if(Date.now() - _hpVGlast < 60000) return; _hpVGlast = Date.now(); hpVersionGuard(); }
+  if(document.readyState === 'complete') setTimeout(hpVGthrottled, 1500);
+  else window.addEventListener('load', function(){ setTimeout(hpVGthrottled, 1500); });
+  document.addEventListener('visibilitychange', function(){ if(document.visibilityState === 'visible') hpVGthrottled(); });
 })();
 </script>
 <div id="modal-aviso-legal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; padding:1rem;" role="dialog" aria-modal="true">

@@ -4,3 +4,6 @@
 *.jpg -text
 *.jpeg -text
 *.ico -text
+*.pfb -text
+*.ttf -text
+*.pdf -text
