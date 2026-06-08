@@ -149,9 +149,17 @@ body.view-home .app-footer{padding-bottom:18px}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--shd)}
 .card h2{font-size:18px;margin-bottom:10px;color:var(--c2);font-weight:600}
 [data-t="dark"] .card h2{color:var(--c2l)}
-.card h3{font-size:14px;margin:14px 0 8px;color:var(--txt);font-weight:600}
+.card h3{font-size:14px;margin:18px 0 9px;color:var(--txt);font-weight:600}
 .card p{margin-bottom:8px}
 .card p.intro{color:var(--mut);font-size:13px}
+.card ul,.card ol{padding-left:22px;margin:8px 0 12px}
+.card li{margin-bottom:7px;line-height:1.55}
+.card li::marker{color:var(--c1)}
+.card .ref{margin-top:12px;font-size:12px;color:var(--mut);border-top:1px solid var(--bd);padding-top:8px}
+.refbox{margin-top:14px;font-size:12px;color:var(--mut);background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rs);padding:9px 11px;line-height:1.6}
+.refbox b{color:var(--txt)}
+.card .ref a,.refbox a{color:var(--c1);text-decoration:none}
+.card .ref a:hover,.refbox a:hover{text-decoration:underline}
 .lbl{display:block;font-size:13px;font-weight:500;margin-bottom:5px;color:var(--txt)}
 .fld{margin-bottom:11px}
 .fld input:not([type=radio]):not([type=checkbox]),.fld select,.fld textarea{width:100%;padding:8px 10px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--inp);color:var(--txt);font-size:13px;outline:none;font-family:inherit}
@@ -2635,7 +2643,7 @@ const HOSP_DIR=[["ADMISIÓN",[["ACTIVIDAD QUIRÚRGICA","EDIF. TRAUMA PL. 1","922
 
 // ===== PAUTAS DE CONSULTA (protocolos dermatológicos basados en guías) =====
 const RX_GROUPS=[
-{label:'Dermatosis inflamatorias',keys:['psoriasis','datopica','dseborreica','dcontacto','urticaria']},
+{label:'Dermatosis inflamatorias',keys:['psoriasis','datopica','liquen','dseborreica','dcontacto','urticaria']},
 {label:'Folículo y glándulas',keys:['acne','rosacea','hs']},
 {label:'Infecciones cutáneas',keys:['dermatofitosis','pversicolor','candidiasis','escabiosis','herpes']},
 {label:'Dermato-oncología',keys:['qa_rx']},
@@ -2645,52 +2653,66 @@ const RX_GROUPS=[
 // Estructura: c=concepto/uso, a=activo/descripción, m=marca comercial, lab=laboratorio. Existen equivalentes; verificar composición vigente.
 const RX_PRODUCTOS={
 acne:[
-{c:'Limpiador',a:'gel espumoso purificante (ác. salicílico/zinc)',m:'Sebium Gel Moussant',lab:'Bioderma'},
-{c:'Coadyuvante seborregulador',a:'niacinamida + ác. salicílico (antimarcas)',m:'Effaclar Duo+M',lab:'La Roche-Posay'},
-{c:'Fotoprotección oil-free',a:'SPF50+ matificante, no comedogénico',m:'Fotoultra Active Unify oil-free',lab:'ISDIN'}
+{c:'Limpiador',a:'gel espumoso purificante (ác. salicílico/zinc)',op:[{m:'Sebium Gel Moussant',lab:'Bioderma'},{m:'Effaclar gel',lab:'La Roche-Posay'}]},
+{c:'Coadyuvante seborregulador',a:'niacinamida + ác. salicílico (antimarcas)',op:[{m:'Effaclar Duo+M',lab:'La Roche-Posay'},{m:'Acnfeel',lab:'Sesderma'}]},
+{c:'Fotoprotección oil-free',a:'SPF50+ matificante, no comedogénico',op:[{m:'Fotoultra Active Unify oil-free',lab:'ISDIN'},{m:'Photoderm AKN Mat SPF50+',lab:'Bioderma'}]}
 ],
 rosacea:[
-{c:'Limpiador suave',a:'agua micelar para piel sensible (sin aclarado)',m:'Sensibio H2O',lab:'Bioderma'},
-{c:'Calmante anti-rojeces',a:'cuidado descongestivo/antieritema',m:'Antirougeurs Calm',lab:'Avène'},
-{c:'Fotoprotección',a:'SPF50+ mineral para piel reactiva',m:'Anthelios Mineral SPF50+',lab:'La Roche-Posay'}
+{c:'Limpiador suave',a:'limpieza suave para piel reactiva',op:[{m:'Sensibio H2O',lab:'Bioderma'},{m:'Toleriane dermolimpiador',lab:'La Roche-Posay'}]},
+{c:'Calmante anti-rojeces',a:'cuidado descongestivo/antieritema',op:[{m:'Antirougeurs Calm',lab:'Avène'},{m:'Rosaliac AR',lab:'La Roche-Posay'}]},
+{c:'Fotoprotección',a:'SPF50+ mineral para piel reactiva',op:[{m:'Anthelios Mineral SPF50+',lab:'La Roche-Posay'},{m:'Mineral 50+',lab:'Avène'}]}
 ],
 hs:[
-{c:'Antiséptico',a:'clorhexidina jabonosa para lavado de zonas',m:'Clorhexidina jabonosa 4%',lab:'EFG / genérico'},
-{c:'Lavado coadyuvante',a:'gel con peróxido de benzoilo (descolonizante)',m:'Peróxido de benzoilo 4% gel',lab:'EFG / genérico'},
-{c:'Higiene diaria',a:'syndet suave sin jabón',m:'Effaclar Gel',lab:'La Roche-Posay'}
+{c:'Antiséptico',a:'lavado de zonas con clorhexidina',op:[{m:'Clorhexidina jabonosa 4%',lab:'EFG'},{m:'Gel de gluconato de clorhexidina',lab:'EFG'}]},
+{c:'Lavado coadyuvante',a:'peróxido de benzoilo (descolonizante)',op:[{m:'Peróxido de benzoilo 4% gel',lab:'EFG'},{m:'Effaclar gel',lab:'La Roche-Posay'}]},
+{c:'Higiene diaria',a:'syndet suave sin jabón',op:[{m:'Lipikar Syndet AP+',lab:'La Roche-Posay'},{m:'Atoderm gel douche',lab:'Bioderma'}]}
 ],
 psoriasis:[
-{c:'Emoliente queratolítico',a:'urea 10% corporal (hidrata y desescama)',m:'Ureadin 10',lab:'ISDIN'},
-{c:'Cuero cabelludo',a:'champú/crema con ác. salicílico (desescamante)',m:'Kertyol P.S.O',lab:'Ducray'},
-{c:'Hidratación calmante',a:'bálsamo relipidizante antipicor',m:'Lipikar Baume AP+M',lab:'La Roche-Posay'}
+{c:'Emoliente queratolítico',a:'urea ~10% (hidrata y desescama)',op:[{m:'Ureadin 10',lab:'ISDIN'},{m:'UreaRepair Plus 10%',lab:'Eucerin'}]},
+{c:'Cuero cabelludo',a:'champú/crema con ác. salicílico (desescamante)',op:[{m:'Kertyol P.S.O',lab:'Ducray'},{m:'Nodé K champú',lab:'Bioderma'}]},
+{c:'Hidratación calmante',a:'bálsamo relipidizante antipicor',op:[{m:'Lipikar Baume AP+M',lab:'La Roche-Posay'},{m:'Atoderm Intensive Baume',lab:'Bioderma'}]}
 ],
 datopica:[
-{c:'Emoliente diario',a:'bálsamo relipidizante con niacinamida',m:'Lipikar Baume AP+M',lab:'La Roche-Posay'},
-{c:'Emoliente atópico',a:'crema relipidizante antipicor',m:'Atoderm Intensive Baume',lab:'Bioderma'},
-{c:'Brote / mantenimiento',a:'crema reparadora calmante (ác. glicirretínico)',m:'XeraCalm A.D',lab:'Avène'}
+{c:'Emoliente diario',a:'bálsamo relipidizante antipicor',op:[{m:'Lipikar Baume AP+M',lab:'La Roche-Posay'},{m:'Atoderm Intensive Baume',lab:'Bioderma'}]},
+{c:'Higiene sin jabón',a:'syndet o aceite de ducha',op:[{m:'Lipikar Syndet AP+',lab:'La Roche-Posay'},{m:'Exomega Control gel',lab:'A-Derma'}]},
+{c:'Calmante en brote',a:'crema reparadora (ác. glicirretínico)',op:[{m:'XeraCalm A.D',lab:'Avène'},{m:'Stelatopia emoliente',lab:'Mustela'}]}
 ],
 dseborreica:[
-{c:'Champú anticaspa',a:'ciclopirox/piroctona olamina + queratolítico',m:'Kelual DS champú',lab:'Ducray'},
-{c:'Antifúngico',a:'ketoconazol 2% (champú/crema)',m:'Ketoconazol 2%',lab:'EFG / genérico'},
-{c:'Cuidado facial',a:'crema seborreguladora antifúngica',m:'Sensibio DS+',lab:'Bioderma'}
+{c:'Champú anticaspa',a:'ciclopirox/piroctona olamina + queratolítico',op:[{m:'Kelual DS champú',lab:'Ducray'},{m:'Nodé DS+',lab:'Bioderma'}]},
+{c:'Antifúngico',a:'ketoconazol/ciclopirox tópico',op:[{m:'Ketoconazol 2% champú',lab:'EFG'},{m:'Sebiprox (ciclopirox)',lab:'EFG'}]},
+{c:'Cuidado facial',a:'crema seborreguladora antifúngica',op:[{m:'Sensibio DS+',lab:'Bioderma'},{m:'Kelual DS crema',lab:'Ducray'}]}
 ],
 dcontacto:[
-{c:'Reparador barrera',a:'bálsamo calmante (pantenol/madecasósido)',m:'Cicaplast Baume B5',lab:'La Roche-Posay'},
-{c:'Reparador alternativo',a:'crema reparadora calmante',m:'Cicalfate+',lab:'Avène'},
-{c:'Limpiador suave',a:'gel sin jabón para piel irritada',m:'Atoderm Gel Douche',lab:'Bioderma'}
+{c:'Reparador barrera',a:'bálsamo calmante (pantenol/madecasósido)',op:[{m:'Cicaplast Baume B5',lab:'La Roche-Posay'},{m:'Cicalfate+',lab:'Avène'}]},
+{c:'Reparador alternativo',a:'crema cicatrizante/calmante',op:[{m:'Cicabio crema',lab:'Bioderma'},{m:'Bepanthol pomada',lab:'Bayer'}]},
+{c:'Limpiador suave',a:'gel sin jabón para piel irritada',op:[{m:'Atoderm gel douche',lab:'Bioderma'},{m:'Lipikar Syndet AP+',lab:'La Roche-Posay'}]}
 ],
 qa_rx:[
-{c:'Fotoprotección muy alta',a:'SPF50+ diario (medida fundamental)',m:'Heliocare 360º SPF50+',lab:'Cantabria Labs'},
-{c:'Foto + reparación ADN',a:'SPF100 con fotoliasa (campo de cancerización)',m:'Eryfotona AK-NMSC',lab:'ISDIN'},
-{c:'Coadyuvante oral',a:'antioxidante sistémico (no sustituye al tópico)',m:'Heliocare Ultra D oral',lab:'Cantabria Labs'}
+{c:'Fotoprotección muy alta',a:'SPF50+ diario (medida fundamental)',op:[{m:'Heliocare 360º SPF50+',lab:'Cantabria Labs'},{m:'Anthelios SPF50+',lab:'La Roche-Posay'}]},
+{c:'Foto + reparación ADN',a:'SPF alto con fotoliasa (campo de cancerización)',op:[{m:'Eryfotona AK-NMSC',lab:'ISDIN'},{m:'Heliocare 360º AK Fluid',lab:'Cantabria Labs'}]},
+{c:'Coadyuvante oral',a:'antioxidante sistémico (no sustituye al tópico)',op:[{m:'Heliocare Ultra D oral',lab:'Cantabria Labs'},{m:'Fernblock cápsulas',lab:'Cantabria Labs'}]}
 ],
 aga_rx:[
-{c:'Minoxidil tópico',a:'minoxidil 5% espuma/solución (base OTC)',m:'Regaxidil / Lacovin 5%',lab:'EFG / Viñas'},
-{c:'Champú coadyuvante',a:'champú con cafeína/anticaída',m:'Anaphase+',lab:'Ducray'},
-{c:'Complemento',a:'suplemento capilar coadyuvante',m:'Pilexil / Triphasic',lab:'Lacer / Martiderm'}
+{c:'Minoxidil tópico',a:'minoxidil 5% espuma/solución (base OTC)',op:[{m:'Regaxidil 5%',lab:'EFG'},{m:'Lacovin 5%',lab:'Lacer'}]},
+{c:'Champú coadyuvante',a:'champú anticaída (cafeína/activos)',op:[{m:'Anaphase+',lab:'Ducray'},{m:'Pilexil anticaída',lab:'Lacer'}]},
+{c:'Complemento',a:'suplemento capilar coadyuvante',op:[{m:'Pilexil cápsulas',lab:'Lacer'},{m:'Priorin',lab:'Bayer'}]}
 ]
 };
 const RX={
+liquen:{label:'Liquen plano',intro:'Tratamiento escalonado según extensión y localización (cutáneo, oral, ungueal). Cribar VHC y revisar fármacos liquenoides. Objetivo: controlar el prurito y la inflamación.',
+tiers:[
+{sev:'Cutáneo localizado',rx:[
+{d:'Corticoide tópico potente',dose:'Clobetasol 0,05% o betametasona dipropionato',pauta:'1-2/día, pautas cortas',notes:'Primera línea. Oclusión en placas hipertróficas; triamcinolona intralesional si es resistente.'},
+{d:'Inhibidor de calcineurina tópico',dose:'Tacrolimus 0,1%',pauta:'1-2/día',notes:'Útil en cara/pliegues y como ahorrador de corticoide.'}]},
+{sev:'Cutáneo extenso / refractario',rx:[
+{d:'Corticoide oral',dose:'Prednisona 0,5 mg/kg/día',pauta:'pauta corta descendente',notes:'Para brotes extensos o muy sintomáticos.'},
+{d:'Fototerapia',dose:'UVB de banda estrecha o PUVA',pauta:'',notes:'Alternativa en enfermedad extensa.'},
+{d:'Sistémicos de 2.ª línea',dose:'Acitretina, metotrexato o micofenolato',pauta:'',notes:'Casos refractarios; valorar derivación.'}]},
+{sev:'Liquen oral',rx:[
+{d:'Corticoide tópico',dose:'Triamcinolona en orabase o clobetasol gel; enjuagues',pauta:'',notes:'Higiene oral; inhibidores de calcineurina tópicos como alternativa.'},
+{d:'Forma erosiva',dose:'Corticoide oral en brotes',pauta:'',notes:'Vigilar malignización: controles periódicos.'}]}],
+general:['Cribar serología de VHC','Revisar fármacos liquenoides (IECA, betabloqueantes, antipalúdicos, AINE, tiazidas)','Higiene y revisiones de la mucosa oral'],
+refs:['Tratamiento orientativo (BAD/AEDV); ajustar a ficha técnica']},
 acne:{label:'Acné vulgar',intro:'Clasificar por gravedad y predominio de lesiones (comedoniano, inflamatorio, mixto). El tratamiento tópico combinado es la base.',
 tiers:[
 {sev:'Leve (comedoniano)',rx:[
@@ -2916,7 +2938,7 @@ h+='</ul></div>';
 });
 if(p.general&&p.general.length)h+=`<div style="margin:10px 0 6px"><strong style="font-size:13px">Medidas generales</strong><ul style="margin:4px 0;padding-left:18px;line-height:1.6">${p.general.map(g=>'<li>'+chatEsc(g)+'</li>').join('')}</ul></div>`;
 const _pr=RX_PRODUCTOS[key];
-if(_pr&&_pr.length)h+=`<div style="margin:12px 0 6px;border:1px solid var(--bd);border-left:3px solid var(--c1);border-radius:var(--rs);padding:10px 12px;background:var(--bg2)"><strong style="font-size:13px">📦 Productos de referencia <span style="color:var(--mut);font-weight:normal">(orientación para el paciente)</span></strong><ul style="margin:6px 0 4px;padding-left:18px;line-height:1.6">${_pr.map(x=>'<li><strong>'+chatEsc(x.c)+':</strong> '+chatEsc(x.a)+' — <em>'+chatEsc(x.m)+'</em>'+(x.lab?' <span style="color:var(--mut)">('+chatEsc(x.lab)+')</span>':'')+'</li>').join('')}</ul><span style="color:var(--mut);font-size:11px">Marcas orientativas (mercado español); existen equivalentes. Verifica disponibilidad y composición vigente antes de recomendar.</span></div>`;
+if(_pr&&_pr.length)h+=`<div style="margin:12px 0 6px;border:1px solid var(--bd);border-left:3px solid var(--c1);border-radius:var(--rs);padding:10px 12px;background:var(--bg2)"><strong style="font-size:13px">📦 Productos de referencia <span style="color:var(--mut);font-weight:normal">(2 opciones por tipo · orientación para el paciente)</span></strong><ul style="margin:6px 0 4px;padding-left:18px;line-height:1.6">${_pr.map(x=>'<li><strong>'+chatEsc(x.c)+':</strong> '+chatEsc(x.a)+'<br>'+(x.op||[]).map(function(o,i){return '<span style="white-space:nowrap">'+(i+1)+') <em>'+chatEsc(o.m)+'</em>'+(o.lab?' <span style="color:var(--mut)">('+chatEsc(o.lab)+')</span>':'')+'</span>';}).join(' &nbsp;·&nbsp; ')+'</li>').join('')}</ul><span style="color:var(--mut);font-size:11px">Marcas orientativas (mercado español); existen equivalentes. Verifica disponibilidad y composición vigente antes de recomendar.</span></div>`;
 if(p.refs&&p.refs.length)h+=`<div class="ref">${p.refs.map(chatEsc).join(' · ')}</div>`;
 out.innerHTML=h;
 }
@@ -2925,9 +2947,12 @@ const p=RX[key];if(!p)return;const t=p.tiers[i];if(!t)return;
 let s=p.label+' — '+t.sev+'\n';
 t.rx.forEach(r=>{let l='• '+r.d;if(r.dose)l+=': '+r.dose;if(r.pauta)l+=' ('+r.pauta+')';s+=l+'\n';if(r.notes)s+='   '+r.notes+'\n';});
 if(p.general&&p.general.length)s+='Medidas generales: '+p.general.join('; ')+'\n';
-const _pr=RX_PRODUCTOS[key];if(_pr&&_pr.length)s+='Productos orientativos: '+_pr.map(x=>x.c+' — '+x.m+(x.lab?' ('+x.lab+')':'')).join('; ')+'\n';
+const _pr=RX_PRODUCTOS[key];if(_pr&&_pr.length)s+='Productos orientativos: '+_pr.map(function(x){return x.c+' ('+(x.op||[]).map(function(o){return o.m+(o.lab?' - '+o.lab:'');}).join(' / ')+')';}).join('; ')+'\n';
 copy(s.trim());
 }
+// Navegación directa a la pauta de una patología concreta (desde su vista)
+function goPauta(k){go('recetas',{key:k});}
+VIEWS.recetas_post=(p)=>{try{if(p&&p.key&&RX[p.key]){var sel=document.getElementById('rx_sel');if(sel)sel.value=p.key;rxRender(p.key);}}catch(e){}};
 
 // ===== VISTA DE PATOLOGÍA (ejemplo de plantilla; pendiente desplegar al resto) =====
 VIEWS.psoriasis=()=>`<div class="card">
@@ -3017,19 +3042,36 @@ VIEWS.dcontacto=()=>`<div class="card">
 
 VIEWS.liquen=()=>`<div class="card">
 <h2>Liquen plano</h2>
-<p class="intro">Dermatosis inflamatoria mediada por linfocitos T contra los queratinocitos basales. Idiopático o asociado a fármacos y a infección por VHC (cribar serología).</p>
+<p class="intro">Dermatosis inflamatoria crónica mediada por linfocitos T contra los queratinocitos basales. Idiopático o asociado a fármacos y a infección por el virus de la hepatitis C (cribar serología).</p>
+
 <h3>Clínica — las "5 P"</h3>
-<p>Pápulas <strong>p</strong>oligonales, <strong>p</strong>lanas, <strong>p</strong>ruriginosas, <strong>p</strong>urpúricas/violáceas y <strong>p</strong>recisas, con estrías de Wickham en superficie. Localización típica: muñecas, tobillos, región lumbar. Fenómeno de Köbner.</p>
-<h3>Variantes</h3>
-<ul style="line-height:1.6">
-<li><strong>Oral</strong> — reticular (Wickham) o erosivo (doloroso; vigilar malignización).</li>
-<li><strong>Ungueal</strong> — adelgazamiento, pterigión dorsal.</li>
-<li><strong>Pilar</strong> — alopecia cicatricial (ver liquen plano pilar / AFF).</li>
-<li>Hipertrófico, ampolloso, pigmentoso.</li>
+<p>Pápulas <strong>p</strong>oligonales, <strong>p</strong>lanas, <strong>p</strong>ruriginosas, <strong>p</strong>urpúricas/violáceas y <strong>p</strong>recisas, con finas estrías blanquecinas en superficie (<em>estrías de Wickham</em>). Localización típica: cara flexora de muñecas, tobillos y región lumbar. Presenta fenómeno de Köbner.</p>
+
+<h3>Variantes clínicas</h3>
+<ul>
+<li><strong>Cutáneo clásico</strong> — pápulas violáceas pruriginosas.</li>
+<li><strong>Oral</strong> — reticular (red de Wickham, asintomático) o erosivo (doloroso; <em>vigilar malignización</em> con controles periódicos).</li>
+<li><strong>Ungueal</strong> — adelgazamiento, estrías longitudinales, pterigión dorsal.</li>
+<li><strong>Pilar</strong> — liquen plano pilar, causa de alopecia cicatricial.</li>
+<li><strong>Otras</strong> — hipertrófico (piernas, muy pruriginoso), ampolloso, actínico, pigmentoso.</li>
 </ul>
-<h3>Diagnóstico y manejo</h3>
-<p>Clínico; biopsia ante duda (infiltrado liquenoide en banda). Cribar VHC. Corticoides tópicos/intralesionales potentes; casos extensos: corticoide oral, fototerapia, retinoides o inmunosupresores. Liquen oral erosivo: corticoide tópico / inhibidor de calcineurina y seguimiento.</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Guías AEDV.</div>
+
+<h3>Diagnóstico</h3>
+<ul>
+<li>Clínico, apoyado en dermatoscopia (estrías de Wickham).</li>
+<li>Biopsia ante duda: infiltrado linfocitario <strong>liquenoide en banda</strong> en la unión dermoepidérmica, con queratinocitos apoptóticos (cuerpos de Civatte).</li>
+<li>Cribar <strong>serología de VHC</strong> y revisar fármacos liquenoides (IECA, betabloqueantes, antipalúdicos, AINE, tiazidas).</li>
+</ul>
+
+<h3>Tratamiento</h3>
+<p>Escalonado según extensión y localización: corticoide tópico potente ± inhibidor de calcineurina (localizado); corticoide oral, fototerapia o sistémicos (extenso); corticoide tópico y seguimiento en el oral erosivo.</p>
+<div class="btns"><button class="btn btn-sm" onclick="goPauta('liquen')">💊 Ver pauta de tratamiento</button></div>
+
+<h3>Pronóstico</h3>
+<p>El cutáneo suele autolimitarse en 1-2 años, dejando hiperpigmentación residual. Las formas oral erosiva, ungueal y pilar son más crónicas y requieren seguimiento.</p>
+
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/lichen-planus" target="_blank" rel="noopener">DermNet — Lichen planus</a> · <a href="https://www.aad.org/member/clinical-quality/guidelines" target="_blank" rel="noopener">AAD Clinical Guidelines</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>. Enlaces a las fuentes oficiales; verifica la versión vigente.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Folículo y glándulas =====
