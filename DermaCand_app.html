@@ -3008,7 +3008,7 @@ VIEWS.psoriasis=()=>`<div class="card">
 <div class="btns">
 <button class="btn btn-out btn-sm" onclick="go('pasi')">📊 PASI</button>
 <button class="btn btn-out btn-sm" onclick="go('dlqi')">DLQI</button>
-<button class="btn btn-sm" onclick="go('recetas')">💊 Pauta de tratamiento</button>
+<button class="btn btn-sm" onclick="goPauta('psoriasis')">💊 Pauta de tratamiento</button>
 </div>
 
 <h3>Comorbilidades a vigilar</h3>
@@ -3040,7 +3040,7 @@ VIEWS.datopica=()=>`<div class="card">
 <button class="btn btn-out btn-sm" onclick="go('easi')">EASI</button>
 <button class="btn btn-out btn-sm" onclick="go('scorad')">SCORAD</button>
 <button class="btn btn-out btn-sm" onclick="go('dlqi')">DLQI</button>
-<button class="btn btn-sm" onclick="go('recetas')">💊 Pauta y productos</button>
+<button class="btn btn-sm" onclick="goPauta('datopica')">💊 Pauta y productos</button>
 </div>
 <h3>Claves de manejo</h3>
 <ul style="line-height:1.6">
@@ -3061,7 +3061,7 @@ VIEWS.dcontacto=()=>`<div class="card">
 </ul>
 <h3>Diagnóstico</h3>
 <p>Historia de exposición (laboral, cosmética, tópicos). La <strong>prueba epicutánea (patch test)</strong> identifica el alérgeno en la forma alérgica; lectura a las 48 y 96 h.</p>
-<div class="btns"><button class="btn btn-sm" onclick="go('recetas')">💊 Pauta</button></div>
+<div class="btns"><button class="btn btn-sm" onclick="goPauta('dcontacto')">💊 Pauta</button></div>
 <h3>Claves de manejo</h3>
 <ul style="line-height:1.6">
 <li>Evitar/retirar el agente causal (clave); protección de barrera y emolientes.</li>
@@ -3119,7 +3119,7 @@ VIEWS.acne=()=>`<div class="card">
 <p>Leve (comedoniano), leve-moderado (mixto/inflamatorio), moderado-grave y grave (nódulo-quístico/cicatrizal). Variantes: fulminans, conglobata, del adulto (mujer, mandibular/perimenstrual).</p>
 <div class="btns">
 <button class="btn btn-out btn-sm" onclick="go('iga')">IGA</button>
-<button class="btn btn-sm" onclick="go('recetas')">💊 Pauta y productos</button>
+<button class="btn btn-sm" onclick="goPauta('acne')">💊 Pauta y productos</button>
 </div>
 <h3>Claves</h3>
 <ul style="line-height:1.6">
@@ -3143,7 +3143,7 @@ VIEWS.rosacea=()=>`<div class="card">
 </ul>
 <h3>Diagnóstico y manejo</h3>
 <p>Clínico. Diferenciar de acné (sin comedones), dermatitis seborreica y lupus. Tratamiento según fenotipo (ver Pauta): tópicos (ivermectina, metronidazol, ác. azelaico, brimonidina), doxiciclina a dosis antiinflamatoria, láser/IPL para lo vascular. <strong>Evitar corticoides tópicos</strong> (empeoran).</p>
-<div class="btns"><button class="btn btn-sm" onclick="go('recetas')">💊 Pauta y productos</button></div>
+<div class="btns"><button class="btn btn-sm" onclick="goPauta('rosacea')">💊 Pauta y productos</button></div>
 <div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Consenso ROSCO / EADV.</div>
 </div>`;
 
@@ -3158,7 +3158,7 @@ VIEWS.hs=()=>`<div class="card">
 </ul>
 <div class="btns">
 <button class="btn btn-out btn-sm" onclick="go('hurley')">Hurley</button>
-<button class="btn btn-sm" onclick="go('recetas')">💊 Pauta</button>
+<button class="btn btn-sm" onclick="goPauta('hs')">💊 Pauta</button>
 </div>
 <h3>Claves de manejo</h3>
 <ul style="line-height:1.6">
@@ -3199,7 +3199,7 @@ VIEWS.inf_vir=()=>`<div class="card">
 </ul>
 <h3>Signos de alarma</h3>
 <p>Eccema herpético (Kaposi-Juliusberg) sobre dermatitis atópica, zóster diseminado o afectación oftálmica → tratamiento sistémico urgente.</p>
-<div class="btns"><button class="btn btn-sm" onclick="go('recetas')">💊 Pauta (herpes)</button></div>
+<div class="btns"><button class="btn btn-sm" onclick="goPauta('herpes')">💊 Pauta (herpes)</button></div>
 <div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
 </div>`;
 
@@ -3214,7 +3214,7 @@ VIEWS.inf_mic=()=>`<div class="card">
 <li><strong>Pitiriasis versicolor</strong> — máculas hipo/hiperpigmentadas en tronco (Malassezia).</li>
 <li><strong>Candidiasis</strong> — pliegues, intertrigo, mucosas; predisponen humedad, diabetes y antibióticos.</li>
 </ul>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('micologia_lab')">KOH / cultivo</button><button class="btn btn-sm" onclick="go('recetas')">💊 Pauta</button></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('micologia_lab')">KOH / cultivo</button><button class="btn btn-out btn-sm" onclick="goPauta('dermatofitosis')">💊 Tiñas</button><button class="btn btn-out btn-sm" onclick="goPauta('candidiasis')">💊 Candidiasis</button><button class="btn btn-out btn-sm" onclick="goPauta('pversicolor')">💊 P. versicolor</button></div>
 <div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
 </div>`;
 
@@ -3227,7 +3227,7 @@ VIEWS.inf_par=()=>`<div class="card">
 <li><strong>Pediculosis</strong> — capitis (niños), corporis, pubis. Pediculicidas tópicos; lavado/aislamiento de ropa.</li>
 <li><strong>Larva migrans cutánea</strong> — trayecto serpiginoso pruriginoso (playas); ivermectina o albendazol.</li>
 </ul>
-<div class="btns"><button class="btn btn-sm" onclick="go('recetas')">💊 Pauta (escabiosis)</button></div>
+<div class="btns"><button class="btn btn-sm" onclick="goPauta('escabiosis')">💊 Pauta (escabiosis)</button></div>
 <div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Tratar a convivientes y desinfectar fómites.</div>
 </div>`;
 
@@ -3263,7 +3263,7 @@ VIEWS.aga=()=>`<div class="card">
 </ul>
 <h3>Diagnóstico</h3>
 <p>Clínico + tricoscopia (miniaturización, diversidad de diámetros >20%, signo peripilar). En mujer con signos de hiperandrogenismo, valorar estudio hormonal.</p>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('tricoscopia')">Tricoscopia</button><button class="btn btn-sm" onclick="go('recetas')">💊 Pauta y productos</button></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('tricoscopia')">Tricoscopia</button><button class="btn btn-sm" onclick="goPauta('aga_rx')">💊 Pauta y productos</button></div>
 <h3>Tratamiento</h3>
 <ul style="line-height:1.6">
 <li>Minoxidil tópico (base) y finasterida/dutasterida oral (varón; mujer seleccionada).</li>
@@ -3440,7 +3440,7 @@ VIEWS.qa=()=>`<div class="card">
 </ul>
 <h3>Manejo</h3>
 <p>Lesión aislada: crioterapia. <strong>Campo de cancerización</strong>: tratamiento dirigido al campo (5-fluorouracilo, imiquimod, tirbanibulina, terapia fotodinámica). Fotoprotección estricta y revisión.</p>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('cec')">CEC</button><button class="btn btn-sm" onclick="go('recetas')">💊 Pauta y fotoprotección</button></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('cec')">CEC</button><button class="btn btn-sm" onclick="goPauta('qa_rx')">💊 Pauta y fotoprotección</button></div>
 <div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
 </div>`;
 
@@ -3853,7 +3853,7 @@ VIEWS.antihistaminicos=()=>`<div class="card">
 </ul>
 <h3>Primera generación</h3>
 <p>Hidroxizina, dexclorfeniramina: sedantes y anticolinérgicos; uso puntual. Evitar de forma crónica y en ancianos.</p>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('uas7')">UAS7 (urticaria)</button><button class="btn btn-sm" onclick="go('recetas')">💊 Pauta (urticaria)</button></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('uas7')">UAS7 (urticaria)</button><button class="btn btn-sm" onclick="goPauta('urticaria')">💊 Pauta (urticaria)</button></div>
 <div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
 </div>`;
 
