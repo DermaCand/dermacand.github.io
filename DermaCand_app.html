@@ -616,7 +616,7 @@ el.title=`${state}\nEstado: ${online?'Online':'Offline'}${lastUpd?'\nÚltima sin
 // === MENU CONFIG ===
 const MENU=[
 {h:'ASISTENTE',o:1,items:[
-{id:'recetas',name:'Pautas de consulta',kw:'pautas consulta recetas receta tratamiento protocolo prescripcion pauta esquema evidencia guias aad eadv edf aedv dermatosis psoriasis acne rosacea dermatitis seborreica contacto hidradenitis supurativa urticaria tiña dermatofitosis pitiriasis versicolor candidiasis escabiosis sarna herpes queratosis actinica alopecia dosis topico sistemico primera linea',new:'2026-06-03'},
+{id:'recetas',name:'Pautas de tratamiento',kw:'pautas tratamiento consulta recetas receta protocolo prescripcion pauta esquema evidencia guias aad eadv edf aedv dermatosis psoriasis acne rosacea dermatitis seborreica contacto hidradenitis supurativa urticaria tiña dermatofitosis pitiriasis versicolor candidiasis escabiosis sarna herpes queratosis actinica alopecia dosis topico sistemico primera linea',new:'2026-06-03'},
 {id:'labconv',name:'Asistente de redacción',kw:'transcriptor convertidor redaccion informe dermatologico lesion descripcion morfologia exploracion formato limpiar ordenar pegar evolutivo nota clinica',new:'2026-05-29'}
 ]},
 {h:'ESCALAS Y SCORES',o:1,items:[
@@ -2942,7 +2942,7 @@ VIEWS.recetas=()=>{
 let opts='<option value="">— Selecciona una patología —</option>';
 RX_GROUPS.forEach(g=>{opts+=`<optgroup label="${g.label}">`;g.keys.forEach(k=>{if(RX[k])opts+=`<option value="${k}">${RX[k].label}</option>`;});opts+='</optgroup>';});
 return `<div class="card">
-<h2>🩹 Pautas de consulta</h2>
+<h2>🩹 Pautas de tratamiento</h2>
 <p class="intro">Protocolos de tratamiento de primera línea para las dermatosis más frecuentes, según guías vigentes (AAD/EADV/EDF/AEDV). Selecciona una patología para ver la pauta escalonada y copiarla.</p>
 <div class="alert b" style="margin-bottom:14px">ℹ️ <strong>Herramienta de apoyo.</strong> Las pautas son orientativas y no sustituyen el juicio clínico ni la ficha técnica. Ajusta a cada paciente (edad, embarazo, comorbilidad, alergias, función renal/hepática).</div>
 <div class="fld"><label class="lbl">Patología</label>
@@ -5250,30 +5250,21 @@ function RXtranscribe(raw){
 }
 window.RXtranscribe=RXtranscribe;
 
-let LC_MODE='les';
+let LC_MODE='lab';
 function setLCmode(m){LC_MODE=m;
   document.querySelectorAll('.lc-tab').forEach(b=>b.classList.toggle('active',b.dataset.m===m));
-  const ph=$('lc_in'),help=$('lc_help'),form=$('lc_form'),paste=$('lc_pastewrap'),run=$('lc_run');
-  if(m==='les'){
-    if(form)form.style.display='';
-    if(paste)paste.style.display='none';
-    if(run)run.textContent='Generar descripción';
-    if(help)help.innerHTML=LC_HELP_LES;
-  } else if(m==='lab'){
-    if(form)form.style.display='none';
-    if(paste)paste.style.display='';
+  const ph=$('lc_in'),help=$('lc_help'),run=$('lc_run');
+  if(m==='lab'){
     if(run)run.textContent='Procesar';
     if(ph)ph.placeholder='Ej: Hemograma: Hb 13,2 g/dL, Leucocitos 7.400/uL, Eosinófilos 6% / 450/uL\nGOT 28 U/L, GPT 35 U/L\nColesterol total 210 mg/dL, Triglicéridos 180 mg/dL\nβ-hCG negativo\nHBsAg negativo, anti-HBc negativo, Ac VHC negativo ...';
     if(help)help.innerHTML=LC_HELP_LAB;
   } else {
-    if(form)form.style.display='none';
-    if(paste)paste.style.display='';
     if(run)run.textContent='Procesar';
     if(ph)ph.placeholder='Ej: ISOTRETINOINA 20 MG - 1 CAPSULA CADA 24 HORAS - VIA ORAL, DOXICICLINA 100 MG - 1 COMPRIMIDO CADA 12 HORAS - VIA ORAL';
     if(help)help.innerHTML=LC_HELP_RX;
   }
   const o=$('lc_out');if(o)o.value='';
-  if(ph&&m!=='les')ph.value='';
+  if(ph)ph.value='';
 }
 
 const LC_HELP_LAB=`<ul style="padding-left:18px;line-height:1.7;font-size:12.5px">
@@ -5290,86 +5281,16 @@ const LC_HELP_RX=`<ul style="padding-left:18px;line-height:1.7;font-size:12.5px"
 </ul>
 <div class="alert y" style="margin-top:8px;font-size:12px"><strong>Importante:</strong> ayuda de redacción; <strong>verifica fármaco, dosis y pauta</strong> antes de prescribir.</div>`;
 
-// ===== ASISTENTE DE REDACCIÓN · descriptor de lesiones (dermatología) =====
-const LES_PRIM=[['mácula','f'],['pápula','f'],['placa','f'],['nódulo','m'],['tumor','m'],['habón','m'],['vesícula','f'],['ampolla','f'],['pústula','f'],['quiste','m'],['comedón','m'],['absceso','m'],['púrpura','f'],['petequia','f'],['telangiectasia','f'],['erosión','f'],['úlcera','f'],['fisura','f'],['cicatriz','f']];
-const LES_PRIMG={};LES_PRIM.forEach(x=>LES_PRIMG[x[0]]=x[1]);
-const LES_NUM=[['Única','única',false],['Escasas (2–5)','escasa',true],['Varias','varia',true],['Múltiples','múltiple',true],['Numerosas','numerosa',true],['Incontables','incontable',true],['Confluentes','confluente',true]];
-const LES_NUMP={};LES_NUM.forEach(x=>LES_NUMP[x[1]]=x[2]);
-const LES_COLOR=['eritematosa','eritemato-violácea','violácea','eritemato-descamativa','parda','hiperpigmentada','hipopigmentada','acrómica','blanco-nacarada','negruzca','azulada','amarillenta','rosada','del color de la piel normal'];
-const LES_BORD=['de bordes bien definidos','de bordes mal definidos','de bordes irregulares','de bordes regulares','de bordes sobreelevados'];
-const LES_SUP=['de superficie lisa','de superficie descamativa','de superficie hiperqueratósica','de superficie verrugosa','con umbilicación central','de superficie exudativa','de superficie costrosa','de superficie erosionada','de superficie brillante'];
-const LES_CONS=['de consistencia firme','de consistencia dura','de consistencia blanda','de consistencia elástica','de consistencia pétrea','fluctuante a la palpación','con induración a la palpación','sin induración a la palpación'];
-const LES_DISP=['de disposición aislada','de disposición agrupada','herpetiforme','de disposición lineal','de disposición anular','de disposición arciforme','en diana','de disposición numular','de disposición reticulada','de disposición serpiginosa','de distribución zosteriforme (metamérica)','confluente'];
-const LES_DISTR=['de distribución simétrica','de distribución asimétrica','de distribución localizada','de afectación regional','de distribución generalizada','de distribución fotoexpuesta','de distribución flexural','de predominio en zonas de extensión','de distribución acral','de distribución seborreica'];
-const LES_SEC=['con escama','con costra','con erosión','con excoriaciones','con liquenificación','con fisuras','con atrofia','con esclerosis','con cicatrización'];
-const LES_SINT=['asintomática','pruriginosa','dolorosa','con sensación de quemazón','parestésica'];
-function lesInflect(a,g){return g==='f'?a:a.replace(/a(s?)$/,'o$1');}
-function lesPlural(w){if(/s$/.test(w))return w;if(/ón$/.test(w))return w.replace(/ón$/,'ones');if(/z$/.test(w))return w.replace(/z$/,'ces');if(/[aeiou]$/.test(w))return w+'s';if(/[áéíóú]$/.test(w))return w.replace(/[áéíóú]$/,m=>({'á':'a','é':'e','í':'i','ó':'o','ú':'u'}[m]))+'s';return w+'es';}
-function lesCap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):s;}
-function lesSelHTML(id,label,arr,mode){
-  let o='<option value="">—</option>';
-  arr.forEach(x=>{let val,txt;if(mode==='num'){val=x[1];txt=x[0];}else if(mode==='prim'){val=x[0];txt=x[0];}else{val=x;txt=x;}o+=`<option value="${val}">${txt}</option>`;});
-  return `<div class="fld" style="margin-bottom:8px"><label class="lbl">${label}</label><select id="${id}" style="width:100%;padding:8px 9px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--bg2);color:var(--txt);font-size:13px;font-family:inherit">${o}</select></div>`;
-}
-function lesFormHTML(){
-  return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 12px">
-    ${lesSelHTML('les_prim','Lesión elemental',LES_PRIM,'prim')}
-    ${lesSelHTML('les_num','Número',LES_NUM,'num')}
-    ${lesSelHTML('les_color','Color / tono',LES_COLOR)}
-    <div class="fld" style="margin-bottom:8px"><label class="lbl">Tamaño</label><input id="les_size" type="text" placeholder="p. ej. 2 cm" style="width:100%;padding:8px 9px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--bg2);color:var(--txt);font-size:13px;font-family:inherit"></div>
-    ${lesSelHTML('les_bord','Bordes / límites',LES_BORD)}
-    ${lesSelHTML('les_sup','Superficie',LES_SUP)}
-    ${lesSelHTML('les_cons','Consistencia',LES_CONS)}
-    ${lesSelHTML('les_disp','Disposición / forma',LES_DISP)}
-    ${lesSelHTML('les_distr','Distribución',LES_DISTR)}
-    ${lesSelHTML('les_sec','Cambios secundarios',LES_SEC)}
-    ${lesSelHTML('les_sint','Síntomas',LES_SINT)}
-    <div class="fld" style="margin-bottom:8px"><label class="lbl">Localización</label><input id="les_loc" type="text" placeholder="p. ej. región pretibial bilateral" style="width:100%;padding:8px 9px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--bg2);color:var(--txt);font-size:13px;font-family:inherit"></div>
-  </div>`;
-}
-function buildLesionDesc(){
-  const gv=id=>{const e=$(id);return e?e.value.trim():'';};
-  const noun=gv('les_prim');
-  if(!noun){toast('Elige al menos la lesión elemental');return;}
-  const gen=LES_PRIMG[noun]||'f';
-  const numBase=gv('les_num');
-  const plural=numBase?!!LES_NUMP[numBase]:false;
-  const color=gv('les_color');
-  let colorOut='';
-  if(color){if(color.indexOf(' ')>=0){colorOut=color;}else{colorOut=lesInflect(color,gen);if(plural)colorOut=lesPlural(colorOut);}}
-  let lead;
-  if(plural){let numW=lesPlural(lesInflect(numBase,gen));lead=lesCap(numW)+' '+lesPlural(noun)+(colorOut?' '+colorOut:'');}
-  else{let numW=numBase?lesInflect(numBase,gen):'';lead=lesCap(noun)+(colorOut?' '+colorOut:'')+(numW?' '+numW:'');}
-  const parts=[lead];
-  const size=gv('les_size');if(size)parts.push('de ~'+size);
-  ['les_bord','les_sup','les_cons','les_disp','les_distr'].forEach(id=>{const v=gv(id);if(v)parts.push(v);});
-  const loc=gv('les_loc');if(loc)parts.push('en '+loc);
-  const sec=gv('les_sec');if(sec)parts.push(sec);
-  let out=parts.join(', ')+'.';
-  const sint=gv('les_sint');
-  if(sint){let s=sint;if(s.indexOf(' ')<0){s=lesInflect(s,gen);if(plural)s=lesPlural(s);}out+=' '+lesCap(s)+'.';}
-  $('lc_out').value=out;
-  toast('Descripción generada');
-}
-const LC_HELP_LES=`<ul style="padding-left:18px;line-height:1.7;font-size:12.5px">
-<li>Elige los descriptores y pulsa <strong>Generar descripción</strong>: se redacta un párrafo morfológico estandarizado, listo para pegar en la exploración.</li>
-<li>Solo es obligatoria la <strong>lesión elemental</strong>; el resto de campos son opcionales y se omiten si los dejas en «—».</li>
-<li>La descripción concuerda en género y número con la lesión elegida y es <strong>editable</strong> antes de copiar.</li>
-</ul>
-<div class="alert y" style="margin-top:8px;font-size:12px"><strong>Importante:</strong> es una ayuda de redacción; no sustituye la valoración clínica directa de la lesión.</div>`;
 function lcClear(){const i=$('lc_in');if(i)i.value='';const o=$('lc_out');if(o)o.value='';}
 VIEWS.labconv=()=>{
 return `<div class="card">
 <h2>📝 Asistente de redacción</h2>
-<p class="intro">Genera y da formato a texto clínico dermatológico. Tres modos: <strong>descripción de lesiones</strong> (redacta la morfología por campos), <strong>analíticas</strong> (ordena y normaliza resultados de laboratorio) y <strong>recetas</strong> (transcribe listas de medicamentos a un texto legible).</p>
+<p class="intro">Genera y da formato a texto clínico dermatológico. Dos modos: <strong>analíticas</strong> (ordena y normaliza resultados de laboratorio) y <strong>recetas</strong> (transcribe listas de medicamentos a un texto legible).</p>
 
 <div class="lc-tabs">
-<button class="lc-tab active" data-m="les" onclick="setLCmode('les')">🔬 Lesiones</button>
-<button class="lc-tab" data-m="lab" onclick="setLCmode('lab')">🧾 Analíticas</button>
+<button class="lc-tab active" data-m="lab" onclick="setLCmode('lab')">🧾 Analíticas</button>
 <button class="lc-tab" data-m="rx" onclick="setLCmode('rx')">💊 Recetas</button>
 </div>
-
-<div id="lc_form" style="display:none">${lesFormHTML()}</div>
 
 <div id="lc_pastewrap" class="fld"><label class="lbl">Pega aquí el texto</label>
 <textarea id="lc_in" style="min-height:160px" placeholder=""></textarea></div>
@@ -5382,14 +5303,13 @@ return `<div class="card">
 
 <div class="coll" style="margin-top:14px">
 <div class="coll-h" onclick="this.parentElement.classList.toggle('open')"><span>ℹ️ Qué hace y reglas aplicadas</span><span class="ar">▶</span></div>
-<div class="coll-c"><div id="lc_help">${LC_HELP_LES}</div></div>
+<div class="coll-c"><div id="lc_help">${LC_HELP_LAB}</div></div>
 </div>
 </div>`;
 };
-VIEWS.labconv_post=()=>setLCmode('les');
+VIEWS.labconv_post=()=>setLCmode('lab');
 
 function runAssistant(){
-  if(LC_MODE==='les'){buildLesionDesc();return;}
   const raw=($('lc_in').value||'');
   if(!raw.trim()){toast('Pega primero el texto');return}
   if(LC_MODE==='rx'){

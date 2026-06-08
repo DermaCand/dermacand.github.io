@@ -4,7 +4,7 @@
 
 - App: [`DermaCand_app.html`](DermaCand_app.html)
 - Asistente virtual: **Mel** (un melanocito).
-- Tema clínico teal · escalas/scores dermatológicos · pautas de consulta · transcriptor de analíticas · listín telefónico · visor de PDF.
+- Tema clínico teal · escalas/scores dermatológicos · pautas de tratamiento · transcriptor de analíticas · listín telefónico · visor de PDF.
 
 ## Autoría
 - **Busnego Barreto, M.T.** — diseño, desarrollo, estructura y arquitectura de la aplicación.
