@@ -2966,6 +2966,428 @@ VIEWS.psoriasis=()=>`<div class="card">
 <div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Elaborado según guías AAD/EADV/AEDV; pendiente de validación antes de publicar.</div>
 </div>`;
 
+// ===== VISTAS DE PATOLOGÍA · Dermatosis inflamatorias =====
+VIEWS.datopica=()=>`<div class="card">
+<h2>Dermatitis atópica</h2>
+<p class="intro">Dermatosis inflamatoria crónica y recidivante, muy pruriginosa, sobre piel con disfunción de barrera (filagrina) y desviación Th2. Cursa en brotes; inicio frecuente en la infancia y "marcha atópica" (asma, rinoconjuntivitis).</p>
+<h3>Clínica por edades</h3>
+<ul style="line-height:1.6">
+<li><strong>Lactante</strong> — eccema en mejillas, cuero cabelludo y superficies de extensión; respeta el área del pañal.</li>
+<li><strong>Infantil</strong> — flexuras (antecubital, poplítea), cuello, muñecas; liquenificación.</li>
+<li><strong>Adulto</strong> — flexuras, manos, párpados, cabeza-cuello; prurigo y liquenificación.</li>
+</ul>
+<h3>Diagnóstico</h3>
+<p>Clínico (criterios de Hanifin-Rajka / UK Working Party): prurito + ≥3 de eccema flexural, xerosis, inicio precoz y antecedentes atópicos. Vigilar sobreinfección (impétigo; eccema herpético = urgencia).</p>
+<h3>Gravedad y seguimiento</h3>
+<p>Extensión/intensidad con EASI o SCORAD, impacto con DLQI, respuesta con IGA.</p>
+<div class="btns">
+<button class="btn btn-out btn-sm" onclick="go('easi')">EASI</button>
+<button class="btn btn-out btn-sm" onclick="go('scorad')">SCORAD</button>
+<button class="btn btn-out btn-sm" onclick="go('dlqi')">DLQI</button>
+<button class="btn btn-sm" onclick="go('recetas')">💊 Pauta y productos</button>
+</div>
+<h3>Claves de manejo</h3>
+<ul style="line-height:1.6">
+<li>Emolientes a diario (base del tratamiento); evitar irritantes y desencadenantes.</li>
+<li>Corticoide tópico o inhibidor de calcineurina en brote; tratamiento proactivo si recidivante.</li>
+<li>Moderada-grave: dupilumab, JAK orales, fototerapia (ver Pauta).</li>
+</ul>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Guías AAD/EADV/AEDV; pendiente de validación.</div>
+</div>`;
+
+VIEWS.dcontacto=()=>`<div class="card">
+<h2>Dermatitis de contacto</h2>
+<p class="intro">Eccema provocado por un agente externo. Dos mecanismos: <strong>irritativa</strong> (no inmunológica, dosis-dependiente, la más frecuente) y <strong>alérgica</strong> (hipersensibilidad retardada tipo IV, requiere sensibilización previa).</p>
+<h3>Irritativa vs alérgica</h3>
+<ul style="line-height:1.6">
+<li><strong>Irritativa</strong> — escozor/quemazón, bordes netos limitados a la zona de contacto; afecta a cualquiera con exposición suficiente (jabones, disolventes, agua).</li>
+<li><strong>Alérgica</strong> — prurito, eccema que rebasa la zona de contacto y puede diseminarse; alérgenos frecuentes: níquel, fragancias/cosméticos, gomas, parafenilendiamina.</li>
+</ul>
+<h3>Diagnóstico</h3>
+<p>Historia de exposición (laboral, cosmética, tópicos). La <strong>prueba epicutánea (patch test)</strong> identifica el alérgeno en la forma alérgica; lectura a las 48 y 96 h.</p>
+<div class="btns"><button class="btn btn-sm" onclick="go('recetas')">💊 Pauta</button></div>
+<h3>Claves de manejo</h3>
+<ul style="line-height:1.6">
+<li>Evitar/retirar el agente causal (clave); protección de barrera y emolientes.</li>
+<li>Corticoide tópico en el brote; pauta corta de corticoide oral si es extensa.</li>
+<li>Eccema crónico de manos: protección, valorar alitretinoína.</li>
+</ul>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Guías AEDV/contacto.</div>
+</div>`;
+
+VIEWS.liquen=()=>`<div class="card">
+<h2>Liquen plano</h2>
+<p class="intro">Dermatosis inflamatoria mediada por linfocitos T contra los queratinocitos basales. Idiopático o asociado a fármacos y a infección por VHC (cribar serología).</p>
+<h3>Clínica — las "5 P"</h3>
+<p>Pápulas <strong>p</strong>oligonales, <strong>p</strong>lanas, <strong>p</strong>ruriginosas, <strong>p</strong>urpúricas/violáceas y <strong>p</strong>recisas, con estrías de Wickham en superficie. Localización típica: muñecas, tobillos, región lumbar. Fenómeno de Köbner.</p>
+<h3>Variantes</h3>
+<ul style="line-height:1.6">
+<li><strong>Oral</strong> — reticular (Wickham) o erosivo (doloroso; vigilar malignización).</li>
+<li><strong>Ungueal</strong> — adelgazamiento, pterigión dorsal.</li>
+<li><strong>Pilar</strong> — alopecia cicatricial (ver liquen plano pilar / AFF).</li>
+<li>Hipertrófico, ampolloso, pigmentoso.</li>
+</ul>
+<h3>Diagnóstico y manejo</h3>
+<p>Clínico; biopsia ante duda (infiltrado liquenoide en banda). Cribar VHC. Corticoides tópicos/intralesionales potentes; casos extensos: corticoide oral, fototerapia, retinoides o inmunosupresores. Liquen oral erosivo: corticoide tópico / inhibidor de calcineurina y seguimiento.</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Guías AEDV.</div>
+</div>`;
+
+// ===== VISTAS DE PATOLOGÍA · Folículo y glándulas =====
+VIEWS.acne=()=>`<div class="card">
+<h2>Acné</h2>
+<p class="intro">Enfermedad inflamatoria crónica del folículo pilosebáceo. Cuatro factores: hiperqueratinización folicular, hiperseborrea (andrógenos), <em>Cutibacterium acnes</em> e inflamación.</p>
+<h3>Lesiones</h3>
+<ul style="line-height:1.6">
+<li><strong>No inflamatorias</strong> — comedones abiertos (puntos negros) y cerrados (microquistes).</li>
+<li><strong>Inflamatorias</strong> — pápulas, pústulas, nódulos y quistes.</li>
+<li>Secuelas — cicatrices (atróficas/hipertróficas) e hiperpigmentación postinflamatoria.</li>
+</ul>
+<h3>Gravedad y variantes</h3>
+<p>Leve (comedoniano), leve-moderado (mixto/inflamatorio), moderado-grave y grave (nódulo-quístico/cicatrizal). Variantes: fulminans, conglobata, del adulto (mujer, mandibular/perimenstrual).</p>
+<div class="btns">
+<button class="btn btn-out btn-sm" onclick="go('iga')">IGA</button>
+<button class="btn btn-sm" onclick="go('recetas')">💊 Pauta y productos</button>
+</div>
+<h3>Claves</h3>
+<ul style="line-height:1.6">
+<li>Tratamiento tópico combinado de base (retinoide + peróxido de benzoilo); antibiótico tópico nunca en monoterapia.</li>
+<li>Isotretinoína oral en grave/cicatrizal/resistente (programa de prevención de embarazo).</li>
+<li>Descartar hiperandrogenismo si hay signos asociados (SOP).</li>
+</ul>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Guías AAD/EADV.</div>
+</div>`;
+
+VIEWS.rosacea=()=>`<div class="card">
+<h2>Rosácea</h2>
+<p class="intro">Dermatosis inflamatoria crónica centrofacial con base vascular y neuroinmune. Cursa en brotes; desencadenantes: calor, sol, alcohol, picantes, estrés.</p>
+<h3>Fenotipos (clasificación por rasgos)</h3>
+<ul style="line-height:1.6">
+<li><strong>Eritema / flushing</strong> — eritema transitorio y persistente centrofacial.</li>
+<li><strong>Telangiectasias</strong> — componente vascular fijo.</li>
+<li><strong>Pápulo-pustulosa</strong> — pápulas y pústulas <em>sin comedones</em> (a diferencia del acné).</li>
+<li><strong>Fimatosa</strong> — engrosamiento (rinofima).</li>
+<li><strong>Ocular</strong> — blefaritis, sequedad, hasta queratitis.</li>
+</ul>
+<h3>Diagnóstico y manejo</h3>
+<p>Clínico. Diferenciar de acné (sin comedones), dermatitis seborreica y lupus. Tratamiento según fenotipo (ver Pauta): tópicos (ivermectina, metronidazol, ác. azelaico, brimonidina), doxiciclina a dosis antiinflamatoria, láser/IPL para lo vascular. <strong>Evitar corticoides tópicos</strong> (empeoran).</p>
+<div class="btns"><button class="btn btn-sm" onclick="go('recetas')">💊 Pauta y productos</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Consenso ROSCO / EADV.</div>
+</div>`;
+
+VIEWS.hs=()=>`<div class="card">
+<h2>Hidrosadenitis supurativa</h2>
+<p class="intro">Enfermedad inflamatoria crónica del folículo en zonas de glándulas apocrinas (axilas, ingles, periné, submamario). Nódulos dolorosos recidivantes, abscesos, fístulas y cicatrices. Asociada a tabaquismo, obesidad y síndrome metabólico.</p>
+<h3>Estadificación de Hurley</h3>
+<ul style="line-height:1.6">
+<li><strong>I</strong> — nódulos/abscesos aislados, sin fístulas ni cicatrices.</li>
+<li><strong>II</strong> — abscesos recidivantes con fístulas y cicatrices, lesiones separadas.</li>
+<li><strong>III</strong> — afectación difusa con trayectos fistulosos interconectados.</li>
+</ul>
+<div class="btns">
+<button class="btn btn-out btn-sm" onclick="go('hurley')">Hurley</button>
+<button class="btn btn-sm" onclick="go('recetas')">💊 Pauta</button>
+</div>
+<h3>Claves de manejo</h3>
+<ul style="line-height:1.6">
+<li>Base: cese del tabaco, pérdida de peso, antisépticos, manejo del dolor.</li>
+<li>Antibióticos (tetraciclinas; clindamicina+rifampicina) y biológicos (adalimumab, secukinumab) en moderada-grave.</li>
+<li>Cirugía (deroofing/exéresis) de trayectos y zonas fibrosadas establecidas.</li>
+</ul>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Guía S2k EADV/EHSF.</div>
+</div>`;
+
+// ===== VISTAS DE PATOLOGÍA · Infecciones cutáneas =====
+VIEWS.inf_bact=()=>`<div class="card">
+<h2>Infecciones bacterianas cutáneas</h2>
+<p class="intro">Mayoritariamente por <em>S. aureus</em> y <em>S. pyogenes</em>. Espectro desde superficial (impétigo) hasta profundo (celulitis, fascitis).</p>
+<h3>Cuadros frecuentes</h3>
+<ul style="line-height:1.6">
+<li><strong>Impétigo</strong> — costras melicéricas (no ampolloso) o ampollas (ampolloso, S. aureus). Tópico (mupirocina/ác. fusídico) u oral si extenso.</li>
+<li><strong>Foliculitis / forúnculo / ántrax</strong> — infección del folículo; drenaje si absceso.</li>
+<li><strong>Erisipela</strong> — placa eritematosa bien delimitada y brillante (dermis superficial, S. pyogenes), con fiebre.</li>
+<li><strong>Celulitis</strong> — bordes mal definidos, dermis profunda/TCS; a menudo S. aureus.</li>
+</ul>
+<h3>Signos de alarma</h3>
+<p>Dolor desproporcionado, ampollas hemorrágicas, crepitación o deterioro sistémico rápido → sospechar <strong>fascitis necrosante</strong> (urgencia quirúrgica). Marca el borde y reevalúa.</p>
+<h3>Manejo</h3>
+<p>Antibioterapia según cuadro y gravedad (cobertura S. aureus/S. pyogenes; valorar SARM según factores de riesgo). Elevar la zona y tratar la puerta de entrada (tiña interdigital, eccema).</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Ajustar al protocolo local de antibioterapia.</div>
+</div>`;
+
+VIEWS.inf_vir=()=>`<div class="card">
+<h2>Infecciones víricas cutáneas</h2>
+<p class="intro">Las más frecuentes en consulta: herpesvirus, VPH y poxvirus.</p>
+<h3>Cuadros frecuentes</h3>
+<ul style="line-height:1.6">
+<li><strong>Herpes simple (VHS)</strong> — vesículas agrupadas recidivantes (oral/genital). Antivirales (aciclovir/valaciclovir) precoces; supresión si recurrencias frecuentes.</li>
+<li><strong>Herpes zóster (VVZ)</strong> — erupción metamérica dolorosa; antiviral en <48-72 h, sobre todo en >50 años o zóster oftálmico. Vigilar neuralgia postherpética.</li>
+<li><strong>Verrugas (VPH)</strong> — vulgares, plantares, planas, anogenitales (condilomas). Queratolíticos, crioterapia, etc.</li>
+<li><strong>Molusco contagioso</strong> — pápulas umbilicadas; autolimitado en inmunocompetentes.</li>
+</ul>
+<h3>Signos de alarma</h3>
+<p>Eccema herpético (Kaposi-Juliusberg) sobre dermatitis atópica, zóster diseminado o afectación oftálmica → tratamiento sistémico urgente.</p>
+<div class="btns"><button class="btn btn-sm" onclick="go('recetas')">💊 Pauta (herpes)</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.inf_mic=()=>`<div class="card">
+<h2>Infecciones micóticas</h2>
+<p class="intro">Por dermatofitos (tiñas), levaduras (<em>Candida</em>, <em>Malassezia</em>) y mohos. Apoyo diagnóstico: KOH directo, cultivo y luz de Wood.</p>
+<h3>Cuadros frecuentes</h3>
+<ul style="line-height:1.6">
+<li><strong>Tiña corporal / cruris / pedis</strong> — placa anular de borde activo descamativo. Tópico; oral si extensa.</li>
+<li><strong>Tiña capitis</strong> — en niños; siempre tratamiento <strong>oral</strong> (griseofulvina/terbinafina).</li>
+<li><strong>Onicomicosis</strong> — confirmar antes de tratar; terbinafina/itraconazol oral.</li>
+<li><strong>Pitiriasis versicolor</strong> — máculas hipo/hiperpigmentadas en tronco (Malassezia).</li>
+<li><strong>Candidiasis</strong> — pliegues, intertrigo, mucosas; predisponen humedad, diabetes y antibióticos.</li>
+</ul>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('micologia_lab')">KOH / cultivo</button><button class="btn btn-sm" onclick="go('recetas')">💊 Pauta</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.inf_par=()=>`<div class="card">
+<h2>Infestaciones parasitarias</h2>
+<p class="intro">Las más relevantes: escabiosis, pediculosis y larva migrans.</p>
+<h3>Cuadros</h3>
+<ul style="line-height:1.6">
+<li><strong>Escabiosis (sarna)</strong> — prurito intenso de predominio nocturno; surcos en espacios interdigitales, muñecas y genitales. Tratar al paciente y a los convivientes (permetrina 5% tópica o ivermectina oral). La sarna costrosa (Noruega) es muy contagiosa (inmunodeprimidos).</li>
+<li><strong>Pediculosis</strong> — capitis (niños), corporis, pubis. Pediculicidas tópicos; lavado/aislamiento de ropa.</li>
+<li><strong>Larva migrans cutánea</strong> — trayecto serpiginoso pruriginoso (playas); ivermectina o albendazol.</li>
+</ul>
+<div class="btns"><button class="btn btn-sm" onclick="go('recetas')">💊 Pauta (escabiosis)</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Tratar a convivientes y desinfectar fómites.</div>
+</div>`;
+
+// ===== VISTAS DE PATOLOGÍA · Tricología =====
+VIEWS.tric_alg=()=>`<div class="card">
+<h2>Algoritmo de alopecias</h2>
+<p class="intro">Primer paso: diferenciar <strong>cicatricial</strong> (pérdida del ostium folicular, irreversible) de <strong>no cicatricial</strong> (folículo conservado).</p>
+<h3>No cicatricial</h3>
+<ul style="line-height:1.6">
+<li><strong>Androgenética</strong> — patrón (Hamilton/Ludwig), miniaturización.</li>
+<li><strong>Areata</strong> — placas, pelos en "signo de exclamación", autoinmune.</li>
+<li><strong>Efluvio telógeno</strong> — caída difusa 2-3 meses tras un desencadenante.</li>
+<li><strong>Tracción / tricotilomanía</strong>.</li>
+</ul>
+<h3>Cicatricial (derivar / biopsiar)</h3>
+<ul style="line-height:1.6">
+<li><strong>Liquen plano pilar / alopecia frontal fibrosante</strong>.</li>
+<li><strong>Lupus discoide</strong>, foliculitis decalvante.</li>
+</ul>
+<h3>Aproximación</h3>
+<p>Anamnesis (tiempo, difusa vs localizada, fármacos, ferropenia/tiroides), tricoscopia y, si hay duda o sospecha cicatricial, biopsia del borde activo. Analítica orientada: ferritina, TSH.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('tricoscopia')">Tricoscopia</button><button class="btn btn-out btn-sm" onclick="go('salt')">SALT (areata)</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.aga=()=>`<div class="card">
+<h2>Alopecia androgenética</h2>
+<p class="intro">Miniaturización folicular progresiva mediada por andrógenos (DHT) en individuos predispuestos. Es la causa más frecuente de alopecia.</p>
+<h3>Patrón clínico</h3>
+<ul style="line-height:1.6">
+<li><strong>Varón (Hamilton-Norwood)</strong> — entradas frontotemporales y vértex.</li>
+<li><strong>Mujer (Ludwig / Sinclair)</strong> — aclaramiento difuso de la línea media, respetando la línea de implantación.</li>
+</ul>
+<h3>Diagnóstico</h3>
+<p>Clínico + tricoscopia (miniaturización, diversidad de diámetros >20%, signo peripilar). En mujer con signos de hiperandrogenismo, valorar estudio hormonal.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('tricoscopia')">Tricoscopia</button><button class="btn btn-sm" onclick="go('recetas')">💊 Pauta y productos</button></div>
+<h3>Tratamiento</h3>
+<ul style="line-height:1.6">
+<li>Minoxidil tópico (base) y finasterida/dutasterida oral (varón; mujer seleccionada).</li>
+<li>Antiandrógenos en mujer; mesoterapia/PRP y trasplante como opciones.</li>
+<li>Tratamiento crónico: la suspensión revierte la mejoría.</li>
+</ul>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.alopareata=()=>`<div class="card">
+<h2>Alopecia areata</h2>
+<p class="intro">Alopecia no cicatricial autoinmune (ataque al folículo anágeno). Curso impredecible; asociada a otras autoinmunes (tiroides, vitíligo).</p>
+<h3>Formas</h3>
+<ul style="line-height:1.6">
+<li>En <strong>placas</strong> (la más común), reticular, ofiásica.</li>
+<li><strong>Total</strong> (todo el cuero cabelludo) y <strong>universal</strong> (todo el vello).</li>
+<li>Afectación ungueal (piqueteado) frecuente.</li>
+</ul>
+<h3>Diagnóstico y extensión</h3>
+<p>Clínico: placas sin inflamación, pelos peládicos "en exclamación", pelos cadavéricos en tricoscopia. Cuantificar con SALT.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('salt')">SALT</button></div>
+<h3>Tratamiento</h3>
+<ul style="line-height:1.6">
+<li>Limitada: corticoide intralesional/tópico potente, minoxidil.</li>
+<li>Extensa/refractaria: inhibidores de JAK orales (baricitinib), inmunoterapia tópica, corticoide sistémico en pulsos.</li>
+<li>Apoyo psicológico; curso recidivante.</li>
+</ul>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.lpp_ffa=()=>`<div class="card">
+<h2>Liquen plano pilar / Alopecia frontal fibrosante</h2>
+<p class="intro">Alopecias <strong>cicatriciales</strong> linfocíticas (variantes del liquen plano folicular). La pérdida del folículo es irreversible: el objetivo es <em>frenar</em> la progresión.</p>
+<h3>Rasgos</h3>
+<ul style="line-height:1.6">
+<li><strong>Liquen plano pilar</strong> — placas de alopecia con eritema e hiperqueratosis perifolicular, prurito/dolor; vértex y zonas dispersas.</li>
+<li><strong>Alopecia frontal fibrosante</strong> — retroceso en banda de la línea de implantación frontotemporal, pérdida de cejas; típica en mujeres posmenopáusicas.</li>
+</ul>
+<h3>Diagnóstico</h3>
+<p>Tricoscopia (eritema/descamación perifolicular, pérdida de ostium) y biopsia del borde activo.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('tricoscopia')">Tricoscopia</button></div>
+<h3>Tratamiento</h3>
+<p>Antiinflamatorio (corticoide tópico/intralesional, inhibidores de calcineurina), inhibidores de 5-α-reductasa/antiandrógenos en AFF, hidroxicloroquina o inmunomoduladores en casos activos. Objetivo: estabilizar.</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.tricoscopia=()=>`<div class="card">
+<h2>Tricoscopia</h2>
+<p class="intro">Dermatoscopia del cuero cabelludo y el pelo. Apoya el diagnóstico diferencial de las alopecias, a menudo sin necesidad de biopsia.</p>
+<h3>Signos orientativos</h3>
+<ul style="line-height:1.6">
+<li><strong>Androgenética</strong> — diversidad de diámetros (>20%), miniaturización, puntos amarillos, predominio de unidades de 1 pelo.</li>
+<li><strong>Areata</strong> — puntos amarillos y negros, pelos en exclamación, pelos cadavéricos, repoblación.</li>
+<li><strong>Cicatricial (LPP/AFF)</strong> — pérdida de ostium foliculares, eritema y descamación perifolicular.</li>
+<li><strong>Tiña capitis</strong> — pelos en coma, en sacacorchos, en código Morse.</li>
+<li><strong>Tricotilomanía</strong> — pelos rotos a distinta altura, tricoptilosis.</li>
+</ul>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('tric_alg')">Algoritmo</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+// ===== VISTAS DE PATOLOGÍA · Enfermedades ampollosas =====
+VIEWS.penfigo=()=>`<div class="card">
+<h2>Pénfigo</h2>
+<p class="intro">Enfermedad ampollosa autoinmune <strong>intraepidérmica</strong> por autoanticuerpos anti-desmogleína (acantólisis). Ampollas fláccidas que se rompen dejando erosiones; mucosas a menudo afectadas.</p>
+<h3>Formas</h3>
+<ul style="line-height:1.6">
+<li><strong>Vulgar</strong> — anti-desmogleína 3 (±1); erosiones orales (con frecuencia primer signo) y ampollas fláccidas cutáneas.</li>
+<li><strong>Foliáceo</strong> — anti-desmogleína 1; descamación/costras superficiales, respeta mucosas.</li>
+<li><strong>Paraneoplásico</strong> — buscar neoplasia subyacente.</li>
+</ul>
+<h3>Diagnóstico</h3>
+<p><strong>Signo de Nikolsky positivo</strong>. Biopsia (acantólisis suprabasal) + IFD (IgG/C3 intercelular "en panal") + IFI/ELISA anti-desmogleína.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('ampoll_alg')">Algoritmo</button><button class="btn btn-out btn-sm" onclick="go('autoac')">Autoanticuerpos</button></div>
+<h3>Tratamiento</h3>
+<p>Corticoide sistémico + <strong>rituximab</strong> (primera línea en el vulgar moderado-grave), inmunosupresores ahorradores. Cuidado de erosiones y vigilancia de infección. Manejo hospitalario.</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.penfigoide=()=>`<div class="card">
+<h2>Penfigoide ampolloso</h2>
+<p class="intro">Enfermedad ampollosa autoinmune <strong>subepidérmica</strong>, la más frecuente. Autoanticuerpos anti-membrana basal (BP180/BP230). Típica del anciano.</p>
+<h3>Clínica</h3>
+<ul style="line-height:1.6">
+<li>Ampollas <strong>tensas</strong> sobre piel eritematosa/urticariforme, muy pruriginosas.</li>
+<li>Fase prodrómica pruriginosa (eccematosa/urticarial) que puede preceder semanas-meses.</li>
+<li>Mucosas poco afectadas (a diferencia del pénfigo).</li>
+</ul>
+<h3>Diagnóstico</h3>
+<p><strong>Nikolsky negativo</strong>. Biopsia (ampolla subepidérmica con eosinófilos) + IFD (IgG/C3 lineal en membrana basal) + IFI sal-split (techo) + ELISA BP180. Revisar fármacos desencadenantes (gliptinas, etc.).</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('ampoll_alg')">Algoritmo</button></div>
+<h3>Tratamiento</h3>
+<p>Corticoide tópico potente (clobetasol) en localizado/moderado; corticoide oral ± ahorradores (doxiciclina, inmunosupresores) en extenso. Curso crónico con remisiones.</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.ampoll_alg=()=>`<div class="card">
+<h2>Algoritmo diagnóstico · ampollosas</h2>
+<p class="intro">Ante ampollas, orienta por el <strong>nivel de despegamiento</strong> y la <strong>inmunofluorescencia</strong>.</p>
+<h3>1. Clínica</h3>
+<ul style="line-height:1.6">
+<li>Ampolla <strong>fláccida</strong> + Nikolsky (+) + erosiones/mucosas → grupo <strong>pénfigo</strong> (intraepidérmico).</li>
+<li>Ampolla <strong>tensa</strong> + Nikolsky (−) + prurito en anciano → grupo <strong>penfigoide</strong> (subepidérmico).</li>
+</ul>
+<h3>2. Biopsias</h3>
+<p>Lesión para H-E (nivel de la ampolla) + piel perilesional para <strong>IFD</strong> (patrón de depósito).</p>
+<h3>3. Suero</h3>
+<p>IFI / ELISA: anti-desmogleína 1 y 3 (pénfigo), anti-BP180/BP230 (penfigoide). El sal-split orienta techo vs suelo en los subepidérmicos.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('ifd_ihq')">IFD / IHQ</button><button class="btn btn-out btn-sm" onclick="go('autoac')">Autoanticuerpos</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+// ===== VISTAS DE PATOLOGÍA · Dermato-oncología =====
+VIEWS.melanoma=()=>`<div class="card">
+<h2>Melanoma</h2>
+<p class="intro">Tumor maligno de los melanocitos; principal causa de muerte por cáncer cutáneo. El diagnóstico precoz es determinante en el pronóstico.</p>
+<h3>Sospecha clínica</h3>
+<ul style="line-height:1.6">
+<li><strong>Regla ABCDE</strong> — Asimetría, Bordes irregulares, Color heterogéneo, Diámetro >6 mm, Evolución.</li>
+<li><strong>Signo del patito feo</strong> — lesión distinta al resto de los nevus del paciente.</li>
+<li>Dermatoscopia: red atípica, velo azul-blanquecino, estructuras de regresión.</li>
+</ul>
+<h3>Subtipos</h3>
+<p>Extensión superficial (el más frecuente), nodular (peor pronóstico, crecimiento vertical), lentigo maligno (cara, anciano), lentiginoso acral (palmas/plantas/uñas).</p>
+<h3>Diagnóstico y estadificación</h3>
+<p>Biopsia <strong>escisional</strong> con margen estrecho. El <strong>índice de Breslow</strong> (grosor) guía el margen de ampliación y la indicación de ganglio centinela. Estadiaje AJCC (T por Breslow/ulceración, N, M + LDH).</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('dermatoscopia')">Dermatoscopia</button><button class="btn btn-out btn-sm" onclick="go('biopsia')">Biopsia</button></div>
+<h3>Manejo</h3>
+<p>Ampliación de márgenes según Breslow; ganglio centinela en ≥0,8 mm o con factores de riesgo. Enfermedad avanzada: inmunoterapia (anti-PD1) y terapia dirigida (BRAF/MEK). Educación en fotoprotección y autoexploración.</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Estadiaje AJCC 8.ª ed.</div>
+</div>`;
+
+VIEWS.cbc=()=>`<div class="card">
+<h2>Carcinoma basocelular</h2>
+<p class="intro">El cáncer cutáneo más frecuente. Crecimiento local lento y metástasis excepcionales. Relacionado con la exposición solar acumulada.</p>
+<h3>Formas</h3>
+<ul style="line-height:1.6">
+<li><strong>Nodular</strong> — pápula perlada con telangiectasias y borde brillante; puede ulcerarse.</li>
+<li><strong>Superficial</strong> — placa eritematosa descamativa (tronco), simula eccema.</li>
+<li><strong>Infiltrante / morfeiforme</strong> — placa esclerosa mal delimitada (más agresivo).</li>
+<li><strong>Pigmentado</strong> — diferencial con melanoma.</li>
+</ul>
+<h3>Diagnóstico y manejo</h3>
+<p>Dermatoscopia (telangiectasias arboriformes, nidos ovoides azul-grisáceos, áreas en hoja de arce) y biopsia. Tratamiento: cirugía (Mohs en zonas de riesgo/recidiva), curetaje-electrocoagulación, imiquimod/5-FU (superficial), radioterapia o inhibidores de la vía hedgehog (avanzado).</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('dermatoscopia')">Dermatoscopia</button><button class="btn btn-out btn-sm" onclick="go('cirugia')">Cirugía / Mohs</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.cec=()=>`<div class="card">
+<h2>Carcinoma escamoso (epidermoide)</h2>
+<p class="intro">Segundo cáncer cutáneo más frecuente. Deriva del campo de cancerización (queratosis actínica) y puede metastatizar, sobre todo en zonas y pacientes de riesgo.</p>
+<h3>Clínica</h3>
+<ul style="line-height:1.6">
+<li>Pápula/placa o nódulo hiperqueratósico, costroso o ulcerado en zonas fotoexpuestas.</li>
+<li><strong>Enfermedad de Bowen</strong> — CEC in situ (placa eritematodescamativa bien definida).</li>
+<li>Crecimiento rápido con cráter central → valorar queratoacantoma.</li>
+</ul>
+<h3>Factores de alto riesgo</h3>
+<p>Tamaño >2 cm, invasión profunda, mala diferenciación, labio/oreja, invasión perineural, inmunodepresión, recidiva. Valorar adenopatías.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('qa')">Queratosis actínica</button><button class="btn btn-out btn-sm" onclick="go('cirugia')">Cirugía</button></div>
+<h3>Manejo</h3>
+<p>Escisión con márgenes (Mohs en alto riesgo); radioterapia o cemiplimab (anti-PD1) en avanzado/irresecable. Fotoprotección y seguimiento del campo.</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.qa=()=>`<div class="card">
+<h2>Queratosis actínica</h2>
+<p class="intro">Lesión precancerosa intraepidérmica por daño actínico crónico. Marcador de campo de cancerización; una fracción progresa a carcinoma escamoso.</p>
+<h3>Clínica</h3>
+<ul style="line-height:1.6">
+<li>Mácula/pápula eritematosa con escama rasposa ("se palpa mejor que se ve") en zonas fotoexpuestas (cara, calva, dorso de manos).</li>
+<li>Queilitis actínica en el labio inferior.</li>
+<li>Alarma de progresión a CEC: induración, dolor, crecimiento, ulceración.</li>
+</ul>
+<h3>Manejo</h3>
+<p>Lesión aislada: crioterapia. <strong>Campo de cancerización</strong>: tratamiento dirigido al campo (5-fluorouracilo, imiquimod, tirbanibulina, terapia fotodinámica). Fotoprotección estricta y revisión.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('cec')">CEC</button><button class="btn btn-sm" onclick="go('recetas')">💊 Pauta y fotoprotección</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.lcut=()=>`<div class="card">
+<h2>Linfomas cutáneos</h2>
+<p class="intro">Linfomas primarios de la piel; los más frecuentes son los de células T (micosis fungoide). Curso y pronóstico muy variables según el tipo.</p>
+<h3>Micosis fungoide (la más común)</h3>
+<ul style="line-height:1.6">
+<li><strong>Parches</strong> — placas eritematodescamativas en zonas no fotoexpuestas ("en bañador"), simulan eccema/psoriasis durante años.</li>
+<li><strong>Placas</strong> infiltradas y, en fases avanzadas, <strong>tumores</strong>.</li>
+<li><strong>Síndrome de Sézary</strong> — variante leucémica (eritrodermia + células de Sézary en sangre).</li>
+</ul>
+<h3>Diagnóstico y extensión</h3>
+<p>Biopsias repetidas (linfocitos atípicos epidermotropos, microabscesos de Pautrier), inmunofenotipo y reordenamiento clonal del TCR. Estadiaje TNMB; carga cutánea con mSWAT.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('mswat')">mSWAT</button></div>
+<h3>Manejo</h3>
+<p>Dirigido a la piel en fases iniciales (corticoides, fototerapia, bexaroteno/mostaza tópica, radioterapia local) y sistémico en avanzados. Manejo multidisciplinar.</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Clasificación WHO-EORTC.</div>
+</div>`;
+
 // ===== ASISTENTE VIRTUAL (chatbot local, indexa todo el contenido de la app) =====
 let _chatBase=null, _chatPdfDocs=[], _chatIndexing=false, _chatInited=false, _chatGreeted=false, _chatLastUser=null, _chatNear=[];
 const CHAT_SKIP_RENDER=new Set(['chat','qt','labconv','sync','viewer','phone']);
