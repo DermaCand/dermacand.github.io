@@ -2888,14 +2888,16 @@ general:['Evitar AINE y desencadenantes','Corticoide oral solo en ciclos cortos 
 refs:[{t:'Zuberbier T, et al. The international EAACI/GA²LEN/EuroGuiDerm/APAAACI guideline for the definition, classification, diagnosis and management of urticaria. Allergy. 2022;77(3):734-766.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=EAACI+EuroGuiDerm+urticaria+guideline+2022+Zuberbier'},{t:'Bolognia JL, et al. Dermatology. 5.ª ed. Elsevier; 2024 — cap. «Urticaria and angioedema».',u:''}]},
 dermatofitosis:{label:'Dermatofitosis (tiñas)',intro:'Confirmar (KOH/cultivo) antes de tratamiento oral prolongado. La tiña del cuero cabelludo y la onicomicosis requieren tratamiento oral.',
 tiers:[
-{sev:'Tinea corporis / cruris localizada',rx:[
-{d:'Terbinafina 1% crema',dose:'',pauta:'1/día, 1–2 semanas',notes:'Alternativa: azol tópico cada 12 h, 2–4 semanas.'}]},
+{sev:'Confirmación previa',rx:[
+{d:'KOH / cultivo',dose:'raspado del borde activo',pauta:'',notes:'Antes de cualquier tratamiento ORAL o prolongado. No tratar con corticoide solo (crea tiña incógnito).'}]},
+{sev:'Tinea corporis / cruris / faciei localizada',rx:[
+{d:'Antifúngico tópico',dose:'terbinafina 1% (o azol cada 12 h)',pauta:'terbinafina 1–2 sem; azol 2–4 sem',notes:'Mantener unos días tras la curación clínica. Si es extensa o hay foliculitis (granuloma de Majocchi) → oral.'}]},
 {sev:'Tinea pedis',rx:[
-{d:'Terbinafina 1% tópica',dose:'',pauta:'1/día, 1–2 semanas',notes:'Forma hiperqueratósica: prolongar a 4 semanas.'}]},
+{d:'Terbinafina 1% tópica',dose:'',pauta:'1/día, 1–2 sem',notes:'Forma hiperqueratósica "en mocasín": prolongar a 4 sem o pasar a oral. Tratar también el calzado.'}]},
 {sev:'Tinea capitis',rx:[
-{d:'Tratamiento ORAL (siempre)',dose:'Terbinafina o griseofulvina (dosis por peso en niños)',pauta:'4–8 semanas',notes:'Confirmación micológica previa. Microsporum responde mejor a griseofulvina; Trichophyton a terbinafina. Lavados con champú de ketoconazol/sulfuro de selenio para reducir el contagio.'}]},
+{d:'Tratamiento ORAL (siempre)',dose:'terbinafina o griseofulvina (dosis por peso en niños)',pauta:'4–8 sem',notes:'Confirmación micológica previa. Microsporum responde mejor a griseofulvina; Trichophyton a terbinafina. Champú de ketoconazol/sulfuro de selenio para reducir el contagio.'}]},
 {sev:'Onicomicosis confirmada',rx:[
-{d:'Terbinafina 250 mg/día oral',dose:'',pauta:'6 semanas (manos) / 12 semanas (pies)',notes:'Alternativa: itraconazol en pulsos. Confirmar siempre antes de iniciar.'}]}],
+{d:'Terbinafina 250 mg/día oral',dose:'',pauta:'6 sem (manos) / 12 sem (pies)',notes:'Alternativa: itraconazol en pulsos. Confirmar SIEMPRE antes de iniciar (clínica poco específica).'}]}],
 general:['Confirmación micológica antes de oral prolongado','Medidas higiénicas, calzado transpirable'],
 refs:[{t:'Ameen M, et al. British Association of Dermatologists guidelines for the management of onychomycosis. Br J Dermatol. 2014;171(5):937-958.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=BAD+guidelines+management+onychomycosis+Ameen+2014'},{t:'Cochrane review — Oral antifungal treatment for fungal nail infections / tinea capitis.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=oral+antifungal+onychomycosis+tinea+cochrane+review'},{t:'Bolognia JL, et al. Dermatology. 5.ª ed. Elsevier; 2024 — cap. «Fungal diseases (dermatophytoses)».',u:''}]},
 pversicolor:{label:'Pitiriasis versicolor',intro:'Micosis superficial por Malassezia. Predomina el tratamiento tópico.',
@@ -2910,12 +2912,15 @@ general:['La hipopigmentación residual tarda semanas-meses en repigmentar (no i
 refs:[{t:'Gupta AK, Foley KA. Antifungal treatment for pityriasis versicolor. J Fungi (Basel). 2015;1(1):13-29.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=antifungal+treatment+pityriasis+versicolor+Gupta'},{t:'Bolognia JL, et al. Dermatology. 5.ª ed. Elsevier; 2024 — cap. «Malassezia infections (pityriasis versicolor)».',u:''}]},
 candidiasis:{label:'Candidiasis cutánea / intertrigo',intro:'Controlar los factores predisponentes (humedad, oclusión, diabetes, obesidad).',
 tiers:[
+{sev:'Medidas (todas)',rx:[
+{d:'Control de factores predisponentes',dose:'humedad, oclusión, diabetes, obesidad, antibióticos, corticoides',pauta:'',notes:'Mantener los pliegues secos y ventilados; clave para evitar recidivas.'}]},
 {sev:'Intertrigo candidiásico',rx:[
-{d:'Antifúngico tópico',dose:'Clotrimazol / miconazol',pauta:'cada 12 h, 2–4 semanas',notes:'Mantener los pliegues secos; ± pasta al agua.'}]},
-{sev:'Inflamación marcada',rx:[
-{d:'Azol + corticoide de baja potencia',dose:'',pauta:'ciclo corto',notes:''}]},
+{d:'Antifúngico tópico',dose:'clotrimazol o miconazol (o nistatina, ciclopirox)',pauta:'cada 12 h, 2–4 sem',notes:'± pasta al agua como barrera. Polvo antifúngico en pliegues/calzado si recidiva.'},
+{d:'Inflamación marcada',dose:'azol + corticoide de baja potencia',pauta:'ciclo corto',notes:'Solo unos días, para el componente inflamatorio.'}]},
+{sev:'Mucosa (oral / genital)',rx:[
+{d:'Tópico u oral',dose:'nistatina/miconazol tópico; fluconazol 150 mg oral en candidiasis vulvovaginal',pauta:'',notes:'Valorar tratar a la pareja si hay recidivas; descartar diabetes.'}]},
 {sev:'Extensa / recidivante / inmunodeprimido',rx:[
-{d:'Fluconazol oral',dose:'150 mg',pauta:'repetir según evolución',notes:'En candidiasis mucocutánea recurrente, fluconazol 150 mg/semana supresivo y descartar inmunodepresión (diabetes, VIH).'}]}],
+{d:'Fluconazol oral',dose:'150 mg',pauta:'repetir según evolución',notes:'En recurrente: fluconazol 150 mg/sem supresivo. Descartar inmunodepresión (diabetes, VIH) y candidiasis mucocutánea crónica.'}]}],
 general:['Control de humedad y factores de riesgo','Mantener pliegues secos'],
 refs:[{t:'Taudorf EH, et al. Cutaneous candidiasis — an evidence-based review of topical and systemic treatments. J Eur Acad Dermatol Venereol. 2019;33(10):1863-1873.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=cutaneous+candidiasis+evidence-based+review+treatment+Taudorf'},{t:'Bolognia JL, et al. Dermatology. 5.ª ed. Elsevier; 2024 — cap. «Candidiasis».',u:''}]},
 escabiosis:{label:'Escabiosis (sarna)',intro:'Tratar simultáneamente a TODOS los convivientes y contactos estrechos, aunque estén asintomáticos.',
@@ -2944,24 +2949,29 @@ general:['Antiviral precoz','Valorar vacuna recombinante de zóster en ≥50 añ
 refs:[{t:'Patel R, et al. European guideline for the management of genital herpes (IUSTI/WHO). 2017.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=European+guideline+management+genital+herpes+IUSTI+2017+Patel'},{t:'Werner RN, et al. European consensus-based (S2k) guideline on the management of herpes zoster (EDF/EADV). J Eur Acad Dermatol Venereol. 2017;31(1):20-29.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=S2k+guideline+management+herpes+zoster+Werner+2017'},{t:'Bolognia JL, et al. Dermatology. 5.ª ed. Elsevier; 2024 — cap. «Human herpesviruses».',u:''}]},
 qa_rx:{label:'Queratosis actínica',intro:'Diferenciar lesión aislada de campo de cancerización. Ante duda de invasión, biopsiar.',
 tiers:[
-{sev:'Lesiones aisladas (<5)',rx:[
-{d:'Crioterapia con nitrógeno líquido',dose:'',pauta:'',notes:''}]},
+{sev:'Base (todas)',rx:[
+{d:'Fotoprotección estricta',dose:'SPF50+ diario + medidas físicas',pauta:'continuo',notes:'Reduce nuevas lesiones y el riesgo de cáncer cutáneo. Autoexploración y revisiones periódicas.'}]},
+{sev:'Lesiones aisladas (pocas)',rx:[
+{d:'Crioterapia con nitrógeno líquido',dose:'',pauta:'',notes:'Dirigida a la lesión; también curetaje. El resultado depende de la técnica.'}]},
 {sev:'Campo de cancerización (múltiples)',rx:[
-{d:'Tratamiento de campo',dose:'5-fluorouracilo 5%, imiquimod 5%, tirbanibulina o terapia fotodinámica',pauta:'',notes:'La terapia fotodinámica cubre amplias áreas con buen resultado cosmético.'}]},
+{d:'Tratamiento de campo',dose:'5-fluorouracilo 5%, imiquimod 5% (o 3,75%), tirbanibulina o terapia fotodinámica',pauta:'según fármaco',notes:'Trata lesiones visibles y subclínicas. La terapia fotodinámica cubre áreas amplias con buen resultado cosmético; el 5-FU es muy eficaz pero con reacción local intensa.'}]},
 {sev:'Hipertrófica / duda diagnóstica',rx:[
 {d:'Biopsia o exéresis',dose:'',pauta:'',notes:'Descartar carcinoma escamoso: toda lesión hipertrófica, indurada, dolorosa, sangrante o que no responde al tratamiento de campo debe biopsiarse.'}]}],
 general:['Fotoprotección estricta diaria','Autoexploración periódica','Alto riesgo de nuevas lesiones y de cáncer cutáneo'],
 refs:[{t:'Werner RN, et al. Evidence- and consensus-based (S3) guidelines for the treatment of actinic keratosis (EDF/EADV). J Eur Acad Dermatol Venereol. 2015;29(11):2069-2079.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=S3+guidelines+treatment+actinic+keratosis+Werner+2015'},{t:'Eisen DB, et al. Guidelines of care for the management of actinic keratosis (AAD). J Am Acad Dermatol. 2021;85(4):e209-e233.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=guidelines+care+management+actinic+keratosis+AAD+2021+Eisen'},{t:'Bolognia JL, et al. Dermatology. 5.ª ed. Elsevier; 2024 — cap. «Actinic keratosis».',u:''}]},
 aga_rx:{label:'Alopecia androgenética',intro:'Explicar la cronicidad: el tratamiento debe mantenerse. Descartar ferropenia y disfunción tiroidea, sobre todo en mujeres. Si hay signos inflamatorios o pérdida de orificios foliculares, sospechar alopecia cicatricial (biopsia y manejo distinto).',
 tiers:[
+{sev:'Base (todos)',rx:[
+{d:'Información y estudio',dose:'descartar ferropenia y disfunción tiroidea (sobre todo en la mujer); fotos basales',pauta:'',notes:'Tratamiento crónico: la mejoría se mantiene solo mientras se trata. Respuesta valorable a los 6–12 meses.'}]},
 {sev:'Varón',rx:[
-{d:'Minoxidil 5% tópico/espuma',dose:'',pauta:'1/día',notes:''},
-{d:'+ Finasterida 1 mg/día oral',dose:'',pauta:'',notes:'Contraindicada en embarazo; precaución en manipulación por gestantes. Alternativa: dutasterida 0,5 mg/día.'}]},
+{d:'Minoxidil 5% tópico o espuma',dose:'',pauta:'1/día',notes:'Posible efluvio inicial transitorio.'},
+{d:'Finasterida 1 mg/día oral',dose:'',pauta:'',notes:'Inhibidor de la 5-α-reductasa. Contraindicada en embarazo (las gestantes no deben manipular comprimidos partidos). Alternativa: dutasterida 0,5 mg/día.'}]},
 {sev:'Mujer',rx:[
-{d:'Minoxidil 2–5% tópico',dose:'',pauta:'1/día',notes:'Antiandrógeno (espironolactona) si hiperandrogenismo. Descartar ferropenia/tiroides.'}]},
+{d:'Minoxidil 2–5% tópico',dose:'',pauta:'1/día',notes:'Base del tratamiento.'},
+{d:'Antiandrógeno',dose:'espironolactona (o ACO con antiandrógeno) si hiperandrogenismo',pauta:'',notes:'Descartar ferropenia/tiroides. No en embarazo.'}]},
 {sev:'Coadyuvante / alternativas',rx:[
 {d:'Minoxidil oral dosis baja',dose:'0,25–2,5 mg/día',pauta:'',notes:'Opción (off-label) si hay intolerancia o mala respuesta al tópico; vigilar hipertricosis y tensión arterial.'},
-{d:'Microneedling, PRP',dose:'',pauta:'',notes:'Evidencia limitada, como complemento.'}]}],
+{d:'Procedimientos',dose:'microneedling, PRP; trasplante capilar',pauta:'',notes:'Como complemento (evidencia variable) o en casos estables.'}]}],
 general:['Tratamiento continuado','Fotos basales para valorar respuesta'],
 refs:[{t:'Kanti V, et al. Evidence-based (S3) guideline for the treatment of androgenetic alopecia in women and men (EDF/EADV). J Eur Acad Dermatol Venereol. 2018;32(1):11-22.',u:'https://pubmed.ncbi.nlm.nih.gov/?term=S3+guideline+treatment+androgenetic+alopecia+Kanti+2018'},{t:'Bolognia JL, et al. Dermatology. 5.ª ed. Elsevier; 2024 — cap. «Alopecias».',u:''}]}
 };
