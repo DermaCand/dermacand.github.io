@@ -3,7 +3,7 @@
 // Estática (CSS/JS/imágenes/fuentes de PDF.js/PDFs locales): cache-first.
 // Versión: bump para forzar actualización de los clientes. DEBE coincidir con DC_BUILD en la app.
 
-const CACHE = 'dermacand-v2';
+const CACHE = 'dermacand-v3';
 // El recurso crítico es DermaCand_app.html (app autocontenida). El resto son auxiliares.
 const APP_SHELL = ['/DermaCand_app.html', '/manifest.json', '/', '/index.html'];
 
