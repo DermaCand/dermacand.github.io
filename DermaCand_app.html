@@ -2055,7 +2055,7 @@ el.innerHTML=`<div style="color:var(--er);font-size:12px;padding:6px 0">Error: $
 let _returnView='home';
 let _pdfjsLoadPromise=null;
 let _viewerParams=null;
-const PDFJS_URL='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';
+const PDFJS_URL='pdf.min.js';
 
 function ensurePDFJSLoaded(){
 if(window.pdfjsLib)return Promise.resolve(true);
@@ -2063,7 +2063,7 @@ if(_pdfjsLoadPromise)return _pdfjsLoadPromise;
 _pdfjsLoadPromise=new Promise(resolve=>{
 const s=document.createElement('script');
 s.src=PDFJS_URL;
-s.onload=()=>{try{if(window.pdfjsLib&&window.pdfjsLib.GlobalWorkerOptions)window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';}catch(e){}resolve(true);};
+s.onload=()=>{try{if(window.pdfjsLib&&window.pdfjsLib.GlobalWorkerOptions)window.pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';}catch(e){}resolve(true);};
 s.onerror=()=>{_pdfjsLoadPromise=null;resolve(false)};
 document.head.appendChild(s);
 });
