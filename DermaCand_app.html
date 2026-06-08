@@ -3388,6 +3388,456 @@ VIEWS.lcut=()=>`<div class="card">
 <div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Clasificación WHO-EORTC.</div>
 </div>`;
 
+// ===== VISTAS DE PATOLOGÍA · Dermatología pediátrica =====
+VIEWS.ped_exant=()=>`<div class="card">
+<h2>Exantemas infantiles</h2>
+<p class="intro">Erupciones febriles frecuentes en la infancia, mayoritariamente víricas y autolimitadas. Orienta por morfología, pródromos y enantema.</p>
+<h3>Clásicos</h3>
+<ul style="line-height:1.6">
+<li><strong>Sarampión</strong> — exantema maculopapuloso craneocaudal, fiebre alta, catarro, manchas de Koplik.</li>
+<li><strong>Rubéola</strong> — exantema tenue + adenopatías retroauriculares.</li>
+<li><strong>Escarlatina</strong> — (estreptococo) exantema en papel de lija, lengua aframbuesada, líneas de Pastia; requiere antibiótico.</li>
+<li><strong>Eritema infeccioso (parvovirus B19)</strong> — "mejillas abofeteadas" + exantema reticulado.</li>
+<li><strong>Exantema súbito (VHH-6)</strong> — fiebre alta 3 días que cede al aparecer el exantema.</li>
+<li><strong>Boca-mano-pie (coxsackie)</strong> — vesículas en manos y pies + enantema.</li>
+</ul>
+<h3>Signos de alarma</h3>
+<p>Petequias que no desaparecen a la digitopresión + mal estado general → descartar <strong>meningococemia</strong> (urgencia). Valorar enfermedad de Kawasaki si fiebre ≥5 días.</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.hemangioma=()=>`<div class="card">
+<h2>Hemangiomas infantiles</h2>
+<p class="intro">Tumor vascular benigno más frecuente de la infancia. Ausente o mínimo al nacer, con fase de <strong>proliferación</strong> (primeros meses) e <strong>involución</strong> lenta posterior.</p>
+<h3>Claves</h3>
+<ul style="line-height:1.6">
+<li>Superficial ("fresa"), profundo o mixto.</li>
+<li>La mayoría no requieren tratamiento (involucionan).</li>
+</ul>
+<h3>Indicaciones de tratamiento / derivación</h3>
+<ul style="line-height:1.6">
+<li><strong>Riesgo funcional</strong> — periocular (ambliopía), labio, vía aérea (subglótico), pañal (ulceración).</li>
+<li>Ulceración (dolor), gran tamaño o desfigurante.</li>
+<li>Múltiples (≥5) → cribar hemangiomas viscerales; segmentarios faciales → síndrome PHACE.</li>
+</ul>
+<h3>Tratamiento</h3>
+<p><strong>Propranolol oral</strong> de primera línea en los de riesgo (precoz, en fase proliferativa). Timolol tópico en lesiones pequeñas superficiales.</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.panal=()=>`<div class="card">
+<h2>Dermatitis del pañal</h2>
+<p class="intro">Dermatitis irritativa del área del pañal por oclusión, humedad, orina y heces. Muy frecuente en lactantes.</p>
+<h3>Diferenciar</h3>
+<ul style="line-height:1.6">
+<li><strong>Irritativa</strong> — eritema en superficies convexas, <em>respeta los pliegues</em>.</li>
+<li><strong>Candidiásica</strong> — afecta a los pliegues, eritema intenso con pápulo-pústulas satélite. Sospechar si dura >3 días.</li>
+<li>Otras: dermatitis seborreica, psoriasis del pañal, acrodermatitis enteropática (déficit de zinc).</li>
+</ul>
+<h3>Manejo</h3>
+<p>Cambios frecuentes, higiene suave y secado, pasta al agua / óxido de zinc como barrera. Antifúngico tópico si candidiasis; corticoide tópico de baja potencia en brote inflamatorio (pauta corta).</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.ictiosis=()=>`<div class="card">
+<h2>Ictiosis y genodermatosis</h2>
+<p class="intro">Trastornos hereditarios de la queratinización con piel seca y descamación generalizada (ictiosis), y otras genodermatosis.</p>
+<h3>Ictiosis frecuentes</h3>
+<ul style="line-height:1.6">
+<li><strong>Vulgar</strong> — la más común (filagrina); escamas finas, respeta pliegues, hiperlinealidad palmar, asocia atopia.</li>
+<li><strong>Ligada al X</strong> — varones; escamas grandes oscuras (déficit de sulfatasa esteroidea).</li>
+<li>Formas congénitas graves (bebé colodión, ictiosis lamelar) → derivación.</li>
+</ul>
+<h3>Otras genodermatosis a conocer</h3>
+<p>Neurofibromatosis (manchas café con leche, neurofibromas), esclerosis tuberosa (máculas hipocrómicas, angiofibromas), epidermólisis ampollosa.</p>
+<h3>Manejo</h3>
+<p>Base: hidratación intensiva con emolientes y queratolíticos (urea, ácido láctico). Casos graves: retinoides sistémicos, manejo multidisciplinar y consejo genético.</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.nevus_cong=()=>`<div class="card">
+<h2>Nevus melanocíticos congénitos</h2>
+<p class="intro">Presentes al nacer o en las primeras semanas. Se clasifican por el tamaño proyectado en la edad adulta.</p>
+<h3>Clasificación por tamaño (adulto)</h3>
+<ul style="line-height:1.6">
+<li>Pequeño (<1,5 cm), mediano (1,5-20 cm), grande (>20 cm) y gigante.</li>
+</ul>
+<h3>Riesgos</h3>
+<ul style="line-height:1.6">
+<li>Riesgo de <strong>melanoma</strong> proporcional al tamaño (sobre todo en grandes/gigantes).</li>
+<li>Nevus grandes en línea media posterior + satélites → riesgo de <strong>melanosis neurocutánea</strong> (valorar RM).</li>
+</ul>
+<h3>Manejo</h3>
+<p>Vigilancia clínica y dermatoscópica con fotografía; educación familiar sobre cambios. Valoración multidisciplinar de exéresis en grandes/gigantes (estética, función y riesgo).</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('melanoma')">Melanoma</button><button class="btn btn-out btn-sm" onclick="go('dermatoscopia')">Dermatoscopia</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+// ===== VISTAS DE PATOLOGÍA · Urgencias dermatológicas =====
+VIEWS.sjs_net=()=>`<div class="card">
+<h2>SJS / NET</h2>
+<p class="intro">Stevens-Johnson / necrólisis epidérmica tóxica: reacción mucocutánea grave, casi siempre <strong>farmacológica</strong>, con apoptosis masiva de queratinocitos y despegamiento epidérmico. <strong>Urgencia vital.</strong></p>
+<h3>Clasificación por superficie despegada</h3>
+<ul style="line-height:1.6">
+<li><strong>SJS</strong> — <10% de la superficie corporal.</li>
+<li><strong>Solapamiento</strong> — 10-30%.</li>
+<li><strong>NET</strong> — >30%.</li>
+</ul>
+<h3>Clínica</h3>
+<p>Pródromo seudogripal, dolor cutáneo, máculas atípicas que confluyen, ampollas y despegamiento (Nikolsky +), con <strong>afectación de ≥2 mucosas</strong> (oral, ocular, genital). Fármacos típicos: alopurinol, anticomiciales, sulfamidas, AINE, nevirapina.</p>
+<h3>Manejo</h3>
+<p><strong>Retirar de inmediato el fármaco sospechoso.</strong> Pronóstico con SCORTEN. Soporte tipo gran quemado (líquidos, temperatura, curas, dolor), cuidado ocular precoz y unidad especializada. Inmunomoduladores según protocolo.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('scorten')">SCORTEN</button><button class="btn btn-out btn-sm" onclick="go('regla9')">Superficie</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.dress=()=>`<div class="card">
+<h2>DRESS</h2>
+<p class="intro">Reacción a fármacos con eosinofilia y síntomas sistémicos. Latencia larga (2-8 semanas). Potencialmente grave.</p>
+<h3>Claves diagnósticas</h3>
+<ul style="line-height:1.6">
+<li>Exantema extenso (a menudo >50%) y edema facial.</li>
+<li>Fiebre y adenopatías.</li>
+<li>Eosinofilia y/o linfocitos atípicos; <strong>afectación visceral</strong> (hepatitis la más frecuente; también riñón, pulmón, corazón).</li>
+<li>Fármacos típicos: anticomiciales (carbamazepina, lamotrigina), alopurinol, sulfamidas, vancomicina.</li>
+</ul>
+<h3>Manejo</h3>
+<p><strong>Retirar el fármaco.</strong> Corticoides sistémicos según gravedad/afectación visceral, con descenso lento (riesgo de recaída). Monitorizar función hepática/renal. Vigilar reactivación de herpesvirus (VHH-6) y secuelas tardías (tiroiditis autoinmune).</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.eritrodermia=()=>`<div class="card">
+<h2>Eritrodermia</h2>
+<p class="intro">Eritema y descamación que afectan a <strong>>90% de la superficie corporal</strong>. Es un síndrome, no un diagnóstico: obliga a buscar la causa. Riesgo de complicaciones sistémicas.</p>
+<h3>Causas</h3>
+<ul style="line-height:1.6">
+<li>Dermatosis previa (psoriasis, dermatitis atópica/contacto) — la más frecuente.</li>
+<li>Fármacos.</li>
+<li>Linfoma cutáneo (síndrome de Sézary) — descartar en el adulto.</li>
+<li>Idiopática.</li>
+</ul>
+<h3>Complicaciones</h3>
+<p>Hipotermia, deshidratación y alteración hidroelectrolítica, hipoalbuminemia, insuficiencia cardiaca de alto gasto, sobreinfección.</p>
+<h3>Manejo</h3>
+<p>Ingreso si inestable: soporte (temperatura, líquidos, nutrición), emolientes y corticoide tópico, retirar fármacos. Tratar la causa subyacente; biopsia + analítica para el estudio etiológico.</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.vasculitis=()=>`<div class="card">
+<h2>Vasculitis cutánea</h2>
+<p class="intro">Inflamación de los vasos de la piel. La forma más frecuente es la <strong>vasculitis leucocitoclástica</strong> de pequeño vaso, que se manifiesta como <strong>púrpura palpable</strong>.</p>
+<h3>Clínica</h3>
+<ul style="line-height:1.6">
+<li>Púrpura palpable en zonas declives (piernas), a veces con ampollas, necrosis o úlceras.</li>
+<li>Causas: infecciones, fármacos, conectivopatías, neoplasias; o idiopática. La IgA orienta a púrpura de Schönlein-Henoch (valorar afectación renal/digestiva).</li>
+</ul>
+<h3>Estudio</h3>
+<p>Biopsia (leucocitoclasia) + IFD (depósitos, IgA). Cribar afectación sistémica: orina (hematuria/proteinuria), función renal, hemograma, complemento, ANA/ANCA y serologías según contexto.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('autoac')">Autoanticuerpos</button></div>
+<h3>Manejo</h3>
+<p>Tratar/retirar la causa. Cutánea limitada: reposo, soporte y, si precisa, corticoide; sistémica o con afectación de órganos: inmunosupresión según el órgano afectado.</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.derm_gest=()=>`<div class="card">
+<h2>Dermatosis del embarazo</h2>
+<p class="intro">Erupciones específicas de la gestación. Clave: distinguir las benignas (frecuentes) de las que implican <strong>riesgo fetal</strong>.</p>
+<h3>Cuadros</h3>
+<ul style="line-height:1.6">
+<li><strong>Erupción polimorfa (PUPPP)</strong> — pápulas/placas urticariformes en estrías abdominales, 3.<sup>er</sup> trimestre; benigna, respeta el ombligo.</li>
+<li><strong>Penfigoide gestacional</strong> — ampollas tensas periumbilicales (autoinmune, anti-BP180); riesgo de prematuridad/bajo peso.</li>
+<li><strong>Colestasis intrahepática</strong> — prurito intenso <em>sin lesiones primarias</em> (palmas/plantas), sales biliares elevadas; <strong>riesgo fetal</strong> → control obstétrico.</li>
+<li><strong>Erupción atópica del embarazo</strong> — la más frecuente; eccema/prurigo, benigna.</li>
+</ul>
+<h3>Manejo</h3>
+<p>Emolientes, corticoide tópico y antihistamínicos seguros según el caso. Colestasis: ácido ursodesoxicólico y vigilancia obstétrica. Penfigoide gestacional: corticoides. Emplear fármacos seguros en el embarazo.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('embarazo')">Fármacos en embarazo</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+// ===== VISTAS DE PATOLOGÍA · Procedimientos y cirugía =====
+VIEWS.dermatoscopia=()=>`<div class="card">
+<h2>Dermatoscopia</h2>
+<p class="intro">Técnica no invasiva que amplía y revela estructuras de la epidermis y dermis superficial no visibles a simple vista. Aumenta la precisión diagnóstica de lesiones pigmentadas y no pigmentadas.</p>
+<h3>Método en 2 pasos (lesión pigmentada)</h3>
+<ul style="line-height:1.6">
+<li><strong>Paso 1</strong> — ¿es melanocítica? (red pigmentaria, glóbulos, estrías, pigmentación homogénea) frente a no melanocítica.</li>
+<li><strong>Paso 2</strong> — si es melanocítica, ¿benigna o maligna? (análisis de patrones, ABCD dermatoscópico, lista de 7 puntos).</li>
+</ul>
+<h3>Pistas frecuentes</h3>
+<ul style="line-height:1.6">
+<li><strong>Melanoma</strong> — red atípica, velo azul-blanquecino, regresión, proyecciones irregulares.</li>
+<li><strong>Basocelular</strong> — telangiectasias arboriformes, nidos ovoides azul-grisáceos, hojas de arce.</li>
+<li><strong>Queratosis seborreica</strong> — quistes tipo milia, aperturas pseudofoliculares.</li>
+<li><strong>Angioma</strong> — lagunas rojo-azuladas.</li>
+</ul>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('melanoma')">Melanoma</button><button class="btn btn-out btn-sm" onclick="go('tricoscopia')">Tricoscopia</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.biopsia=()=>`<div class="card">
+<h2>Técnicas de biopsia cutánea</h2>
+<p class="intro">La elección depende de la sospecha clínica, el tamaño y la localización. Remite siempre con datos clínicos y orientación diagnóstica.</p>
+<h3>Técnicas</h3>
+<ul style="line-height:1.6">
+<li><strong>Punch (sacabocados)</strong> — cilindro de piel hasta TCS; ideal para dermatosis inflamatorias y lesiones pequeñas (3-4 mm).</li>
+<li><strong>Afeitado (shave)</strong> — lesiones exofíticas/epidérmicas. <strong>Evitar</strong> si se sospecha melanoma (impide medir Breslow).</li>
+<li><strong>Incisional</strong> — muestra parcial de lesiones grandes.</li>
+<li><strong>Escisional</strong> — extirpación completa con margen; de elección ante sospecha de <strong>melanoma</strong>.</li>
+</ul>
+<h3>Consejos</h3>
+<p>Toma del borde activo (no del centro necrótico) en inflamatorias; muestra perilesional adicional para IFD en ampollosas/vasculitis.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('anestesia')">Anestesia local</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.cirugia=()=>`<div class="card">
+<h2>Cirugía dermatológica</h2>
+<p class="intro">Extirpación de tumores cutáneos y reconstrucción, buscando la resección completa con el mejor resultado funcional y estético.</p>
+<h3>Principios</h3>
+<ul style="line-height:1.6">
+<li><strong>Márgenes</strong> orientativos: basocelular 3-5 mm; escamoso 4-6 mm (más en alto riesgo); melanoma según Breslow (in situ 0,5-1 cm; ≤1 mm → 1 cm; >1-2 mm → 1-2 cm; >2 mm → 2 cm).</li>
+<li>Huso siguiendo las líneas de tensión relajadas; relación longitud:anchura ≈ 3:1.</li>
+<li>Cierre por planos; colgajos/injertos si no es posible el cierre directo.</li>
+</ul>
+<h3>Cirugía de Mohs</h3>
+<p>Control histológico del 100% del margen <em>intraoperatorio</em>. Indicada en tumores de alto riesgo o en zonas críticas (cara central, periorificial), recidivas y bordes mal definidos. Máxima conservación de tejido sano.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('anestesia')">Anestesia</button><button class="btn btn-out btn-sm" onclick="go('prof_atb')">Profilaxis ATB</button><button class="btn btn-out btn-sm" onclick="go('bridging')">Anticoagulación</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Márgenes orientativos; ajustar a guías y a la anatomía patológica.</div>
+</div>`;
+
+VIEWS.anestesia=()=>`<div class="card">
+<h2>Anestesia local</h2>
+<p class="intro">Base de la cirugía dermatológica. La lidocaína es el anestésico más usado; la adrenalina prolonga el efecto y reduce el sangrado.</p>
+<h3>Dosis máximas (orientativas)</h3>
+<ul style="line-height:1.6">
+<li><strong>Lidocaína sin adrenalina</strong> — ~4,5 mg/kg (máx. ~300 mg en adulto).</li>
+<li><strong>Lidocaína con adrenalina</strong> — ~7 mg/kg (máx. ~500 mg).</li>
+<li>Recuerda: lidocaína 1% = 10 mg/mL.</li>
+</ul>
+<h3>Claves</h3>
+<ul style="line-height:1.6">
+<li>Adrenalina útil en zonas vascularizadas; valorar en acras.</li>
+<li>Toxicidad sistémica: neurológica (mareo, sabor metálico, convulsiones) y cardiaca; vigilar dosis acumulada.</li>
+<li>Alergia verdadera rara; diferenciar de reacción vasovagal o a la adrenalina.</li>
+</ul>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('dosispeso')">Dosis por peso</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Verificar dosis máximas con ficha técnica.</div>
+</div>`;
+
+VIEWS.prof_atb=()=>`<div class="card">
+<h2>Profilaxis antibiótica en cirugía cutánea</h2>
+<p class="intro">La mayoría de la cirugía dermatológica es limpia y <strong>no requiere</strong> profilaxis. Se reserva para casos seleccionados por riesgo de infección de herida o a distancia.</p>
+<h3>Valorar profilaxis si</h3>
+<ul style="line-height:1.6">
+<li>Localización de alto riesgo (extremidades inferiores, ingle), cuña de labio/oreja, colgajos/injertos extensos.</li>
+<li>Heridas contaminadas/infectadas o úlceras.</li>
+<li>Inmunodepresión significativa.</li>
+<li>Riesgo de endocarditis o de infección de prótesis articular en pacientes seleccionados.</li>
+</ul>
+<h3>Pauta orientativa</h3>
+<p>Dosis única oral 30-60 min antes (p. ej. amoxicilina/cefalosporina; clindamicina en alérgicos). Ajustar al protocolo local y a la guía de profilaxis de endocarditis cuando proceda.</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Seguir el protocolo del centro.</div>
+</div>`;
+
+// ===== VISTAS DE PATOLOGÍA · Dermatopatología y laboratorio =====
+VIEWS.histopat=()=>`<div class="card">
+<h2>Patrones histopatológicos</h2>
+<p class="intro">Reconocer el patrón de reacción tisular ayuda a correlacionar la clínica con la biopsia. Marco básico para entender el informe.</p>
+<h3>Patrones de reacción frecuentes</h3>
+<ul style="line-height:1.6">
+<li><strong>Espongiótico</strong> — edema intercelular; eccemas/dermatitis.</li>
+<li><strong>Psoriasiforme</strong> — hiperplasia epidérmica regular; psoriasis, liquen simple.</li>
+<li><strong>Liquenoide / de interfase</strong> — infiltrado en banda y daño basal; liquen plano, lupus, toxicodermias.</li>
+<li><strong>Vesículo-ampolloso</strong> — clasificar por nivel (intra- vs subepidérmico).</li>
+<li><strong>Granulomatoso</strong> — granuloma anular, sarcoidosis, infecciones.</li>
+<li><strong>Vasculítico</strong> — daño de pared vascular, leucocitoclasia.</li>
+</ul>
+<h3>Términos útiles</h3>
+<p>Hiperqueratosis, paraqueratosis, acantosis, espongiosis, acantólisis, exocitosis, papilomatosis.</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.ifd_ihq=()=>`<div class="card">
+<h2>IFD e inmunohistoquímica</h2>
+<p class="intro">Complementan la histología convencional. La <strong>IFD</strong> detecta depósitos de inmunoglobulinas/complemento; la <strong>IHQ</strong> caracteriza estirpes celulares con marcadores.</p>
+<h3>Inmunofluorescencia directa (IFD)</h3>
+<ul style="line-height:1.6">
+<li>Requiere <strong>piel perilesional</strong> (medio de Michel o congelada, no en formol).</li>
+<li><strong>Pénfigo</strong> — IgG/C3 intercelular ("en panal").</li>
+<li><strong>Penfigoide</strong> — IgG/C3 lineal en la membrana basal.</li>
+<li><strong>Dermatitis herpetiforme</strong> — IgA granular en papilas dérmicas.</li>
+<li><strong>Vasculitis IgA / lupus</strong> — depósitos vasculares / banda lúpica.</li>
+</ul>
+<h3>Inmunohistoquímica (IHQ)</h3>
+<p>Marcadores útiles: S100/Melan-A/SOX10/HMB45 (melanocíticos), citoqueratinas (epiteliales), CD3/CD20 (linfocitos T/B), Ki-67 (proliferación).</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('autoac')">Autoanticuerpos</button><button class="btn btn-out btn-sm" onclick="go('ampoll_alg')">Ampollosas</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.autoac=()=>`<div class="card">
+<h2>Autoanticuerpos en dermatología</h2>
+<p class="intro">Apoyo serológico al diagnóstico de enfermedades ampollosas y conectivopatías. Interpretar siempre junto con la clínica.</p>
+<h3>Ampollosas autoinmunes</h3>
+<ul style="line-height:1.6">
+<li><strong>Anti-desmogleína 1 y 3</strong> — pénfigo (foliáceo / vulgar).</li>
+<li><strong>Anti-BP180 / BP230</strong> — penfigoide ampolloso.</li>
+<li><strong>Anti-transglutaminasa / endomisio</strong> — dermatitis herpetiforme (celiaquía).</li>
+</ul>
+<h3>Conectivopatías</h3>
+<ul style="line-height:1.6">
+<li><strong>ANA</strong> — cribado de lupus y conectivopatías.</li>
+<li><strong>Anti-dsDNA, anti-Sm</strong> — lupus (específicos).</li>
+<li><strong>Anti-Ro/SSA</strong> — lupus cutáneo subagudo, lupus neonatal, Sjögren.</li>
+<li><strong>Anti-centrómero / Scl-70</strong> — esclerodermia; <strong>anti-Jo1/Mi-2</strong> — dermatomiositis.</li>
+<li><strong>ANCA</strong> — vasculitis asociadas.</li>
+</ul>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.micologia_lab=()=>`<div class="card">
+<h2>Micología (KOH / cultivo)</h2>
+<p class="intro">Confirmación de infección fúngica antes de tratar, sobre todo si el tratamiento va a ser sistémico o prolongado.</p>
+<h3>Toma de muestra</h3>
+<ul style="line-height:1.6">
+<li><strong>Piel</strong> — raspado del borde activo con bisturí.</li>
+<li><strong>Uña</strong> — recorte y raspado subungueal del frente de avance.</li>
+<li><strong>Pelo</strong> — pelos arrancados de la placa (tiña capitis).</li>
+</ul>
+<h3>Técnicas</h3>
+<ul style="line-height:1.6">
+<li><strong>KOH directo</strong> — disuelve la queratina y muestra hifas/esporas; rápido, confirma pero no especia.</li>
+<li><strong>Cultivo</strong> (Sabouraud) — identifica el hongo (semanas); útil antes de tratamiento sistémico.</li>
+<li><strong>Luz de Wood</strong> — fluorescencia en algunas tiñas y en eritrasma (rojo coral).</li>
+</ul>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('inf_mic')">Infecciones micóticas</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.farmacogen=()=>`<div class="card">
+<h2>Farmacogenética en dermatología</h2>
+<p class="intro">Pruebas que predicen reacciones graves o ajustan la dosis de fármacos usados en dermatología.</p>
+<h3>Tests útiles</h3>
+<ul style="line-height:1.6">
+<li><strong>HLA-B*58:01</strong> — riesgo de SJS/NET y DRESS por <strong>alopurinol</strong> (cribar en poblaciones de riesgo).</li>
+<li><strong>HLA-B*15:02</strong> — SJS/NET por carbamazepina (poblaciones asiáticas).</li>
+<li><strong>TPMT / NUDT15</strong> — antes de <strong>azatioprina</strong> (mielotoxicidad).</li>
+<li><strong>G6PD</strong> — antes de <strong>dapsona</strong> (hemólisis).</li>
+<li><strong>DPYD</strong> — antes de 5-fluorouracilo (toxicidad).</li>
+</ul>
+<h3>Antes de iniciar inmunosupresión</h3>
+<p>Cribado de TBC/VHB/VHC antes de biológicos/inmunosupresores; perfil hepático/renal y hemograma basales según el fármaco.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('biologicos')">Biológicos</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+// ===== VISTAS DE PATOLOGÍA · Tratamientos =====
+VIEWS.cort_topicos=()=>`<div class="card">
+<h2>Corticoides tópicos</h2>
+<p class="intro">Pilar del tratamiento antiinflamatorio cutáneo. Se eligen por potencia, vehículo y zona; el equilibrio eficacia/seguridad depende del uso correcto.</p>
+<h3>Potencia</h3>
+<ul style="line-height:1.6">
+<li><strong>Baja</strong> — hidrocortisona; cara, pliegues, niños.</li>
+<li><strong>Media</strong> — betametasona valerato, clobetasona.</li>
+<li><strong>Alta</strong> — mometasona, metilprednisolona aceponato.</li>
+<li><strong>Muy alta</strong> — clobetasol propionato; placas gruesas, palmoplantar, pautas cortas.</li>
+</ul>
+<h3>Uso correcto (FTU)</h3>
+<p>Dosifica con la <strong>unidad de la punta del dedo (FTU)</strong> ≈ 0,5 g, que cubre 2 palmas de adulto. Vehículo según zona (crema en agudo/pliegues, pomada en seco/liquenificado, loción/espuma en cuero cabelludo).</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('ftu')">Calculadora FTU</button></div>
+<h3>Efectos adversos / precauciones</h3>
+<p>Atrofia, estrías, telangiectasias, dermatitis perioral, taquifilaxia; absorción sistémica en uso extenso/oclusión. Cara y pliegues: baja potencia y pautas cortas; preferir ahorradores (inhibidores de calcineurina) en mantenimiento.</p>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.antifungicos=()=>`<div class="card">
+<h2>Antifúngicos</h2>
+<p class="intro">Tópicos en infecciones limitadas; sistémicos en tiña de pelo/uña, formas extensas o resistentes. Confirmar micología antes del tratamiento sistémico.</p>
+<h3>Tópicos</h3>
+<ul style="line-height:1.6">
+<li><strong>Azoles</strong> (clotrimazol, ketoconazol, sertaconazol) — amplio espectro (dermatofitos y Candida).</li>
+<li><strong>Alilaminas</strong> (terbinafina tópica) — muy eficaces frente a dermatofitos.</li>
+<li><strong>Ciclopirox</strong> — incluye uñas (laca) y dermatitis seborreica.</li>
+</ul>
+<h3>Sistémicos</h3>
+<ul style="line-height:1.6">
+<li><strong>Terbinafina oral</strong> — primera línea en onicomicosis/tiña por dermatofitos.</li>
+<li><strong>Itraconazol / fluconazol</strong> — Candida, pitiriasis versicolor, alternativa en uñas.</li>
+<li><strong>Griseofulvina</strong> — clásica en tiña capitis infantil.</li>
+</ul>
+<p>Vigilar interacciones (azoles inhiben el CYP3A4) y hepatotoxicidad; control analítico en tratamientos prolongados.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('inf_mic')">Infecciones micóticas</button><button class="btn btn-out btn-sm" onclick="go('micologia_lab')">Micología</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.antihistaminicos=()=>`<div class="card">
+<h2>Antihistamínicos H1</h2>
+<p class="intro">Base del tratamiento de la urticaria y útiles en el prurito histaminérgico. Se prefieren los de <strong>segunda generación</strong> (no sedantes).</p>
+<h3>Segunda generación (de elección)</h3>
+<ul style="line-height:1.6">
+<li>Cetirizina, levocetirizina, loratadina, desloratadina, bilastina, fexofenadina, rupatadina, ebastina.</li>
+<li>En <strong>urticaria crónica</strong>: dosis estándar y, si no controla, subir hasta <strong>x4</strong> (según guías) antes de escalar a omalizumab.</li>
+</ul>
+<h3>Primera generación</h3>
+<p>Hidroxizina, dexclorfeniramina: sedantes y anticolinérgicos; uso puntual. Evitar de forma crónica y en ancianos.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('uas7')">UAS7 (urticaria)</button><button class="btn btn-sm" onclick="go('recetas')">💊 Pauta (urticaria)</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.atb_topicos=()=>`<div class="card">
+<h2>Antibióticos tópicos</h2>
+<p class="intro">Útiles en infecciones bacterianas superficiales y localizadas y como coadyuvantes en el acné. Limitar su uso para reducir resistencias.</p>
+<h3>Principales</h3>
+<ul style="line-height:1.6">
+<li><strong>Mupirocina</strong> — impétigo y descolonización nasal de S. aureus.</li>
+<li><strong>Ácido fusídico</strong> — infecciones superficiales por grampositivos.</li>
+<li><strong>Clindamicina / eritromicina</strong> — acné; <strong>siempre con peróxido de benzoilo</strong>, nunca en monoterapia.</li>
+<li><strong>Metronidazol / ivermectina</strong> — rosácea (más antiinflamatorios que antibacterianos).</li>
+</ul>
+<h3>Claves</h3>
+<p>Evitar tandas largas y grandes superficies; el peróxido de benzoilo reduce la resistencia al asociarse a antibiótico tópico en el acné.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('acne')">Acné</button><button class="btn btn-out btn-sm" onclick="go('inf_bact')">Infecciones bacterianas</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.biologicos=()=>`<div class="card">
+<h2>Biológicos y sistémicos</h2>
+<p class="intro">Tratamientos de enfermedades moderadas-graves (psoriasis, dermatitis atópica, hidrosadenitis, urticaria). Requieren <strong>cribado previo</strong> y seguimiento.</p>
+<h3>Cribado antes de iniciar</h3>
+<p>TBC (IGRA/Mantoux + radiografía), VHB/VHC/VIH, hemograma y bioquímica; estado vacunal (evitar vacunas vivas con inmunosupresión); embarazo.</p>
+<h3>Principales dianas</h3>
+<ul style="line-height:1.6">
+<li><strong>Psoriasis</strong> — anti-TNF, anti-IL17 (secukinumab, ixekizumab), anti-IL23 (guselkumab, risankizumab), anti-IL12/23 (ustekinumab).</li>
+<li><strong>Dermatitis atópica</strong> — dupilumab (anti-IL4/13), tralokinumab; JAK orales (upadacitinib, abrocitinib).</li>
+<li><strong>Hidrosadenitis</strong> — adalimumab, secukinumab.</li>
+<li><strong>Urticaria crónica</strong> — omalizumab (anti-IgE).</li>
+</ul>
+<h3>Sistémicos clásicos</h3>
+<p>Metotrexato, ciclosporina, acitretina, azatioprina (TPMT previo), con sus controles analíticos.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('farmacogen')">Cribado / farmacogenética</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.embarazo=()=>`<div class="card">
+<h2>Fármacos dermatológicos en embarazo y lactancia</h2>
+<p class="intro">Guía rápida de seguridad. Ante la duda, elige el fármaco con más experiencia y consulta fuentes específicas; la antigua clasificación FDA por letras ya no se usa.</p>
+<h3>Contraindicados / teratógenos</h3>
+<ul style="line-height:1.6">
+<li><strong>Isotretinoína y acitretina</strong> — altamente teratógenos (programa de prevención del embarazo).</li>
+<li><strong>Metotrexato</strong> — abortivo/teratógeno; suspender con antelación.</li>
+<li>Talidomida; tetraciclinas (2.º-3.<sup>er</sup> trimestre).</li>
+</ul>
+<h3>Razonablemente seguros (valorar)</h3>
+<ul style="line-height:1.6">
+<li>Emolientes y corticoides tópicos de baja-media potencia.</li>
+<li>Antibióticos: penicilinas, cefalosporinas, eritromicina; permetrina (escabiosis).</li>
+<li>Antihistamínicos con experiencia (loratadina, cetirizina).</li>
+</ul>
+<p>El acné suele manejarse con tópicos seguros (peróxido de benzoilo, ácido azelaico). Confirma siempre con ficha técnica/fuentes especializadas.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('derm_gest')">Dermatosis del embarazo</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). No sustituye la consulta de seguridad en el embarazo.</div>
+</div>`;
+
 // ===== ASISTENTE VIRTUAL (chatbot local, indexa todo el contenido de la app) =====
 let _chatBase=null, _chatPdfDocs=[], _chatIndexing=false, _chatInited=false, _chatGreeted=false, _chatLastUser=null, _chatNear=[];
 const CHAT_SKIP_RENDER=new Set(['chat','qt','labconv','sync','viewer','phone']);
