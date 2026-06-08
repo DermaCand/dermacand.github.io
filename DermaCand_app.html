@@ -645,7 +645,26 @@ const MENU=[
 {id:'datopica',name:'Dermatitis atópica',kw:'dermatitis atopica eccema atopico eccema prurito dupilumab emolientes corticoides inhibidores calcineurina'},
 {id:'dcontacto',name:'Dermatitis de contacto',kw:'dermatitis contacto alergica irritativa eccema pruebas epicutaneas patch test alergeno'},
 {id:'liquen',name:'Liquen plano',kw:'liquen plano papulas purpuricas pruriginosas wickham mucosa oral'},
+{id:'pit_liquenoide',name:'Pitiriasis liquenoide',kw:'pitiriasis liquenoide aguda pleva mucha habermann cronica plc varioliforme'},
+{id:'parapsoriasis',name:'Parapsoriasis',kw:'parapsoriasis pequena gran placa premicotica micosis fungoide digitiforme'},
+{id:'derm_neutro',name:'Dermatosis neutrofílicas',kw:'dermatosis neutrofilica sweet pioderma gangrenoso neutrofilos hidradenitis ecrina'},
+{id:'morfea',name:'Morfea (esclerodermia localizada)',kw:'morfea esclerodermia localizada placa lineal golpe de sable esclerosis'},
+{id:'liquen_escleroso',name:'Liquen escleroso',kw:'liquen escleroso atrofico genital vulvar balanitis xerotica obliterans'},
+{id:'dermatomiositis',name:'Dermatomiositis',kw:'dermatomiositis heliotropo gottron miopatia conectivopatia mda5 cribado neoplasia'},
+{id:'lupus',name:'Lupus eritematoso cutáneo',kw:'lupus eritematoso cutaneo discoide subagudo sistemico les malar fotosensible ro'},
+{id:'esclerosis_sist',name:'Esclerosis sistémica',kw:'esclerosis sistemica esclerodermia raynaud esclerodactilia capilaroscopia scl70 centromero'},
 {id:'g_inflam',name:'Guías clínicas',kw:'guias clinicas dermatosis inflamatorias psoriasis dermatitis atopica eccema aad eadv pdf'}
+]},
+{h:'ENFERMEDADES METABÓLICAS',items:[
+{id:'mucinosis',name:'Mucinosis',kw:'mucinosis liquen mixedematoso escleromixedema mixedema pretibial deposito mucina'},
+{id:'amiloidosis',name:'Amiloidosis cutánea',kw:'amiloidosis cutanea macular liquenoide nodular sistemica deposito amiloide'},
+{id:'porfirias',name:'Porfirias',kw:'porfiria cutanea tarda eritropoyetica fotosensibilidad ampollas fragilidad'},
+{id:'deposito',name:'Enfermedades por depósito',kw:'deposito calcinosis cutis gota tofos xantomas ocronosis'},
+{id:'nutricionales',name:'Enfermedades nutricionales',kw:'nutricional acrodermatitis enteropatica zinc pelagra escorbuto deficit vitaminas'}
+]},
+{h:'ENFERMEDADES DE LA GRASA',items:[
+{id:'paniculitis',name:'Paniculitis',kw:'paniculitis eritema nudoso lobulillar septal grasa subcutanea nodulos'},
+{id:'lipodistrofia',name:'Lipodistrofia',kw:'lipodistrofia atrofia grasa lipoatrofia lipohipertrofia adquirida congenita'}
 ]},
 {h:'INFECCIONES CUTÁNEAS',items:[
 {id:'inf_bact',name:'Infecciones bacterianas',kw:'infeccion bacteriana impetigo erisipela celulitis foliculitis forunculo absceso staphylococcus streptococcus sarm'},
@@ -672,7 +691,13 @@ const MENU=[
 {id:'penfigo',name:'Pénfigo',kw:'penfigo vulgar foliaceo ampollas flacidas nikolsky desmogleina acantolisis rituximab'},
 {id:'penfigoide',name:'Penfigoide ampolloso',kw:'penfigoide ampolloso bulloso ampollas tensas subepidermico bp180 bp230 anciano'},
 {id:'ampoll_alg',name:'Algoritmo diagnóstico',kw:'algoritmo diagnostico enfermedades ampollosas autoinmunes intraepidermica subepidermica ifd inmunofluorescencia'},
+{id:'dh_iga',name:'Dermatitis herpetiforme / IgA lineal',kw:'dermatitis herpetiforme duhring celiaca dapsona iga lineal ampollosa cordon de perlas subepidermica'},
+{id:'epidermolisis',name:'Epidermólisis ampollosa',kw:'epidermolisis ampollosa congenita simple juntural distrofica hereditaria adquirida fragilidad'},
 {id:'g_ampoll',name:'Guías clínicas',kw:'guias clinicas enfermedades ampollosas penfigo penfigoide autoinmunes pdf'}
+]},
+{h:'ENFERMEDADES VASCULARES',items:[
+{id:'malf_vascular',name:'Malformaciones vasculares',kw:'malformacion vascular capilar venosa linfatica arteriovenosa mancha vino oporto sturge weber klippel trenaunay'},
+{id:'hemangioma',name:'Hemangiomas infantiles',kw:'hemangioma infantil angioma propranolol proliferacion involucion fresa phace'}
 ]},
 {h:'DERMATO-ONCOLOGÍA',items:[
 {id:'melanoma',name:'Melanoma',kw:'melanoma maligno breslow clark estadiaje ajcc abcde dermatoscopia ganglio centinela'},
@@ -680,11 +705,11 @@ const MENU=[
 {id:'cec',name:'Carcinoma escamoso',kw:'carcinoma escamoso epidermoide cec espinocelular queratosis actinica invasivo'},
 {id:'qa',name:'Queratosis actínica',kw:'queratosis actinica solar campo cancerizacion crioterapia 5 fluorouracilo imiquimod terapia fotodinamica'},
 {id:'lcut',name:'Linfomas cutáneos',kw:'linfoma cutaneo micosis fungoide sezary celulas t b mswat estadiaje'},
+{id:'merkel',name:'Carcinoma de Merkel',kw:'carcinoma celulas merkel neuroendocrino cutaneo poliomavirus aeiou avidez avitene agresivo'},
 {id:'g_onco',name:'Guías clínicas',kw:'guias clinicas dermato-oncologia melanoma carcinoma basocelular escamoso pdf'}
 ]},
 {h:'DERMATOLOGÍA PEDIÁTRICA',items:[
 {id:'ped_exant',name:'Exantemas infantiles',kw:'exantema infantil viral sarampion rubeola escarlatina eritema infeccioso exantema subito boca mano pie'},
-{id:'hemangioma',name:'Hemangiomas infantiles',kw:'hemangioma infantil angioma propranolol proliferacion involucion fresa'},
 {id:'panal',name:'Dermatitis del pañal',kw:'dermatitis pañal irritativa candidiasica pañal lactante area genital'},
 {id:'ictiosis',name:'Ictiosis y genodermatosis',kw:'ictiosis genodermatosis vulgar escamas piel seca xerosis hereditaria'},
 {id:'nevus_cong',name:'Nevus congénitos',kw:'nevus congenito melanocitico gigante riesgo melanoma satelite'},
@@ -714,6 +739,12 @@ const MENU=[
 {id:'micologia_lab',name:'Micología (KOH/cultivo)',kw:'micologia koh hidroxido potasio cultivo hongos dermatofitos examen directo lampara wood'},
 {id:'farmacogen',name:'Farmacogenética',kw:'farmacogenetica hla b 5701 tpmt dihidropirimidina g6pd dapsona reaccion farmaco'},
 {id:'g_patol',name:'Guías clínicas',kw:'guias clinicas dermatopatologia laboratorio histopatologia inmunofluorescencia pdf'}
+]},
+{h:'MISCELÁNEAS',items:[
+{id:'eritemas_fig',name:'Eritemas figurados',kw:'eritema figurado anular centrifugo gyratum repens marginatum migrans reactivo'},
+{id:'purpuras',name:'Púrpuras',kw:'purpura petequias equimosis trombopenia vasculitis senil actinica coagulopatia palpable'},
+{id:'oclusion_micro',name:'Síndromes de oclusión microvascular',kw:'oclusion microvascular livedo racemosa necrosis cumarinica saf embolia colesterol calcifilaxis cid'},
+{id:'granulomatosas',name:'Enfermedades granulomatosas cutáneas',kw:'granuloma anular necrobiosis lipoidica sarcoidosis cutanea granulomatosa cuerpo extrano'}
 ]},
 {h:'TRATAMIENTOS',items:[
 {id:'cort_topicos',name:'Corticoides tópicos',kw:'corticoides topicos potencia baja media alta muy alta clobetasol betametasona hidrocortisona ftu efectos'},
@@ -3878,6 +3909,401 @@ VIEWS.embarazo=()=>`<div class="card">
 <p>El acné suele manejarse con tópicos seguros (peróxido de benzoilo, ácido azelaico). Confirma siempre con ficha técnica/fuentes especializadas.</p>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('derm_gest')">Dermatosis del embarazo</button></div>
 <div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). No sustituye la consulta de seguridad en el embarazo.</div>
+</div>`;
+
+// ===== VISTAS DE PATOLOGÍA · Dermatosis inflamatorias (ampliación) =====
+VIEWS.pit_liquenoide=()=>`<div class="card">
+<h2>Pitiriasis liquenoide</h2>
+<p class="intro">Grupo de dermatosis inflamatorias idiopáticas (proceso linfoproliferativo T benigno / hipersensibilidad). Forma un espectro entre las variantes aguda y crónica.</p>
+<h3>Formas</h3>
+<ul>
+<li><strong>Aguda (PLEVA, enf. de Mucha-Habermann)</strong> — brotes de pápulas que se necrosan y dejan costra y cicatriz varioliforme; predominio en jóvenes.</li>
+<li><strong>Crónica (PLC)</strong> — pápulas marronáceas con escama central adherida ("en oblea"), curso prolongado en brotes.</li>
+<li><strong>Febril ulceronecrótica</strong> — variante grave (fiebre, úlceras), rara.</li>
+</ul>
+<h3>Diagnóstico</h3>
+<p>Clínico + biopsia (paraqueratosis, exocitosis linfocitaria, queratinocitos necróticos). Diferenciar de varicela, vasculitis, pitiriasis rosada y, en formas atípicas, papulosis linfomatoide.</p>
+<h3>Tratamiento</h3>
+<ul>
+<li>Fototerapia (UVB-BE) de elección en formas extensas.</li>
+<li>Antibióticos inmunomoduladores (tetraciclinas, eritromicina/azitromicina).</li>
+<li>Corticoide tópico para el prurito; metotrexato en casos graves/refractarios.</li>
+</ul>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/pityriasis-lichenoides" target="_blank" rel="noopener">DermNet — Pityriasis lichenoides</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>. Verifica la versión vigente.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.parapsoriasis=()=>`<div class="card">
+<h2>Parapsoriasis</h2>
+<p class="intro">Grupo de dermatosis crónicas eritematodescamativas. Su relevancia está en la relación con el linfoma cutáneo de células T (micosis fungoide).</p>
+<h3>Formas</h3>
+<ul>
+<li><strong>De pequeña placa</strong> — placas menores de 5 cm, digitiformes en flancos; curso benigno, riesgo mínimo de progresión.</li>
+<li><strong>De gran placa</strong> — placas mayores de 5 cm, a veces poiquilodérmicas; <strong>premicótica</strong> (puede evolucionar a micosis fungoide) → biopsias y seguimiento.</li>
+</ul>
+<h3>Diagnóstico</h3>
+<p>Clínico + biopsia (a menudo inespecífica); en la de gran placa, biopsias seriadas y correlación. Vigilar signos de progresión a micosis fungoide.</p>
+<h3>Tratamiento</h3>
+<ul>
+<li>Emolientes y corticoide tópico; fototerapia (UVB-BE) en formas extensas o de gran placa.</li>
+<li>Seguimiento periódico, sobre todo en la de gran placa.</li>
+</ul>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('lcut')">Linfomas cutáneos</button></div>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/parapsoriasis" target="_blank" rel="noopener">DermNet — Parapsoriasis</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.derm_neutro=()=>`<div class="card">
+<h2>Dermatosis neutrofílicas</h2>
+<p class="intro">Grupo caracterizado por infiltrados de neutrófilos sin infección. Frecuente asociación con enfermedad sistémica (EII, hematológica, autoinmune) → estudiar.</p>
+<h3>Entidades principales</h3>
+<ul>
+<li><strong>Síndrome de Sweet</strong> — placas/nódulos eritematosos dolorosos, fiebre y neutrofilia; gatillos: infección, fármacos, neoplasia hematológica. Responde a corticoides.</li>
+<li><strong>Pioderma gangrenoso</strong> — úlcera dolorosa de borde violáceo socavado, patergia; asocia EII, artritis, gammapatía. <em>No desbridar</em>.</li>
+<li><strong>Otras</strong> — hidradenitis ecrina neutrofílica, pustulosis subcórnea (Sneddon-Wilkinson).</li>
+</ul>
+<h3>Diagnóstico y manejo</h3>
+<p>Clínico + biopsia (infiltrado neutrofílico denso, sin vasculitis). Descartar infección y cribar enfermedad asociada/neoplasia. Tratamiento: corticoides sistémicos, ahorradores (dapsona, colchicina, ciclosporina) y biológicos (anti-TNF en el pioderma).</p>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/sweet-syndrome" target="_blank" rel="noopener">DermNet — Sweet</a> · <a href="https://dermnetnz.org/topics/pyoderma-gangrenosum" target="_blank" rel="noopener">DermNet — Pioderma gangrenoso</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.morfea=()=>`<div class="card">
+<h2>Morfea (esclerodermia localizada)</h2>
+<p class="intro">Esclerosis cutánea localizada <strong>sin</strong> afectación sistémica ni fenómeno de Raynaud (a diferencia de la esclerosis sistémica). Evoluciona de inflamación a esclerosis y atrofia.</p>
+<h3>Formas</h3>
+<ul>
+<li><strong>En placas</strong> — placa esclerótica marfileña con halo violáceo activo (anillo lila).</li>
+<li><strong>Lineal</strong> — banda; en cara/cuero cabelludo "en golpe de sable"; en niños puede limitar el crecimiento.</li>
+<li><strong>Generalizada / profunda</strong> — formas más extensas.</li>
+</ul>
+<h3>Diagnóstico y manejo</h3>
+<p>Clínico + biopsia; valorar la actividad. Localizada: corticoide o tacrolimus tópico, fototerapia (UVA1/UVB-BE). Activa, extensa o lineal: metotrexato ± corticoide sistémico. Rehabilitación si afecta articulaciones.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('esclerosis_sist')">Esclerosis sistémica</button></div>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/morphoea" target="_blank" rel="noopener">DermNet — Morphoea</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.liquen_escleroso=()=>`<div class="card">
+<h2>Liquen escleroso</h2>
+<p class="intro">Dermatosis inflamatoria crónica de predilección <strong>genital</strong>, más frecuente en mujeres (vulva), niñas y posmenopáusicas. Conlleva riesgo de carcinoma escamoso en la zona.</p>
+<h3>Clínica</h3>
+<ul>
+<li>Placas blanco-nacaradas atróficas ("papel de fumar"), con prurito y dispareunia; en la vulva, patrón vulvo-perianal "en 8".</li>
+<li>Puede causar cicatrización y sinequias (reabsorción de labios menores; en el varón, fimosis = balanitis xerótica obliterante).</li>
+</ul>
+<h3>Diagnóstico y manejo</h3>
+<p>Clínico; biopsia ante duda o sospecha de malignización. <strong>Corticoide tópico muy potente</strong> (clobetasol) de primera línea con mantenimiento; inhibidores de calcineurina como alternativa. <strong>Seguimiento</strong> por el riesgo de CEC vulvar/peneano.</p>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/lichen-sclerosus" target="_blank" rel="noopener">DermNet — Lichen sclerosus</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.dermatomiositis=()=>`<div class="card">
+<h2>Dermatomiositis</h2>
+<p class="intro">Miopatía inflamatoria autoinmune con manifestaciones cutáneas características. Es clave el cribado de neoplasia y de afectación pulmonar.</p>
+<h3>Signos cutáneos clave</h3>
+<ul>
+<li><strong>Eritema en heliotropo</strong> — violáceo periorbitario con edema.</li>
+<li><strong>Pápulas de Gottron</strong> — sobre nudillos, codos y rodillas (patognomónico).</li>
+<li>Signo del chal / V del escote, manos de mecánico, eritema periungueal con megacapilares.</li>
+</ul>
+<h3>Estudio</h3>
+<ul>
+<li>Debilidad muscular proximal; enzimas (CK), EMG, RM y biopsia muscular.</li>
+<li>Autoanticuerpos: anti-Mi2, anti-MDA5 (enf. pulmonar intersticial, formas amiopáticas), anti-TIF1γ (neoplasia).</li>
+<li><strong>Cribado de neoplasia</strong> según edad/sexo, sobre todo el primer año.</li>
+</ul>
+<h3>Tratamiento</h3>
+<p>Corticoides sistémicos + inmunosupresores (metotrexato, azatioprina, micofenolato); inmunoglobulinas en refractarios. Fotoprotección y corticoide/antipalúdico para la piel.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('autoac')">Autoanticuerpos</button></div>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/dermatomyositis" target="_blank" rel="noopener">DermNet — Dermatomyositis</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.lupus=()=>`<div class="card">
+<h2>Lupus eritematoso cutáneo</h2>
+<p class="intro">Espectro de afectación cutánea autoinmune, con o sin enfermedad sistémica (LES). La fotosensibilidad es común. Se clasifica por cronicidad.</p>
+<h3>Formas cutáneas</h3>
+<ul>
+<li><strong>Agudo (LECA)</strong> — eritema malar "en alas de mariposa"; alta asociación a LES.</li>
+<li><strong>Subagudo (LECS)</strong> — anular o psoriasiforme fotodistribuido; anti-Ro/SSA; gatillo farmacológico frecuente.</li>
+<li><strong>Crónico discoide (LED)</strong> — placas con eritema, escama adherente y tapones foliculares; deja cicatriz y alopecia cicatricial.</li>
+</ul>
+<h3>Estudio y manejo</h3>
+<p>Biopsia + IFD (banda lúpica); ANA, anti-dsDNA, anti-Ro/La y complemento; cribar afectación sistémica. Tratamiento: <strong>fotoprotección estricta</strong>, corticoide/inhibidor de calcineurina tópico y <strong>antipalúdicos</strong> (hidroxicloroquina) de base; sistémicos en refractarios. Evitar el tabaco (reduce la respuesta).</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('autoac')">Autoanticuerpos</button></div>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/cutaneous-lupus-erythematosus" target="_blank" rel="noopener">DermNet — Cutaneous lupus</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.esclerosis_sist=()=>`<div class="card">
+<h2>Esclerosis sistémica</h2>
+<p class="intro">Conectivopatía con esclerosis cutánea y afectación de órganos internos por vasculopatía, autoinmunidad y fibrosis. El fenómeno de Raynaud suele ser el primer signo.</p>
+<h3>Formas y signos</h3>
+<ul>
+<li><strong>Limitada (antes CREST)</strong> — esclerosis distal; Calcinosis, Raynaud, dismotilidad Esofágica, eSclerodactilia, Telangiectasias; anti-centrómero.</li>
+<li><strong>Difusa</strong> — esclerosis proximal rápida; anti-Scl70; mayor riesgo renal/pulmonar.</li>
+<li>Cara amímica, microstomía, surcos peribucales y úlceras digitales.</li>
+</ul>
+<h3>Estudio y manejo</h3>
+<p><strong>Capilaroscopia</strong> (megacapilares, áreas avasculares) y autoanticuerpos. Cribar afectación pulmonar (EPID, hipertensión pulmonar), renal, cardiaca y digestiva. Manejo multidisciplinar: vasodilatadores para Raynaud/úlceras, inmunosupresores/antifibróticos según el órgano.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('morfea')">Morfea</button><button class="btn btn-out btn-sm" onclick="go('autoac')">Autoanticuerpos</button></div>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/systemic-sclerosis" target="_blank" rel="noopener">DermNet — Systemic sclerosis</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+// ===== VISTAS DE PATOLOGÍA · Enfermedades metabólicas =====
+VIEWS.mucinosis=()=>`<div class="card">
+<h2>Mucinosis cutáneas</h2>
+<p class="intro">Grupo heterogéneo por depósito anómalo de mucina en la dermis. Pueden ser primarias o asociarse a enfermedad tiroidea o a paraproteinemia.</p>
+<h3>Entidades</h3>
+<ul>
+<li><strong>Mixedema pretibial</strong> — placas induradas en piernas, asociado a enfermedad de Graves (autoinmunidad tiroidea).</li>
+<li><strong>Liquen mixedematoso / escleromixedema</strong> — pápulas firmes; el escleromixedema es difuso y asocia gammapatía monoclonal (estudio hematológico).</li>
+<li><strong>Mucinosis folicular</strong> — placas alopécicas; puede asociarse a micosis fungoide.</li>
+</ul>
+<h3>Diagnóstico y manejo</h3>
+<p>Biopsia (mucina con azul alcián). Estudiar tiroides y proteinograma/inmunofijación. Tratar la causa; en el escleromixedema, inmunoglobulinas y manejo de la gammapatía.</p>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/mucinoses" target="_blank" rel="noopener">DermNet — Cutaneous mucinoses</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.amiloidosis=()=>`<div class="card">
+<h2>Amiloidosis cutánea</h2>
+<p class="intro">Depósito de material amiloide en la piel. Puede ser <strong>primaria cutánea</strong> (limitada a la piel) o manifestación de amiloidosis <strong>sistémica</strong>.</p>
+<h3>Formas cutáneas primarias</h3>
+<ul>
+<li><strong>Macular</strong> — máculas marronáceas reticuladas y pruriginosas (espalda); relación con el rascado crónico.</li>
+<li><strong>Liquenoide (papular)</strong> — pápulas hiperqueratósicas pruriginosas en piernas.</li>
+<li><strong>Nodular</strong> — nódulos; puede asociar amiloidosis sistémica.</li>
+</ul>
+<h3>Sistémica (alarma)</h3>
+<p>Púrpura periorbitaria ("ojos de mapache"), macroglosia y equimosis fáciles → sospechar amiloidosis sistémica AL (gammapatía) y derivar para estudio de órganos.</p>
+<h3>Manejo</h3>
+<p>Biopsia (rojo Congo con birrefringencia verde manzana). Cutánea: control del prurito/rascado, corticoide tópico, fototerapia. Sistémica: tratamiento hematológico.</p>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/cutaneous-amyloidosis" target="_blank" rel="noopener">DermNet — Cutaneous amyloidosis</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.porfirias=()=>`<div class="card">
+<h2>Porfirias cutáneas</h2>
+<p class="intro">Trastornos del metabolismo del hemo con acumulación de porfirinas fotosensibilizantes. La piel se afecta en las formas con fotosensibilidad.</p>
+<h3>Principales con afectación cutánea</h3>
+<ul>
+<li><strong>Porfiria cutánea tarda (PCT)</strong> — la más frecuente; fragilidad y ampollas en dorso de manos, hipertricosis, milia; asocia hepatopatía (VHC, alcohol, hierro, estrógenos). Uroporfirinas elevadas en orina.</li>
+<li><strong>Protoporfiria eritropoyética</strong> — dolor/quemazón inmediatos tras el sol, sin ampollas; inicio infantil.</li>
+<li><strong>Porfirias agudas</strong> — algunas con lesiones tipo PCT (p. ej. variegata).</li>
+</ul>
+<h3>Manejo</h3>
+<p>Confirmar con porfirinas (orina, heces, sangre). PCT: retirar desencadenantes, flebotomías o hidroxicloroquina a dosis bajas. <strong>Fotoprotección</strong> con filtros físicos en todas.</p>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/porphyria" target="_blank" rel="noopener">DermNet — Porphyria</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.deposito=()=>`<div class="card">
+<h2>Enfermedades por depósito</h2>
+<p class="intro">Acumulación de sustancias (calcio, lípidos, urato, pigmentos) en la piel, a menudo como signo de enfermedad metabólica subyacente.</p>
+<h3>Entidades</h3>
+<ul>
+<li><strong>Calcinosis cutis</strong> — depósito de calcio; distrófica (sobre tejido dañado, p. ej. dermatomiositis/esclerodermia), metastásica (hipercalcemia) o idiopática.</li>
+<li><strong>Xantomas</strong> — depósito de lípidos; marcador de dislipemia (xantelasma, tendinoso, eruptivo por hipertrigliceridemia). Estudiar el perfil lipídico.</li>
+<li><strong>Gota / tofos</strong> — depósito de urato; nódulos en hélix, dedos, codos.</li>
+<li><strong>Ocronosis</strong> — depósito de homogentísico (alcaptonuria) o exógena (hidroquinona).</li>
+</ul>
+<h3>Manejo</h3>
+<p>Tratar la causa metabólica (lípidos, calcio/fósforo, urato). Extirpación o medidas locales según el caso.</p>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/calcinosis-cutis" target="_blank" rel="noopener">DermNet — Calcinosis cutis</a> · <a href="https://dermnetnz.org/topics/xanthoma" target="_blank" rel="noopener">DermNet — Xanthomas</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.nutricionales=()=>`<div class="card">
+<h2>Enfermedades nutricionales</h2>
+<p class="intro">Manifestaciones cutáneas de déficits (o excesos) nutricionales. La piel puede ser la primera pista de una carencia.</p>
+<h3>Déficits clásicos</h3>
+<ul>
+<li><strong>Zinc (acrodermatitis enteropática)</strong> — dermatitis periorificial y acral, alopecia y diarrea; hereditaria o adquirida.</li>
+<li><strong>Niacina / B3 (pelagra)</strong> — las "3 D": dermatitis fotodistribuida (collar de Casal), diarrea y demencia.</li>
+<li><strong>Vitamina C (escorbuto)</strong> — púrpura perifolicular, pelos "en sacacorchos", gingivorragia.</li>
+<li><strong>Otros</strong> — déficit de biotina, ácidos grasos esenciales, vitamina A; kwashiorkor (desnutrición proteica).</li>
+</ul>
+<h3>Manejo</h3>
+<p>Reconocer el patrón, confirmar con niveles y <strong>reponer</strong> el nutriente; buscar la causa (malabsorción, dieta, alcohol, cirugía bariátrica).</p>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/acrodermatitis-enteropathica" target="_blank" rel="noopener">DermNet — Acrodermatitis enteropathica</a> · <a href="https://dermnetnz.org/topics/pellagra" target="_blank" rel="noopener">DermNet — Pellagra</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+// ===== VISTAS DE PATOLOGÍA · Enfermedades de la grasa =====
+VIEWS.paniculitis=()=>`<div class="card">
+<h2>Paniculitis</h2>
+<p class="intro">Inflamación del tejido graso subcutáneo, que se manifiesta como nódulos o placas profundos. Se clasifica por el patrón histológico (septal vs lobulillar) y la presencia de vasculitis.</p>
+<h3>Más frecuentes</h3>
+<ul>
+<li><strong>Eritema nudoso</strong> — paniculitis <em>septal</em> sin vasculitis; nódulos dolorosos en cara anterior de piernas que no se ulceran. Reactivo (infección estreptocócica, sarcoidosis, EII, fármacos, embarazo). Es la más frecuente.</li>
+<li><strong>Paniculitis lobulillar</strong> — p. ej. por déficit de alfa-1-antitripsina, lúpica, pancreática o facticia.</li>
+<li><strong>Eritema indurado de Bazin</strong> — lobulillar con vasculitis; relación con tuberculosis.</li>
+</ul>
+<h3>Manejo</h3>
+<p>Biopsia <strong>incisional profunda</strong> que incluya grasa. Buscar y tratar la causa. Eritema nudoso: reposo, AINE, yoduro potásico; suele autolimitarse.</p>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/panniculitis" target="_blank" rel="noopener">DermNet — Panniculitis</a> · <a href="https://dermnetnz.org/topics/erythema-nodosum" target="_blank" rel="noopener">DermNet — Erythema nodosum</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.lipodistrofia=()=>`<div class="card">
+<h2>Lipodistrofia</h2>
+<p class="intro">Alteración del tejido adiposo con pérdida (lipoatrofia) o acumulación (lipohipertrofia) anómala de grasa. Puede asociar alteraciones metabólicas (resistencia a insulina, dislipemia).</p>
+<h3>Tipos</h3>
+<ul>
+<li><strong>Congénitas</strong> — generalizada (Berardinelli-Seip) o parcial familiar; suelen asociar complicaciones metabólicas.</li>
+<li><strong>Adquiridas</strong> — generalizada o parcial (Barraquer-Simons).</li>
+<li><strong>Localizadas</strong> — por presión, paniculitis o <strong>inyecciones</strong> repetidas (insulina, corticoides) en el punto de punción.</li>
+</ul>
+<h3>Manejo</h3>
+<p>Tratar las complicaciones metabólicas (dieta, control de lípidos/glucemia; metreleptina en formas con leptina baja). Rotar los puntos de inyección para prevenir la localizada. Opciones estéticas (rellenos) en la lipoatrofia.</p>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/lipodystrophy" target="_blank" rel="noopener">DermNet — Lipodystrophy</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+// ===== VISTAS DE PATOLOGÍA · Ampollosas (ampliación) =====
+VIEWS.dh_iga=()=>`<div class="card">
+<h2>Dermatitis herpetiforme y dermatosis IgA lineal</h2>
+<p class="intro">Dos enfermedades ampollosas subepidérmicas mediadas por <strong>IgA</strong>. Comparten la respuesta a la dapsona, pero difieren en su asociación y patrón inmunológico.</p>
+<h3>Dermatitis herpetiforme (Duhring)</h3>
+<ul>
+<li>Pápulo-vesículas muy <strong>pruriginosas</strong> agrupadas (herpetiformes) en superficies de extensión (codos, rodillas, glúteos, cuero cabelludo); a menudo solo se ven excoriaciones por el rascado.</li>
+<li><strong>Manifestación cutánea de la enfermedad celíaca</strong>; anti-transglutaminasa y anti-endomisio.</li>
+<li>IFD: depósitos <strong>granulares de IgA</strong> en las papilas dérmicas.</li>
+</ul>
+<h3>Dermatosis IgA lineal</h3>
+<ul>
+<li>Ampollas tensas, típicas en disposición anular ("collar de perlas"); afecta a niños (enf. ampollosa crónica de la infancia) y adultos.</li>
+<li>Idiopática o inducida por fármacos (vancomicina).</li>
+<li>IFD: depósito <strong>lineal de IgA</strong> en la membrana basal.</li>
+</ul>
+<h3>Tratamiento</h3>
+<p><strong>Dapsona</strong> (descartar déficit de G6PD antes). En la dermatitis herpetiforme, <strong>dieta sin gluten</strong> de base, estricta y mantenida. En la IgA lineal por fármaco, retirarlo.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('ampoll_alg')">Algoritmo ampollosas</button><button class="btn btn-out btn-sm" onclick="go('farmacogen')">G6PD / cribado</button></div>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/dermatitis-herpetiformis" target="_blank" rel="noopener">DermNet — Dermatitis herpetiformis</a> · <a href="https://dermnetnz.org/topics/linear-iga-bullous-dermatosis" target="_blank" rel="noopener">DermNet — Linear IgA</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.epidermolisis=()=>`<div class="card">
+<h2>Epidermólisis ampollosa</h2>
+<p class="intro">Grupo con <strong>fragilidad cutánea</strong> y formación de ampollas ante mínimos traumatismos. Mayoritariamente hereditarias (genodermatosis); existe una forma adquirida autoinmune.</p>
+<h3>Formas hereditarias (por nivel de despegamiento)</h3>
+<ul>
+<li><strong>Simple</strong> — intraepidérmica (queratinas 5/14); ampollas que curan sin cicatriz.</li>
+<li><strong>Juntural</strong> — en la lámina lúcida; formas graves neonatales.</li>
+<li><strong>Distrófica</strong> — bajo la lámina densa (colágeno VII); cura con cicatriz, milia y sinequias (seudosindactilia), afectación mucosa; riesgo de CEC.</li>
+</ul>
+<h3>Adquirida</h3>
+<p><strong>Epidermólisis ampollosa adquirida</strong> — autoinmune, autoanticuerpos anti-colágeno VII; ampollas en zonas de roce que curan con cicatriz y milia.</p>
+<h3>Manejo</h3>
+<p>Hereditarias: cuidado de heridas, prevención del traumatismo, nutrición y manejo multidisciplinar; vigilar CEC en la distrófica. Adquirida: inmunosupresión. Diagnóstico con mapeo antigénico/estudio genético.</p>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/epidermolysis-bullosa" target="_blank" rel="noopener">DermNet — Epidermolysis bullosa</a> · <a href="https://www.orpha.net" target="_blank" rel="noopener">Orphanet</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+// ===== VISTA DE PATOLOGÍA · Dermato-oncología (ampliación) =====
+VIEWS.merkel=()=>`<div class="card">
+<h2>Carcinoma de células de Merkel</h2>
+<p class="intro">Tumor cutáneo neuroendocrino raro pero <strong>agresivo</strong>. Relacionado con el poliomavirus de células de Merkel, la exposición solar y la inmunosupresión.</p>
+<h3>Sospecha — regla "AEIOU"</h3>
+<ul>
+<li><strong>A</strong>sintomático (no doloroso), <strong>E</strong>xpansión rápida, <strong>I</strong>nmunosupresión, <strong>O</strong>lder (mayor de 50 años), piel fotoexpuesta (<strong>U</strong>V).</li>
+<li>Nódulo rojo-violáceo firme de crecimiento rápido (cara, cuero cabelludo, extremidades).</li>
+</ul>
+<h3>Diagnóstico y estadificación</h3>
+<p>Biopsia + inmunohistoquímica (CK20 con patrón paranuclear "en punto", marcadores neuroendocrinos). Alta tendencia a metástasis ganglionar → <strong>ganglio centinela</strong> e imagen para estadiaje.</p>
+<h3>Manejo</h3>
+<p>Cirugía con márgenes ± radioterapia (muy radiosensible). Enfermedad avanzada: <strong>inmunoterapia anti-PD1/PD-L1</strong> (avelumab). Manejo multidisciplinar y seguimiento estrecho.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('melanoma')">Melanoma</button><button class="btn btn-out btn-sm" onclick="go('cirugia')">Cirugía</button></div>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/merkel-cell-carcinoma" target="_blank" rel="noopener">DermNet — Merkel cell carcinoma</a> · <a href="https://www.aad.org/member/clinical-quality/guidelines" target="_blank" rel="noopener">AAD Guidelines</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+// ===== VISTA DE PATOLOGÍA · Enfermedades vasculares =====
+VIEWS.malf_vascular=()=>`<div class="card">
+<h2>Malformaciones vasculares</h2>
+<p class="intro">Anomalías estructurales de los vasos, presentes al nacer, que crecen con el niño y <strong>no involucionan</strong> (a diferencia de los hemangiomas, que son tumores). Se clasifican por el vaso predominante y el flujo (clasificación ISSVA).</p>
+<h3>Tipos</h3>
+<ul>
+<li><strong>Capilar</strong> — "mancha en vino de Oporto", persistente. En distribución trigeminal (V1) valorar <em>síndrome de Sturge-Weber</em> (glaucoma, afectación leptomeníngea).</li>
+<li><strong>Venosa</strong> — masa azulada compresible, de bajo flujo; se rellena en declive.</li>
+<li><strong>Linfática</strong> — vesículas o masas (linfangioma).</li>
+<li><strong>Arteriovenosa</strong> — <em>alto flujo</em>, con frémito/soplo; potencialmente complejas.</li>
+<li><strong>Combinadas / síndromes</strong> — Klippel-Trénaunay, etc.</li>
+</ul>
+<h3>Manejo</h3>
+<p>Diagnóstico clínico + imagen (eco-Doppler, RM) para definir flujo y extensión. Tratamiento según tipo: <strong>láser de colorante pulsado</strong> (capilar), escleroterapia (venosa/linfática), embolización/cirugía (arteriovenosa). Manejo multidisciplinar.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('hemangioma')">Hemangiomas infantiles</button></div>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/vascular-malformations" target="_blank" rel="noopener">DermNet — Vascular malformations</a> · <a href="https://www.issva.org" target="_blank" rel="noopener">Clasificación ISSVA</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+// ===== VISTAS DE PATOLOGÍA · Misceláneas =====
+VIEWS.eritemas_fig=()=>`<div class="card">
+<h2>Eritemas figurados</h2>
+<p class="intro">Erupciones con lesiones eritematosas <strong>anulares, arciformes o policíclicas</strong> que cambian de forma. A menudo reactivos a un proceso subyacente.</p>
+<h3>Entidades</h3>
+<ul>
+<li><strong>Eritema anular centrífugo</strong> — anillos que se expanden con escama "en remolque" por dentro del borde; reactivo (infección, fármacos, neoplasia).</li>
+<li><strong>Eritema marginado</strong> — anillos evanescentes; criterio de fiebre reumática.</li>
+<li><strong>Eritema migratorio (enf. de Lyme)</strong> — lesión anular en la zona de la picadura de garrapata.</li>
+<li><strong>Eritema gyratum repens</strong> — patrón "en vetas de madera"; muy asociado a neoplasia (paraneoplásico).</li>
+</ul>
+<h3>Manejo</h3>
+<p>Buscar y tratar la causa (infección, fármaco, neoplasia). El estudio depende del patrón y el contexto; el gyratum repens obliga a descartar malignidad.</p>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/erythema-annulare-centrifugum" target="_blank" rel="noopener">DermNet — Erythema annulare centrifugum</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.purpuras=()=>`<div class="card">
+<h2>Púrpuras</h2>
+<p class="intro">Extravasación de hematíes en la piel: lesiones rojo-violáceas que <strong>no desaparecen a la digitopresión</strong> (a diferencia del eritema). Clave: ¿palpable o no?, ¿plaquetas normales?</p>
+<h3>Clasificación práctica</h3>
+<ul>
+<li><strong>No palpable + trombopenia</strong> — púrpura trombopénica (PTI, fármacos, médula).</li>
+<li><strong>No palpable, plaquetas normales</strong> — fragilidad/causa mecánica: púrpura senil, actínica, por corticoides, escorbuto; o alteración de la coagulación.</li>
+<li><strong>Palpable</strong> — <strong>vasculitis</strong> de pequeño vaso (leucocitoclástica); valorar afectación sistémica.</li>
+<li><strong>Retiforme / necrótica</strong> — oclusión microvascular (ver apartado).</li>
+</ul>
+<h3>Estudio</h3>
+<p>Hemograma con plaquetas y coagulación; según el patrón, biopsia (con IFD si hay vasculitis) y estudio etiológico. La distribución y la morfología orientan la causa.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('vasculitis')">Vasculitis</button><button class="btn btn-out btn-sm" onclick="go('oclusion_micro')">Oclusión microvascular</button></div>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/purpura" target="_blank" rel="noopener">DermNet — Purpura</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.oclusion_micro=()=>`<div class="card">
+<h2>Síndromes de oclusión microvascular</h2>
+<p class="intro">Oclusión de la microcirculación cutánea (trombos, émbolos o depósitos) que produce <strong>púrpura retiforme</strong> y necrosis. No es una vasculitis (no hay inflamación de la pared) y el manejo es distinto.</p>
+<h3>Causas</h3>
+<ul>
+<li><strong>Trombóticas</strong> — síndrome antifosfolípido, CID, trombopenia inducida por heparina, púrpura fulminante.</li>
+<li><strong>Calcifilaxis</strong> — en insuficiencia renal/diálisis; placas necróticas muy dolorosas.</li>
+<li><strong>Embólicas</strong> — émbolos de colesterol, mixoma, endocarditis; livedo racemosa, "dedos azules".</li>
+<li><strong>Otras</strong> — crioglobulinemia, necrosis por cumarínicos.</li>
+</ul>
+<h3>Manejo</h3>
+<p>Biopsia (trombos sin vasculitis) y estudio sistémico urgente (coagulación, autoinmunidad, fuente embólica). Tratar la causa; la calcifilaxis requiere manejo específico (tiosulfato sódico, control mineral). Suele indicar enfermedad sistémica grave.</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('purpuras')">Púrpuras</button></div>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/retiform-purpura" target="_blank" rel="noopener">DermNet — Retiform purpura</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>`;
+
+VIEWS.granulomatosas=()=>`<div class="card">
+<h2>Enfermedades granulomatosas cutáneas</h2>
+<p class="intro">Dermatosis con <strong>granulomas</strong> (acúmulos de histiocitos) en la histología. Pueden ser idiopáticas, infecciosas o manifestación de enfermedad sistémica.</p>
+<h3>No infecciosas frecuentes</h3>
+<ul>
+<li><strong>Granuloma anular</strong> — pápulas anulares en dorso de manos/pies; suele ser autolimitado. La forma diseminada puede asociar diabetes/dislipemia.</li>
+<li><strong>Necrobiosis lipoídica</strong> — placas amarillentas atróficas con telangiectasias en zona pretibial; asociación con diabetes.</li>
+<li><strong>Sarcoidosis cutánea</strong> — "gran simuladora"; pápulas/placas, lupus pernio; granulomas no caseificantes. Cribar afectación sistémica (pulmón).</li>
+</ul>
+<h3>Manejo</h3>
+<p>Biopsia para caracterizar el granuloma y <strong>descartar infección</strong> (tinciones/cultivos). Tratar la causa o asociación (control de la diabetes); corticoides tópicos/intralesionales o sistémicos según la extensión.</p>
+<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/granuloma-annulare" target="_blank" rel="noopener">DermNet — Granuloma annulare</a> · <a href="https://dermnetnz.org/topics/cutaneous-sarcoidosis" target="_blank" rel="noopener">DermNet — Cutaneous sarcoidosis</a>.</div>
+<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
 </div>`;
 
 // ===== ASISTENTE VIRTUAL (chatbot local, indexa todo el contenido de la app) =====
