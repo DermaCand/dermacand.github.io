@@ -5714,6 +5714,9 @@ if(document.readyState!=='loading')init();
   if(document.readyState === 'complete') setTimeout(hpVGthrottled, 1500);
   else window.addEventListener('load', function(){ setTimeout(hpVGthrottled, 1500); });
   document.addEventListener('visibilitychange', function(){ if(document.visibilityState === 'visible') hpVGthrottled(); });
+  // Comprobación periódica (cada 10 min) aunque la app esté abierta sin tocarla:
+  // un equipo que deja DermaCand abierto se autoactualiza solo a la última versión.
+  setInterval(hpVGthrottled, 10*60*1000);
 })();
 </script>
 <div id="modal-aviso-legal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; padding:1rem;" role="dialog" aria-modal="true">
