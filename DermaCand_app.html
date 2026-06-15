@@ -192,6 +192,13 @@ body.view-home .app-footer{padding-bottom:18px}
 .rxcard.l1{border-left-color:var(--ok)}
 .rxcard.l2{border-left-color:var(--wn)}
 .rxcard.l3{border-left-color:var(--c1)}
+/* Escalones desplegables (acordeón): colapsados por defecto, se abre el que interesa */
+.lvl{border:1px solid var(--bd);border-radius:var(--rs);margin:10px 0;overflow:hidden;background:var(--card)}
+.lvl .step-h{margin:0;padding:10px 12px;cursor:pointer;user-select:none}
+.lvl .step-h .ar{margin-left:auto;transition:transform .2s;color:var(--mut);font-size:11px;flex:0 0 auto}
+.lvl.open .step-h .ar{transform:rotate(90deg)}
+.lvl-c{max-height:0;overflow:hidden;transition:max-height .3s ease;padding:0 12px}
+.lvl.open .lvl-c{max-height:2000px;padding:2px 12px 12px}
 .step-h{display:flex;align-items:center;gap:9px;margin:18px 0 4px}
 .step-h .sn{flex:0 0 26px;height:26px;border-radius:50%;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
 .step-h .st{font-size:15px;font-weight:700;color:var(--txt)}
@@ -993,6 +1000,31 @@ function wrapTbls(root){
     });
   }catch(e){}
 }
+// Convierte cada escalón (.step-h) y su contenido (chips + pauta) en un acordeón desplegable,
+// colapsado por defecto. Se ejecuta tras pintar cada vista. Sirve para todas las patologías.
+function makeStepsCollapsible(root){
+  try{
+    (root||document).querySelectorAll('.step-h').forEach(function(h){
+      if(h.parentElement&&h.parentElement.classList.contains('lvl'))return; // ya envuelto
+      var lv=(h.className.match(/\bl[123]\b/)||[''])[0];
+      var wrap=document.createElement('div'); wrap.className='lvl'+(lv?(' '+lv):'');
+      var body=document.createElement('div'); body.className='lvl-c';
+      h.parentNode.insertBefore(wrap, h);
+      // mover el contenido del escalón (hasta el siguiente .step-h / h3 / referencias / productos)
+      var n=h.nextElementSibling;
+      while(n){
+        if(n.classList&&(n.classList.contains('step-h')||n.classList.contains('refbox')))break;
+        if(n.tagName==='H3')break;
+        if(n.classList&&n.classList.contains('cplab')&&n.classList.contains('prod'))break;
+        var next=n.nextElementSibling; body.appendChild(n); n=next;
+      }
+      var ar=document.createElement('span'); ar.className='ar'; ar.textContent='▶';
+      h.appendChild(ar);
+      h.addEventListener('click',function(){ wrap.classList.toggle('open'); });
+      wrap.appendChild(h); wrap.appendChild(body);
+    });
+  }catch(e){}
+}
 function go(id, params) {
     if (id === 'chat') { closeSb(); openChat(); return; }
     S.view = id;
@@ -1010,6 +1042,7 @@ function go(id, params) {
     $('content').innerHTML = v ? v(params) : homeView();
     if (VIEWS[id + '_post']) VIEWS[id + '_post'](params);
     if (typeof wrapTbls === 'function') wrapTbls($('content'));
+    if (typeof makeStepsCollapsible === 'function') makeStepsCollapsible($('content'));
     document.body.classList.toggle('view-home', !!document.querySelector('#content .home-screen'));
     const _ew = $('eriWrap');
     if (_ew) { _ew._manual = false; if (typeof eriAnchor === 'function') requestAnimationFrame(eriAnchor); }
