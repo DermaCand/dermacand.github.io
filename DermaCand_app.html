@@ -203,18 +203,14 @@ body.view-home .app-footer{padding-bottom:18px}
 .step-h .sn{flex:0 0 26px;height:26px;border-radius:50%;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
 .step-h .st{font-size:15px;font-weight:700;color:var(--txt)}
 .step-h.l1 .sn{background:var(--ok)}.step-h.l2 .sn{background:var(--wn)}.step-h.l3 .sn{background:var(--c1)}
-/* Productos comerciales: lista limpia con opciones numeradas (sin burbujas), acento azul fino */
-.prodlist{border-left:3px solid var(--c2);padding:1px 0 1px 12px;margin:4px 0 14px}
-[data-t="dark"] .prodlist{border-left-color:var(--c2l)}
-.prodlist .prod-row{margin-bottom:9px}
-.prodlist .prod-cat{font-size:13px;font-weight:600;color:var(--txt)}
-.prodlist .prod-cat .prod-desc{font-weight:400;color:var(--mut);font-size:12px}
-.prodlist .prod-opts{font-size:12.5px;color:var(--txt);line-height:1.7;margin-top:1px}
-.prodlist .po-n{color:var(--c2);font-weight:700}
-[data-t="dark"] .prodlist .po-n{color:var(--c2l)}
-.prodlist .po-lab{color:var(--mut)}
-.prodlist .po-sep{color:var(--bd);padding:0 2px}
-.prodlist .prod-note{font-size:11px;color:var(--mut);margin-top:5px}
+/* Productos comerciales: tabla (categoría + 3 opciones). Acento azul sutil en la cabecera. */
+.prodtbl{margin:4px 0 3px}
+.prodtbl th{background:rgba(26,58,108,.08);color:var(--c2)}
+[data-t="dark"] .prodtbl th{background:rgba(123,163,224,.12);color:var(--c2l)}
+.prodtbl td:first-child{white-space:nowrap}
+.prodtbl .prod-desc{display:block;font-weight:400;color:var(--mut);font-size:11px;margin-top:1px}
+.prodtbl .po-lab{color:var(--mut);font-size:11px}
+.prod-note{font-size:11px;color:var(--mut);margin:0 0 14px}
 .lbl{display:block;font-size:13px;font-weight:500;margin-bottom:5px;color:var(--txt)}
 .fld{margin-bottom:11px}
 .fld input:not([type=radio]):not([type=checkbox]),.fld select,.fld textarea{width:100%;padding:8px 10px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--inp);color:var(--txt);font-size:13px;outline:none;font-family:inherit}
@@ -3008,10 +3004,11 @@ aga_rx:[
 function productosCard(key){
   var pr=RX_PRODUCTOS[key]; if(!pr||!pr.length) return '';
   var rows=pr.map(function(x){
-    var ops=(x.op||[]).map(function(o,i){return '<span class="po-n">'+(i+1)+'.</span> '+chatEsc(o.m)+(o.lab?' <span class="po-lab">('+chatEsc(o.lab)+')</span>':'');}).join('<span class="po-sep"> · </span>');
-    return '<div class="prod-row"><div class="prod-cat">'+chatEsc(x.c)+(x.a?' <span class="prod-desc">— '+chatEsc(x.a)+'</span>':'')+'</div><div class="prod-opts">'+ops+'</div></div>';
+    var cells=(x.op||[]).map(function(o){return '<td>'+chatEsc(o.m)+(o.lab?'<br><span class="po-lab">'+chatEsc(o.lab)+'</span>':'')+'</td>';});
+    while(cells.length<3) cells.push('<td></td>');
+    return '<tr><td><strong>'+chatEsc(x.c)+'</strong>'+(x.a?'<br><span class="prod-desc">'+chatEsc(x.a)+'</span>':'')+'</td>'+cells.join('')+'</tr>';
   }).join('');
-  return '<div class="cplab prod"><span>Productos comerciales de referencia:</span><button class="btn btn-out btn-sm" onclick="copyProductos(\''+key+'\')">Copiar</button></div><div class="prodlist">'+rows+'<div class="prod-note">Orientativo (dermocosmética); existen equivalentes, verificar composición vigente.</div></div>';
+  return '<div class="cplab prod"><span>Productos comerciales de referencia:</span><button class="btn btn-out btn-sm" onclick="copyProductos(\''+key+'\')">Copiar</button></div><table class="tbl prodtbl"><tr><th>Categoría</th><th>Opción 1</th><th>Opción 2</th><th>Opción 3</th></tr>'+rows+'</table><div class="prod-note">Orientativo (dermocosmética); existen equivalentes, verificar composición vigente.</div>';
 }
 function copyProductos(key){var pr=RX_PRODUCTOS[key]||[];var t=pr.map(function(x){return x.c+': '+(x.op||[]).map(function(o){return o.m+(o.lab?' ('+o.lab+')':'');}).join(' / ');}).join(String.fromCharCode(10));if(typeof copy==='function')copy(t);}
 const RX={
