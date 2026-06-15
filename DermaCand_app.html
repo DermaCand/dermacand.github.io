@@ -3999,51 +3999,77 @@ VIEWS.nevus_cong=()=>`<div class="card">
 // ===== VISTAS DE PATOLOGÍA · Urgencias dermatológicas =====
 VIEWS.sjs_net=()=>`<div class="card">
 <h2>SJS / NET</h2>
-<p class="intro">Stevens-Johnson / necrólisis epidérmica tóxica: reacción mucocutánea grave, casi siempre <strong>farmacológica</strong>, con apoptosis masiva de queratinocitos y despegamiento epidérmico. <strong>Urgencia vital.</strong></p>
-<h3>Clasificación por superficie despegada</h3>
-<ul style="line-height:1.6">
-<li><strong>SJS</strong> — <10% de la superficie corporal.</li>
-<li><strong>Solapamiento</strong> — 10-30%.</li>
-<li><strong>NET</strong> — >30%.</li>
-</ul>
-<h3>Clínica</h3>
-<p>Pródromo seudogripal, dolor cutáneo, máculas atípicas que confluyen, ampollas y despegamiento (Nikolsky +), con <strong>afectación de ≥2 mucosas</strong> (oral, ocular, genital). Fármacos típicos: alopurinol, anticomiciales, sulfamidas, AINE, nevirapina.</p>
-<h3>Manejo</h3>
-<p><strong>Retirar de inmediato el fármaco sospechoso.</strong> Pronóstico con SCORTEN. Soporte tipo gran quemado (líquidos, temperatura, curas, dolor), cuidado ocular precoz y unidad especializada. Inmunomoduladores según protocolo.</p>
+<p class="intro">Necrólisis epidérmica (Stevens-Johnson <10% SC · solapamiento 10-30% · NET >30%), casi siempre <strong>farmacológica</strong>. Despegamiento + Nikolsky + afectación de ≥2 mucosas. <strong>Urgencia vital.</strong></p>
+
+<div class="perla"><div><strong>Lo primero: RETIRAR el fármaco sospechoso</strong> (alopurinol, anticomiciales, sulfamidas, AINE, nevirapina). Pronóstico con <strong>SCORTEN</strong>. Soporte tipo gran quemado + cuidado ocular precoz. Los <strong>corticoides sistémicos NO se recomiendan de rutina</strong> (guía UK); ciclosporina o etanercept son lo más prometedor (multidisciplinar).</div></div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('scorten')">SCORTEN</button><button class="btn btn-out btn-sm" onclick="go('regla9')">Superficie</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="cplab"><span>Manejo (pauta para HC):</span><button class="btn btn-g btn-sm" onclick="copy($('net_hc').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="net_hc">SJS / NET - manejo (URGENCIA)
+1. RETIRAR de inmediato el farmaco sospechoso.
+2. Calcular SCORTEN; ingreso en unidad de grandes quemados/UCI si NET o inestable.
+3. Soporte tipo gran quemado: fluidoterapia, control de temperatura, analgesia, soporte nutricional, curas (no desbridar de rutina).
+4. Cuidado OCULAR precoz (oftalmologia) y de mucosas (oral, genital).
+5. Inmunomodulacion bajo decision multidisciplinar: ciclosporina 3-5 mg/kg/dia, o etanercept 50 mg SC. Corticoides sistemicos NO de rutina (guia UK).
+6. Notificar a farmacovigilancia; carnet de alergia al alta.</pre></div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>S3 / revisión 2024</b> — Diagnosis and management of SJS/TEN: <em>Am J Clin Dermatol</em> 2024 · <a href="https://link.springer.com/article/10.1007/s40257-024-00889-6" target="_blank" rel="noopener">springer</a>.</li>
+<li><b>DermNet</b> — SJS/TEN · <a href="https://dermnetnz.org/topics/stevens-johnson-syndrome-toxic-epidermal-necrolysis" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.dress=()=>`<div class="card">
 <h2>DRESS</h2>
-<p class="intro">Reacción a fármacos con eosinofilia y síntomas sistémicos. Latencia larga (2-8 semanas). Potencialmente grave.</p>
-<h3>Claves diagnósticas</h3>
-<ul style="line-height:1.6">
-<li>Exantema extenso (a menudo >50%) y edema facial.</li>
-<li>Fiebre y adenopatías.</li>
-<li>Eosinofilia y/o linfocitos atípicos; <strong>afectación visceral</strong> (hepatitis la más frecuente; también riñón, pulmón, corazón).</li>
-<li>Fármacos típicos: anticomiciales (carbamazepina, lamotrigina), alopurinol, sulfamidas, vancomicina.</li>
+<p class="intro">Reacción a fármacos con eosinofilia y síntomas sistémicos. <strong>Latencia 2-6 semanas</strong>. Exantema extenso + edema facial + fiebre + adenopatías + eosinofilia + <strong>afectación visceral</strong> (hepatitis la más frecuente).</p>
+
+<div class="perla"><div><strong>Lo primero: RETIRAR el fármaco</strong> (anticomiciales, alopurinol, sulfamidas, vancomicina). Confirmar con <strong>RegiSCAR</strong>. Tratamiento <strong>según gravedad</strong> y afectación visceral; descenso de corticoide <strong>muy lento</strong> (riesgo de recaída). Vigilar reactivación VHH-6 y tiroiditis tardía.</div></div>
+
+<div class="cplab"><span>Manejo (pauta para HC):</span><button class="btn btn-g btn-sm" onclick="copy($('dr_hc').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="dr_hc">DRESS - manejo
+1. RETIRAR el farmaco sospechoso (latencia 2-6 semanas).
+2. Confirmar con RegiSCAR (exantema + fiebre + eosinofilia/linfocitos atipicos + adenopatias + afectacion visceral).
+3. Analitica: hemograma con eosinofilos, perfil hepatico y renal; valorar afectacion cardiaca/pulmonar.
+4. Corticoide segun gravedad:
+   - Leve: corticoide topico superpotente, descenso 6 sem - 3 meses.
+   - Moderado-grave o afectacion visceral: prednisona 1 mg/kg/dia, descenso LENTO en 3-6 meses.
+5. Vigilar reactivacion de VHH-6 y secuelas tardias (tiroiditis autoinmune): control posterior.</pre></div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>AAD</b> — DRESS, Parte II (diagnóstico y manejo): <em>J Am Acad Dermatol</em> 2023 · <a href="https://www.jaad.org/article/S0190-9622(23)02403-9/abstract" target="_blank" rel="noopener">jaad.org</a>.</li>
+<li><b>DermNet</b> — DRESS / síndrome de hipersensibilidad a fármacos · <a href="https://dermnetnz.org/topics/drug-hypersensitivity-syndrome" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
 </ul>
-<h3>Manejo</h3>
-<p><strong>Retirar el fármaco.</strong> Corticoides sistémicos según gravedad/afectación visceral, con descenso lento (riesgo de recaída). Monitorizar función hepática/renal. Vigilar reactivación de herpesvirus (VHH-6) y secuelas tardías (tiroiditis autoinmune).</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.eritrodermia=()=>`<div class="card">
 <h2>Eritrodermia</h2>
-<p class="intro">Eritema y descamación que afectan a <strong>>90% de la superficie corporal</strong>. Es un síndrome, no un diagnóstico: obliga a buscar la causa. Riesgo de complicaciones sistémicas.</p>
-<h3>Causas</h3>
-<ul style="line-height:1.6">
-<li>Dermatosis previa (psoriasis, dermatitis atópica/contacto) — la más frecuente.</li>
-<li>Fármacos.</li>
-<li>Linfoma cutáneo (síndrome de Sézary) — descartar en el adulto.</li>
-<li>Idiopática.</li>
+<p class="intro">Eritema y descamación en <strong>>90% de la superficie corporal</strong>. Es un <strong>síndrome</strong>, no un diagnóstico: obliga a buscar la causa. Riesgo de hipotermia, deshidratación, hipoalbuminemia, fallo cardiaco de alto gasto y sobreinfección.</p>
+
+<div class="perla"><div><strong>Busca la causa:</strong> dermatosis previa (psoriasis, eccema) — la más frecuente —, <strong>fármaco</strong>, o <strong>linfoma cutáneo (Sézary)</strong> a descartar en el adulto. Soporte mientras tanto; trata la causa una vez identificada.</div></div>
+
+<div class="cplab"><span>Manejo (pauta para HC):</span><button class="btn btn-g btn-sm" onclick="copy($('er_hc').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="er_hc">ERITRODERMIA (>90% SC) - manejo
+1. Es un sindrome: BUSCAR la causa (psoriasis, eccema/contacto, FARMACO, linfoma cutaneo/Sezary, idiopatica). Retirar farmacos sospechosos.
+2. Ingreso si inestable: control de temperatura, fluidoterapia e hidroelectrolitos, soporte nutricional (hipoalbuminemia); vigilar insuficiencia cardiaca de alto gasto y sobreinfeccion.
+3. Cuidado cutaneo: emolientes abundantes + corticoide topico de potencia media; ambiente calido y humedo.
+4. Estudio: biopsia cutanea (a veces repetida), hemograma (Sezary: linfocitos atipicos + citometria de sangre periferica), perfil hepatorrenal.
+5. Tratar la causa subyacente una vez identificada.</pre></div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>DermNet</b> — Erythroderma · <a href="https://dermnetnz.org/topics/erythroderma" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
 </ul>
-<h3>Complicaciones</h3>
-<p>Hipotermia, deshidratación y alteración hidroelectrolítica, hipoalbuminemia, insuficiencia cardiaca de alto gasto, sobreinfección.</p>
-<h3>Manejo</h3>
-<p>Ingreso si inestable: soporte (temperatura, líquidos, nutrición), emolientes y corticoide tópico, retirar fármacos. Tratar la causa subyacente; biopsia + analítica para el estudio etiológico.</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.vasculitis=()=>`<div class="card">
