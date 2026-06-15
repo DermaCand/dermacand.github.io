@@ -3848,36 +3848,87 @@ VIEWS.tricoscopia=()=>`<div class="card">
 // ===== VISTAS DE PATOLOGÍA · Enfermedades ampollosas =====
 VIEWS.penfigo=()=>`<div class="card">
 <h2>Pénfigo</h2>
-<p class="intro">Enfermedad ampollosa autoinmune <strong>intraepidérmica</strong> por autoanticuerpos anti-desmogleína (acantólisis). Ampollas fláccidas que se rompen dejando erosiones; mucosas a menudo afectadas.</p>
-<h3>Formas</h3>
-<ul style="line-height:1.6">
-<li><strong>Vulgar</strong> — anti-desmogleína 3 (±1); erosiones orales (con frecuencia primer signo) y ampollas fláccidas cutáneas.</li>
-<li><strong>Foliáceo</strong> — anti-desmogleína 1; descamación/costras superficiales, respeta mucosas.</li>
-<li><strong>Paraneoplásico</strong> — buscar neoplasia subyacente.</li>
-</ul>
-<h3>Diagnóstico</h3>
-<p><strong>Signo de Nikolsky positivo</strong>. Biopsia (acantólisis suprabasal) + IFD (IgG/C3 intercelular "en panal") + IFI/ELISA anti-desmogleína.</p>
+<p class="intro">Ampollosa autoinmune <strong>intraepidérmica</strong> (anti-desmogleína, acantólisis): ampollas fláccidas y erosiones, Nikolsky +. Vulgar (anti-Dsg3±1, mucosa + piel), foliáceo (anti-Dsg1, respeta mucosa), paraneoplásico. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Confirma y trata pronto:</strong> biopsia + <strong>IFD</strong> (IgG/C3 intercelular «en panal») + <strong>anti-desmogleína 1/3</strong>. El <strong>rituximab es de 1.ª línea</strong> (precoz) en el moderado-grave: mejora la remisión y reduce la dosis acumulada de corticoide. Si paraneoplásico, buscar neoplasia. Manejo hospitalario.</div></div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('ampoll_alg')">Algoritmo</button><button class="btn btn-out btn-sm" onclick="go('autoac')">Autoanticuerpos</button></div>
-<h3>Tratamiento</h3>
-<p>Corticoide sistémico + <strong>rituximab</strong> (primera línea en el vulgar moderado-grave), inmunosupresores ahorradores. Cuidado de erosiones y vigilancia de infección. Manejo hospitalario.</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Inducción</div></div>
+<div class="chips"><span class="chip">prednisona</span><span class="chip">rituximab (1.ª línea)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pf_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="pf_hc1">PENFIGO (vulgar/foliaceo) moderado-grave - induccion
+- Corticoide sistemico: prednisona 0,5-1 mg/kg/dia segun gravedad.
+- RITUXIMAB de 1a linea (precoz): 1 g IV x2 (dias 0 y 14), o 375 mg/m2 semanal x4.
+  -> mejora la remision y reduce la dosis acumulada de corticoide.
+- Cuidado de erosiones; vigilar/tratar infeccion. Manejo hospitalario.
+Confirmar con IFD + anti-desmogleina 1/3.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Mantenimiento / ahorrador</div></div>
+<div class="chips"><span class="chip">descenso de corticoide</span><span class="chip">azatioprina/micofenolato</span><span class="chip">rituximab (reinfusión)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pf_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="pf_hc2">PENFIGO - mantenimiento / ahorrador de corticoide
+- Descenso progresivo del corticoide segun respuesta clinica y anti-Dsg.
+- Ahorrador: azatioprina o micofenolato de mofetilo.
+- Reinfusion de rituximab a los 6 meses o segun recaida/serologia.
+Profilaxis segun corticoide prolongado (osea, gastrica, Pneumocystis si procede).</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Refractario</div></div>
+<div class="chips"><span class="chip">inmunoglobulinas IV</span><span class="chip">inmunoadsorción</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pf_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="pf_hc3">PENFIGO - refractario
+- Inmunoglobulinas IV; inmunoadsorcion.
+- Optimizar o repetir rituximab.
+Manejo en unidad especializada.</pre></div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente y la ficha técnica):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>EADV (S2k)</b> — Management of pemphigus: Joly P, et al. <em>JEADV</em> 2020 · <a href="https://pubmed.ncbi.nlm.nih.gov/32830877/" target="_blank" rel="noopener">PubMed</a>.</li>
+<li><b>DermNet</b> — Pemphigus vulgaris · <a href="https://dermnetnz.org/topics/pemphigus-vulgaris" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.penfigoide=()=>`<div class="card">
 <h2>Penfigoide ampolloso</h2>
-<p class="intro">Enfermedad ampollosa autoinmune <strong>subepidérmica</strong>, la más frecuente. Autoanticuerpos anti-membrana basal (BP180/BP230). Típica del anciano.</p>
-<h3>Clínica</h3>
-<ul style="line-height:1.6">
-<li>Ampollas <strong>tensas</strong> sobre piel eritematosa/urticariforme, muy pruriginosas.</li>
-<li>Fase prodrómica pruriginosa (eccematosa/urticarial) que puede preceder semanas-meses.</li>
-<li>Mucosas poco afectadas (a diferencia del pénfigo).</li>
+<p class="intro">Ampollosa autoinmune <strong>subepidérmica</strong>, la más frecuente; anti-membrana basal (BP180/BP230). Anciano: ampollas <strong>tensas</strong> muy pruriginosas (con fase prodrómica eccematosa/urticarial), mucosas poco afectadas. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>1.ª línea = clobetasol tópico, incluso en enfermedad extensa</strong> (mejor perfil de seguridad que el corticoide oral). Nikolsky negativo; confirmar con IFD (IgG/C3 lineal) + ELISA BP180. <strong>Revisar fármacos desencadenantes</strong>: gliptinas (iDPP4), diuréticos, anti-PD1.</div></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('ampoll_alg')">Algoritmo</button><button class="btn btn-out btn-sm" onclick="go('bpdai')">BPDAI</button></div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Localizado / moderado</div></div>
+<div class="chips"><span class="chip">clobetasol tóp.</span><span class="chip">doxiciclina</span><span class="chip">antihistamínico</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pb_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="pb_hc1">PENFIGOIDE AMPOLLOSO - localizado/moderado
+- Clobetasol propionato 0,05% topico: 20-30 g/dia (1a linea, mejor perfil que el corticoide oral).
+- +/- doxiciclina 200 mg/dia como ahorrador.
+- Antihistaminico para el prurito; cuidado de las ampollas.
+Revisar farmacos desencadenantes (gliptinas/iDPP4, diureticos, anti-PD1). Confirmar IFD + ELISA BP180.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Extenso</div></div>
+<div class="chips"><span class="chip">clobetasol 30-40 g/día</span><span class="chip">prednisona</span><span class="chip">MMF/azatioprina/MTX</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pb_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="pb_hc2">PENFIGOIDE AMPOLLOSO - extenso
+- Clobetasol 0,05% topico 30-40 g/dia (1a linea incluso en extenso), o prednisona 0,5 mg/kg/dia.
+- Ahorrador de corticoide: doxiciclina, metotrexato, micofenolato o azatioprina.
+Vigilar efectos del corticoide. Curso cronico con remisiones.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Refractario</div></div>
+<div class="chips"><span class="chip">rituximab</span><span class="chip">omalizumab</span><span class="chip">dupilumab</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pb_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="pb_hc3">PENFIGOIDE AMPOLLOSO - refractario
+- Rituximab; omalizumab o dupilumab (emergentes; utiles si prurito/eosinofilia marcados).
+Manejo especializado.</pre></div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente y la ficha técnica):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>EADV (S2k)</b> — Management of bullous pemphigoid: Borradori L, et al. <em>JEADV</em> 2022;36(10):1689-1704 · <a href="https://onlinelibrary.wiley.com/doi/10.1111/jdv.18220" target="_blank" rel="noopener">doi:10.1111/jdv.18220</a>.</li>
+<li><b>DermNet</b> — Bullous pemphigoid · <a href="https://dermnetnz.org/topics/bullous-pemphigoid" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
 </ul>
-<h3>Diagnóstico</h3>
-<p><strong>Nikolsky negativo</strong>. Biopsia (ampolla subepidérmica con eosinófilos) + IFD (IgG/C3 lineal en membrana basal) + IFI sal-split (techo) + ELISA BP180. Revisar fármacos desencadenantes (gliptinas, etc.).</p>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('ampoll_alg')">Algoritmo</button></div>
-<h3>Tratamiento</h3>
-<p>Corticoide tópico potente (clobetasol) en localizado/moderado; corticoide oral ± ahorradores (doxiciclina, inmunosupresores) en extenso. Curso crónico con remisiones.</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.ampoll_alg=()=>`<div class="card">
@@ -4783,11 +4834,26 @@ VIEWS.dh_iga=()=>`<div class="card">
 <li>Idiopática o inducida por fármacos (vancomicina).</li>
 <li>IFD: depósito <strong>lineal de IgA</strong> en la membrana basal.</li>
 </ul>
-<h3>Tratamiento</h3>
-<p><strong>Dapsona</strong> (descartar déficit de G6PD antes). En la dermatitis herpetiforme, <strong>dieta sin gluten</strong> de base, estricta y mantenida. En la IgA lineal por fármaco, retirarlo.</p>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('ampoll_alg')">Algoritmo ampollosas</button><button class="btn btn-out btn-sm" onclick="go('farmacogen')">G6PD / cribado</button></div>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/dermatitis-herpetiformis" target="_blank" rel="noopener">DermNet — Dermatitis herpetiformis</a> · <a href="https://dermnetnz.org/topics/linear-iga-bullous-dermatosis" target="_blank" rel="noopener">DermNet — Linear IgA</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+<div class="perla"><div><strong>Ambas responden a dapsona</strong> (descartar <strong>déficit de G6PD</strong> antes). La dermatitis herpetiforme es cutánea de la <strong>celíaca</strong> → la <strong>dieta sin gluten</strong> es el tratamiento de base. En la IgA lineal por fármaco (vancomicina), <strong>retirarlo</strong>.</div></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('ampoll_alg')">Algoritmo</button><button class="btn btn-out btn-sm" onclick="go('farmacogen')">G6PD</button></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dh_hc').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="dh_hc">DERMATITIS HERPETIFORME / IgA LINEAL - tratamiento
+Antes de la dapsona: descartar deficit de G6PD.
+- Dapsona 50-100 mg/dia (alivia el prurito en 24-72 h); ajustar dosis; control de hemograma y metahemoglobina.
+DERMATITIS HERPETIFORME:
+- DIETA SIN GLUTEN estricta y mantenida de por vida (tratamiento de base; permite reducir/retirar la dapsona).
+- Cribar enfermedad celiaca (anti-transglutaminasa) y deficits nutricionales.
+DERMATOSIS IgA LINEAL:
+- Si es por farmaco (vancomicina), RETIRARLO. Idiopatica: dapsona; alternativa sulfapiridina.</pre></div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>DermNet</b> — Dermatitis herpetiformis · <a href="https://dermnetnz.org/topics/dermatitis-herpetiformis" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+<li><b>DermNet</b> — Linear IgA bullous dermatosis · <a href="https://dermnetnz.org/topics/linear-iga-bullous-dermatosis" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.epidermolisis=()=>`<div class="card">
