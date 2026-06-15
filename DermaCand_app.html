@@ -189,6 +189,9 @@ body.view-home .app-footer{padding-bottom:18px}
 .cplab{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.3px;margin:12px 0 3px}
 .cplab .btn{text-transform:none;letter-spacing:0}
 .rxcard.pt{border-left-color:var(--c2)}
+.rxcard.l1{border-left-color:var(--ok)}
+.rxcard.l2{border-left-color:var(--wn)}
+.rxcard.l3{border-left-color:var(--c1)}
 .step-h{display:flex;align-items:center;gap:9px;margin:18px 0 4px}
 .step-h .sn{flex:0 0 26px;height:26px;border-radius:50%;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
 .step-h .st{font-size:15px;font-weight:700;color:var(--txt)}
@@ -3285,7 +3288,7 @@ VIEWS.psoriasis=()=>`<div class="card">
 <div class="step-h l1"><div class="sn">1</div><div class="st">Psoriasis leve — tratamiento tópico</div></div>
 <div class="chips"><span class="chip c1">calcipotriol/betametasona</span><span class="chip">tacrolimus</span><span class="chip">tapinarof 1%</span><span class="chip">roflumilast 0,3%</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pso_hc1').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="pso_hc1">PSORIASIS EN PLACAS LEVE - tratamiento topico
+<div class="rxcard l1"><pre id="pso_hc1">PSORIASIS EN PLACAS LEVE - tratamiento topico
 - Calcipotriol/betametasona (gel o espuma): 1 aplicacion/dia 4 semanas; luego mantenimiento 2 dias/semana.
 - Cara y pliegues: tacrolimus 0,1% pomada 2x/dia (o roflumilast 0,3% topico 1x/dia).
 - Emoliente a diario; queratolitico (urea 10-20%) si placa gruesa.
@@ -3293,7 +3296,7 @@ Objetivo: aclaramiento. Revision en 4-8 semanas; si no hay control o gran impact
 <div class="step-h l2"><div class="sn">2</div><div class="st">Moderada-grave — fototerapia / sistémico convencional</div></div>
 <div class="chips"><span class="chip">UVB-BE</span><span class="chip">metotrexato</span><span class="chip">ciclosporina</span><span class="chip">acitretina</span><span class="chip">apremilast</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pso_hc2').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="pso_hc2">PSORIASIS MODERADA-GRAVE (PASI/BSA/DLQI >=10) - sistemico convencional / fototerapia
+<div class="rxcard l2"><pre id="pso_hc2">PSORIASIS MODERADA-GRAVE (PASI/BSA/DLQI >=10) - sistemico convencional / fototerapia
 Opcion segun perfil:
 - Fototerapia UVB banda estrecha 2-3 sesiones/semana, o
 - Metotrexato oral semanal + acido folico (control analitico), o
@@ -3320,7 +3323,7 @@ Solicito analitica de control. Revision en 8-12 semanas; si no respuesta, biolog
 </div>
 <p style="font-size:11.5px;color:var(--mut);margin:8px 0 0">Dianas: anti-TNF (adalimumab, etanercept, infliximab, certolizumab) · anti-IL-12/23 (ustekinumab) · anti-IL-23 (guselkumab, risankizumab, tildrakizumab) · anti-IL-17 (secukinumab, ixekizumab, brodalumab, bimekizumab) · oral: apremilast (PDE4), deucravacitinib (TYK2).</p>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pso_hc3').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="pso_hc3">PSORIASIS GRAVE/REFRACTARIA a convencional (o zona de alto impacto / artritis) - indico BIOLOGICO
+<div class="rxcard l3"><pre id="pso_hc3">PSORIASIS GRAVE/REFRACTARIA a convencional (o zona de alto impacto / artritis) - indico BIOLOGICO
 Cribado previo: IGRA/Mantoux + Rx torax; serologia VHB/VHC (+VIH si riesgo); hemograma, hepatico y renal; descartar gestacion; actualizar vacunas (las vivas, antes de iniciar).
 Eleccion por comorbilidad:
 - Artritis psoriasica: anti-TNF / anti-IL-17 / anti-IL-23.
@@ -3368,7 +3371,7 @@ VIEWS.datopica=()=>`<div class="card">
 <div class="step-h l1"><div class="sn">1</div><div class="st">Leve — tópico</div></div>
 <div class="chips"><span class="chip c1">emoliente</span><span class="chip">corticoide tóp.</span><span class="chip">tacrolimus/pimecrolimus</span><span class="chip">crisaborol</span><span class="chip">ruxolitinib tóp.</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('da_hc1').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="da_hc1">DERMATITIS ATOPICA LEVE
+<div class="rxcard l1"><pre id="da_hc1">DERMATITIS ATOPICA LEVE
 - Emoliente abundante 2 veces/dia (base del tratamiento), sobre todo tras el baño.
 - Brote: corticoide topico de potencia media-baja 1 vez/dia hasta control.
 - Cara, parpados y pliegues: tacrolimus 0,1% o pimecrolimus 2 veces/dia; mantenimiento proactivo 2 dias/semana en zonas de recaida.
@@ -3378,7 +3381,7 @@ Revision en 4 semanas; si brotes frecuentes o mal control, escalar.</pre></div>
 <div class="step-h l2"><div class="sn">2</div><div class="st">Moderada — optimizar tópico / fototerapia</div></div>
 <div class="chips"><span class="chip">corticoide medio-alto</span><span class="chip">calcineurínico proactivo</span><span class="chip">vendaje húmedo</span><span class="chip">UVB-BE</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('da_hc2').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="da_hc2">DERMATITIS ATOPICA MODERADA (EASI/SCORAD moderado, DLQI elevado)
+<div class="rxcard l2"><pre id="da_hc2">DERMATITIS ATOPICA MODERADA (EASI/SCORAD moderado, DLQI elevado)
 - Optimizar topico: corticoide de potencia media-alta en brote + calcineurinico proactivo 2 dias/semana.
 - Brote intenso: vendajes humedos (wet wraps) unos dias.
 - Fototerapia UVB de banda estrecha 2-3 sesiones/semana, o
@@ -3398,7 +3401,7 @@ Descartar y tratar sobreinfeccion. Revision en 4-8 semanas.</pre></div>
 <div class="dxrow"><div><strong>Puente corto</strong> → ciclosporina (brote); MTX o azatioprina como convencional</div></div>
 </div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('da_hc3').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="da_hc3">DERMATITIS ATOPICA MODERADA-GRAVE refractaria a topico - sistemico avanzado
+<div class="rxcard l3"><pre id="da_hc3">DERMATITIS ATOPICA MODERADA-GRAVE refractaria a topico - sistemico avanzado
 Biologico (sin monitorizacion analitica de rutina):
 - Dupilumab (anti-IL-4Ra) SC; vigilar conjuntivitis.
 - Tralokinumab o lebrikizumab (anti-IL-13). Nemolizumab (anti-IL-31) si prurito predominante.
@@ -3439,7 +3442,7 @@ VIEWS.dcontacto=()=>`<div class="card">
 <div class="step-h l1"><div class="sn">1</div><div class="st">Aguda / localizada</div></div>
 <div class="chips"><span class="chip c1">evitación</span><span class="chip">corticoide tóp. potente</span><span class="chip">emoliente / barrera</span><span class="chip">tacrolimus (cara/pliegues)</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dc_hc1').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="dc_hc1">DERMATITIS DE CONTACTO - aguda/localizada
+<div class="rxcard l1"><pre id="dc_hc1">DERMATITIS DE CONTACTO - aguda/localizada
 - Identificar y EVITAR el agente (laboral, cosmetico, topico); lavado y retirada.
 - Corticoide topico potente 1 vez/dia 1-2 semanas (cara/pliegues: potencia media o tacrolimus 0,1%).
 - Emoliente y proteccion de barrera (guantes, cremas barrera).
@@ -3449,7 +3452,7 @@ Revision en 2-4 semanas.</pre></div>
 <div class="step-h l2"><div class="sn">2</div><div class="st">Extensa o crónica (p. ej. manos)</div></div>
 <div class="chips"><span class="chip">corticoide oral corto</span><span class="chip">fototerapia</span><span class="chip wn">alitretinoína (manos crónica)</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dc_hc2').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="dc_hc2">DERMATITIS DE CONTACTO - extensa o cronica (p. ej. manos)
+<div class="rxcard l2"><pre id="dc_hc2">DERMATITIS DE CONTACTO - extensa o cronica (p. ej. manos)
 - Evitacion estricta del alergeno/irritante + proteccion de barrera.
 - Brote extenso: corticoide oral en pauta corta descendente (p. ej. prednisona 0,5 mg/kg/dia con descenso en 2-3 semanas).
 - Eccema cronico de manos refractario: valorar alitretinoina oral; fototerapia.
@@ -3476,7 +3479,7 @@ VIEWS.liquen=()=>`<div class="card">
 <div class="step-h l1"><div class="sn">1</div><div class="st">Cutáneo localizado</div></div>
 <div class="chips"><span class="chip c1">clobetasol 0,05%</span><span class="chip">triamcinolona intralesional</span><span class="chip">antihistamínico (prurito)</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('lp_hc1').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="lp_hc1">LIQUEN PLANO CUTANEO - localizado
+<div class="rxcard l1"><pre id="lp_hc1">LIQUEN PLANO CUTANEO - localizado
 - Corticoide topico superpotente (clobetasol 0,05%) 1 vez/dia 2-4 semanas.
 - Lesiones resistentes/hipertroficas: triamcinolona intralesional 5-10 mg/mL.
 - Antihistaminico oral para el prurito si precisa.
@@ -3485,7 +3488,7 @@ Cribar serologia VHC; revisar y retirar farmacos liquenoides.</pre></div>
 <div class="step-h l2"><div class="sn">2</div><div class="st">Cutáneo difuso / extenso</div></div>
 <div class="chips"><span class="chip">prednisona oral (descendente)</span><span class="chip">UVB-BE / PUVA</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('lp_hc2').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="lp_hc2">LIQUEN PLANO CUTANEO - difuso/extenso
+<div class="rxcard l2"><pre id="lp_hc2">LIQUEN PLANO CUTANEO - difuso/extenso
 - Corticoide oral en pauta descendente (prednisona 30-60 mg/dia, descenso en 2-6 semanas), o
 - Fototerapia (UVB de banda estrecha o PUVA).
 Revision a las 4-8 semanas.</pre></div>
@@ -3493,7 +3496,7 @@ Revision a las 4-8 semanas.</pre></div>
 <div class="step-h l3"><div class="sn">3</div><div class="st">Refractario / oral erosivo</div></div>
 <div class="chips"><span class="chip">acitretina</span><span class="chip">metotrexato</span><span class="chip">hidroxicloroquina</span><span class="chip">ciclosporina/micofenolato</span><span class="chip">tacrolimus tóp. (oral)</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('lp_hc3').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="lp_hc3">LIQUEN PLANO refractario o cronico (hipertrofico, ungueal, pilar)
+<div class="rxcard l3"><pre id="lp_hc3">LIQUEN PLANO refractario o cronico (hipertrofico, ungueal, pilar)
 - Sistemico: acitretina, o metotrexato, o hidroxicloroquina, o ciclosporina/micofenolato.
 LIQUEN PLANO ORAL EROSIVO:
 - 1a linea: corticoide topico (gel en orabase o enjuague de dexametasona).
@@ -3522,7 +3525,7 @@ VIEWS.acne=()=>`<div class="card">
 <div class="step-h l1"><div class="sn">1</div><div class="st">Leve — tópico</div></div>
 <div class="chips"><span class="chip c1">retinoide tóp.</span><span class="chip c1">peróxido de benzoilo</span><span class="chip">ác. azelaico</span><span class="chip">clascoterona</span><span class="chip">clindamicina (+BPO)</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ac_hc1').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="ac_hc1">ACNE LEVE (comedoniano / inflamatorio leve) - topico combinado
+<div class="rxcard l1"><pre id="ac_hc1">ACNE LEVE (comedoniano / inflamatorio leve) - topico combinado
 - Retinoide topico por la noche (adapaleno 0,1-0,3%, tretinoina o trifaroteno) +
 - Peroxido de benzoilo (BPO) 2,5-5% por la manana.
 - Anadir si precisa: acido azelaico 15-20% o clascoterona 1% (antiandrogeno topico).
@@ -3532,7 +3535,7 @@ Limpiador suave; fotoprotector no comedogenico. Revision en 8-12 semanas.</pre><
 <div class="step-h l2"><div class="sn">2</div><div class="st">Moderado — tópico + oral</div></div>
 <div class="chips"><span class="chip">doxiciclina/sarecyclina</span><span class="chip wn">espironolactona</span><span class="chip wn">ACO combinado</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ac_hc2').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="ac_hc2">ACNE MODERADO (papulopustuloso) - topico + sistemico
+<div class="rxcard l2"><pre id="ac_hc2">ACNE MODERADO (papulopustuloso) - topico + sistemico
 - Mantener base topica (retinoide + BPO).
 - Antibiotico oral: doxiciclina 100 mg/dia (o sarecyclina), maximo 3-4 meses, SIEMPRE con BPO/retinoide.
 - Mujer: valorar hormonal -> espironolactona 50-200 mg/dia o anticonceptivo combinado.
@@ -3541,7 +3544,7 @@ Revision en 8-12 semanas; si no respuesta o cicatrices, isotretinoina.</pre></di
 <div class="step-h l3"><div class="sn">3</div><div class="st">Grave / nódulo-quístico / cicatrizal — isotretinoína</div></div>
 <div class="chips"><span class="chip c1">isotretinoína oral</span><span class="chip er">programa prevención embarazo</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ac_hc3').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="ac_hc3">ACNE GRAVE / nodulo-quistico / cicatrizal / resistente - ISOTRETINOINA ORAL
+<div class="rxcard l3"><pre id="ac_hc3">ACNE GRAVE / nodulo-quistico / cicatrizal / resistente - ISOTRETINOINA ORAL
 - Isotretinoina oral: iniciar 0,5 mg/kg/dia, subir a 0,5-1 mg/kg/dia (dosis acumulada objetivo ~120-150 mg/kg).
 - MUJER EN EDAD FERTIL: programa de prevencion de embarazo (anticoncepcion eficaz + test de gestacion).
 - Control analitico: perfil hepatico y lipidico basal y durante el tratamiento.
@@ -3577,7 +3580,7 @@ VIEWS.rosacea=()=>`<div class="card">
 <div class="step-h l1"><div class="sn">1</div><div class="st">Pápulo-pustulosa leve-moderada — tópico</div></div>
 <div class="chips"><span class="chip c1">ivermectina 1%</span><span class="chip">metronidazol 0,75%</span><span class="chip">ác. azelaico 15%</span><span class="chip">brimonidina (eritema)</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ro_hc1').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="ro_hc1">ROSACEA PAPULO-PUSTULOSA leve-moderada
+<div class="rxcard l1"><pre id="ro_hc1">ROSACEA PAPULO-PUSTULOSA leve-moderada
 - Topico: ivermectina 1% crema 1 vez/dia (o metronidazol 0,75%, o acido azelaico 15%).
 - Eritema persistente: brimonidina 0,33% gel u oximetazolina (uso puntual).
 - Medidas: evitar desencadenantes, fotoprotector mineral, limpiador suave. NO corticoides topicos.
@@ -3586,7 +3589,7 @@ Revision en 8-12 semanas.</pre></div>
 <div class="step-h l2"><div class="sn">2</div><div class="st">Moderada-grave / refractaria — oral, láser, cirugía</div></div>
 <div class="chips"><span class="chip">doxiciclina 40 mg</span><span class="chip wn">isotretinoína dosis baja</span><span class="chip">láser/IPL</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ro_hc2').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="ro_hc2">ROSACEA moderada-grave / refractaria
+<div class="rxcard l2"><pre id="ro_hc2">ROSACEA moderada-grave / refractaria
 - Anadir doxiciclina oral a dosis antiinflamatoria (40 mg/dia liberacion modificada, o 100 mg/dia).
 - Refractaria o fima inflamatorio: isotretinoina oral a dosis baja.
 - Telangiectasias / eritema fijo / fima fibrotico: laser/IPL o cirugia.
@@ -3614,7 +3617,7 @@ VIEWS.hs=()=>`<div class="card">
 <div class="step-h l1"><div class="sn">1</div><div class="st">Leve (Hurley I) — tópico + medidas</div></div>
 <div class="chips"><span class="chip c1">clindamicina tóp.</span><span class="chip">antiséptico</span><span class="chip">corticoide intralesional</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('hs_hc1').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="hs_hc1">HIDROSADENITIS SUPURATIVA - leve (Hurley I)
+<div class="rxcard l1"><pre id="hs_hc1">HIDROSADENITIS SUPURATIVA - leve (Hurley I)
 - Medidas de base: dejar el tabaco, perdida de peso; lavados antisepticos (clorhexidina); manejo del dolor.
 - Topico: clindamicina 1% solucion 2 veces/dia.
 - Brote/nodulo: infiltracion de corticoide intralesional (triamcinolona). Absceso a tension: deroofing (mejor que incision simple).
@@ -3623,7 +3626,7 @@ Revision en 8-12 semanas.</pre></div>
 <div class="step-h l2"><div class="sn">2</div><div class="st">Moderada (Hurley II) — antibiótico sistémico</div></div>
 <div class="chips"><span class="chip">doxiciclina</span><span class="chip">clindamicina + rifampicina</span><span class="chip wn">hormonal (mujer)</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('hs_hc2').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="hs_hc2">HIDROSADENITIS SUPURATIVA - moderada (Hurley II / IHS4 moderado)
+<div class="rxcard l2"><pre id="hs_hc2">HIDROSADENITIS SUPURATIVA - moderada (Hurley II / IHS4 moderado)
 - Antibiotico sistemico: doxiciclina 100 mg/dia (3 meses), o clindamicina 300 mg/12h + rifampicina 300 mg/12h (10-12 semanas).
 - Mujer: valorar hormonal (espironolactona, ACO antiandrogenico; metformina si sd. metabolico).
 - Brote agudo intenso: clindamicina IV o ertapenem como puente.
@@ -3632,7 +3635,7 @@ Si no control, pasar a biologico. Deroofing de trayectos recidivantes.</pre></di
 <div class="step-h l3"><div class="sn">3</div><div class="st">Moderada-grave (Hurley II-III) — biológico / cirugía</div></div>
 <div class="chips"><span class="chip c2">adalimumab (TNF)</span><span class="chip er">secukinumab (IL-17A)</span><span class="chip er">bimekizumab (IL-17A/F)</span><span class="chip">cirugía amplia</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('hs_hc3').innerText)">Copiar</button></div>
-<div class="rxcard"><pre id="hs_hc3">HIDROSADENITIS SUPURATIVA - moderada-grave (biologico)
+<div class="rxcard l3"><pre id="hs_hc3">HIDROSADENITIS SUPURATIVA - moderada-grave (biologico)
 - Biologico aprobado: adalimumab SC (anti-TNF), o secukinumab (anti-IL-17A), o bimekizumab (anti-IL-17A/F).
 - Cribado pre-biologico: TB latente (IGRA + Rx torax), VHB/VHC, hemograma, descartar infeccion activa.
 - Cirugia: exeresis amplia de zonas fibrosadas/trayectos establecidos (Hurley III).
