@@ -160,6 +160,39 @@ body.view-home .app-footer{padding-bottom:18px}
 .refbox b{color:var(--txt)}
 .card .ref a,.refbox a{color:var(--c1);text-decoration:none}
 .card .ref a:hover,.refbox a:hover{text-decoration:underline}
+/* ====== Kit didáctico reutilizable (chips, escalera, decisión, pauta, perla) ====== */
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}
+.chip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600;line-height:1.6;background:var(--bg2);color:var(--txt);border:1px solid var(--bd);white-space:nowrap}
+.chip.c1{background:rgba(13,125,140,.13);color:var(--c1);border-color:transparent}
+.chip.c2{background:rgba(26,58,108,.13);color:var(--c2);border-color:transparent}
+.chip.ok{background:rgba(22,163,74,.14);color:var(--ok);border-color:transparent}
+.chip.wn{background:rgba(245,158,11,.16);color:#b45309;border-color:transparent}
+.chip.er{background:rgba(220,38,38,.13);color:var(--er);border-color:transparent}
+[data-t="dark"] .chip.wn{color:#fbbf24}
+[data-t="dark"] .chip.c2{color:var(--c2l)}
+.ladder{display:flex;flex-direction:column;gap:9px;margin:10px 0}
+.lstep{display:flex;gap:11px;align-items:flex-start;background:var(--card);border:1px solid var(--bd);border-left:4px solid var(--c1);border-radius:var(--rs);padding:10px 12px}
+.lstep .ln{flex:0 0 26px;height:26px;border-radius:50%;background:var(--c1);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+.lstep.s1{border-left-color:var(--ok)}.lstep.s1 .ln{background:var(--ok)}
+.lstep.s2{border-left-color:var(--wn)}.lstep.s2 .ln{background:var(--wn)}
+.lstep.s3{border-left-color:var(--c1)}.lstep.s3 .ln{background:var(--c1)}
+.lstep .lt{font-weight:600;color:var(--txt);font-size:13.5px}
+.lstep .ld{font-size:12.5px;color:var(--mut);margin-top:2px;line-height:1.5}
+.dxgrid{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0}
+@media(min-width:560px){.dxgrid{grid-template-columns:1fr 1fr}}
+.dxrow{display:flex;gap:10px;align-items:flex-start;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rs);padding:9px 11px;font-size:13px;line-height:1.5}
+.dxrow .dxi{flex:0 0 auto;font-size:18px;line-height:1.3}
+.rxcard{background:var(--bg2);border:1px solid var(--bd);border-left:4px solid var(--c1);border-radius:var(--rs);padding:11px 13px;margin:6px 0}
+.rxcard pre{white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;margin:0;color:var(--txt);line-height:1.55}
+.perla{display:flex;gap:9px;align-items:flex-start;background:rgba(13,125,140,.08);border:1px solid var(--bd);border-left:4px solid var(--c1);border-radius:var(--rs);padding:10px 12px;margin:10px 0;font-size:13px;line-height:1.55;color:var(--txt)}
+.perla .pi{flex:0 0 auto;font-size:17px}
+.cplab{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.3px;margin:12px 0 3px}
+.cplab .btn{text-transform:none;letter-spacing:0}
+.rxcard.pt{border-left-color:var(--c2)}
+.step-h{display:flex;align-items:center;gap:9px;margin:18px 0 4px}
+.step-h .sn{flex:0 0 26px;height:26px;border-radius:50%;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+.step-h .st{font-size:15px;font-weight:700;color:var(--txt)}
+.step-h.l1 .sn{background:var(--ok)}.step-h.l2 .sn{background:var(--wn)}.step-h.l3 .sn{background:var(--c1)}
 .lbl{display:block;font-size:13px;font-weight:500;margin-bottom:5px;color:var(--txt)}
 .fld{margin-bottom:11px}
 .fld input:not([type=radio]):not([type=checkbox]),.fld select,.fld textarea{width:100%;padding:8px 10px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--inp);color:var(--txt);font-size:13px;outline:none;font-family:inherit}
@@ -3219,38 +3252,83 @@ VIEWS.recetas_post=(p)=>{try{if(p&&p.key&&RX[p.key]){var sel=document.getElement
 // ===== VISTA DE PATOLOGÍA (ejemplo de plantilla; pendiente desplegar al resto) =====
 VIEWS.psoriasis=()=>`<div class="card">
 <h2>Psoriasis</h2>
-<p class="intro">Dermatosis inflamatoria crónica inmunomediada (eje IL-23/IL-17), de curso en brotes. Placas eritematosas bien delimitadas con escama nacarada. Asociada a artritis psoriásica y a comorbilidad cardiometabólica.</p>
+<p class="intro">Placas crónicas que cursan en brotes (eje IL-23/IL-17); se controla muy bien <strong>por escalones</strong>. Cada escalón trae la <strong>pauta lista para copiar en la historia clínica</strong>.</p>
 
-<h3>Formas clínicas</h3>
-<ul style="line-height:1.6">
-<li><strong>En placas (vulgar)</strong> — la más frecuente; codos, rodillas, sacro, cuero cabelludo.</li>
-<li><strong>Guttata</strong> — pápulas "en gotas", brote postinfeccioso (estreptococo); típica en jóvenes.</li>
-<li><strong>Invertida</strong> — pliegues; placas lisas brillantes sin escama.</li>
-<li><strong>Pustulosa</strong> — palmoplantar o generalizada (von Zumbusch = urgencia).</li>
-<li><strong>Eritrodérmica</strong> — &gt;90% de superficie; urgencia dermatológica.</li>
-<li><strong>Ungueal</strong> — piqueteado, onicólisis, mancha "en aceite"; predice artritis.</li>
-</ul>
-
-<h3>Signos y diagnóstico</h3>
-<p>Diagnóstico clínico. Signo de Auspitz (rocío hemorrágico al raspado), fenómeno de Köbner. Dermatoscopia: puntos rojos regulares sobre fondo claro con escama blanca. Biopsia solo ante duda diagnóstica.</p>
-
-<h3>Gravedad y cribado</h3>
-<p>Clasifica en <strong>leve</strong> frente a <strong>moderada-grave</strong> con la "regla de los dieces" (BSA, PASI o DLQI ≥10), o si hay afectación de <em>zonas especiales</em> (cara, palmoplantar, genital, ungueal) o artritis. <strong>Cribar artritis psoriásica</strong> en cada visita (dolor/rigidez articular, dactilitis).</p>
+<div class="perla"><div><strong>Primero, clasifica.</strong> <strong>Moderada-grave</strong> = PASI/BSA/DLQI ≥10, o zona de alto impacto (cara, cuero cabelludo, palmoplantar, genital, uñas) o artritis. <strong>Objetivo:</strong> BSA ≤1% (o PASI absoluto ≤2–3) a los 3 meses; si no se alcanza, sube de escalón.</div></div>
 <div class="btns">
-<button class="btn btn-out btn-sm" onclick="go('pasi')">📊 PASI</button>
+<button class="btn btn-out btn-sm" onclick="go('pasi')">PASI</button>
 <button class="btn btn-out btn-sm" onclick="go('dlqi')">DLQI</button>
-<button class="btn btn-sm" onclick="goPauta('psoriasis')">💊 Pauta de tratamiento</button>
+<button class="btn btn-out btn-sm" onclick="go('bsa')">BSA</button>
 </div>
 
-<h3>Comorbilidades a vigilar</h3>
-<ul style="line-height:1.6">
-<li>Artritis psoriásica (hasta ~30%).</li>
-<li>Riesgo cardiovascular y síndrome metabólico.</li>
-<li>Enfermedad inflamatoria intestinal, hígado graso, uveítis.</li>
-<li>Ansiedad/depresión — valorar impacto en calidad de vida (DLQI).</li>
-</ul>
+<div class="step-h l1"><div class="sn">1</div><div class="st">Psoriasis leve — tratamiento tópico</div></div>
+<div class="chips"><span class="chip c1">calcipotriol/betametasona</span><span class="chip">tacrolimus</span><span class="chip">tapinarof 1%</span><span class="chip">roflumilast 0,3%</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pso_hc1').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="pso_hc1">PSORIASIS EN PLACAS LEVE - tratamiento topico
+- Calcipotriol/betametasona (gel o espuma): 1 aplicacion/dia 4 semanas; luego mantenimiento 2 dias/semana.
+- Cara y pliegues: tacrolimus 0,1% pomada 2x/dia (o roflumilast 0,3% topico 1x/dia).
+- Emoliente a diario; queratolitico (urea 10-20%) si placa gruesa.
+Objetivo: aclaramiento. Revision en 4-8 semanas; si no hay control o gran impacto, escalar.</pre></div>
+<div class="step-h l2"><div class="sn">2</div><div class="st">Moderada-grave — fototerapia / sistémico convencional</div></div>
+<div class="chips"><span class="chip">UVB-BE</span><span class="chip">metotrexato</span><span class="chip">ciclosporina</span><span class="chip">acitretina</span><span class="chip">apremilast</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pso_hc2').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="pso_hc2">PSORIASIS MODERADA-GRAVE (PASI/BSA/DLQI >=10) - sistemico convencional / fototerapia
+Opcion segun perfil:
+- Fototerapia UVB banda estrecha 2-3 sesiones/semana, o
+- Metotrexato oral semanal + acido folico (control analitico), o
+- Ciclosporina en ciclos cortos (brote), o
+- Acitretina (de eleccion en pustulosa; NO en mujer con deseo gestacional).
+Solicito analitica de control. Revision en 8-12 semanas; si no respuesta, biologico.</pre></div>
+<div class="step-h l3"><div class="sn">3</div><div class="st">Grave o refractaria — biológico / oral dirigido</div></div>
+<p style="font-size:12.5px;color:var(--mut);margin:2px 0 4px"><strong>Antes de pedirlo</strong> (cribado):</p>
+<div class="chips">
+<span class="chip">TB latente (IGRA/PPD + Rx tórax)</span>
+<span class="chip">VHB / VHC (± VIH)</span>
+<span class="chip">hemograma · hepático · renal</span>
+<span class="chip">descartar gestación</span>
+<span class="chip">vacunas (vivas antes de iniciar)</span>
+</div>
+<p style="font-size:12.5px;color:var(--mut);margin:10px 0 4px"><strong>Elige la diana</strong> por comorbilidad (✓ preferir · <span style="color:var(--er)">✕ evitar</span>):</p>
+<div class="dxgrid">
+<div class="dxrow"><div><strong>Artritis psoriásica</strong> → anti-TNF, anti-IL-17 o anti-IL-23</div></div>
+<div class="dxrow"><div><strong>EII (Crohn/CU)</strong> → anti-IL-23 o anti-TNF · <span style="color:var(--er)">✕ anti-IL-17</span></div></div>
+<div class="dxrow"><div><strong>Gestación / deseo</strong> → certolizumab · <span style="color:var(--er)">✕ MTX, acitretina</span></div></div>
+<div class="dxrow"><div><strong>Cáncer o TB latente</strong> → anti-IL-17 / anti-IL-23 (cautela anti-TNF)</div></div>
+<div class="dxrow"><div><strong>Cardiometabólico</strong> → apremilast neutro/↓ peso; trata la comorbilidad</div></div>
+<div class="dxrow"><div><strong>Desmielinizante / ICC</strong> → <span style="color:var(--er)">✕ anti-TNF</span></div></div>
+</div>
+<p style="font-size:11.5px;color:var(--mut);margin:8px 0 0">Dianas: anti-TNF (adalimumab, etanercept, infliximab, certolizumab) · anti-IL-12/23 (ustekinumab) · anti-IL-23 (guselkumab, risankizumab, tildrakizumab) · anti-IL-17 (secukinumab, ixekizumab, brodalumab, bimekizumab) · oral: apremilast (PDE4), deucravacitinib (TYK2).</p>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pso_hc3').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="pso_hc3">PSORIASIS GRAVE/REFRACTARIA a convencional (o zona de alto impacto / artritis) - indico BIOLOGICO
+Cribado previo: IGRA/Mantoux + Rx torax; serologia VHB/VHC (+VIH si riesgo); hemograma, hepatico y renal; descartar gestacion; actualizar vacunas (las vivas, antes de iniciar).
+Eleccion por comorbilidad:
+- Artritis psoriasica: anti-TNF / anti-IL-17 / anti-IL-23.
+- EII: anti-IL-23 o anti-TNF (evitar anti-IL-17).
+- Gestacion/deseo: certolizumab.
+- Cancer o TB: anti-IL-17 / anti-IL-23.
+Solicito inicio/visado de [farmaco]. Revision tras la induccion (objetivo BSA<=1%).</pre></div>
+<div class="btns" style="margin-top:12px"><button class="btn btn-sm" onclick="goPauta('psoriasis')">Pauta completa por escalones</button></div>
 
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Elaborado según guías AAD/EADV/AEDV; pendiente de validación antes de publicar.</div>
+<h3>Novedades (2022–2024)</h3>
+<div class="chips" style="margin-bottom:4px">
+<span class="chip c1">deucravacitinib · TYK2 oral · 2022</span>
+<span class="chip er">bimekizumab · IL-17A/F · 2023</span>
+<span class="chip">tapinarof · AhR tóp. · 2022</span>
+<span class="chip">roflumilast · PDE4 tóp. · 2022</span>
+<span class="chip wn">espesolimab · IL-36R · brote PPG</span>
+</div>
+<p style="font-size:12px;color:var(--mut);margin:2px 0 0">Ensayos pivotales: POETYK · BE VIVID/READY/SURE · PSOARING · DERMIS · Effisayil.</p>
+
+<div class="refbox">
+<b>Referencias</b> (verifica siempre la fuente y la ficha técnica):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>EuroGuiDerm</b> — Nast A, et al. Systemic treatment of psoriasis vulgaris. <b>Parte 1</b> (recomendaciones y monitorización): <em>JEADV</em> 2020;34(11):2461-2498 · <a href="https://doi.org/10.1111/jdv.16915" target="_blank" rel="noopener">doi:10.1111/jdv.16915</a>. <b>Parte 2</b> (situaciones y comorbilidad): <em>JEADV</em> 2021;35(2):281-317 · <a href="https://doi.org/10.1111/jdv.16926" target="_blank" rel="noopener">doi:10.1111/jdv.16926</a>.</li>
+<li><b>AAD-NPF</b> — Biológicos: Menter A, et al. <em>J Am Acad Dermatol</em> 2019;80(4):1029-1072 · <a href="https://www.jaad.org/article/S0190-9622(18)33001-9/fulltext" target="_blank" rel="noopener">jaad.org</a>. Tópicos: Elmets CA, et al. <em>JAAD</em> 2021 · <a href="https://pubmed.ncbi.nlm.nih.gov/32738429/" target="_blank" rel="noopener">PubMed</a>. Comorbilidades: <em>JAAD</em> 2019;80(4):1073-1113 · <a href="https://www.jaad.org/article/S0190-9622(18)33002-0/fulltext" target="_blank" rel="noopener">jaad.org</a>.</li>
+<li><b>AEDV (Grupo de Psoriasis)</b> — Psoriasis pediátrica (consenso GPP/GET): <em>Actas Dermosifiliogr</em> 2024 · <a href="https://www.actasdermo.org/es-documento-consenso-del-grupo-espanol-articulo-S0001731024010044" target="_blank" rel="noopener">actasdermo.org</a>. Paciente oncológico: <em>Actas Dermosifiliogr</em> 2024 · <a href="https://www.actasdermo.org/es-recomendaciones-del-grupo-psoriasis-academia-articulo-S0001731024001546" target="_blank" rel="noopener">actasdermo.org</a>.</li>
+<li><b>Treat-to-target</b> — Armstrong AW, et al. NPF. <em>J Am Acad Dermatol</em> 2017;76(2):290-298 · <a href="https://pubmed.ncbi.nlm.nih.gov/27908543/" target="_blank" rel="noopener">PubMed</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). Contenido orientativo basado en las guías citadas; <strong>confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Dermatosis inflamatorias =====
