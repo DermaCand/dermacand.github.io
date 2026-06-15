@@ -1,0 +1,52 @@
+rules_version = '2';
+
+// ── Reglas de Cloud Storage para DermaCand ──
+// SOLO se aplican si decides guardar los PDF en Firebase Storage. Por defecto DermaCand
+// (como HemoPocket) guarda los PDF en un repo de GitHub Pages (ver GH_REPO en la app y
+// GUIA_FIREBASE.md), porque muchas intranets hospitalarias bloquean Firebase Storage pero
+// permiten github.io. Publica estas reglas solo si optas por Storage.
+//
+// Los PDF se guardan organizados por sección:  guias/{section}/{archivo}.pdf
+//   p. ej.  guias/onco/Melanoma.pdf  →  pertenece a la sección "onco" (Dermato-oncología)
+//
+// Lectura: usuario autorizado (admin/editor, cuenta aprobada o heredada).
+// Escritura (subir/sustituir/borrar): admin, o editor de ESA sección.
+// Los permisos se leen de Firestore (colección roles), porque las reglas de
+// Storage pueden consultar Firestore pero NO la Realtime Database.
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function roleData() {
+      return firestore.get(/databases/(default)/documents/roles/$(request.auth.uid)).data;
+    }
+    function hasRole() {
+      return request.auth != null
+        && firestore.exists(/databases/(default)/documents/roles/$(request.auth.uid));
+    }
+    function canEdit(section) {
+      return (hasRole() && roleData().role == 'admin')
+        || (hasRole()
+            && roleData().role == 'editor'
+            && (roleData().sections is list)
+            && (section in roleData().sections));
+    }
+    function hasApprovedAccount() {
+      return request.auth != null
+        && firestore.exists(/databases/(default)/documents/cuentas/$(request.auth.uid))
+        && firestore.get(/databases/(default)/documents/cuentas/$(request.auth.uid)).data.estado == 'aprobada';
+    }
+    function hasNoAccount() {
+      return request.auth != null
+        && !firestore.exists(/databases/(default)/documents/cuentas/$(request.auth.uid));
+    }
+    function isApproved() {
+      return hasRole() || hasApprovedAccount() || hasNoAccount();
+    }
+
+    match /guias/{section}/{fileName} {
+      allow read:  if isApproved();
+      allow write: if canEdit(section);
+    }
+  }
+}

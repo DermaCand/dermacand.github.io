@@ -7,6 +7,14 @@ _img.ps1
 *.backup-*.html
 DermaCand_app.backup-*.html
 
+# Firebase: secretos y dependencias (NUNCA subir)
+firebase/scripts/serviceAccountKey.json
+serviceAccountKey.json
+firebase/functions/node_modules/
+firebase/scripts/node_modules/
+.firebase/
+firebase-debug.log
+
 # Cruft del SO / editor
 Thumbs.db
 .DS_Store

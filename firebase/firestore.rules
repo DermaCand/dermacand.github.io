@@ -1,0 +1,107 @@
+rules_version = '2';
+
+// ── Reglas de Firestore para DermaCand ──
+// Colecciones:
+//   roles/{uid}     → { role: "admin" }  ó  { role: "editor", sections: ["inflam","onco", ...] }
+//   cuentas/{uid}   → { email, nombre, apellido, estado: "pendiente|aprobada", aceptaTerminos, ... }
+//   guias/{id}      → { section, subtype, name, path, updatedAt, uploadedBy }
+//   config/github   → { token }   (PAT de GitHub para subir PDFs; se gestiona en consola)
+//   reportes/{id}   → { texto, tipo, vista, build, ... }
+//
+// Lectura de guías: solo usuarios AUTORIZADOS (admin/editor, cuenta aprobada, o
+//   usuario heredado sin ficha de cuenta). Ver función isApproved().
+// Escritura de guías: admin (cualquier sección) o editor de ESA sección.
+// La colección roles se gestiona desde la consola; el cliente no la escribe.
+//
+// Secciones de DermaCand (campo "section"): inflam, inf, folic, tric, ampoll,
+//   onco, ped, urg, proc, patol, tto.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function roleData() {
+      return get(/databases/$(database)/documents/roles/$(request.auth.uid)).data;
+    }
+    function hasRole() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/roles/$(request.auth.uid));
+    }
+    function isAdmin() {
+      return hasRole() && roleData().role == 'admin';
+    }
+    // ¿Puede el usuario actual editar guías de la sección indicada?
+    function canEdit(section) {
+      return isAdmin()
+        || (hasRole()
+            && roleData().role == 'editor'
+            && (roleData().sections is list)
+            && (section in roleData().sections));
+    }
+
+    // ── Aprobación de cuentas ──
+    function accountData() {
+      return get(/databases/$(database)/documents/cuentas/$(request.auth.uid)).data;
+    }
+    function hasAccount() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/cuentas/$(request.auth.uid));
+    }
+    // ¿Está autorizado el usuario a LEER el contenido?
+    //  - admin/editor (rol asignado en consola), o
+    //  - cuenta aprobada por el administrador, o
+    //  - usuario HEREDADO sin ficha de cuenta (creado en consola antes del registro).
+    // Una vez migrados todos a 'cuentas', puede endurecerse quitando "|| !hasAccount()".
+    function isApproved() {
+      return request.auth != null
+        && ( hasRole()
+          || !hasAccount()
+          || accountData().estado == 'aprobada' );
+    }
+
+    match /guias/{id} {
+      allow read:   if isApproved();
+      allow create: if canEdit(request.resource.data.section);
+      // Al actualizar, debe poder editar tanto la sección actual como la nueva
+      // (impide "mover" una guía a una sección sobre la que no se tiene permiso).
+      allow update: if canEdit(resource.data.section)
+                    && canEdit(request.resource.data.section);
+      allow delete: if canEdit(resource.data.section);
+    }
+
+    match /roles/{uid} {
+      // Cada usuario puede leer su propio rol; nadie escribe roles desde la app.
+      allow read:  if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // ── Cuentas de usuario y registro de aceptación de términos ──
+    // Cada usuario crea su PROPIA ficha al registrarse (estado 'pendiente' y con la
+    // aceptación de términos). Solo el admin puede leer todas, aprobar/rechazar o borrar.
+    match /cuentas/{uid} {
+      allow create: if request.auth != null
+                    && request.auth.uid == uid
+                    && request.resource.data.estado == 'pendiente'
+                    && request.resource.data.aceptaTerminos == true;
+      allow read:   if request.auth != null && (request.auth.uid == uid || isAdmin());
+      allow update, delete: if isAdmin();
+    }
+
+    match /config/{doc} {
+      // Token de GitHub y similares: solo lo leen admin/editores (para subir PDF).
+      // Nunca se escribe desde la app; se gestiona desde la consola.
+      allow read:  if isAdmin() || (hasRole() && roleData().role == 'editor');
+      allow write: if false;
+    }
+
+    // ── Reportes de errores / incidencias ──
+    // Cualquier usuario autenticado puede CREAR un reporte (manual o captura automática de
+    // un error de JS). Solo el administrador puede leerlos, marcarlos como resueltos o borrarlos.
+    match /reportes/{id} {
+      allow create: if request.auth != null
+                    && request.resource.data.texto is string
+                    && request.resource.data.texto.size() > 0
+                    && request.resource.data.texto.size() <= 4000;
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}

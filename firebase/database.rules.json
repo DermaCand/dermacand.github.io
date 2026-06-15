@@ -1,0 +1,14 @@
+{
+  // Reglas de Realtime Database de DermaCand: sincroniza preferencias por usuario
+  // (favoritos y recientes) bajo users/{uid}. Cada usuario solo accede a SU propio nodo.
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    }
+  }
+}

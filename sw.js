@@ -3,9 +3,16 @@
 // Estática (CSS/JS/imágenes/fuentes de PDF.js/PDFs locales): cache-first.
 // Versión: bump para forzar actualización de los clientes. DEBE coincidir con DC_BUILD en la app.
 
-const CACHE = 'dermacand-v3';
+const CACHE = 'dermacand-v6';
 // El recurso crítico es DermaCand_app.html (app autocontenida). El resto son auxiliares.
-const APP_SHELL = ['/DermaCand_app.html', '/manifest.json', '/', '/index.html'];
+// pdf.min.js + worker se auto-alojan y se precachean para que el visor de PDF funcione sin conexión.
+const APP_SHELL = ['/DermaCand_app.html', '/manifest.json', '/', '/index.html', '/pdf.min.js', '/pdf.worker.min.js'];
+
+// Caché DURABLE: NO se borra al subir de versión. Conserva offline los assets que conviene
+// mantener aunque cambie la versión de la app: PDFs vistos, iconos y las fuentes de PDF.js.
+// El 'app shell' (HTML, pdf.min.js, worker, …) sigue en CACHE, que se refresca en cada versión.
+const ASSET = 'dermacand-assets';
+function isShell(pathname) { return APP_SHELL.indexOf(pathname) !== -1; }
 
 // Guarda una respuesta en caché de forma segura. Si venía de una redirección
 // (típico en Vercel/Pages para "/" e "/index.html"), la reconstruimos: servir una
@@ -41,7 +48,7 @@ self.addEventListener('activate', e => {
   e.waitUntil(
     Promise.all([
       caches.keys().then(keys =>
-        Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+        Promise.all(keys.filter(k => k !== CACHE && k !== ASSET).map(k => caches.delete(k)))
       ),
       self.clients.claim()
     ])
@@ -95,14 +102,33 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // 2. Mismo origen (CSS/JS/iconos/fuentes de PDF.js/PDFs locales): cache-first
+  // 1c. SDK de Firebase (gstatic.com/firebasejs/...): cache-first CROSS-ORIGIN, en caché durable.
+  //     Imprescindible para offline: Firebase se importa desde Google; si no lo guardamos, sin
+  //     conexión el módulo de login no carga. gstatic envía CORS (respuesta 'cors', cacheable).
+  if (url.hostname === 'www.gstatic.com' && url.pathname.indexOf('/firebasejs/') !== -1) {
+    e.respondWith(
+      caches.match(req).then(cached => {
+        if (cached) return cached;
+        return fetch(req).then(resp => {
+          const copy = resp.clone();
+          caches.open(ASSET).then(c => safePut(c, req, copy));
+          return resp;
+        });
+      })
+    );
+    return;
+  }
+
+  // 2. Mismo origen (CSS/JS/iconos/fuentes de PDF.js/PDFs locales): cache-first.
+  //    El app shell va a CACHE (versionada, se refresca al actualizar); el resto (PDFs de guías,
+  //    iconos, fuentes de PDF.js…) va a la caché DURABLE, para que no se pierda offline al subir de versión.
   if (sameOrigin) {
     e.respondWith(
       caches.match(req).then(cached => {
         if (cached) return cached;
         return fetch(req).then(resp => {
           const copy = resp.clone();
-          caches.open(CACHE).then(c => safePut(c, req, copy));
+          caches.open(isShell(url.pathname) ? CACHE : ASSET).then(c => safePut(c, req, copy));
           return resp;
         }).catch(() => cached);
       })
