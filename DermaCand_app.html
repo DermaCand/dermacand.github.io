@@ -206,12 +206,9 @@ body.view-home .app-footer{padding-bottom:18px}
 /* Bloque de productos comerciales: color propio (azul marino) para diferenciarlo del tratamiento */
 .prodcard{background:rgba(26,58,108,.07);border:1px solid var(--bd);border-left:4px solid var(--c2);border-radius:var(--rs);padding:11px 13px;margin:6px 0 14px}
 [data-t="dark"] .prodcard{background:rgba(123,163,224,.10);border-left-color:var(--c2l)}
-.prodcard .pc-cat{font-size:12.5px;font-weight:600;color:var(--c2)}
-[data-t="dark"] .prodcard .pc-cat{color:var(--c2l)}
+.prodcard .pc-cat{font-size:12.5px;font-weight:600;color:var(--txt)}
 .prodcard .pc-desc{font-size:11.5px;color:var(--mut);margin:1px 0 3px}
-.cplab.prod span{color:var(--c2)}
-[data-t="dark"] .cplab.prod span{color:var(--c2l)}
-.chip.prod{background:rgba(26,58,108,.12);color:var(--c2);border-color:transparent}
+.chip.prod{background:rgba(26,58,108,.10);color:var(--c2);border-color:transparent}
 [data-t="dark"] .chip.prod{background:rgba(123,163,224,.16);color:var(--c2l)}
 .lbl{display:block;font-size:13px;font-weight:500;margin-bottom:5px;color:var(--txt)}
 .fld{margin-bottom:11px}
@@ -3319,7 +3316,7 @@ VIEWS.psoriasis=()=>`<div class="card">
 </div>
 
 <div class="step-h l1"><div class="sn">1</div><div class="st">Psoriasis leve — tratamiento tópico</div></div>
-<div class="chips"><span class="chip c1">calcipotriol/betametasona</span><span class="chip">tacrolimus</span><span class="chip">tapinarof 1%</span><span class="chip">roflumilast 0,3%</span></div>
+<div class="chips"><span class="chip">calcipotriol/betametasona</span><span class="chip">tacrolimus</span><span class="chip">tapinarof 1%</span><span class="chip">roflumilast 0,3%</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pso_hc1').innerText)">Copiar</button></div>
 <div class="rxcard l1"><pre id="pso_hc1">PSORIASIS EN PLACAS LEVE - tratamiento topico
 - Calcipotriol/betametasona (gel o espuma): 1 aplicacion/dia 4 semanas; luego mantenimiento 2 dias/semana.
@@ -3368,11 +3365,11 @@ ${productosCard('psoriasis')}
 
 <h3>Novedades (2022–2024)</h3>
 <div class="chips" style="margin-bottom:4px">
-<span class="chip c1">deucravacitinib · TYK2 oral · 2022</span>
-<span class="chip er">bimekizumab · IL-17A/F · 2023</span>
+<span class="chip">deucravacitinib · TYK2 oral · 2022</span>
+<span class="chip">bimekizumab · IL-17A/F · 2023</span>
 <span class="chip">tapinarof · AhR tóp. · 2022</span>
 <span class="chip">roflumilast · PDE4 tóp. · 2022</span>
-<span class="chip wn">espesolimab · IL-36R · brote PPG</span>
+<span class="chip">espesolimab · IL-36R · brote PPG</span>
 </div>
 <p style="font-size:12px;color:var(--mut);margin:2px 0 0">Ensayos pivotales: POETYK · BE VIVID/READY/SURE · PSOARING · DERMIS · Effisayil.</p>
 
@@ -3402,7 +3399,7 @@ VIEWS.datopica=()=>`<div class="card">
 </div>
 
 <div class="step-h l1"><div class="sn">1</div><div class="st">Leve — tópico</div></div>
-<div class="chips"><span class="chip c1">emoliente</span><span class="chip">corticoide tóp.</span><span class="chip">tacrolimus/pimecrolimus</span><span class="chip">crisaborol</span><span class="chip">ruxolitinib tóp.</span></div>
+<div class="chips"><span class="chip">emoliente</span><span class="chip">corticoide tóp.</span><span class="chip">tacrolimus/pimecrolimus</span><span class="chip">crisaborol</span><span class="chip">ruxolitinib tóp.</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('da_hc1').innerText)">Copiar</button></div>
 <div class="rxcard l1"><pre id="da_hc1">DERMATITIS ATOPICA LEVE
 - Emoliente abundante 2 veces/dia (base del tratamiento), sobre todo tras el baño.
@@ -3423,7 +3420,7 @@ Descartar y tratar sobreinfeccion. Revision en 4-8 semanas.</pre></div>
 
 <div class="step-h l3"><div class="sn">3</div><div class="st">Moderada-grave refractaria — sistémico avanzado</div></div>
 <p style="font-size:12.5px;color:var(--mut);margin:2px 0 4px"><strong>Biológicos</strong> (sin monitorización analítica de rutina) · <strong>JAK orales</strong> (rápidos, requieren cribado):</p>
-<div class="chips"><span class="chip c1">dupilumab (IL-4Rα)</span><span class="chip c1">tralokinumab/lebrikizumab (IL-13)</span><span class="chip c1">nemolizumab (IL-31)</span><span class="chip wn">upadacitinib · abrocitinib · baricitinib (JAK)</span></div>
+<div class="chips"><span class="chip">dupilumab (IL-4Rα)</span><span class="chip">tralokinumab/lebrikizumab (IL-13)</span><span class="chip">nemolizumab (IL-31)</span><span class="chip">upadacitinib · abrocitinib · baricitinib (JAK)</span></div>
 <p style="font-size:12.5px;color:var(--mut);margin:10px 0 4px"><strong>Elige</strong> (✓ preferir · <span style="color:var(--er)">✕ evitar</span>):</p>
 <div class="dxgrid">
 <div class="dxrow"><div><strong>Quiero seguridad / sin analíticas</strong> → dupilumab o tralokinumab/lebrikizumab</div></div>
@@ -3446,10 +3443,10 @@ Mantener emoliente. Solicito inicio de [farmaco]; revision tras la induccion.</p
 
 <h3>Novedades (2021–2024)</h3>
 <div class="chips" style="margin-bottom:4px">
-<span class="chip c1">tralokinumab · IL-13 · 2021</span>
-<span class="chip c1">lebrikizumab · IL-13 · 2024</span>
-<span class="chip c1">nemolizumab · IL-31 · 2024</span>
-<span class="chip wn">abrocitinib/upadacitinib · JAK · 2022</span>
+<span class="chip">tralokinumab · IL-13 · 2021</span>
+<span class="chip">lebrikizumab · IL-13 · 2024</span>
+<span class="chip">nemolizumab · IL-31 · 2024</span>
+<span class="chip">abrocitinib/upadacitinib · JAK · 2022</span>
 <span class="chip">ruxolitinib tóp. · JAK · 2021</span>
 </div>
 
@@ -3473,7 +3470,7 @@ VIEWS.dcontacto=()=>`<div class="card">
 <div class="perla"><div><strong>La clave es identificar y EVITAR el agente.</strong> Si sospechas alérgica → <strong>patch test</strong> (batería estándar + dirigida; lectura a 48 y 96 h). Irritativa: bordes netos en la zona de contacto; alérgica: rebasa la zona y pica.</div></div>
 
 <div class="step-h l1"><div class="sn">1</div><div class="st">Aguda / localizada</div></div>
-<div class="chips"><span class="chip c1">evitación</span><span class="chip">corticoide tóp. potente</span><span class="chip">emoliente / barrera</span><span class="chip">tacrolimus (cara/pliegues)</span></div>
+<div class="chips"><span class="chip">evitación</span><span class="chip">corticoide tóp. potente</span><span class="chip">emoliente / barrera</span><span class="chip">tacrolimus (cara/pliegues)</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dc_hc1').innerText)">Copiar</button></div>
 <div class="rxcard l1"><pre id="dc_hc1">DERMATITIS DE CONTACTO - aguda/localizada
 - Identificar y EVITAR el agente (laboral, cosmetico, topico); lavado y retirada.
@@ -3483,7 +3480,7 @@ VIEWS.dcontacto=()=>`<div class="card">
 Revision en 2-4 semanas.</pre></div>
 
 <div class="step-h l2"><div class="sn">2</div><div class="st">Extensa o crónica (p. ej. manos)</div></div>
-<div class="chips"><span class="chip">corticoide oral corto</span><span class="chip">fototerapia</span><span class="chip wn">alitretinoína (manos crónica)</span></div>
+<div class="chips"><span class="chip">corticoide oral corto</span><span class="chip">fototerapia</span><span class="chip">alitretinoína (manos crónica)</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dc_hc2').innerText)">Copiar</button></div>
 <div class="rxcard l2"><pre id="dc_hc2">DERMATITIS DE CONTACTO - extensa o cronica (p. ej. manos)
 - Evitacion estricta del alergeno/irritante + proteccion de barrera.
@@ -3510,7 +3507,7 @@ VIEWS.liquen=()=>`<div class="card">
 <div class="perla"><div><strong>Antes de tratar:</strong> cribar <strong>serología VHC</strong> y revisar fármacos liquenoides (IECA, betabloqueantes, antipalúdicos, AINE, tiazidas). <strong>Oral erosivo:</strong> vigilar malignización (controles periódicos). Variantes crónicas: oral, ungueal, pilar (alopecia cicatricial).</div></div>
 
 <div class="step-h l1"><div class="sn">1</div><div class="st">Cutáneo localizado</div></div>
-<div class="chips"><span class="chip c1">clobetasol 0,05%</span><span class="chip">triamcinolona intralesional</span><span class="chip">antihistamínico (prurito)</span></div>
+<div class="chips"><span class="chip">clobetasol 0,05%</span><span class="chip">triamcinolona intralesional</span><span class="chip">antihistamínico (prurito)</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('lp_hc1').innerText)">Copiar</button></div>
 <div class="rxcard l1"><pre id="lp_hc1">LIQUEN PLANO CUTANEO - localizado
 - Corticoide topico superpotente (clobetasol 0,05%) 1 vez/dia 2-4 semanas.
@@ -3556,7 +3553,7 @@ VIEWS.acne=()=>`<div class="card">
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('iga')">IGA</button></div>
 
 <div class="step-h l1"><div class="sn">1</div><div class="st">Leve — tópico</div></div>
-<div class="chips"><span class="chip c1">retinoide tóp.</span><span class="chip c1">peróxido de benzoilo</span><span class="chip">ác. azelaico</span><span class="chip">clascoterona</span><span class="chip">clindamicina (+BPO)</span></div>
+<div class="chips"><span class="chip">retinoide tóp.</span><span class="chip">peróxido de benzoilo</span><span class="chip">ác. azelaico</span><span class="chip">clascoterona</span><span class="chip">clindamicina (+BPO)</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ac_hc1').innerText)">Copiar</button></div>
 <div class="rxcard l1"><pre id="ac_hc1">ACNE LEVE (comedoniano / inflamatorio leve) - topico combinado
 - Retinoide topico por la noche (adapaleno 0,1-0,3%, tretinoina o trifaroteno) +
@@ -3566,7 +3563,7 @@ VIEWS.acne=()=>`<div class="card">
 Limpiador suave; fotoprotector no comedogenico. Revision en 8-12 semanas.</pre></div>
 
 <div class="step-h l2"><div class="sn">2</div><div class="st">Moderado — tópico + oral</div></div>
-<div class="chips"><span class="chip">doxiciclina/sarecyclina</span><span class="chip wn">espironolactona</span><span class="chip wn">ACO combinado</span></div>
+<div class="chips"><span class="chip">doxiciclina/sarecyclina</span><span class="chip">espironolactona</span><span class="chip">ACO combinado</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ac_hc2').innerText)">Copiar</button></div>
 <div class="rxcard l2"><pre id="ac_hc2">ACNE MODERADO (papulopustuloso) - topico + sistemico
 - Mantener base topica (retinoide + BPO).
@@ -3575,7 +3572,7 @@ Limpiador suave; fotoprotector no comedogenico. Revision en 8-12 semanas.</pre><
 Revision en 8-12 semanas; si no respuesta o cicatrices, isotretinoina.</pre></div>
 
 <div class="step-h l3"><div class="sn">3</div><div class="st">Grave / nódulo-quístico / cicatrizal — isotretinoína</div></div>
-<div class="chips"><span class="chip c1">isotretinoína oral</span><span class="chip er">programa prevención embarazo</span></div>
+<div class="chips"><span class="chip">isotretinoína oral</span><span class="chip">programa prevención embarazo</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ac_hc3').innerText)">Copiar</button></div>
 <div class="rxcard l3"><pre id="ac_hc3">ACNE GRAVE / nodulo-quistico / cicatrizal / resistente - ISOTRETINOINA ORAL
 - Isotretinoina oral: iniciar 0,5 mg/kg/dia, subir a 0,5-1 mg/kg/dia (dosis acumulada objetivo ~120-150 mg/kg).
@@ -3611,7 +3608,7 @@ VIEWS.rosacea=()=>`<div class="card">
 </div>
 
 <div class="step-h l1"><div class="sn">1</div><div class="st">Pápulo-pustulosa leve-moderada — tópico</div></div>
-<div class="chips"><span class="chip c1">ivermectina 1%</span><span class="chip">metronidazol 0,75%</span><span class="chip">ác. azelaico 15%</span><span class="chip">brimonidina (eritema)</span></div>
+<div class="chips"><span class="chip">ivermectina 1%</span><span class="chip">metronidazol 0,75%</span><span class="chip">ác. azelaico 15%</span><span class="chip">brimonidina (eritema)</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ro_hc1').innerText)">Copiar</button></div>
 <div class="rxcard l1"><pre id="ro_hc1">ROSACEA PAPULO-PUSTULOSA leve-moderada
 - Topico: ivermectina 1% crema 1 vez/dia (o metronidazol 0,75%, o acido azelaico 15%).
@@ -3620,7 +3617,7 @@ VIEWS.rosacea=()=>`<div class="card">
 Revision en 8-12 semanas.</pre></div>
 
 <div class="step-h l2"><div class="sn">2</div><div class="st">Moderada-grave / refractaria — oral, láser, cirugía</div></div>
-<div class="chips"><span class="chip">doxiciclina 40 mg</span><span class="chip wn">isotretinoína dosis baja</span><span class="chip">láser/IPL</span></div>
+<div class="chips"><span class="chip">doxiciclina 40 mg</span><span class="chip">isotretinoína dosis baja</span><span class="chip">láser/IPL</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ro_hc2').innerText)">Copiar</button></div>
 <div class="rxcard l2"><pre id="ro_hc2">ROSACEA moderada-grave / refractaria
 - Anadir doxiciclina oral a dosis antiinflamatoria (40 mg/dia liberacion modificada, o 100 mg/dia).
@@ -3648,7 +3645,7 @@ VIEWS.hs=()=>`<div class="card">
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('hurley')">Hurley</button></div>
 
 <div class="step-h l1"><div class="sn">1</div><div class="st">Leve (Hurley I) — tópico + medidas</div></div>
-<div class="chips"><span class="chip c1">clindamicina tóp.</span><span class="chip">antiséptico</span><span class="chip">corticoide intralesional</span></div>
+<div class="chips"><span class="chip">clindamicina tóp.</span><span class="chip">antiséptico</span><span class="chip">corticoide intralesional</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('hs_hc1').innerText)">Copiar</button></div>
 <div class="rxcard l1"><pre id="hs_hc1">HIDROSADENITIS SUPURATIVA - leve (Hurley I)
 - Medidas de base: dejar el tabaco, perdida de peso; lavados antisepticos (clorhexidina); manejo del dolor.
@@ -3657,7 +3654,7 @@ VIEWS.hs=()=>`<div class="card">
 Revision en 8-12 semanas.</pre></div>
 
 <div class="step-h l2"><div class="sn">2</div><div class="st">Moderada (Hurley II) — antibiótico sistémico</div></div>
-<div class="chips"><span class="chip">doxiciclina</span><span class="chip">clindamicina + rifampicina</span><span class="chip wn">hormonal (mujer)</span></div>
+<div class="chips"><span class="chip">doxiciclina</span><span class="chip">clindamicina + rifampicina</span><span class="chip">hormonal (mujer)</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('hs_hc2').innerText)">Copiar</button></div>
 <div class="rxcard l2"><pre id="hs_hc2">HIDROSADENITIS SUPURATIVA - moderada (Hurley II / IHS4 moderado)
 - Antibiotico sistemico: doxiciclina 100 mg/dia (3 meses), o clindamicina 300 mg/12h + rifampicina 300 mg/12h (10-12 semanas).
@@ -3666,7 +3663,7 @@ Revision en 8-12 semanas.</pre></div>
 Si no control, pasar a biologico. Deroofing de trayectos recidivantes.</pre></div>
 
 <div class="step-h l3"><div class="sn">3</div><div class="st">Moderada-grave (Hurley II-III) — biológico / cirugía</div></div>
-<div class="chips"><span class="chip c2">adalimumab (TNF)</span><span class="chip er">secukinumab (IL-17A)</span><span class="chip er">bimekizumab (IL-17A/F)</span><span class="chip">cirugía amplia</span></div>
+<div class="chips"><span class="chip">adalimumab (TNF)</span><span class="chip">secukinumab (IL-17A)</span><span class="chip">bimekizumab (IL-17A/F)</span><span class="chip">cirugía amplia</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('hs_hc3').innerText)">Copiar</button></div>
 <div class="rxcard l3"><pre id="hs_hc3">HIDROSADENITIS SUPURATIVA - moderada-grave (biologico)
 - Biologico aprobado: adalimumab SC (anti-TNF), o secukinumab (anti-IL-17A), o bimekizumab (anti-IL-17A/F).
