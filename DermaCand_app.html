@@ -3489,65 +3489,134 @@ LIQUEN PLANO ORAL EROSIVO:
 // ===== VISTAS DE PATOLOGÍA · Folículo y glándulas =====
 VIEWS.acne=()=>`<div class="card">
 <h2>Acné</h2>
-<p class="intro">Enfermedad inflamatoria crónica del folículo pilosebáceo. Cuatro factores: hiperqueratinización folicular, hiperseborrea (andrógenos), <em>Cutibacterium acnes</em> e inflamación.</p>
-<h3>Lesiones</h3>
-<ul style="line-height:1.6">
-<li><strong>No inflamatorias</strong> — comedones abiertos (puntos negros) y cerrados (microquistes).</li>
-<li><strong>Inflamatorias</strong> — pápulas, pústulas, nódulos y quistes.</li>
-<li>Secuelas — cicatrices (atróficas/hipertróficas) e hiperpigmentación postinflamatoria.</li>
+<p class="intro">Inflamación crónica del folículo pilosebáceo (hiperqueratinización + seborrea andrógena + <em>C. acnes</em> + inflamación). Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Reglas de oro:</strong> tratamiento tópico <strong>combinado</strong> (retinoide + peróxido de benzoilo); antibiótico <strong>nunca en monoterapia</strong> (resistencias) y limitado a 3-4 meses. El efecto tarda 8-12 semanas. Mujer adulta (mandibular/perimenstrual): valorar hormonal y descartar SOP.</div></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('iga')">IGA</button></div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Leve — tópico</div></div>
+<div class="chips"><span class="chip c1">retinoide tóp.</span><span class="chip c1">peróxido de benzoilo</span><span class="chip">ác. azelaico</span><span class="chip">clascoterona</span><span class="chip">clindamicina (+BPO)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ac_hc1').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="ac_hc1">ACNE LEVE (comedoniano / inflamatorio leve) - topico combinado
+- Retinoide topico por la noche (adapaleno 0,1-0,3%, tretinoina o trifaroteno) +
+- Peroxido de benzoilo (BPO) 2,5-5% por la manana.
+- Anadir si precisa: acido azelaico 15-20% o clascoterona 1% (antiandrogeno topico).
+- Antibiotico topico (clindamicina) SOLO combinado con BPO, nunca en monoterapia.
+Limpiador suave; fotoprotector no comedogenico. Revision en 8-12 semanas.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Moderado — tópico + oral</div></div>
+<div class="chips"><span class="chip">doxiciclina/sarecyclina</span><span class="chip wn">espironolactona</span><span class="chip wn">ACO combinado</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ac_hc2').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="ac_hc2">ACNE MODERADO (papulopustuloso) - topico + sistemico
+- Mantener base topica (retinoide + BPO).
+- Antibiotico oral: doxiciclina 100 mg/dia (o sarecyclina), maximo 3-4 meses, SIEMPRE con BPO/retinoide.
+- Mujer: valorar hormonal -> espironolactona 50-200 mg/dia o anticonceptivo combinado.
+Revision en 8-12 semanas; si no respuesta o cicatrices, isotretinoina.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Grave / nódulo-quístico / cicatrizal — isotretinoína</div></div>
+<div class="chips"><span class="chip c1">isotretinoína oral</span><span class="chip er">programa prevención embarazo</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ac_hc3').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="ac_hc3">ACNE GRAVE / nodulo-quistico / cicatrizal / resistente - ISOTRETINOINA ORAL
+- Isotretinoina oral: iniciar 0,5 mg/kg/dia, subir a 0,5-1 mg/kg/dia (dosis acumulada objetivo ~120-150 mg/kg).
+- MUJER EN EDAD FERTIL: programa de prevencion de embarazo (anticoncepcion eficaz + test de gestacion).
+- Control analitico: perfil hepatico y lipidico basal y durante el tratamiento.
+- Fotoproteccion; evitar tetraciclinas concomitantes (riesgo de hipertension intracraneal).
+Descartar hiperandrogenismo (SOP) si signos asociados. Revision mensual.</pre></div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente y la ficha técnica):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>AAD</b> — Guidelines of care for the management of acne vulgaris: <em>J Am Acad Dermatol</em> 2024 · <a href="https://www.jaad.org/article/S0190-9622(23)03389-3/fulltext" target="_blank" rel="noopener">jaad.org</a>.</li>
 </ul>
-<h3>Gravedad y variantes</h3>
-<p>Leve (comedoniano), leve-moderado (mixto/inflamatorio), moderado-grave y grave (nódulo-quístico/cicatrizal). Variantes: fulminans, conglobata, del adulto (mujer, mandibular/perimenstrual).</p>
-<div class="btns">
-<button class="btn btn-out btn-sm" onclick="go('iga')">IGA</button>
-<button class="btn btn-sm" onclick="goPauta('acne')">💊 Pauta y productos</button>
 </div>
-<h3>Claves</h3>
-<ul style="line-height:1.6">
-<li>Tratamiento tópico combinado de base (retinoide + peróxido de benzoilo); antibiótico tópico nunca en monoterapia.</li>
-<li>Isotretinoína oral en grave/cicatrizal/resistente (programa de prevención de embarazo).</li>
-<li>Descartar hiperandrogenismo si hay signos asociados (SOP).</li>
-</ul>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Guías AAD/EADV.</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.rosacea=()=>`<div class="card">
 <h2>Rosácea</h2>
-<p class="intro">Dermatosis inflamatoria crónica centrofacial con base vascular y neuroinmune. Cursa en brotes; desencadenantes: calor, sol, alcohol, picantes, estrés.</p>
-<h3>Fenotipos (clasificación por rasgos)</h3>
-<ul style="line-height:1.6">
-<li><strong>Eritema / flushing</strong> — eritema transitorio y persistente centrofacial.</li>
-<li><strong>Telangiectasias</strong> — componente vascular fijo.</li>
-<li><strong>Pápulo-pustulosa</strong> — pápulas y pústulas <em>sin comedones</em> (a diferencia del acné).</li>
-<li><strong>Fimatosa</strong> — engrosamiento (rinofima).</li>
-<li><strong>Ocular</strong> — blefaritis, sequedad, hasta queratitis.</li>
+<p class="intro">Inflamación centrofacial vascular y neuroinmune, en brotes. Manejo <strong>por fenotipo</strong> (se trata cada signo). Sin comedones (la distingue del acné). Pautas listas para copiar abajo.</p>
+
+<div class="perla"><div><strong>Base para todos:</strong> evitar desencadenantes (calor, sol, alcohol, picantes, estrés), fotoprotector mineral y limpiador suave. <strong>Nunca corticoides tópicos</strong> (empeoran / rosácea esteroidea).</div></div>
+
+<h3>Tratamiento por fenotipo</h3>
+<div class="dxgrid">
+<div class="dxrow"><div><strong>Eritema / flushing</strong> → brimonidina 0,33% u oximetazolina (puntual) · evitar desencadenantes</div></div>
+<div class="dxrow"><div><strong>Pápulas / pústulas</strong> → ivermectina 1%, metronidazol o ác. azelaico · doxiciclina si moderado</div></div>
+<div class="dxrow"><div><strong>Telangiectasias</strong> → láser/IPL</div></div>
+<div class="dxrow"><div><strong>Fima</strong> → doxiciclina/isotretinoína (inflamatorio) + láser/cirugía (fibrótico)</div></div>
+<div class="dxrow"><div><strong>Ocular</strong> → higiene palpebral + lágrima artificial · doxiciclina · oftalmología si queratitis</div></div>
+</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Pápulo-pustulosa leve-moderada — tópico</div></div>
+<div class="chips"><span class="chip c1">ivermectina 1%</span><span class="chip">metronidazol 0,75%</span><span class="chip">ác. azelaico 15%</span><span class="chip">brimonidina (eritema)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ro_hc1').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="ro_hc1">ROSACEA PAPULO-PUSTULOSA leve-moderada
+- Topico: ivermectina 1% crema 1 vez/dia (o metronidazol 0,75%, o acido azelaico 15%).
+- Eritema persistente: brimonidina 0,33% gel u oximetazolina (uso puntual).
+- Medidas: evitar desencadenantes, fotoprotector mineral, limpiador suave. NO corticoides topicos.
+Revision en 8-12 semanas.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Moderada-grave / refractaria — oral, láser, cirugía</div></div>
+<div class="chips"><span class="chip">doxiciclina 40 mg</span><span class="chip wn">isotretinoína dosis baja</span><span class="chip">láser/IPL</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ro_hc2').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="ro_hc2">ROSACEA moderada-grave / refractaria
+- Anadir doxiciclina oral a dosis antiinflamatoria (40 mg/dia liberacion modificada, o 100 mg/dia).
+- Refractaria o fima inflamatorio: isotretinoina oral a dosis baja.
+- Telangiectasias / eritema fijo / fima fibrotico: laser/IPL o cirugia.
+- Rosacea ocular: higiene palpebral + lagrima artificial; doxiciclina; derivar a oftalmologia si queratitis.</pre></div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>ROSCO</b> — Schaller M, et al. Rosacea treatment update (global ROSacea COnsensus, enfoque por fenotipo): <em>Br J Dermatol</em> 2017;176(2):465-471 · <a href="https://pubmed.ncbi.nlm.nih.gov/27861741/" target="_blank" rel="noopener">PubMed</a>.</li>
+<li><b>DermNet</b> — Rosacea · <a href="https://dermnetnz.org/topics/rosacea" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
 </ul>
-<h3>Diagnóstico y manejo</h3>
-<p>Clínico. Diferenciar de acné (sin comedones), dermatitis seborreica y lupus. Tratamiento según fenotipo (ver Pauta): tópicos (ivermectina, metronidazol, ác. azelaico, brimonidina), doxiciclina a dosis antiinflamatoria, láser/IPL para lo vascular. <strong>Evitar corticoides tópicos</strong> (empeoran).</p>
-<div class="btns"><button class="btn btn-sm" onclick="goPauta('rosacea')">💊 Pauta y productos</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Consenso ROSCO / EADV.</div>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.hs=()=>`<div class="card">
 <h2>Hidrosadenitis supurativa</h2>
-<p class="intro">Enfermedad inflamatoria crónica del folículo en zonas de glándulas apocrinas (axilas, ingles, periné, submamario). Nódulos dolorosos recidivantes, abscesos, fístulas y cicatrices. Asociada a tabaquismo, obesidad y síndrome metabólico.</p>
-<h3>Estadificación de Hurley</h3>
-<ul style="line-height:1.6">
-<li><strong>I</strong> — nódulos/abscesos aislados, sin fístulas ni cicatrices.</li>
-<li><strong>II</strong> — abscesos recidivantes con fístulas y cicatrices, lesiones separadas.</li>
-<li><strong>III</strong> — afectación difusa con trayectos fistulosos interconectados.</li>
+<p class="intro">Inflamación folicular crónica en pliegues apocrinos (axilas, ingles, periné, submamario): nódulos dolorosos, abscesos, fístulas y cicatrices. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Base para todos:</strong> dejar el <strong>tabaco</strong>, pérdida de peso, lavados antisépticos y <strong>manejo del dolor</strong>. Gradúa con <strong>Hurley</strong> (I-III) e IHS4. Cribar comorbilidad (síndrome metabólico, EII, depresión).</div></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('hurley')">Hurley</button></div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Leve (Hurley I) — tópico + medidas</div></div>
+<div class="chips"><span class="chip c1">clindamicina tóp.</span><span class="chip">antiséptico</span><span class="chip">corticoide intralesional</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('hs_hc1').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="hs_hc1">HIDROSADENITIS SUPURATIVA - leve (Hurley I)
+- Medidas de base: dejar el tabaco, perdida de peso; lavados antisepticos (clorhexidina); manejo del dolor.
+- Topico: clindamicina 1% solucion 2 veces/dia.
+- Brote/nodulo: infiltracion de corticoide intralesional (triamcinolona). Absceso a tension: deroofing (mejor que incision simple).
+Revision en 8-12 semanas.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Moderada (Hurley II) — antibiótico sistémico</div></div>
+<div class="chips"><span class="chip">doxiciclina</span><span class="chip">clindamicina + rifampicina</span><span class="chip wn">hormonal (mujer)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('hs_hc2').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="hs_hc2">HIDROSADENITIS SUPURATIVA - moderada (Hurley II / IHS4 moderado)
+- Antibiotico sistemico: doxiciclina 100 mg/dia (3 meses), o clindamicina 300 mg/12h + rifampicina 300 mg/12h (10-12 semanas).
+- Mujer: valorar hormonal (espironolactona, ACO antiandrogenico; metformina si sd. metabolico).
+- Brote agudo intenso: clindamicina IV o ertapenem como puente.
+Si no control, pasar a biologico. Deroofing de trayectos recidivantes.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Moderada-grave (Hurley II-III) — biológico / cirugía</div></div>
+<div class="chips"><span class="chip c2">adalimumab (TNF)</span><span class="chip er">secukinumab (IL-17A)</span><span class="chip er">bimekizumab (IL-17A/F)</span><span class="chip">cirugía amplia</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('hs_hc3').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="hs_hc3">HIDROSADENITIS SUPURATIVA - moderada-grave (biologico)
+- Biologico aprobado: adalimumab SC (anti-TNF), o secukinumab (anti-IL-17A), o bimekizumab (anti-IL-17A/F).
+- Cribado pre-biologico: TB latente (IGRA + Rx torax), VHB/VHC, hemograma, descartar infeccion activa.
+- Cirugia: exeresis amplia de zonas fibrosadas/trayectos establecidos (Hurley III).
+Mantener medidas de base y manejo del dolor. Solicito inicio de [biologico].</pre></div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente y la ficha técnica):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>EADV (S2k)</b> — European guidelines for HS, parte 2 (tratamiento): Zouboulis CC, et al. <em>JEADV</em> 2025 · <a href="https://onlinelibrary.wiley.com/doi/10.1111/jdv.20472" target="_blank" rel="noopener">doi:10.1111/jdv.20472</a>.</li>
+<li><b>Norteamericana</b> — Medical management of HS: <em>J Am Acad Dermatol</em> 2024 · <a href="https://www.jaad.org/article/S0190-9622(24)03395-4/fulltext" target="_blank" rel="noopener">jaad.org</a>.</li>
 </ul>
-<div class="btns">
-<button class="btn btn-out btn-sm" onclick="go('hurley')">Hurley</button>
-<button class="btn btn-sm" onclick="goPauta('hs')">💊 Pauta</button>
 </div>
-<h3>Claves de manejo</h3>
-<ul style="line-height:1.6">
-<li>Base: cese del tabaco, pérdida de peso, antisépticos, manejo del dolor.</li>
-<li>Antibióticos (tetraciclinas; clindamicina+rifampicina) y biológicos (adalimumab, secukinumab) en moderada-grave.</li>
-<li>Cirugía (deroofing/exéresis) de trayectos y zonas fibrosadas establecidas.</li>
-</ul>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Guía S2k EADV/EHSF.</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Infecciones cutáneas =====
