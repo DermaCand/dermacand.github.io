@@ -584,7 +584,7 @@ body{font-size:13px}
   <br>
   <button onclick="abrirAvisoLegal()" style="background:none; border:none; color:var(--c1); cursor:pointer; font-size:0.75rem; text-decoration:underline; padding:0.2rem 0;">⚖️ Aviso Legal</button>
   <span style="color:var(--bd)"> · </span>
-  <button onclick="hpOpenReport()" style="background:none; border:none; color:var(--c1); cursor:pointer; font-size:0.75rem; text-decoration:underline; padding:0.2rem 0;">🐞 Reportar un error</button>
+  <button onclick="hpOpenReport()" style="background:none; border:none; color:var(--c1); cursor:pointer; font-size:0.75rem; text-decoration:underline; padding:0.2rem 0;">Reportar un error</button>
   <br><span id="app-build-stamp" style="color:var(--mut); opacity:.7; font-size:0.7rem"></span>
 </footer>
 <script>document.addEventListener('DOMContentLoaded',function(){try{var s=document.getElementById('app-build-stamp');if(s&&typeof EMBEDDED_VERSION!=='undefined')s.textContent='Versión '+EMBEDDED_VERSION;}catch(e){}});</script>
@@ -5520,7 +5520,7 @@ const LC_HELP_RX=`<ul style="padding-left:18px;line-height:1.7;font-size:12.5px"
 </ul>
 <div class="alert y" style="margin-top:8px;font-size:12px"><strong>Importante:</strong> ayuda de redacción; <strong>verifica fármaco, dosis y pauta</strong> antes de prescribir.</div>`;
 
-function lcClear(){const i=$('lc_in');if(i)i.value='';const o=$('lc_out');if(o)o.value='';}
+function lcClear(){const i=$('lc_in');if(i)i.value='';const o=$('lc_out');if(o)o.value='';const g=$('lc_guard');if(g)g.innerHTML='';}
 VIEWS.labconv=()=>{
 return `<div class="card">
 <h2>📝 Asistente de redacción</h2>
@@ -5538,6 +5538,7 @@ return `<div class="card">
 
 <div class="fld" style="margin-top:6px"><label class="lbl">Resultado (editable)</label>
 <textarea id="lc_out" style="min-height:150px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px"></textarea></div>
+<div id="lc_guard" style="margin:8px 0"></div>
 <div class="btns"><button class="btn btn-g" onclick="copyLabConv()">📋 Copiar resultado</button></div>
 
 <div class="coll" style="margin-top:14px">
@@ -5548,12 +5549,61 @@ return `<div class="card">
 };
 VIEWS.labconv_post=()=>setLCmode('lab');
 
+// ── Blindaje del asistente de redacción: verificación de integridad numérica ──
+// Garantiza que el asistente SOLO reordena/reformatea: ningún número del resultado puede
+// ser inventado ni alterado. Extrae todos los valores numéricos del texto original y del
+// resultado y comprueba que cada número del resultado procede del original. En modo
+// analíticas se acepta la conversión de recuento (×1000 o ÷1000).
+function lcCanonNums(str){
+  let s=(str||'').toString()
+    .replace(/[x×·*]?\s*10\s*[eE^]?\s*\d/g,' ')   // 10E9, x10^3, ×10 6 …
+    .replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g,' ') // fechas
+    .replace(/\b\d{1,2}:\d{2}(?::\d{2})?\b/g,' ');           // horas
+  const out=[];
+  const re=/\d[\d.,]*\d|\d/g; let m;
+  while((m=re.exec(s))!==null){
+    let t=m[0]; let v;
+    if(t.includes(',')&&t.includes('.')){ v=parseFloat(t.replace(/\./g,'').replace(',','.')); }
+    else if(t.includes(',')){ v=parseFloat(t.replace(/\./g,'').replace(',','.')); }
+    else if((t.match(/\./g)||[]).length>=1 && /^\d{1,3}(\.\d{3})+$/.test(t)){ v=parseFloat(t.replace(/\./g,'')); }
+    else { v=parseFloat(t); }
+    if(!isNaN(v)) out.push(v);
+  }
+  return out;
+}
+function lcNumMatch(v,inSet,allowScale){
+  const tol=x=>Math.max(1e-6,Math.abs(x)*0.0015);
+  for(const iv of inSet){
+    if(Math.abs(v-iv)<=tol(v)) return true;
+    if(allowScale){
+      if(Math.abs(v-iv*1000)<=tol(v)) return true;
+      if(Math.abs(v-iv/1000)<=tol(v)) return true;
+    }
+  }
+  return false;
+}
+function lcGuard(raw,out,mode){
+  const box=$('lc_guard'); if(!box) return;
+  if(!out||!out.trim()){ box.innerHTML=''; return; }
+  const inNums=lcCanonNums(raw);
+  const outNums=lcCanonNums(out);
+  const allowScale=(mode==='lab');
+  const miss=[];
+  outNums.forEach(v=>{ if(!lcNumMatch(v,inNums,allowScale)) miss.push(v); });
+  if(!miss.length){
+    box.innerHTML='<div class="alert g" style="font-size:12px;margin:0"><strong>✓ Valores verificados.</strong> Todos los números del resultado provienen del texto original; el asistente solo ha reordenado y reformateado.</div>';
+  }else{
+    const uniq=[...new Set(miss.map(x=>x.toString().replace('.',',')))].slice(0,12).join(', ');
+    box.innerHTML='<div class="alert y" style="font-size:12px;margin:0"><strong>⚠ Revisa estos valores:</strong> '+uniq+'. No coinciden exactamente con ningún número del texto original. Comprueba que no se haya alterado ningún resultado antes de copiar.</div>';
+  }
+}
 function runAssistant(){
   const raw=($('lc_in').value||'');
   if(!raw.trim()){toast('Pega primero el texto');return}
   if(LC_MODE==='rx'){
     const out=window.RXtranscribe(raw);
     $('lc_out').value=out||'No se han reconocido medicamentos. Revisa el texto pegado.';
+    lcGuard(raw, (out&&out.indexOf('No se han reconocido')!==0)?out:'', 'rx');
     if(!out)toast('No se reconocieron medicamentos');
     return;
   }
@@ -5561,6 +5611,7 @@ function runAssistant(){
   const date=r.dateGuess||'';
   const out=window.LCbuild(r.found,date);
   $('lc_out').value=out||'No se han reconocido valores. Revisa el texto pegado o complétalo manualmente.';
+  lcGuard(raw, (out&&out.indexOf('No se han reconocido')!==0)?out:'', 'lab');
   if(!out)toast('No se reconocieron valores');
   else if(!date)toast('No se detectó fecha en el texto');
 }
