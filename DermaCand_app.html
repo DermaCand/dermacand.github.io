@@ -784,7 +784,6 @@ el.title=`${state}\nEstado: ${online?'Online':'Offline'}${lastUpd?'\nÚltima sin
 // === MENU CONFIG ===
 const MENU=[
 {h:'ASISTENTE',o:1,items:[
-{id:'recetas',name:'Pautas de tratamiento',kw:'pautas tratamiento consulta recetas receta protocolo prescripcion pauta esquema evidencia guias aad eadv edf aedv dermatosis psoriasis acne rosacea dermatitis seborreica contacto hidradenitis supurativa urticaria tiña dermatofitosis pitiriasis versicolor candidiasis escabiosis sarna herpes queratosis actinica alopecia dosis topico sistemico primera linea',new:'2026-06-03'},
 {id:'labconv',name:'Asistente de redacción',kw:'transcriptor convertidor redaccion informe dermatologico lesion descripcion morfologia exploracion formato limpiar ordenar pegar evolutivo nota clinica',new:'2026-05-29'}
 ]},
 {h:'ESCALAS Y SCORES',o:1,items:[
@@ -2956,6 +2955,17 @@ aga_rx:[
 {c:'Complemento oral',a:'suplemento capilar coadyuvante',op:[{m:'Pilexil cápsulas',lab:'Lacer'},{m:'Priorin',lab:'Bayer'},{m:'Lambdapil',lab:'ISDIN'}]}
 ]
 };
+// Tarjeta de productos comerciales de referencia (>=3 opciones por categoria) para una patologia,
+// renderizada dentro de su propia vista. Datos en RX_PRODUCTOS. Boton Copiar incluido.
+function productosCard(key){
+  var pr=RX_PRODUCTOS[key]; if(!pr||!pr.length) return '';
+  var rows=pr.map(function(x){
+    var ops=(x.op||[]).map(function(o){return '<span class="chip">'+chatEsc(o.m)+(o.lab?' · '+chatEsc(o.lab):'')+'</span>';}).join('');
+    return '<div style="margin-bottom:8px"><div style="font-size:12.5px;font-weight:600;color:var(--txt)">'+chatEsc(x.c)+'</div><div style="font-size:11.5px;color:var(--mut);margin:1px 0 3px">'+chatEsc(x.a)+'</div><div class="chips">'+ops+'</div></div>';
+  }).join('');
+  return '<div class="cplab"><span>Productos comerciales de referencia:</span><button class="btn btn-g btn-sm" onclick="copyProductos(\''+key+'\')">Copiar</button></div><div class="rxcard">'+rows+'<div style="font-size:11px;color:var(--mut);margin-top:2px">Orientativo (dermocosmética); existen equivalentes, verificar composición vigente.</div></div>';
+}
+function copyProductos(key){var pr=RX_PRODUCTOS[key]||[];var t=pr.map(function(x){return x.c+': '+(x.op||[]).map(function(o){return o.m+(o.lab?' ('+o.lab+')':'');}).join(' / ');}).join(String.fromCharCode(10));if(typeof copy==='function')copy(t);}
 const RX={
 liquen:{label:'Liquen plano',intro:'Tratamiento escalonado según extensión y localización (cutáneo, oral, ungueal). Cribar VHC y revisar fármacos liquenoides. Objetivo: controlar el prurito y la inflamación.',
 tiers:[
@@ -3308,7 +3318,7 @@ Eleccion por comorbilidad:
 - Gestacion/deseo: certolizumab.
 - Cancer o TB: anti-IL-17 / anti-IL-23.
 Solicito inicio/visado de [farmaco]. Revision tras la induccion (objetivo BSA<=1%).</pre></div>
-<div class="btns" style="margin-top:12px"><button class="btn btn-sm" onclick="goPauta('psoriasis')">Pauta completa por escalones</button></div>
+${productosCard('psoriasis')}
 
 <h3>Novedades (2022–2024)</h3>
 <div class="chips" style="margin-bottom:4px">
@@ -3349,10 +3359,10 @@ VIEWS.datopica=()=>`<div class="card">
 <div class="chips"><span class="chip c1">emoliente</span><span class="chip">corticoide tóp.</span><span class="chip">tacrolimus/pimecrolimus</span><span class="chip">crisaborol</span><span class="chip">ruxolitinib tóp.</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('da_hc1').innerText)">Copiar</button></div>
 <div class="rxcard"><pre id="da_hc1">DERMATITIS ATOPICA LEVE
-- Emoliente abundante 2 veces/dia (base del tratamiento), sobre todo tras el bano.
+- Emoliente abundante 2 veces/dia (base del tratamiento), sobre todo tras el baño.
 - Brote: corticoide topico de potencia media-baja 1 vez/dia hasta control.
 - Cara, parpados y pliegues: tacrolimus 0,1% o pimecrolimus 2 veces/dia; mantenimiento proactivo 2 dias/semana en zonas de recaida.
-- Bano corto con agua templada y syndet; algodon; evitar irritantes y rascado.
+- Baño corto con agua templada y syndet; algodon; evitar irritantes y rascado.
 Revision en 4 semanas; si brotes frecuentes o mal control, escalar.</pre></div>
 
 <div class="step-h l2"><div class="sn">2</div><div class="st">Moderada — optimizar tópico / fototerapia</div></div>
@@ -3397,6 +3407,8 @@ Mantener emoliente. Solicito inicio de [farmaco]; revision tras la induccion.</p
 <span class="chip">ruxolitinib tóp. · JAK · 2021</span>
 </div>
 
+${productosCard('datopica')}
+
 <div class="refbox">
 <b>Referencias</b> (verifica la fuente y la ficha técnica):
 <ul style="margin:6px 0 0;padding-left:18px">
@@ -3432,6 +3444,8 @@ Revision en 2-4 semanas.</pre></div>
 - Brote extenso: corticoide oral en pauta corta descendente (p. ej. prednisona 0,5 mg/kg/dia con descenso en 2-3 semanas).
 - Eccema cronico de manos refractario: valorar alitretinoina oral; fototerapia.
 Solicito patch test (bateria estandar + series dirigidas segun exposicion). Revision segun evolucion.</pre></div>
+
+${productosCard('dcontacto')}
 
 <div class="refbox">
 <b>Referencias</b> (verifica la fuente):
@@ -3524,6 +3538,8 @@ Revision en 8-12 semanas; si no respuesta o cicatrices, isotretinoina.</pre></di
 - Fotoproteccion; evitar tetraciclinas concomitantes (riesgo de hipertension intracraneal).
 Descartar hiperandrogenismo (SOP) si signos asociados. Revision mensual.</pre></div>
 
+${productosCard('acne')}
+
 <div class="refbox">
 <b>Referencias</b> (verifica la fuente y la ficha técnica):
 <ul style="margin:6px 0 0;padding-left:18px">
@@ -3565,6 +3581,8 @@ Revision en 8-12 semanas.</pre></div>
 - Refractaria o fima inflamatorio: isotretinoina oral a dosis baja.
 - Telangiectasias / eritema fijo / fima fibrotico: laser/IPL o cirugia.
 - Rosacea ocular: higiene palpebral + lagrima artificial; doxiciclina; derivar a oftalmologia si queratitis.</pre></div>
+
+${productosCard('rosacea')}
 
 <div class="refbox">
 <b>Referencias</b> (verifica la fuente):
@@ -3609,6 +3627,8 @@ Si no control, pasar a biologico. Deroofing de trayectos recidivantes.</pre></di
 - Cribado pre-biologico: TB latente (IGRA + Rx torax), VHB/VHC, hemograma, descartar infeccion activa.
 - Cirugia: exeresis amplia de zonas fibrosadas/trayectos establecidos (Hurley III).
 Mantener medidas de base y manejo del dolor. Solicito inicio de [biologico].</pre></div>
+
+${productosCard('hs')}
 
 <div class="refbox">
 <b>Referencias</b> (verifica la fuente y la ficha técnica):
