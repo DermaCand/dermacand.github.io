@@ -193,6 +193,16 @@ body.view-home .app-footer{padding-bottom:18px}
 .step-h .sn{flex:0 0 26px;height:26px;border-radius:50%;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
 .step-h .st{font-size:15px;font-weight:700;color:var(--txt)}
 .step-h.l1 .sn{background:var(--ok)}.step-h.l2 .sn{background:var(--wn)}.step-h.l3 .sn{background:var(--c1)}
+/* Bloque de productos comerciales: color propio (azul marino) para diferenciarlo del tratamiento */
+.prodcard{background:rgba(26,58,108,.07);border:1px solid var(--bd);border-left:4px solid var(--c2);border-radius:var(--rs);padding:11px 13px;margin:6px 0 14px}
+[data-t="dark"] .prodcard{background:rgba(123,163,224,.10);border-left-color:var(--c2l)}
+.prodcard .pc-cat{font-size:12.5px;font-weight:600;color:var(--c2)}
+[data-t="dark"] .prodcard .pc-cat{color:var(--c2l)}
+.prodcard .pc-desc{font-size:11.5px;color:var(--mut);margin:1px 0 3px}
+.cplab.prod span{color:var(--c2)}
+[data-t="dark"] .cplab.prod span{color:var(--c2l)}
+.chip.prod{background:rgba(26,58,108,.12);color:var(--c2);border-color:transparent}
+[data-t="dark"] .chip.prod{background:rgba(123,163,224,.16);color:var(--c2l)}
 .lbl{display:block;font-size:13px;font-weight:500;margin-bottom:5px;color:var(--txt)}
 .fld{margin-bottom:11px}
 .fld input:not([type=radio]):not([type=checkbox]),.fld select,.fld textarea{width:100%;padding:8px 10px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--inp);color:var(--txt);font-size:13px;outline:none;font-family:inherit}
@@ -2960,10 +2970,10 @@ aga_rx:[
 function productosCard(key){
   var pr=RX_PRODUCTOS[key]; if(!pr||!pr.length) return '';
   var rows=pr.map(function(x){
-    var ops=(x.op||[]).map(function(o){return '<span class="chip">'+chatEsc(o.m)+(o.lab?' · '+chatEsc(o.lab):'')+'</span>';}).join('');
-    return '<div style="margin-bottom:8px"><div style="font-size:12.5px;font-weight:600;color:var(--txt)">'+chatEsc(x.c)+'</div><div style="font-size:11.5px;color:var(--mut);margin:1px 0 3px">'+chatEsc(x.a)+'</div><div class="chips">'+ops+'</div></div>';
+    var ops=(x.op||[]).map(function(o){return '<span class="chip prod">'+chatEsc(o.m)+(o.lab?' · '+chatEsc(o.lab):'')+'</span>';}).join('');
+    return '<div style="margin-bottom:8px"><div class="pc-cat">'+chatEsc(x.c)+'</div><div class="pc-desc">'+chatEsc(x.a)+'</div><div class="chips">'+ops+'</div></div>';
   }).join('');
-  return '<div class="cplab"><span>Productos comerciales de referencia:</span><button class="btn btn-g btn-sm" onclick="copyProductos(\''+key+'\')">Copiar</button></div><div class="rxcard">'+rows+'<div style="font-size:11px;color:var(--mut);margin-top:2px">Orientativo (dermocosmética); existen equivalentes, verificar composición vigente.</div></div>';
+  return '<div class="cplab prod"><span>Productos comerciales de referencia:</span><button class="btn btn-out btn-sm" onclick="copyProductos(\''+key+'\')">Copiar</button></div><div class="prodcard">'+rows+'<div style="font-size:11px;color:var(--mut);margin-top:2px">Orientativo (dermocosmética); existen equivalentes, verificar composición vigente.</div></div>';
 }
 function copyProductos(key){var pr=RX_PRODUCTOS[key]||[];var t=pr.map(function(x){return x.c+': '+(x.op||[]).map(function(o){return o.m+(o.lab?' ('+o.lab+')':'');}).join(' / ');}).join(String.fromCharCode(10));if(typeof copy==='function')copy(t);}
 const RX={
