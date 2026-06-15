@@ -3334,84 +3334,156 @@ Solicito inicio/visado de [farmaco]. Revision tras la induccion (objetivo BSA<=1
 // ===== VISTAS DE PATOLOGÍA · Dermatosis inflamatorias =====
 VIEWS.datopica=()=>`<div class="card">
 <h2>Dermatitis atópica</h2>
-<p class="intro">Dermatosis inflamatoria crónica y recidivante, muy pruriginosa, sobre piel con disfunción de barrera (filagrina) y desviación Th2. Cursa en brotes; inicio frecuente en la infancia y "marcha atópica" (asma, rinoconjuntivitis).</p>
-<h3>Clínica por edades</h3>
-<ul style="line-height:1.6">
-<li><strong>Lactante</strong> — eccema en mejillas, cuero cabelludo y superficies de extensión; respeta el área del pañal.</li>
-<li><strong>Infantil</strong> — flexuras (antecubital, poplítea), cuello, muñecas; liquenificación.</li>
-<li><strong>Adulto</strong> — flexuras, manos, párpados, cabeza-cuello; prurigo y liquenificación.</li>
-</ul>
-<h3>Diagnóstico</h3>
-<p>Clínico (criterios de Hanifin-Rajka / UK Working Party): prurito + ≥3 de eccema flexural, xerosis, inicio precoz y antecedentes atópicos. Vigilar sobreinfección (impétigo; eccema herpético = urgencia).</p>
-<h3>Gravedad y seguimiento</h3>
-<p>Extensión/intensidad con EASI o SCORAD, impacto con DLQI, respuesta con IGA.</p>
+<p class="intro">Eccema crónico pruriginoso por disfunción de barrera (filagrina) + inflamación Th2. Cursa en brotes. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica.</strong> Intensidad con <strong>EASI/SCORAD</strong>, impacto con <strong>DLQI</strong>, respuesta con <strong>IGA</strong>. Moderada-grave = no controlada con tópicos bien usados o gran impacto. <strong>Base siempre:</strong> emoliente diario + evitar irritantes. Descartar sobreinfección (S. aureus; eccema herpético).</div></div>
 <div class="btns">
 <button class="btn btn-out btn-sm" onclick="go('easi')">EASI</button>
 <button class="btn btn-out btn-sm" onclick="go('scorad')">SCORAD</button>
 <button class="btn btn-out btn-sm" onclick="go('dlqi')">DLQI</button>
-<button class="btn btn-sm" onclick="goPauta('datopica')">💊 Pauta y productos</button>
+<button class="btn btn-out btn-sm" onclick="go('iga')">IGA</button>
 </div>
-<h3>Claves de manejo</h3>
-<ul style="line-height:1.6">
-<li>Emolientes a diario (base del tratamiento); evitar irritantes y desencadenantes.</li>
-<li>Corticoide tópico o inhibidor de calcineurina en brote; tratamiento proactivo si recidivante.</li>
-<li>Moderada-grave: dupilumab, JAK orales, fototerapia (ver Pauta).</li>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Leve — tópico</div></div>
+<div class="chips"><span class="chip c1">emoliente</span><span class="chip">corticoide tóp.</span><span class="chip">tacrolimus/pimecrolimus</span><span class="chip">crisaborol</span><span class="chip">ruxolitinib tóp.</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('da_hc1').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="da_hc1">DERMATITIS ATOPICA LEVE
+- Emoliente abundante 2 veces/dia (base del tratamiento), sobre todo tras el bano.
+- Brote: corticoide topico de potencia media-baja 1 vez/dia hasta control.
+- Cara, parpados y pliegues: tacrolimus 0,1% o pimecrolimus 2 veces/dia; mantenimiento proactivo 2 dias/semana en zonas de recaida.
+- Bano corto con agua templada y syndet; algodon; evitar irritantes y rascado.
+Revision en 4 semanas; si brotes frecuentes o mal control, escalar.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Moderada — optimizar tópico / fototerapia</div></div>
+<div class="chips"><span class="chip">corticoide medio-alto</span><span class="chip">calcineurínico proactivo</span><span class="chip">vendaje húmedo</span><span class="chip">UVB-BE</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('da_hc2').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="da_hc2">DERMATITIS ATOPICA MODERADA (EASI/SCORAD moderado, DLQI elevado)
+- Optimizar topico: corticoide de potencia media-alta en brote + calcineurinico proactivo 2 dias/semana.
+- Brote intenso: vendajes humedos (wet wraps) unos dias.
+- Fototerapia UVB de banda estrecha 2-3 sesiones/semana, o
+- Valorar sistemico si fallo a topico bien hecho / fototerapia.
+Descartar y tratar sobreinfeccion. Revision en 4-8 semanas.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Moderada-grave refractaria — sistémico avanzado</div></div>
+<p style="font-size:12.5px;color:var(--mut);margin:2px 0 4px"><strong>Biológicos</strong> (sin monitorización analítica de rutina) · <strong>JAK orales</strong> (rápidos, requieren cribado):</p>
+<div class="chips"><span class="chip c1">dupilumab (IL-4Rα)</span><span class="chip c1">tralokinumab/lebrikizumab (IL-13)</span><span class="chip c1">nemolizumab (IL-31)</span><span class="chip wn">upadacitinib · abrocitinib · baricitinib (JAK)</span></div>
+<p style="font-size:12.5px;color:var(--mut);margin:10px 0 4px"><strong>Elige</strong> (✓ preferir · <span style="color:var(--er)">✕ evitar</span>):</p>
+<div class="dxgrid">
+<div class="dxrow"><div><strong>Quiero seguridad / sin analíticas</strong> → dupilumab o tralokinumab/lebrikizumab</div></div>
+<div class="dxrow"><div><strong>Prurito predominante</strong> → nemolizumab (anti-IL-31) o JAK</div></div>
+<div class="dxrow"><div><strong>Necesito respuesta rápida / oral</strong> → JAK (upadacitinib, abrocitinib)</div></div>
+<div class="dxrow"><div><strong>>65 años, tabaquismo, riesgo CV/trombótico o neoplásico</strong> → <span style="color:var(--er)">✕ JAK</span>; prefiere biológico</div></div>
+<div class="dxrow"><div><strong>Conjuntivitis con dupilumab</strong> → cambiar a anti-IL-13 o JAK</div></div>
+<div class="dxrow"><div><strong>Puente corto</strong> → ciclosporina (brote); MTX o azatioprina como convencional</div></div>
+</div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('da_hc3').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="da_hc3">DERMATITIS ATOPICA MODERADA-GRAVE refractaria a topico - sistemico avanzado
+Biologico (sin monitorizacion analitica de rutina):
+- Dupilumab (anti-IL-4Ra) SC; vigilar conjuntivitis.
+- Tralokinumab o lebrikizumab (anti-IL-13). Nemolizumab (anti-IL-31) si prurito predominante.
+JAK oral (rapido; requiere cribado previo):
+- Upadacitinib o abrocitinib (o baricitinib).
+- Cribado JAK: hemograma, perfil hepatico y lipidico, TB y VHB/VHC, valorar riesgo CV/trombotico; precaucion en >65 anos, fumadores y antecedente CV o neoplasico.
+Convencional puente: ciclosporina (brote), metotrexato o azatioprina.
+Mantener emoliente. Solicito inicio de [farmaco]; revision tras la induccion.</pre></div>
+
+<h3>Novedades (2021–2024)</h3>
+<div class="chips" style="margin-bottom:4px">
+<span class="chip c1">tralokinumab · IL-13 · 2021</span>
+<span class="chip c1">lebrikizumab · IL-13 · 2024</span>
+<span class="chip c1">nemolizumab · IL-31 · 2024</span>
+<span class="chip wn">abrocitinib/upadacitinib · JAK · 2022</span>
+<span class="chip">ruxolitinib tóp. · JAK · 2021</span>
+</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente y la ficha técnica):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>AAD</b> — Manejo de la dermatitis atópica en adultos con fototerapia y terapias sistémicas: <em>J Am Acad Dermatol</em> 2024 · <a href="https://www.jaad.org/article/S0190-9622(23)02878-5/fulltext" target="_blank" rel="noopener">jaad.org</a>.</li>
+<li><b>AAAAI/ACAAI (JTF)</b> — Atopic dermatitis guidelines (GRADE): <em>Ann Allergy Asthma Immunol</em> 2024 · <a href="https://www.annallergy.org/article/S1081-1206(23)01455-2/fulltext" target="_blank" rel="noopener">annallergy.org</a>.</li>
+<li><b>AEDV</b> — Consenso de manejo de la dermatitis atópica moderada-grave (Delphi): <em>Actas Dermosifiliogr</em> 2023 · <a href="https://www.actasdermo.org/es-lineas-mejora-asistencial-entre-dermatologos-articulo-S0001731023003022" target="_blank" rel="noopener">actasdermo.org</a>.</li>
 </ul>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Guías AAD/EADV/AEDV; pendiente de validación.</div>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). Contenido orientativo basado en las guías citadas; <strong>confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.dcontacto=()=>`<div class="card">
 <h2>Dermatitis de contacto</h2>
-<p class="intro">Eccema provocado por un agente externo. Dos mecanismos: <strong>irritativa</strong> (no inmunológica, dosis-dependiente, la más frecuente) y <strong>alérgica</strong> (hipersensibilidad retardada tipo IV, requiere sensibilización previa).</p>
-<h3>Irritativa vs alérgica</h3>
-<ul style="line-height:1.6">
-<li><strong>Irritativa</strong> — escozor/quemazón, bordes netos limitados a la zona de contacto; afecta a cualquiera con exposición suficiente (jabones, disolventes, agua).</li>
-<li><strong>Alérgica</strong> — prurito, eccema que rebasa la zona de contacto y puede diseminarse; alérgenos frecuentes: níquel, fragancias/cosméticos, gomas, parafenilendiamina.</li>
+<p class="intro">Eccema por agente externo: <strong>irritativa</strong> (dosis-dependiente, la más frecuente) o <strong>alérgica</strong> (hipersensibilidad tipo IV). Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>La clave es identificar y EVITAR el agente.</strong> Si sospechas alérgica → <strong>patch test</strong> (batería estándar + dirigida; lectura a 48 y 96 h). Irritativa: bordes netos en la zona de contacto; alérgica: rebasa la zona y pica.</div></div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Aguda / localizada</div></div>
+<div class="chips"><span class="chip c1">evitación</span><span class="chip">corticoide tóp. potente</span><span class="chip">emoliente / barrera</span><span class="chip">tacrolimus (cara/pliegues)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dc_hc1').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="dc_hc1">DERMATITIS DE CONTACTO - aguda/localizada
+- Identificar y EVITAR el agente (laboral, cosmetico, topico); lavado y retirada.
+- Corticoide topico potente 1 vez/dia 1-2 semanas (cara/pliegues: potencia media o tacrolimus 0,1%).
+- Emoliente y proteccion de barrera (guantes, cremas barrera).
+- Si se sospecha alergica: solicitar patch test para identificar el alergeno (lectura 48 y 96 h).
+Revision en 2-4 semanas.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Extensa o crónica (p. ej. manos)</div></div>
+<div class="chips"><span class="chip">corticoide oral corto</span><span class="chip">fototerapia</span><span class="chip wn">alitretinoína (manos crónica)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dc_hc2').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="dc_hc2">DERMATITIS DE CONTACTO - extensa o cronica (p. ej. manos)
+- Evitacion estricta del alergeno/irritante + proteccion de barrera.
+- Brote extenso: corticoide oral en pauta corta descendente (p. ej. prednisona 0,5 mg/kg/dia con descenso en 2-3 semanas).
+- Eccema cronico de manos refractario: valorar alitretinoina oral; fototerapia.
+Solicito patch test (bateria estandar + series dirigidas segun exposicion). Revision segun evolucion.</pre></div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>ESCD</b> — Guías de la European Society of Contact Dermatitis (patch testing; eccema de manos 2022) · <a href="https://escd.org/guidelines-papers-books/" target="_blank" rel="noopener">escd.org/guidelines</a>.</li>
+<li><b>DermNet</b> — Contact dermatitis · <a href="https://dermnetnz.org/topics/contact-dermatitis" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
 </ul>
-<h3>Diagnóstico</h3>
-<p>Historia de exposición (laboral, cosmética, tópicos). La <strong>prueba epicutánea (patch test)</strong> identifica el alérgeno en la forma alérgica; lectura a las 48 y 96 h.</p>
-<div class="btns"><button class="btn btn-sm" onclick="goPauta('dcontacto')">💊 Pauta</button></div>
-<h3>Claves de manejo</h3>
-<ul style="line-height:1.6">
-<li>Evitar/retirar el agente causal (clave); protección de barrera y emolientes.</li>
-<li>Corticoide tópico en el brote; pauta corta de corticoide oral si es extensa.</li>
-<li>Eccema crónico de manos: protección, valorar alitretinoína.</li>
-</ul>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Guías AEDV/contacto.</div>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.liquen=()=>`<div class="card">
 <h2>Liquen plano</h2>
-<p class="intro">Dermatosis inflamatoria crónica mediada por linfocitos T contra los queratinocitos basales. Idiopático o asociado a fármacos y a infección por el virus de la hepatitis C (cribar serología).</p>
+<p class="intro">Dermatosis liquenoide por linfocitos T (5 P: pápulas poligonales, planas, pruriginosas, púrpuras; estrías de Wickham). Cutáneo suele autolimitarse en 1-2 años. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
 
-<h3>Clínica — las "5 P"</h3>
-<p>Pápulas <strong>p</strong>oligonales, <strong>p</strong>lanas, <strong>p</strong>ruriginosas, <strong>p</strong>urpúricas/violáceas y <strong>p</strong>recisas, con finas estrías blanquecinas en superficie (<em>estrías de Wickham</em>). Localización típica: cara flexora de muñecas, tobillos y región lumbar. Presenta fenómeno de Köbner.</p>
+<div class="perla"><div><strong>Antes de tratar:</strong> cribar <strong>serología VHC</strong> y revisar fármacos liquenoides (IECA, betabloqueantes, antipalúdicos, AINE, tiazidas). <strong>Oral erosivo:</strong> vigilar malignización (controles periódicos). Variantes crónicas: oral, ungueal, pilar (alopecia cicatricial).</div></div>
 
-<h3>Variantes clínicas</h3>
-<ul>
-<li><strong>Cutáneo clásico</strong> — pápulas violáceas pruriginosas.</li>
-<li><strong>Oral</strong> — reticular (red de Wickham, asintomático) o erosivo (doloroso; <em>vigilar malignización</em> con controles periódicos).</li>
-<li><strong>Ungueal</strong> — adelgazamiento, estrías longitudinales, pterigión dorsal.</li>
-<li><strong>Pilar</strong> — liquen plano pilar, causa de alopecia cicatricial.</li>
-<li><strong>Otras</strong> — hipertrófico (piernas, muy pruriginoso), ampolloso, actínico, pigmentoso.</li>
+<div class="step-h l1"><div class="sn">1</div><div class="st">Cutáneo localizado</div></div>
+<div class="chips"><span class="chip c1">clobetasol 0,05%</span><span class="chip">triamcinolona intralesional</span><span class="chip">antihistamínico (prurito)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('lp_hc1').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="lp_hc1">LIQUEN PLANO CUTANEO - localizado
+- Corticoide topico superpotente (clobetasol 0,05%) 1 vez/dia 2-4 semanas.
+- Lesiones resistentes/hipertroficas: triamcinolona intralesional 5-10 mg/mL.
+- Antihistaminico oral para el prurito si precisa.
+Cribar serologia VHC; revisar y retirar farmacos liquenoides.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Cutáneo difuso / extenso</div></div>
+<div class="chips"><span class="chip">prednisona oral (descendente)</span><span class="chip">UVB-BE / PUVA</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('lp_hc2').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="lp_hc2">LIQUEN PLANO CUTANEO - difuso/extenso
+- Corticoide oral en pauta descendente (prednisona 30-60 mg/dia, descenso en 2-6 semanas), o
+- Fototerapia (UVB de banda estrecha o PUVA).
+Revision a las 4-8 semanas.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Refractario / oral erosivo</div></div>
+<div class="chips"><span class="chip">acitretina</span><span class="chip">metotrexato</span><span class="chip">hidroxicloroquina</span><span class="chip">ciclosporina/micofenolato</span><span class="chip">tacrolimus tóp. (oral)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('lp_hc3').innerText)">Copiar</button></div>
+<div class="rxcard"><pre id="lp_hc3">LIQUEN PLANO refractario o cronico (hipertrofico, ungueal, pilar)
+- Sistemico: acitretina, o metotrexato, o hidroxicloroquina, o ciclosporina/micofenolato.
+LIQUEN PLANO ORAL EROSIVO:
+- 1a linea: corticoide topico (gel en orabase o enjuague de dexametasona).
+- Refractario: tacrolimus topico; sistemico si extenso.
+- Vigilar malignizacion con controles periodicos.</pre></div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>StatPearls</b> — Lichen planus (revisión) · <a href="https://www.ncbi.nlm.nih.gov/books/NBK526126/" target="_blank" rel="noopener">NCBI</a>.</li>
+<li><b>Cochrane</b> — Corticoides en liquen plano oral · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7047223/" target="_blank" rel="noopener">PMC</a>.</li>
+<li><b>DermNet</b> — Lichen planus · <a href="https://dermnetnz.org/topics/lichen-planus" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
 </ul>
-
-<h3>Diagnóstico</h3>
-<ul>
-<li>Clínico, apoyado en dermatoscopia (estrías de Wickham).</li>
-<li>Biopsia ante duda: infiltrado linfocitario <strong>liquenoide en banda</strong> en la unión dermoepidérmica, con queratinocitos apoptóticos (cuerpos de Civatte).</li>
-<li>Cribar <strong>serología de VHC</strong> y revisar fármacos liquenoides (IECA, betabloqueantes, antipalúdicos, AINE, tiazidas).</li>
-</ul>
-
-<h3>Tratamiento</h3>
-<p>Escalonado según extensión y localización: corticoide tópico potente ± inhibidor de calcineurina (localizado); corticoide oral, fototerapia o sistémicos (extenso); corticoide tópico y seguimiento en el oral erosivo.</p>
-<div class="btns"><button class="btn btn-sm" onclick="goPauta('liquen')">💊 Ver pauta de tratamiento</button></div>
-
-<h3>Pronóstico</h3>
-<p>El cutáneo suele autolimitarse en 1-2 años, dejando hiperpigmentación residual. Las formas oral erosiva, ungueal y pilar son más crónicas y requieren seguimiento.</p>
-
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/lichen-planus" target="_blank" rel="noopener">DermNet — Lichen planus</a> · <a href="https://www.aad.org/member/clinical-quality/guidelines" target="_blank" rel="noopener">AAD Clinical Guidelines</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>. Enlaces a las fuentes oficiales; verifica la versión vigente.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Folículo y glándulas =====
