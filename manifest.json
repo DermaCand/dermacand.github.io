@@ -10,6 +10,22 @@
   "background_color": "#eef1f5",
   "theme_color": "#0d7d8c",
   "categories": ["medical", "health", "education"],
+  "shortcuts": [
+    {
+      "name": "Buscar",
+      "short_name": "Buscar",
+      "description": "Búsqueda rápida de guías, escalas y cálculos",
+      "url": "./DermaCand_app.html#buscar",
+      "icons": [{ "src": "./icono-192.png?v=45", "sizes": "192x192" }]
+    },
+    {
+      "name": "Listín telefónico",
+      "short_name": "Listín",
+      "description": "Directorio de extensiones del hospital",
+      "url": "./DermaCand_app.html#phone",
+      "icons": [{ "src": "./icono-192.png?v=45", "sizes": "192x192" }]
+    }
+  ],
   "icons": [
     {
       "src": "./icono-192.png?v=45",

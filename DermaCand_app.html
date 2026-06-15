@@ -212,6 +212,8 @@ body.view-home .app-footer{padding-bottom:18px}
 .tbl{width:100%;border-collapse:collapse;margin:8px 0;font-size:12.5px}
 .tbl th,.tbl td{padding:8px 9px;border:1px solid var(--bd);text-align:left;vertical-align:top}
 .tbl th{background:var(--bg2);font-weight:600;font-size:12px}
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;margin:8px 0}
+.tbl-scroll>.tbl{margin:0;min-width:max-content}
 .coll{margin-bottom:8px;border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden}
 .coll-h{padding:11px 14px;cursor:pointer;background:var(--bg2);font-weight:500;display:flex;justify-content:space-between;align-items:center;font-size:13px;user-select:none}
 .coll-h:hover{background:var(--hov)}
@@ -933,6 +935,19 @@ function toggleFav(id){const i=S.favs.indexOf(id);if(i>=0)S.favs.splice(i,1);els
 function homeFav(id){toggleFav(id);if(S.view==='home')$('content').innerHTML=homeView();}
 function filterMenu(v){renderMenu(v)}
 
+// Envuelve cada table.tbl en un contenedor con scroll horizontal, para que las tablas
+// anchas no se desborden en móvil. Se invoca en go() tras pintar cada vista.
+function wrapTbls(root){
+  try{
+    (root||document).querySelectorAll('table.tbl').forEach(t=>{
+      const p=t.parentElement; if(!p) return;
+      if(p.classList.contains('tbl-scroll')) return;
+      if(p.style&&/auto|scroll/.test(p.style.overflowX||'')) return;
+      const w=document.createElement('div'); w.className='tbl-scroll';
+      t.replaceWith(w); w.appendChild(t);
+    });
+  }catch(e){}
+}
 function go(id, params) {
     if (id === 'chat') { closeSb(); openChat(); return; }
     S.view = id;
@@ -949,6 +964,7 @@ function go(id, params) {
     const v = VIEWS[id];
     $('content').innerHTML = v ? v(params) : homeView();
     if (VIEWS[id + '_post']) VIEWS[id + '_post'](params);
+    if (typeof wrapTbls === 'function') wrapTbls($('content'));
     document.body.classList.toggle('view-home', !!document.querySelector('#content .home-screen'));
     const _ew = $('eriWrap');
     if (_ew) { _ew._manual = false; if (typeof eriAnchor === 'function') requestAnimationFrame(eriAnchor); }
@@ -2610,25 +2626,56 @@ Object.keys(GUIDES_TITLES).forEach(id=>{VIEWS['g_'+id]=()=>guidesView(id)});
 
 // === SINCRONIZACIÓN ===
 const DEFAULT_UPDATE_URL=''; // DermaCand: sincronización deshabilitada hasta crear su PROPIO Gist (NO el de HemoPocket). Se configurará al publicar.
+// Escape de emergencia si el service worker se queda "pegado" en una versión vieja:
+// desregistra los SW, borra todas las cachés y recarga sin caché. No pierde favoritos ni datos.
+async function hpForceUpdate(){
+  try{ if(typeof toast==='function') toast('🔄 Actualizando…'); }catch(e){}
+  try{
+    if('serviceWorker' in navigator){
+      const regs=await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r=>r.unregister()));
+    }
+    if(window.caches){
+      const keys=await caches.keys();
+      await Promise.all(keys.map(k=>caches.delete(k)));
+    }
+  }catch(e){}
+  location.replace(location.pathname+'?u='+Date.now());
+}
 VIEWS.sync=()=>{
 const lastUpd=ls.g('lastUpdate');
 const version=ls.g('updateVersion')||'';
 const online=navigator.onLine;
 const btnDisabled=!online;
 const btnText=!online?'Sin Internet':'Descargar todo ahora';
+// ¿La app está guardada para funcionar sin conexión? Si el SW ya controla la página, el armazón está cacheado.
+const swReady=('serviceWorker' in navigator)&&!!navigator.serviceWorker.controller;
+const offlineReady='<div class="alert '+(swReady?'g':'y')+'" style="margin:14px 0">'+
+  (swReady
+    ? '✅ <strong>Listo para usar sin conexión.</strong> La app está guardada en este dispositivo.'
+    : '⏳ <strong>Aún no está guardada del todo para sin conexión.</strong> Mantén la app abierta unos segundos con Internet y vuelve a esta pantalla.')+
+  '</div>';
 return `<div class="card">
 <h2>Actualizar la app</h2>
-<p class="intro">La sincronización de contenidos en la nube <strong>todavía no está configurada</strong> en DermaCand. Se activará cuando la app se publique con su propia fuente de datos.</p>
-<p class="intro">De momento, todo el contenido viaja <strong>dentro de la propia app</strong> y funciona sin conexión.</p>
+<p class="intro"><strong>La app se actualiza sola</strong> en segundo plano siempre que tengas Internet. Las <strong>guías de la nube</strong> se descargan automáticamente al iniciar sesión. <strong>Normalmente no necesitas usar ningún botón.</strong></p>
+<p class="intro">Todo el contenido base viaja <strong>dentro de la propia app</strong> y funciona sin conexión.</p>
 
 <div class="alert ${online?'g':'r'}" style="margin:14px 0">
 <strong>Estado:</strong> ${online?'Online':'Sin Internet'}<br>
 <strong>Última actualización:</strong> ${lastUpd?new Date(lastUpd).toLocaleString('es-ES'):'Nunca'}${version?'<br><strong>Versión:</strong> '+version:''}
 </div>
 
+${offlineReady}
+
 <button class="btn btn-2" style="width:100%;padding:18px;font-size:16px;justify-content:center" onclick="syncAll()" ${btnDisabled?'disabled':''}>${btnText}</button>
 
 <div id="sy_status"></div>
+
+<details style="margin-top:18px">
+<summary style="cursor:pointer;color:var(--mut);font-size:14px">¿La app no muestra los últimos cambios?</summary>
+<p class="intro" style="margin-top:10px">Si tras abrir con Internet sigues viendo una versión antigua, pulsa este botón: borra la caché y el service worker y recarga la app con la última versión. No pierdes tus favoritos ni datos.</p>
+<button class="btn" style="width:100%;padding:14px;justify-content:center" onclick="hpForceUpdate()">🔄 Forzar actualización completa</button>
+</details>
 
 </div>`;
 };
@@ -5994,7 +6041,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 6;
+  var DC_BUILD = 7;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;

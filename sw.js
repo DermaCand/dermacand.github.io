@@ -3,7 +3,7 @@
 // Estática (CSS/JS/imágenes/fuentes de PDF.js/PDFs locales): cache-first.
 // Versión: bump para forzar actualización de los clientes. DEBE coincidir con DC_BUILD en la app.
 
-const CACHE = 'dermacand-v6';
+const CACHE = 'dermacand-v7';
 // El recurso crítico es DermaCand_app.html (app autocontenida). El resto son auxiliares.
 // pdf.min.js + worker se auto-alojan y se precachean para que el visor de PDF funcione sin conexión.
 const APP_SHELL = ['/DermaCand_app.html', '/manifest.json', '/', '/index.html', '/pdf.min.js', '/pdf.worker.min.js'];
@@ -79,7 +79,15 @@ self.addEventListener('fetch', e => {
             .then(r => r || caches.match('/DermaCand_app.html'))
             .then(r => r || caches.match('/'))
             .then(r => r || new Response(
-              '<!doctype html><meta charset="utf-8"><body style="font-family:system-ui;text-align:center;padding:40px;color:#333"><h2>Sin conexión</h2><p>Abre DermaCand una vez con conexión para guardarla en el dispositivo.</p></body>',
+              `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DermaCand — Sin conexión</title></head>
+<body style="margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;background:#eef1f5;color:#333;padding:24px">
+<div style="max-width:380px;text-align:center">
+<div style="font-size:1.6rem;font-weight:700;margin-bottom:8px"><span style="color:#1a3a6c;font-weight:500">DERMA</span><span style="color:#0d7d8c">CAND</span></div>
+<h1 style="font-size:1.15rem;margin:.4rem 0;color:#0d7d8c">Sin conexión</h1>
+<p style="font-size:.95rem;line-height:1.6">Parece que es la primera vez que abres DermaCand en este dispositivo y ahora no hay conexión.</p>
+<p style="font-size:.95rem;line-height:1.6"><strong>Ábrela una vez con Internet</strong> y deja pasar unos segundos: se guardará en el dispositivo y, a partir de entonces, <strong>funcionará sin conexión</strong>.</p>
+<button onclick="location.reload()" style="margin-top:12px;background:#0d7d8c;color:#fff;border:none;border-radius:8px;padding:.6rem 1.3rem;font-size:.95rem;cursor:pointer">Reintentar</button>
+</div></body></html>`,
               { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
             ))
         )
