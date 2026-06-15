@@ -2997,6 +2997,13 @@ aga_rx:[
 {c:'Minoxidil tópico',a:'minoxidil 5% espuma/solución (base OTC)',op:[{m:'Regaxidil 5%',lab:'EFG'},{m:'Lacovin 5%',lab:'Lacer'},{m:'Minoxidil Viñas 5%',lab:'Viñas'}]},
 {c:'Champú coadyuvante',a:'champú anticaída (cafeína/activos)',op:[{m:'Anaphase+',lab:'Ducray'},{m:'Pilexil anticaída',lab:'Lacer'},{m:'Dercos Energy+',lab:'Vichy'}]},
 {c:'Complemento oral',a:'suplemento capilar coadyuvante',op:[{m:'Pilexil cápsulas',lab:'Lacer'},{m:'Priorin',lab:'Bayer'},{m:'Lambdapil',lab:'ISDIN'}]}
+],
+lupus:[
+{c:'Fotoprotección muy alta (clave)',a:'SPF50+ diario, con cobertura UVA y luz visible',op:[{m:'Anthelios UVMune SPF50+',lab:'La Roche-Posay'},{m:'Heliocare 360 SPF50+',lab:'Cantabria Labs'},{m:'Fotoultra/Fusion SPF50+',lab:'ISDIN'}]},
+{c:'Fotoprotección con color',a:'pigmento (cubre luz visible, mejor en fotodermatosis)',op:[{m:'Anthelios SPF50+ color',lab:'La Roche-Posay'},{m:'Heliocare 360 Color',lab:'Cantabria Labs'},{m:'Fotoprotector Fusion Water Color',lab:'ISDIN'}]}
+],
+dermatomiositis:[
+{c:'Fotoprotección muy alta (clave)',a:'SPF50+ diario, con cobertura UVA y luz visible',op:[{m:'Anthelios UVMune SPF50+',lab:'La Roche-Posay'},{m:'Heliocare 360 SPF50+',lab:'Cantabria Labs'},{m:'Fotoultra/Fusion SPF50+',lab:'ISDIN'}]}
 ]
 };
 // Tarjeta de productos comerciales de referencia (>=3 opciones por categoria) para una patologia,
@@ -4539,40 +4546,98 @@ VIEWS.liquen_escleroso=()=>`<div class="card">
 
 VIEWS.dermatomiositis=()=>`<div class="card">
 <h2>Dermatomiositis</h2>
-<p class="intro">Miopatía inflamatoria autoinmune con manifestaciones cutáneas características. Es clave el cribado de neoplasia y de afectación pulmonar.</p>
-<h3>Signos cutáneos clave</h3>
-<ul>
-<li><strong>Eritema en heliotropo</strong> — violáceo periorbitario con edema.</li>
-<li><strong>Pápulas de Gottron</strong> — sobre nudillos, codos y rodillas (patognomónico).</li>
-<li>Signo del chal / V del escote, manos de mecánico, eritema periungueal con megacapilares.</li>
-</ul>
-<h3>Estudio</h3>
-<ul>
-<li>Debilidad muscular proximal; enzimas (CK), EMG, RM y biopsia muscular.</li>
-<li>Autoanticuerpos: anti-Mi2, anti-MDA5 (enf. pulmonar intersticial, formas amiopáticas), anti-TIF1γ (neoplasia).</li>
-<li><strong>Cribado de neoplasia</strong> según edad/sexo, sobre todo el primer año.</li>
-</ul>
-<h3>Tratamiento</h3>
-<p>Corticoides sistémicos + inmunosupresores (metotrexato, azatioprina, micofenolato); inmunoglobulinas en refractarios. Fotoprotección y corticoide/antipalúdico para la piel.</p>
+<p class="intro">Miopatía inflamatoria autoinmune con piel característica (heliotropo, pápulas de Gottron, signo del chal, manos de mecánico). Puede ser amiopática. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Dos prioridades:</strong> <strong>cribado de neoplasia</strong> (según edad/sexo, sobre todo el primer año; alto riesgo con anti-TIF1γ) y valorar <strong>miositis</strong> (CK) y <strong>pulmón</strong> (anti-MDA5 → enfermedad pulmonar intersticial). La piel es muy <strong>fotosensible</strong> → fotoprotección estricta.</div></div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('autoac')">Autoanticuerpos</button></div>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/dermatomyositis" target="_blank" rel="noopener">DermNet — Dermatomyositis</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Piel — tópico + antipalúdico</div></div>
+<div class="chips"><span class="chip">fotoprotección SPF50+</span><span class="chip">corticoide tóp.</span><span class="chip">tacrolimus (cara)</span><span class="chip">hidroxicloroquina</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dm_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="dm_hc1">DERMATOMIOSITIS - afectacion cutanea
+- Fotoproteccion estricta SPF50+ a diario (piel muy fotosensible).
+- Corticoide topico de potencia media-alta en placas; tacrolimus 0,1% en cara.
+- Antiprurito si precisa; emoliente.
+- Hidroxicloroquina 200-400 mg/dia (<=5 mg/kg/dia) de base para la piel.
+Cribado de NEOPLASIA segun edad/sexo (sobre todo el primer ano). Valorar miositis (CK) y pulmon (anti-MDA5 -> EPI).</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Cutáneo refractario / con miositis</div></div>
+<div class="chips"><span class="chip">metotrexato</span><span class="chip">micofenolato</span><span class="chip">corticoide sistémico (miositis)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dm_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="dm_hc2">DERMATOMIOSITIS - cutaneo refractario o con miositis
+- Piel resistente a antipaludicos: metotrexato (1a eleccion) o micofenolato de mofetilo.
+- Miositis: corticoide sistemico (prednisona) + ahorrador (MTX / azatioprina / micofenolato).
+Control de fuerza, CK y funcion pulmonar. Mantener fotoproteccion.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Grave / refractaria</div></div>
+<div class="chips"><span class="chip">inmunoglobulinas IV</span><span class="chip">rituximab</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dm_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="dm_hc3">DERMATOMIOSITIS - grave o refractaria
+- Inmunoglobulinas IV (IVIG): aprobada para dermatomiositis (2021); util en piel y musculo.
+- Otras: rituximab; en EPI por anti-MDA5, tratamiento intensivo precoz.
+Manejo multidisciplinar (reumatologia / neumologia). Reevaluar cribado oncologico.</pre></div>
+
+${productosCard('dermatomiositis')}
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Inmunoglobulinas IV</strong> aprobadas para dermatomiositis (2021).</li>
+<li><strong>Anti-MDA5</strong>: identifica el fenotipo con enfermedad pulmonar intersticial rápidamente progresiva (tratar precoz).</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>An update on dermatomyositis: cutaneous clues, muscle involvement and treatment (revisión) · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12735794/" target="_blank" rel="noopener">PMC</a>.</li>
+<li><b>DermNet</b> — Dermatomyositis · <a href="https://dermnetnz.org/topics/dermatomyositis" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.lupus=()=>`<div class="card">
 <h2>Lupus eritematoso cutáneo</h2>
-<p class="intro">Espectro de afectación cutánea autoinmune, con o sin enfermedad sistémica (LES). La fotosensibilidad es común. Se clasifica por cronicidad.</p>
-<h3>Formas cutáneas</h3>
-<ul>
-<li><strong>Agudo (LECA)</strong> — eritema malar "en alas de mariposa"; alta asociación a LES.</li>
-<li><strong>Subagudo (LECS)</strong> — anular o psoriasiforme fotodistribuido; anti-Ro/SSA; gatillo farmacológico frecuente.</li>
-<li><strong>Crónico discoide (LED)</strong> — placas con eritema, escama adherente y tapones foliculares; deja cicatriz y alopecia cicatricial.</li>
-</ul>
-<h3>Estudio y manejo</h3>
-<p>Biopsia + IFD (banda lúpica); ANA, anti-dsDNA, anti-Ro/La y complemento; cribar afectación sistémica. Tratamiento: <strong>fotoprotección estricta</strong>, corticoide/inhibidor de calcineurina tópico y <strong>antipalúdicos</strong> (hidroxicloroquina) de base; sistémicos en refractarios. Evitar el tabaco (reduce la respuesta).</p>
+<p class="intro">Afectación cutánea autoinmune, fotosensible: agudo (malar, alta asociación a LES), subagudo (anular/psoriasiforme fotodistribuido, anti-Ro, a veces por fármacos) y discoide (placas con escama y tapones, deja cicatriz). Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Tres pilares de base:</strong> <strong>fotoprotección estricta</strong> (UVA + luz visible), <strong>dejar de fumar</strong> (el tabaco reduce la eficacia de los antipalúdicos) y <strong>cribar LES</strong> (ANA, anti-dsDNA, complemento, sedimento urinario). El discoide puede dejar cicatriz y alopecia cicatricial.</div></div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('autoac')">Autoanticuerpos</button></div>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/cutaneous-lupus-erythematosus" target="_blank" rel="noopener">DermNet — Cutaneous lupus</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Localizado — tópico + fotoprotección</div></div>
+<div class="chips"><span class="chip">fotoprotección SPF50+</span><span class="chip">corticoide tóp. potente</span><span class="chip">tacrolimus (cara)</span><span class="chip">triamcinolona intralesional</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('lu_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="lu_hc1">LUPUS CUTANEO - localizado
+- Fotoproteccion estricta SPF50+ (UVA y luz visible) a diario; evitar el sol.
+- Corticoide topico potente en placas (pautas cortas/rotar); tacrolimus 0,1% en cara.
+- Lesiones discoides gruesas/resistentes: triamcinolona intralesional.
+- DEJAR DE FUMAR (el tabaco reduce la eficacia de los antipaludicos).
+Cribar afectacion sistemica (LES): ANA, anti-dsDNA, complemento, sedimento urinario.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Extenso / con LES — antipalúdico</div></div>
+<div class="chips"><span class="chip">hidroxicloroquina</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('lu_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="lu_hc2">LUPUS CUTANEO - extenso o con LES
+- Hidroxicloroquina 200-400 mg/dia (NO superar 5 mg/kg/dia de peso real); control oftalmologico anual.
+- Mantener fotoproteccion y abstinencia de tabaco.
+Si no hay respuesta en 2-3 meses, anadir o cambiar el sistemico.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Refractario</div></div>
+<div class="chips"><span class="chip">metotrexato</span><span class="chip">micofenolato</span><span class="chip">dapsona</span><span class="chip">retinoides</span><span class="chip">belimumab/anifrolumab (LES)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('lu_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="lu_hc3">LUPUS CUTANEO - refractario
+- Metotrexato o micofenolato de mofetilo; alternativas: dapsona, retinoides, talidomida (uso restringido).
+- En LES activo: valorar belimumab o anifrolumab (con reumatologia).
+Manejo conjunto con reumatologia. Vigilar cicatrices y alopecia cicatricial (discoide).</pre></div>
+
+${productosCard('lupus')}
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>EADV/EDF (S2k)</b> — Treatment of cutaneous lupus erythematosus: Kuhn A, et al. <em>JEADV</em> 2017 (actualización EDF 2018) · <a href="https://pubmed.ncbi.nlm.nih.gov/27859683/" target="_blank" rel="noopener">PubMed</a>.</li>
+<li><b>DermNet</b> — Cutaneous lupus erythematosus · <a href="https://dermnetnz.org/topics/cutaneous-lupus-erythematosus" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.esclerosis_sist=()=>`<div class="card">
