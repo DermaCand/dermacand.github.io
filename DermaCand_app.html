@@ -3004,6 +3004,20 @@ lupus:[
 ],
 dermatomiositis:[
 {c:'Fotoprotección muy alta (clave)',a:'SPF50+ diario, con cobertura UVA y luz visible',op:[{m:'Anthelios UVMune SPF50+',lab:'La Roche-Posay'},{m:'Heliocare 360 SPF50+',lab:'Cantabria Labs'},{m:'Fotoultra/Fusion SPF50+',lab:'ISDIN'}]}
+],
+morfea:[
+{c:'Emoliente relipidizante',a:'hidratación diaria de la placa y piel perilesional',op:[{m:'Lipikar Baume AP+M',lab:'La Roche-Posay'},{m:'Atoderm Intensive baume',lab:'Bioderma'},{m:'Crema hidratante',lab:'CeraVe'}]},
+{c:'Fotoprotección',a:'SPF50+ en piel no tratada (sobre todo si fototerapia)',op:[{m:'Anthelios UVMune SPF50+',lab:'La Roche-Posay'},{m:'Mineral 50+',lab:'Avène'},{m:'Fusion Water SPF50+',lab:'ISDIN'}]}
+],
+liquen_escleroso:[
+{c:'Emoliente reparador (barrera)',a:'reparador calmante en zona genital',op:[{m:'Cicalfate+',lab:'Avène'},{m:'Cicaplast Baume B5',lab:'La Roche-Posay'},{m:'Atoderm Intensive baume',lab:'Bioderma'}]},
+{c:'Sustituto de jabón',a:'higiene suave sin jabón (syndet)',op:[{m:'Lipikar Syndet AP+',lab:'La Roche-Posay'},{m:'Atoderm gel douche',lab:'Bioderma'},{m:'Trixera Nutrition gel',lab:'Avène'}]},
+{c:'Emoliente diario antipicor',a:'mantenimiento de la barrera, calma el prurito',op:[{m:'Lipikar Baume AP+M',lab:'La Roche-Posay'},{m:'Xeracalm A.D',lab:'Avène'},{m:'Crema hidratante',lab:'CeraVe'}]}
+],
+esclerosis_sist:[
+{c:'Emoliente intensivo',a:'piel esclerótica/seca, aplicación diaria',op:[{m:'Lipikar Baume AP+M',lab:'La Roche-Posay'},{m:'Atoderm Intensive baume',lab:'Bioderma'},{m:'Xeracalm A.D',lab:'Avène'}]},
+{c:'Manos (Raynaud / úlceras)',a:'reparador barrera para manos y dedos',op:[{m:'Cicaplast Baume B5',lab:'La Roche-Posay'},{m:'Cicalfate+ manos',lab:'Avène'},{m:'Atoderm manos',lab:'Bioderma'}]},
+{c:'Fotoprotección',a:'SPF50+ diario',op:[{m:'Anthelios UVMune SPF50+',lab:'La Roche-Posay'},{m:'Mineral 50+',lab:'Avène'},{m:'Fusion Water SPF50+',lab:'ISDIN'}]}
 ]
 };
 // Tarjeta de productos comerciales de referencia (>=3 opciones por categoria) para una patologia,
@@ -4567,32 +4581,107 @@ VIEWS.derm_neutro=()=>`<div class="card">
 
 VIEWS.morfea=()=>`<div class="card">
 <h2>Morfea (esclerodermia localizada)</h2>
-<p class="intro">Esclerosis cutánea localizada <strong>sin</strong> afectación sistémica ni fenómeno de Raynaud (a diferencia de la esclerosis sistémica). Evoluciona de inflamación a esclerosis y atrofia.</p>
-<h3>Formas</h3>
-<ul>
-<li><strong>En placas</strong> — placa esclerótica marfileña con halo violáceo activo (anillo lila).</li>
-<li><strong>Lineal</strong> — banda; en cara/cuero cabelludo "en golpe de sable"; en niños puede limitar el crecimiento.</li>
-<li><strong>Generalizada / profunda</strong> — formas más extensas.</li>
-</ul>
-<h3>Diagnóstico y manejo</h3>
-<p>Clínico + biopsia; valorar la actividad. Localizada: corticoide o tacrolimus tópico, fototerapia (UVA1/UVB-BE). Activa, extensa o lineal: metotrexato ± corticoide sistémico. Rehabilitación si afecta articulaciones.</p>
+<p class="intro">Esclerosis cutánea localizada <strong>sin</strong> Raynaud ni afectación visceral (la distingue de la esclerosis sistémica). Pasa de inflamación (halo lila activo) a esclerosis y atrofia. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica.</strong> <strong>Limitada</strong> (placas, pocas áreas) → tópico/fototerapia. <strong>Activa, extensa, lineal o profunda</strong> (cara "en golpe de sable", banda en miembro del niño, afectación de fascia/músculo o que cruza una articulación) → <strong>metotrexato precoz</strong>: el objetivo es frenar la actividad ANTES de que deje atrofia, contractura o asimetría irreversibles. Valora la actividad por el eritema/halo lila y la induración progresiva.</div></div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('esclerosis_sist')">Esclerosis sistémica</button></div>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/morphoea" target="_blank" rel="noopener">DermNet — Morphoea</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Limitada / en placas — tópico + fototerapia</div></div>
+<div class="chips"><span class="chip">corticoide tóp. potente</span><span class="chip">tacrolimus 0,1%</span><span class="chip">calcipotriol</span><span class="chip">UVA1 / UVB-BE</span><span class="chip">emoliente</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('mor_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="mor_hc1">MORFEA - limitada / en placas
+- Corticoide topico potente (mometasona / metilprednisolona aceponato) en placa activa 4-8 sem; o tacrolimus 0,1% 2/dia (ahorra corticoide, util en cara).
+- Alternativa topica: calcipotriol +/- corticoide.
+- Fototerapia de eleccion si varias placas o tronco: UVA1 (dosis media) o UVB de banda estrecha.
+- Emoliente diario; fotoproteccion de la piel no tratada.
+Reevaluar actividad (eritema/halo lila, induracion) en 2-3 meses.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Activa / extensa / lineal / profunda — metotrexato</div></div>
+<div class="chips"><span class="chip">metotrexato</span><span class="chip">+ corticoide sistémico (fase activa)</span><span class="chip">fototerapia adyuvante</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('mor_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="mor_hc2">MORFEA - activa, extensa, lineal o profunda
+- Metotrexato 15-25 mg/sem (ninos 0,3-1 mg/kg/sem) + acido folico; tratamiento de eleccion.
+- En fase muy activa: anadir corticoide sistemico (pulsos de metilprednisolona IV o prednisona oral en pauta descendente).
+- Mantener 12-24 meses tras la inactividad por riesgo de recaida.
+- Rehabilitacion/fisioterapia si cruza articulacion; valorar oftalmo/neuro en el golpe de sable.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Refractaria / intolerancia a MTX — 2ª línea</div></div>
+<div class="chips"><span class="chip">micofenolato</span><span class="chip">ác. micofenólico</span><span class="chip">abatacept</span><span class="chip">injerto graso autólogo (secuela)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('mor_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="mor_hc3">MORFEA - refractaria o intolerancia a MTX
+- Micofenolato de mofetilo / acido micofenolico, o abatacept (2a linea de la S2k 2024).
+- Secuelas YA inactivas (atrofia, golpe de sable): correccion con lipotransferencia de grasa autologa o cirugia reconstructiva, solo en enfermedad inactiva.
+Manejo conjunto (reumatologia / rehabilitacion / cirugia plastica) en formas discapacitantes.</pre></div>
+
+${productosCard('morfea')}
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>S2k europea 2024</strong>: confirma MTX (± corticoide sistémico en fase activa) como base de las formas graves; <strong>micofenolato, ác. micofenólico o abatacept</strong> como 2ª línea.</li>
+<li><strong>Injerto de grasa autóloga</strong> para corregir defectos de tejido en la morfea lineal (solo en fase inactiva).</li>
+<li><strong>UVA1</strong> consolidada para formas superficiales extensas.</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>S2k</b> — Kreuter A, et al. Diagnosis and therapy of localized scleroderma. <em>JDDG</em> 2024 · doi 10.1111/ddg.15328 · <a href="https://pubmed.ncbi.nlm.nih.gov/38574014/" target="_blank" rel="noopener">PubMed</a>.</li>
+<li><b>DermNet</b> — Morphoea · <a href="https://dermnetnz.org/topics/morphoea" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.liquen_escleroso=()=>`<div class="card">
 <h2>Liquen escleroso</h2>
-<p class="intro">Dermatosis inflamatoria crónica de predilección <strong>genital</strong>, más frecuente en mujeres (vulva), niñas y posmenopáusicas. Conlleva riesgo de carcinoma escamoso en la zona.</p>
-<h3>Clínica</h3>
-<ul>
-<li>Placas blanco-nacaradas atróficas ("papel de fumar"), con prurito y dispareunia; en la vulva, patrón vulvo-perianal "en 8".</li>
-<li>Puede causar cicatrización y sinequias (reabsorción de labios menores; en el varón, fimosis = balanitis xerótica obliterante).</li>
+<p class="intro">Dermatosis inflamatoria crónica de predilección <strong>genital</strong> (vulva en mujeres y niñas, prepucio/glande en varones). Placas blanco-nacaradas atróficas, prurito y, sin tratar, cicatrización (sinequias, fimosis) y riesgo de <strong>carcinoma escamoso</strong>. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, confirma y fija dos objetivos.</strong> Diagnóstico clínico; <strong>biopsia</strong> si hay duda, induración/úlcera persistente, sospecha de neoplasia o falta de respuesta. Objetivos: (1) <strong>controlar la inflamación</strong> para evitar cicatrices y sinequias y (2) <strong>seguimiento</strong> por el riesgo de CEC vulvar/peneano (≈4-5 %). El corticoide tópico ultrapotente es de elección a cualquier edad.</div></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('cec')">Carcinoma escamoso</button></div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Inducción — corticoide ultrapotente</div></div>
+<div class="chips"><span class="chip">clobetasol 0,05%</span><span class="chip">emoliente / sustituto de jabón</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('le_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="le_hc1">LIQUEN ESCLEROSO - induccion (eleccion: clobetasol)
+- Clobetasol propionato 0,05% pomada, capa fina por la noche:
+  1/dia x 4 semanas -> dias alternos x 4 semanas -> 2/semana x 4 semanas (pauta BAD, 3 meses).
+- Emoliente como hidratante y SUSTITUTO DE JABON en la zona; evitar irritantes/jabones.
+- Reevaluar a las 12 semanas: si buena respuesta, pasar a mantenimiento.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Mantenimiento (proactivo)</div></div>
+<div class="chips"><span class="chip">corticoide potente 1-2/sem</span><span class="chip">tacrolimus tóp.</span><span class="chip">emoliente diario</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('le_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="le_hc2">LIQUEN ESCLEROSO - mantenimiento proactivo
+- Corticoide topico (clobetasol o mometasona) 1-2 veces/semana de forma proactiva: reduce los brotes Y disminuye el riesgo de malignizacion (mejor que tratar solo los brotes).
+- Inhibidor de calcineurina topico (tacrolimus 0,1%) como ahorrador de corticoide.
+- Emoliente diario indefinido.
+- Controles periodicos (autoexploracion + revision) por riesgo de CEC.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Refractario / secuelas</div></div>
+<div class="chips"><span class="chip">revisar adherencia/dx</span><span class="chip">biopsia</span><span class="chip">cirugía solo para secuelas</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('le_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="le_hc3">LIQUEN ESCLEROSO - refractario o con secuelas
+- Si no responde: revisar cumplimiento y diagnostico; BIOPSIAR para descartar neoplasia o liquen plano.
+- Cirugia SOLO para secuelas, no para la enfermedad activa: liberacion de sinequias; en el varon, la circuncision es curativa en la mayoria de las fimosis cicatriciales.
+- Casos extensos/resistentes: valorar fototerapia o sistemicos (uso restringido) con la enfermedad controlada.
+Seguimiento de por vida por riesgo de carcinoma escamoso.</pre></div>
+
+${productosCard('liquen_escleroso')}
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Guía BAD 2018</strong>: el corticoide ultrapotente sigue siendo de elección; el <strong>mantenimiento proactivo</strong> controla la enfermedad y <strong>reduce el riesgo de CEC</strong>.</li>
+<li>En el varón, la <strong>circuncisión</strong> es curativa en la mayoría de las fimosis cicatriciales.</li>
 </ul>
-<h3>Diagnóstico y manejo</h3>
-<p>Clínico; biopsia ante duda o sospecha de malignización. <strong>Corticoide tópico muy potente</strong> (clobetasol) de primera línea con mantenimiento; inhibidores de calcineurina como alternativa. <strong>Seguimiento</strong> por el riesgo de CEC vulvar/peneano.</p>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/lichen-sclerosus" target="_blank" rel="noopener">DermNet — Lichen sclerosus</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>BAD</b> — Lewis FM, et al. Guidelines for the management of lichen sclerosus, 2018. <em>Br J Dermatol</em> 2018;178(4):839-853 · doi 10.1111/bjd.16241 · <a href="https://pubmed.ncbi.nlm.nih.gov/29313888/" target="_blank" rel="noopener">PubMed</a>.</li>
+<li><b>DermNet</b> — Lichen sclerosus · <a href="https://dermnetnz.org/topics/lichen-sclerosus" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.dermatomiositis=()=>`<div class="card">
@@ -4693,18 +4782,53 @@ ${productosCard('lupus')}
 
 VIEWS.esclerosis_sist=()=>`<div class="card">
 <h2>Esclerosis sistémica</h2>
-<p class="intro">Conectivopatía con esclerosis cutánea y afectación de órganos internos por vasculopatía, autoinmunidad y fibrosis. El fenómeno de Raynaud suele ser el primer signo.</p>
-<h3>Formas y signos</h3>
-<ul>
-<li><strong>Limitada (antes CREST)</strong> — esclerosis distal; Calcinosis, Raynaud, dismotilidad Esofágica, eSclerodactilia, Telangiectasias; anti-centrómero.</li>
-<li><strong>Difusa</strong> — esclerosis proximal rápida; anti-Scl70; mayor riesgo renal/pulmonar.</li>
-<li>Cara amímica, microstomía, surcos peribucales y úlceras digitales.</li>
-</ul>
-<h3>Estudio y manejo</h3>
-<p><strong>Capilaroscopia</strong> (megacapilares, áreas avasculares) y autoanticuerpos. Cribar afectación pulmonar (EPID, hipertensión pulmonar), renal, cardiaca y digestiva. Manejo multidisciplinar: vasodilatadores para Raynaud/úlceras, inmunosupresores/antifibróticos según el órgano.</p>
+<p class="intro">Conectivopatía con vasculopatía, autoinmunidad y fibrosis cutánea y visceral. El <strong>fenómeno de Raynaud</strong> suele ser el primer signo. El dermatólogo maneja piel, Raynaud y úlceras digitales; la afectación de órgano se trata en equipo. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica y criba órgano.</strong> <strong>Limitada</strong> (esclerosis distal a codos/rodillas, anti-centrómero, antes CREST) vs <strong>difusa</strong> (proximal y rápida, anti-Scl70 o anti-RNA pol III; más riesgo renal/pulmonar). De entrada: <strong>capilaroscopia</strong>, autoanticuerpos y cribado de órgano (DLCO + TCAR de pulmón, ECG/ecocardio, TA y función renal, estudio digestivo). El tratamiento es <strong>por dominio afecto</strong>, no único.</div></div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('morfea')">Morfea</button><button class="btn btn-out btn-sm" onclick="go('autoac')">Autoanticuerpos</button></div>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/systemic-sclerosis" target="_blank" rel="noopener">DermNet — Systemic sclerosis</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Raynaud + piel</div></div>
+<div class="chips"><span class="chip">medidas (frío, no tabaco)</span><span class="chip">nifedipino / amlodipino</span><span class="chip">PDE5i (sildenafilo)</span><span class="chip">MTX o micofenolato (piel)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('es_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="es_hc1">ESCLEROSIS SISTEMICA - Raynaud y piel
+- Raynaud: proteccion del frio + dejar de fumar. 1a linea: antagonista del calcio dihidropiridinico (nifedipino retard 30-60 mg/dia o amlodipino).
+- Si insuficiente: anadir/cambiar a inhibidor de PDE5 (sildenafilo).
+- Fibrosis cutanea (difusa precoz): metotrexato; alternativa micofenolato de mofetilo.
+- Cuidado de piel: emoliente intensivo y fotoproteccion.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Úlceras digitales</div></div>
+<div class="chips"><span class="chip">PDE5i</span><span class="chip">iloprost IV</span><span class="chip">bosentán (prevención)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('es_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="es_hc2">ESCLEROSIS SISTEMICA - ulceras digitales
+- Inhibidor de PDE5 (sildenafilo) y/o iloprost IV para cicatrizar las ulceras activas.
+- Bosentan (antagonista del receptor de endotelina) para PREVENIR nuevas ulceras digitales (sobre todo si son recurrentes/multiples).
+- Curas locales; descartar infeccion/osteomielitis.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Afectación de órgano (EPI / HAP / renal)</div></div>
+<div class="chips"><span class="chip">micofenolato</span><span class="chip">nintedanib</span><span class="chip">tocilizumab</span><span class="chip">rituximab</span><span class="chip">IECA (crisis renal)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('es_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="es_hc3">ESCLEROSIS SISTEMICA - afectacion de organo (manejo en equipo)
+- EPI (enf. pulmonar intersticial): micofenolato de mofetilo de base; nintedanib (antifibrotico) solo o con MMF; tocilizumab o rituximab segun el caso.
+- HAP (hipertension arterial pulmonar): PDE5i, antagonista de endotelina y/o prostaciclina (con cardio/neumo).
+- Crisis renal esclerodermica: IECA (captopril) a dosis crecientes; NO usar corticoide a dosis altas (la precipita).
+Manejo multidisciplinar (reumatologia, neumologia, cardiologia).</pre></div>
+
+${productosCard('esclerosis_sist')}
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>EULAR 2023</strong>: incorpora <strong>nintedanib</strong> (solo o con micofenolato), <strong>tocilizumab</strong> y <strong>rituximab</strong> para la enfermedad pulmonar intersticial asociada.</li>
+<li><strong>Anti-RNA polimerasa III</strong>: marca mayor riesgo de crisis renal y de neoplasia asociada.</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>EULAR</b> — Del Galdo F, et al. Recommendations for the treatment of systemic sclerosis: 2023 update. <em>Ann Rheum Dis</em> · <a href="https://ard.eular.org/article/S0003-4967(24)00584-3/fulltext" target="_blank" rel="noopener">ard.eular.org</a>.</li>
+<li><b>DermNet</b> — Systemic sclerosis · <a href="https://dermnetnz.org/topics/systemic-sclerosis" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Enfermedades metabólicas =====
