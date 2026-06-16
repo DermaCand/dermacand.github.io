@@ -3018,6 +3018,15 @@ esclerosis_sist:[
 {c:'Emoliente intensivo',a:'piel esclerótica/seca, aplicación diaria',op:[{m:'Lipikar Baume AP+M',lab:'La Roche-Posay'},{m:'Atoderm Intensive baume',lab:'Bioderma'},{m:'Xeracalm A.D',lab:'Avène'}]},
 {c:'Manos (Raynaud / úlceras)',a:'reparador barrera para manos y dedos',op:[{m:'Cicaplast Baume B5',lab:'La Roche-Posay'},{m:'Cicalfate+ manos',lab:'Avène'},{m:'Atoderm manos',lab:'Bioderma'}]},
 {c:'Fotoprotección',a:'SPF50+ diario',op:[{m:'Anthelios UVMune SPF50+',lab:'La Roche-Posay'},{m:'Mineral 50+',lab:'Avène'},{m:'Fusion Water SPF50+',lab:'ISDIN'}]}
+],
+aga:[
+{c:'Champú anticaída / fortificante',a:'coadyuvante de uso frecuente',op:[{m:'Anaphase+',lab:'Ducray'},{m:'Lambdapil champú',lab:'ISDIN'},{m:'Dercos Aminexil',lab:'Vichy'}]},
+{c:'Loción / sérum anticaída',a:'aplicación en cuero cabelludo (no sustituye al minoxidil)',op:[{m:'Neoptide loción',lab:'Ducray'},{m:'Lambdapil loción',lab:'ISDIN'},{m:'Dercos Aminexil Clinical',lab:'Vichy'}]},
+{c:'Nutricosmético oral',a:'soporte (descartar antes ferropenia/tiroides)',op:[{m:'Anacaps Progressiv',lab:'Ducray'},{m:'Lambdapil cápsulas',lab:'ISDIN'},{m:'Pilexil cápsulas',lab:'Lacer'}]}
+],
+lpp_ffa:[
+{c:'Champú suave (sin sulfatos)',a:'higiene poco irritante del cuero cabelludo',op:[{m:'Sensinol champú',lab:'Ducray'},{m:'Kerium extra suave',lab:'La Roche-Posay'},{m:'Nodé fluido',lab:'Bioderma'}]},
+{c:'Reparador / calmante',a:'borde activo, cejas y zona frontal',op:[{m:'Cicalfate+',lab:'Avène'},{m:'Cicaplast Baume B5',lab:'La Roche-Posay'},{m:'Bepanthol',lab:'Bayer'}]}
 ]
 };
 // Tarjeta de productos comerciales de referencia (>=3 opciones por categoria) para una patologia,
@@ -3789,59 +3798,158 @@ VIEWS.tric_alg=()=>`<div class="card">
 
 VIEWS.aga=()=>`<div class="card">
 <h2>Alopecia androgenética</h2>
-<p class="intro">Miniaturización folicular progresiva mediada por andrógenos (DHT) en individuos predispuestos. Es la causa más frecuente de alopecia.</p>
-<h3>Patrón clínico</h3>
-<ul style="line-height:1.6">
-<li><strong>Varón (Hamilton-Norwood)</strong> — entradas frontotemporales y vértex.</li>
-<li><strong>Mujer (Ludwig / Sinclair)</strong> — aclaramiento difuso de la línea media, respetando la línea de implantación.</li>
+<p class="intro">Miniaturización folicular progresiva mediada por andrógenos (DHT) en personas predispuestas; la alopecia más frecuente. Tratamiento <strong>crónico</strong>: si se suspende, se pierde lo ganado. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica.</strong> Patrón <strong>varón</strong> (Hamilton-Norwood: entradas + vértex) o <strong>mujer</strong> (Ludwig/Sinclair: línea media, respeta implantación). Confirma con tricoscopia (miniaturización, diversidad de diámetro &gt;20%). En la <strong>mujer</strong> descarta ferropenia y disfunción tiroidea, y si hay hiperandrogenismo (acné, hirsutismo) pide estudio hormonal. Avisa del <em>shedding</em> inicial del minoxidil.</div></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('tricoscopia')">Tricoscopia</button></div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Tópico — base en ambos sexos</div></div>
+<div class="chips"><span class="chip">minoxidil tópico</span><span class="chip">cuidado capilar</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('aga_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="aga_hc1">ALOPECIA ANDROGENETICA - tratamiento topico (base)
+- Minoxidil topico: varon 5% (espuma 1/dia o solucion 2/dia); mujer 2% 2/dia o 5% espuma 1/dia.
+- Avisar de caida transitoria (shedding) las primeras 4-8 semanas y de que el efecto tarda 4-6 meses.
+- Tratamiento indefinido: al suspender se revierte la mejoria.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Sistémico — antiandrógeno / minoxidil oral</div></div>
+<div class="chips"><span class="chip">finasterida 1 mg</span><span class="chip">dutasterida 0,5 mg</span><span class="chip">minoxidil oral baja dosis</span><span class="chip">espironolactona (♀)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('aga_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="aga_hc2">ALOPECIA ANDROGENETICA - tratamiento sistemico
+VARON:
+- Finasterida 1 mg/dia (1a linea). Alternativa mas potente (off-label): dutasterida 0,5 mg/dia.
+- Informar de posibles efectos sexuales (suelen ser reversibles).
+MUJER:
+- Minoxidil oral baja dosis 0,25-2,5 mg/dia (vigilar hipertricosis; CV poco frecuente).
+- Antiandrogeno: espironolactona 100-200 mg/dia (anticoncepcion segura) o ACO antiandrogenico.
+- Finasterida/dutasterida solo con anticoncepcion segura o en posmenopausia.
+VARON Y MUJER:
+- Minoxidil oral baja dosis 0,25-5 mg/dia como alternativa/anadido al topico.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Procedimientos / refractario</div></div>
+<div class="chips"><span class="chip">PRP (plasma rico en plaquetas)</span><span class="chip">mesoterapia</span><span class="chip">trasplante capilar</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('aga_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="aga_hc3">ALOPECIA ANDROGENETICA - procedimientos
+- PRP (plasma rico en plaquetas): sesiones mensuales x3 y mantenimiento; adyuvante del tratamiento medico.
+- Mesoterapia con dutasterida/minoxidil segun protocolo.
+- Trasplante capilar (FUE) en patron estable, manteniendo el tratamiento medico de base.</pre></div>
+
+${productosCard('aga')}
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Minoxidil oral en baja dosis</strong>: eficacia dosis-dependiente bien documentada; práctica habitual en no respondedores al tópico.</li>
+<li><strong>Dutasterida 0,5 mg</strong>: el más eficaz en metaanálisis en red (off-label); finasterida sigue siendo 1ª línea por aprobación.</li>
+<li><strong>Finasterida tópica</strong>: opción con menor exposición sistémica.</li>
 </ul>
-<h3>Diagnóstico</h3>
-<p>Clínico + tricoscopia (miniaturización, diversidad de diámetros >20%, signo peripilar). En mujer con signos de hiperandrogenismo, valorar estudio hormonal.</p>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('tricoscopia')">Tricoscopia</button><button class="btn btn-sm" onclick="goPauta('aga_rx')">💊 Pauta y productos</button></div>
-<h3>Tratamiento</h3>
-<ul style="line-height:1.6">
-<li>Minoxidil tópico (base) y finasterida/dutasterida oral (varón; mujer seleccionada).</li>
-<li>Antiandrógenos en mujer; mesoterapia/PRP y trasplante como opciones.</li>
-<li>Tratamiento crónico: la suspensión revierte la mejoría.</li>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Gupta AK, et al. Medical and procedural treatment of androgenetic alopecia — where are we? <em>J Am Acad Dermatol</em> 2023 · <a href="https://www.jaad.org/article/S0190-9622(23)00768-5/fulltext" target="_blank" rel="noopener">jaad.org</a>.</li>
+<li>Low-dose oral minoxidil en AGA (revisión). <em>Expert Opin Pharmacother</em> 2024;25(2) · <a href="https://www.tandfonline.com/doi/abs/10.1080/14656566.2024.2314087" target="_blank" rel="noopener">tandfonline</a>.</li>
 </ul>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.alopareata=()=>`<div class="card">
 <h2>Alopecia areata</h2>
-<p class="intro">Alopecia no cicatricial autoinmune (ataque al folículo anágeno). Curso impredecible; asociada a otras autoinmunes (tiroides, vitíligo).</p>
-<h3>Formas</h3>
-<ul style="line-height:1.6">
-<li>En <strong>placas</strong> (la más común), reticular, ofiásica.</li>
-<li><strong>Total</strong> (todo el cuero cabelludo) y <strong>universal</strong> (todo el vello).</li>
-<li>Afectación ungueal (piqueteado) frecuente.</li>
-</ul>
-<h3>Diagnóstico y extensión</h3>
-<p>Clínico: placas sin inflamación, pelos peládicos "en exclamación", pelos cadavéricos en tricoscopia. Cuantificar con SALT.</p>
+<p class="intro">Alopecia no cicatricial autoinmune (ataque al folículo anágeno). Curso impredecible y recidivante; asociada a otras autoinmunes (tiroides, vitíligo). Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, mide la extensión (SALT) y el impacto.</strong> <strong>Limitada</strong> (&lt;25-50 %, placas) → tópico/intralesional. <strong>Extensa o grave</strong> (&gt;50 %, ofiásica, total/universal), de larga evolución o gran impacto vital → candidata a <strong>inhibidor de JAK</strong>. Cribar tiroides y autoinmunidad. La recuperación es posible pero la recidiva al suspender es frecuente.</div></div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('salt')">SALT</button></div>
-<h3>Tratamiento</h3>
-<ul style="line-height:1.6">
-<li>Limitada: corticoide intralesional/tópico potente, minoxidil.</li>
-<li>Extensa/refractaria: inhibidores de JAK orales (baricitinib), inmunoterapia tópica, corticoide sistémico en pulsos.</li>
-<li>Apoyo psicológico; curso recidivante.</li>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Limitada (&lt;25-50 %)</div></div>
+<div class="chips"><span class="chip">triamcinolona intralesional</span><span class="chip">corticoide tóp. potente</span><span class="chip">minoxidil</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('aa_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="aa_hc1">ALOPECIA AREATA - limitada (placas)
+- Triamcinolona acetonido intralesional 2,5-5 mg/ml (max ~10 mg/sesion en cuero cabelludo), cada 4-6 semanas.
+- Corticoide topico potente/ultrapotente (oclusion) en ninos o si no se infiltra.
+- Minoxidil 5% como adyuvante.
+- Muchas placas aisladas remiten solas: cabe la observacion.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Extensa / refractaria — inmunoterapia o pulsos</div></div>
+<div class="chips"><span class="chip">difenciprona (DPCP) tópica</span><span class="chip">corticoide sistémico en pulsos</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('aa_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="aa_hc2">ALOPECIA AREATA - extensa / refractaria
+- Inmunoterapia topica de contacto (difenciprona/DPCP) en centros con experiencia: sensibilizar y escalar concentracion.
+- Corticoide sistemico en pulsos (p. ej. metilprednisolona/dexametasona) como puente en formas rapidamente progresivas; respuesta no mantenida al suspender.
+- Si no responde o recae: pasar a inhibidor de JAK.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Grave (&gt;50 %, total/universal) — inhibidores de JAK</div></div>
+<div class="chips"><span class="chip">baricitinib</span><span class="chip">ritlecitinib</span><span class="chip">deuruxolitinib</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('aa_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="aa_hc3">ALOPECIA AREATA grave - inhibidores de JAK (aprobados para AA)
+- Baricitinib 2-4 mg/dia (adultos) o ritlecitinib 50 mg/dia (a partir de 12 anos). Deuruxolitinib aprobado en adultos.
+- Cribado previo: TBC/hepatitis/VIH, hemograma, perfil hepatico y lipidico, vacunas; valorar riesgo CV/tromboembolico y neoplasico.
+- Respuesta a evaluar hacia las 24-36 semanas (objetivo SALT <=20, es decir >=80% de cobertura).
+- La enfermedad suele recidivar al suspender; tratamiento mantenido.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Inhibidores de JAK</strong>: primer tratamiento dirigido aprobado para AA grave — <strong>baricitinib</strong> (2022), <strong>ritlecitinib</strong> (2023) y <strong>deuruxolitinib</strong> (2024).</li>
+<li>Consenso europeo 2024: baricitinib 2-4 mg/día y ritlecitinib 50 mg/día como opciones formalmente aprobadas.</li>
 </ul>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Comparison of current international guidelines for the management of alopecia areata (revisión). <em>Int J Mol Sci</em> 2025;26(17):8632 · <a href="https://www.mdpi.com/1422-0067/26/17/8632" target="_blank" rel="noopener">mdpi.com</a>.</li>
+<li><b>BAD</b> — Ritlecitinib for alopecia areata: supplementary guidance, 2024 · <a href="https://cdn.bad.org.uk/uploads/2024/07/01005430/Ritlecitinib-for-alopecia-areata-supplementary-guidance-26.06.24.pdf" target="_blank" rel="noopener">bad.org.uk</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.lpp_ffa=()=>`<div class="card">
 <h2>Liquen plano pilar / Alopecia frontal fibrosante</h2>
-<p class="intro">Alopecias <strong>cicatriciales</strong> linfocíticas (variantes del liquen plano folicular). La pérdida del folículo es irreversible: el objetivo es <em>frenar</em> la progresión.</p>
-<h3>Rasgos</h3>
-<ul style="line-height:1.6">
-<li><strong>Liquen plano pilar</strong> — placas de alopecia con eritema e hiperqueratosis perifolicular, prurito/dolor; vértex y zonas dispersas.</li>
-<li><strong>Alopecia frontal fibrosante</strong> — retroceso en banda de la línea de implantación frontotemporal, pérdida de cejas; típica en mujeres posmenopáusicas.</li>
-</ul>
-<h3>Diagnóstico</h3>
-<p>Tricoscopia (eritema/descamación perifolicular, pérdida de ostium) y biopsia del borde activo.</p>
+<p class="intro">Alopecias <strong>cicatriciales</strong> linfocíticas (variantes del liquen plano folicular). La pérdida del folículo es irreversible: el objetivo realista es <strong>estabilizar</strong>, no recuperar. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, confirma actividad y fija la meta.</strong> Tricoscopia (eritema y descamación perifolicular, pérdida de ostium) + <strong>biopsia del borde activo</strong>. <strong>LPP</strong>: placas en vértex con prurito/dolor. <strong>AFF</strong>: retroceso en banda de la implantación frontotemporal y pérdida de cejas (posmenopáusicas). Documenta la línea de implantación (foto/medida) para medir progresión. Meta = frenar la actividad.</div></div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('tricoscopia')">Tricoscopia</button></div>
-<h3>Tratamiento</h3>
-<p>Antiinflamatorio (corticoide tópico/intralesional, inhibidores de calcineurina), inhibidores de 5-α-reductasa/antiandrógenos en AFF, hidroxicloroquina o inmunomoduladores en casos activos. Objetivo: estabilizar.</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Local — tópico + intralesional (1ª línea)</div></div>
+<div class="chips"><span class="chip">corticoide tóp. ultrapotente</span><span class="chip">triamcinolona intralesional</span><span class="chip">tacrolimus tóp.</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('lpp_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="lpp_hc1">LPP / AFF - tratamiento local (1a linea)
+- Corticoide topico ultrapotente (clobetasol) en el borde activo, en pauta intermitente.
+- Triamcinolona acetonido intralesional 2,5-10 mg/ml en la linea de implantacion y cejas, cada 4-8 semanas.
+- Inhibidor de calcineurina topico (tacrolimus) como ahorrador de corticoide.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Sistémico — 5-α-reductasa (AFF) / hidroxicloroquina</div></div>
+<div class="chips"><span class="chip">finasterida / dutasterida (AFF)</span><span class="chip">hidroxicloroquina</span><span class="chip">doxiciclina</span><span class="chip">isotretinoína baja dosis (pápulas faciales)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('lpp_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="lpp_hc2">LPP / AFF - tratamiento sistemico
+- AFF: inhibidor de 5-alfa-reductasa (finasterida 2,5-5 mg/dia o dutasterida 0,5 mg/dia o semanal) -> es lo mas eficaz para estabilizar e incluso recuperar linea de implantacion.
+- Hidroxicloroquina 200 mg/12h (<=5 mg/kg/dia) en LPP y AFF activos; respuesta a los 3-6 meses, control oftalmologico.
+- Doxiciclina 100 mg/dia como antiinflamatorio alternativo.
+- Isotretinoina oral en baja dosis para las papulas faciales de la AFF.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Refractario / muy activo</div></div>
+<div class="chips"><span class="chip">metotrexato</span><span class="chip">retinoides orales</span><span class="chip">pioglitazona</span><span class="chip">naltrexona baja dosis</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('lpp_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="lpp_hc3">LPP / AFF - refractario
+- Metotrexato (de las mejores tasas de respuesta en LPP) + acido folico.
+- Retinoides orales (acitretina) utiles, sobre todo en AFF.
+- Opciones adicionales: pioglitazona, naltrexona a baja dosis.
+Objetivo: estabilizar; lo ya cicatrizado no se recupera.</pre></div>
+
+${productosCard('lpp_ffa')}
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Consenso SOFFIA 2024</strong>: corticoide tópico potente/ultrapotente como 1ª línea local; en sistémico, <strong>5-α-reductasa</strong> de elección (sobre todo en AFF), seguido de hidroxicloroquina.</li>
+<li>Isotretinoína oral en baja dosis como tratamiento preferente de las <strong>pápulas faciales</strong> de la AFF.</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>SOFFIA</b> — Statement from the frontal fibrosing alopecia international expert alliance, 2024 · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12843854/" target="_blank" rel="noopener">PMC</a>.</li>
+<li>LPP y AFF: revisión y actualización diagnóstico-terapéutica · <a href="https://www.sciencedirect.com/science/article/pii/S0365059622000460" target="_blank" rel="noopener">ScienceDirect</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.tricoscopia=()=>`<div class="card">
