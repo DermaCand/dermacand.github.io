@@ -914,7 +914,6 @@ const MENU=[
 {id:'biopsia',name:'Técnicas de biopsia',kw:'biopsia punch afeitado incisional escisional cutanea tecnica eleccion'},
 {id:'cirugia',name:'Cirugía dermatológica',kw:'cirugia dermatologica extirpacion margenes cierre colgajo injerto mohs'},
 {id:'bridging',name:'Bridging perioperatorio',kw:'bridging perioperatorio anticoagulacion cirugia avk acod hbpm puente suspension apixaban rivaroxaban dabigatran edoxaban warfarina sintrom acenocumarol operar operacion intervencion quirurgica preoperatorio postoperatorio procedimiento suspender reiniciar'},
-{id:'anestesia',name:'Anestesia local',kw:'anestesia local lidocaina mepivacaina dosis maxima toxicidad vasoconstrictor adrenalina infiltracion bloqueo'},
 {id:'prof_atb',name:'Profilaxis antibiótica',kw:'profilaxis antibiotica cirugia cutanea endocarditis articular infeccion herida amoxicilina'},
 {id:'g_proc',name:'Guías clínicas',kw:'guias clinicas procedimientos cirugia dermatologica mohs biopsia pdf'}
 ]},
@@ -1963,7 +1962,9 @@ const GUIDES_TITLES={
 'urg':'Urgencias dermatológicas',
 'proc':'Procedimientos y cirugía',
 'patol':'Dermatopatología y laboratorio',
-'tto':'Tratamientos'
+'tto':'Tratamientos',
+'dermato':'Dermatoscopia (atlas de patrones)',
+'cirugia':'Cirugía dermatológica (atlas y guías)'
 };
 
 const EMBEDDED_VERSION='2026.05.23';
@@ -2129,7 +2130,10 @@ const DEFAULT_CONTACTS=[
 // === Urología ===
 {n:'Urología - Secretaría',c:'Urología',e:'32390'}
 ];
-const DEFAULT_SUBTYPES={};
+const DEFAULT_SUBTYPES={
+dermato:[{id:'melano',name:'Lesiones melanocíticas (nevus / melanoma)'},{id:'nomelano',name:'Tumores no melanocíticos'},{id:'inflam_inf',name:'Inflamatorias e infecciosas'},{id:'acral_ung',name:'Acral, ungueal y mucosas'},{id:'tricoscopia',name:'Tricoscopia (cuero cabelludo)'},{id:'atlas',name:'Atlas y libros generales'}],
+cirugia:[{id:'colgajos',name:'Colgajos (atlas)'},{id:'injertos',name:'Injertos'},{id:'cierres',name:'Cierres, husos y líneas de tensión'},{id:'tecnicas',name:'Técnicas y vídeos'},{id:'guias',name:'Guías y protocolos'}]
+};
 
 function getSubtypes(id){return ls.g('subtypes_'+id)||DEFAULT_SUBTYPES[id]||[]}
 function setSubtypes(id,subs){ls.s('subtypes_'+id,subs)}
@@ -4946,24 +4950,9 @@ B) COLESTASIS INTRAHEPATICA:
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Procedimientos y cirugía =====
-VIEWS.dermatoscopia=()=>`<div class="card">
-<h2>Dermatoscopia</h2>
-<p class="intro">Técnica no invasiva que amplía y revela estructuras de la epidermis y dermis superficial no visibles a simple vista. Aumenta la precisión diagnóstica de lesiones pigmentadas y no pigmentadas.</p>
-<h3>Método en 2 pasos (lesión pigmentada)</h3>
-<ul style="line-height:1.6">
-<li><strong>Paso 1</strong> — ¿es melanocítica? (red pigmentaria, glóbulos, estrías, pigmentación homogénea) frente a no melanocítica.</li>
-<li><strong>Paso 2</strong> — si es melanocítica, ¿benigna o maligna? (análisis de patrones, ABCD dermatoscópico, lista de 7 puntos).</li>
-</ul>
-<h3>Pistas frecuentes</h3>
-<ul style="line-height:1.6">
-<li><strong>Melanoma</strong> — red atípica, velo azul-blanquecino, regresión, proyecciones irregulares.</li>
-<li><strong>Basocelular</strong> — telangiectasias arboriformes, nidos ovoides azul-grisáceos, hojas de arce.</li>
-<li><strong>Queratosis seborreica</strong> — quistes tipo milia, aperturas pseudofoliculares.</li>
-<li><strong>Angioma</strong> — lagunas rojo-azuladas.</li>
-</ul>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('melanoma')">Melanoma</button><button class="btn btn-out btn-sm" onclick="go('tricoscopia')">Tricoscopia</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
-</div>`;
+VIEWS.dermatoscopia=()=>`<div class="card"><h2>Dermatoscopia — atlas de patrones</h2>
+<p class="intro">Biblioteca de <strong>atlas, libros y guías de dermatoscopia</strong> para <strong>comparar patrones</strong> con la lesión del paciente. Cuelga aquí los PDF por categorías: pulsa <strong>✏️ Editar</strong> para añadir apartados y <strong>⬆️ Subir PDF</strong> (requiere permiso de edición).</p>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('melanoma')">Melanoma</button><button class="btn btn-out btn-sm" onclick="go('tricoscopia')">Tricoscopia</button></div></div>`+guidesView('dermato');
 
 VIEWS.biopsia=()=>`<div class="card">
 <h2>Técnicas de biopsia cutánea</h2>
@@ -4977,43 +4966,31 @@ VIEWS.biopsia=()=>`<div class="card">
 </ul>
 <h3>Consejos</h3>
 <p>Toma del borde activo (no del centro necrótico) en inflamatorias; muestra perilesional adicional para IFD en ampollosas/vasculitis.</p>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('anestesia')">Anestesia local</button></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('cirugia')">Cirugía</button></div>
 <div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
 </div>`;
 
 VIEWS.cirugia=()=>`<div class="card">
 <h2>Cirugía dermatológica</h2>
-<p class="intro">Extirpación de tumores cutáneos y reconstrucción, buscando la resección completa con el mejor resultado funcional y estético.</p>
-<h3>Principios</h3>
-<ul style="line-height:1.6">
-<li><strong>Márgenes</strong> orientativos: basocelular 3-5 mm; escamoso 4-6 mm (más en alto riesgo); melanoma según Breslow (in situ 0,5-1 cm; ≤1 mm → 1 cm; >1-2 mm → 1-2 cm; >2 mm → 2 cm).</li>
-<li>Huso siguiendo las líneas de tensión relajadas; relación longitud:anchura ≈ 3:1.</li>
-<li>Cierre por planos; colgajos/injertos si no es posible el cierre directo.</li>
-</ul>
-<h3>Cirugía de Mohs</h3>
-<p>Control histológico del 100% del margen <em>intraoperatorio</em>. Indicada en tumores de alto riesgo o en zonas críticas (cara central, periorificial), recidivas y bordes mal definidos. Máxima conservación de tejido sano.</p>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('anestesia')">Anestesia</button><button class="btn btn-out btn-sm" onclick="go('prof_atb')">Profilaxis ATB</button><button class="btn btn-out btn-sm" onclick="go('bridging')">Anticoagulación</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Márgenes orientativos; ajustar a guías y a la anatomía patológica.</div>
-</div>`;
+<p class="intro">Ejemplos de <strong>cierres y colgajos</strong> más usados y repositorio para <strong>colgar atlas/guías y PDF</strong> de técnica quirúrgica. Esquemas orientativos: <span style="color:var(--c1)">azul</span> = colgajo/tejido que se moviliza · <span style="color:var(--er)">rojo discontinuo</span> = defecto o lesión.</p>
 
-VIEWS.anestesia=()=>`<div class="card">
-<h2>Anestesia local</h2>
-<p class="intro">Base de la cirugía dermatológica. La lidocaína es el anestésico más usado; la adrenalina prolonga el efecto y reduce el sangrado.</p>
-<h3>Dosis máximas (orientativas)</h3>
-<ul style="line-height:1.6">
-<li><strong>Lidocaína sin adrenalina</strong> — ~4,5 mg/kg (máx. ~300 mg en adulto).</li>
-<li><strong>Lidocaína con adrenalina</strong> — ~7 mg/kg (máx. ~500 mg).</li>
-<li>Recuerda: lidocaína 1% = 10 mg/mL.</li>
-</ul>
-<h3>Claves</h3>
-<ul style="line-height:1.6">
-<li>Adrenalina útil en zonas vascularizadas; valorar en acras.</li>
-<li>Toxicidad sistémica: neurológica (mareo, sabor metálico, convulsiones) y cardiaca; vigilar dosis acumulada.</li>
-<li>Alergia verdadera rara; diferenciar de reacción vasovagal o a la adrenalina.</li>
-</ul>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('dosispeso')">Dosis por peso</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Verificar dosis máximas con ficha técnica.</div>
-</div>`;
+<div class="perla"><div><strong>Márgenes orientativos:</strong> basocelular 3-5 mm · escamoso 4-6 mm (más en alto riesgo) · melanoma según Breslow (in situ 0,5-1 cm; ≤1 mm → 1 cm; &gt;1-2 mm → 1-2 cm; &gt;2 mm → 2 cm). Huso siguiendo las líneas de tensión relajadas (≈ 3:1). <strong>Mohs</strong> (control del 100 % del margen intraoperatorio): tumores de alto riesgo, zonas críticas (cara central/periorificial), recidivas y bordes mal definidos.</div></div>
+
+<h3>Opciones de reconstrucción</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:6px 0">
+<div style="border:1px solid var(--bd);border-radius:8px;padding:8px;text-align:center"><svg viewBox="0 0 100 72" style="width:100%;height:62px"><ellipse cx="50" cy="36" rx="33" ry="15" fill="var(--c1)" opacity="0.12" stroke="var(--c1)" stroke-width="2"/><line x1="17" y1="36" x2="83" y2="36" stroke="var(--c1)" stroke-width="1.4" stroke-dasharray="3 3"/><circle cx="50" cy="36" r="7" fill="none" stroke="var(--er)" stroke-width="1.4" stroke-dasharray="2 2"/></svg><div style="font-weight:600;font-size:12.5px;margin-top:4px">Cierre directo (huso)</div><div style="font-size:11px;color:var(--mut)">elipse en la línea de tensión; relación 3:1</div></div>
+<div style="border:1px solid var(--bd);border-radius:8px;padding:8px;text-align:center"><svg viewBox="0 0 100 72" style="width:100%;height:62px"><rect x="18" y="24" width="24" height="24" rx="3" fill="none" stroke="var(--er)" stroke-width="1.4" stroke-dasharray="3 3"/><rect x="48" y="24" width="34" height="24" rx="3" fill="var(--c1)" opacity="0.15" stroke="var(--c1)" stroke-width="2"/><line x1="62" y1="36" x2="45" y2="36" stroke="var(--c1)" stroke-width="2"/><polygon points="44,36 51,32 51,40" fill="var(--c1)"/></svg><div style="font-weight:600;font-size:12.5px;margin-top:4px">Colgajo de avance</div><div style="font-size:11px;color:var(--mut)">desliza tejido en línea recta hacia el defecto</div></div>
+<div style="border:1px solid var(--bd);border-radius:8px;padding:8px;text-align:center"><svg viewBox="0 0 100 72" style="width:100%;height:62px"><circle cx="46" cy="42" r="10" fill="none" stroke="var(--er)" stroke-width="1.4" stroke-dasharray="3 3"/><path d="M72 20 A26 26 0 0 0 40 34" fill="none" stroke="var(--c1)" stroke-width="2"/><polygon points="40,34 47,31 45,39" fill="var(--c1)"/></svg><div style="font-weight:600;font-size:12.5px;margin-top:4px">Colgajo de rotación</div><div style="font-size:11px;color:var(--mut)">gira tejido adyacente sobre un arco curvo</div></div>
+<div style="border:1px solid var(--bd);border-radius:8px;padding:8px;text-align:center"><svg viewBox="0 0 100 72" style="width:100%;height:62px"><polygon points="40,24 54,36 40,48 26,36" fill="none" stroke="var(--er)" stroke-width="1.4" stroke-dasharray="3 3"/><polygon points="54,36 70,28 80,42 64,50" fill="var(--c1)" opacity="0.15" stroke="var(--c1)" stroke-width="2"/><path d="M67 38 A14 14 0 0 1 49 36" fill="none" stroke="var(--c1)" stroke-width="2"/><polygon points="49,36 56,34 53,41" fill="var(--c1)"/></svg><div style="font-weight:600;font-size:12.5px;margin-top:4px">Transposición (romboidal)</div><div style="font-size:11px;color:var(--mut)">Limberg; salta tejido sobre piel sana</div></div>
+<div style="border:1px solid var(--bd);border-radius:8px;padding:8px;text-align:center"><svg viewBox="0 0 100 72" style="width:100%;height:62px"><circle cx="32" cy="42" r="9" fill="none" stroke="var(--er)" stroke-width="1.4" stroke-dasharray="3 3"/><circle cx="53" cy="32" r="9" fill="var(--c1)" opacity="0.15" stroke="var(--c1)" stroke-width="2"/><circle cx="72" cy="42" r="6.5" fill="var(--c1)" opacity="0.15" stroke="var(--c1)" stroke-width="2"/><path d="M49 34 A12 12 0 0 0 37 40" fill="none" stroke="var(--c1)" stroke-width="1.8"/><polygon points="37,40 44,38 41,45" fill="var(--c1)"/></svg><div style="font-weight:600;font-size:12.5px;margin-top:4px">Bilobulado</div><div style="font-size:11px;color:var(--mut)">dos lóbulos; útil en punta nasal</div></div>
+<div style="border:1px solid var(--bd);border-radius:8px;padding:8px;text-align:center"><svg viewBox="0 0 100 72" style="width:100%;height:62px"><path d="M30 26 L48 40 L30 54" fill="none" stroke="var(--er)" stroke-width="1.4" stroke-dasharray="3 3"/><polygon points="50,30 66,40 50,50" fill="var(--c1)" opacity="0.15" stroke="var(--c1)" stroke-width="2"/><line x1="60" y1="40" x2="47" y2="40" stroke="var(--c1)" stroke-width="2"/><polygon points="46,40 53,36 53,44" fill="var(--c1)"/></svg><div style="font-weight:600;font-size:12.5px;margin-top:4px">Avance en V-Y (isla)</div><div style="font-size:11px;color:var(--mut)">la V se cierra en Y; labio, ala nasal</div></div>
+<div style="border:1px solid var(--bd);border-radius:8px;padding:8px;text-align:center"><svg viewBox="0 0 100 72" style="width:100%;height:62px"><circle cx="34" cy="38" r="12" fill="none" stroke="var(--er)" stroke-width="1.4" stroke-dasharray="3 3"/><circle cx="70" cy="38" r="12" fill="var(--c1)" opacity="0.15" stroke="var(--c1)" stroke-width="2" stroke-dasharray="2 2"/><line x1="58" y1="38" x2="49" y2="38" stroke="var(--c1)" stroke-width="2"/><polygon points="48,38 55,34 55,42" fill="var(--c1)"/></svg><div style="font-weight:600;font-size:12.5px;margin-top:4px">Injerto (FTSG / STSG)</div><div style="font-size:11px;color:var(--mut)">piel de zona donante; defecto sin cierre local</div></div>
+<div style="border:1px solid var(--bd);border-radius:8px;padding:8px;text-align:center"><svg viewBox="0 0 100 72" style="width:100%;height:62px"><circle cx="50" cy="38" r="16" fill="none" stroke="var(--er)" stroke-width="1.4" stroke-dasharray="3 3"/><circle cx="50" cy="38" r="10" fill="var(--c1)" opacity="0.12" stroke="var(--c1)" stroke-width="1.6"/><circle cx="50" cy="38" r="4.5" fill="var(--c1)" opacity="0.28"/></svg><div style="font-weight:600;font-size:12.5px;margin-top:4px">2.ª intención</div><div style="font-size:11px;color:var(--mut)">granulación dirigida; cóncavas (canto, concha)</div></div>
+</div>
+
+<div class="btns" style="margin-top:6px"><button class="btn btn-out btn-sm" onclick="go('biopsia')">Biopsia</button><button class="btn btn-out btn-sm" onclick="go('prof_atb')">Profilaxis ATB</button><button class="btn btn-out btn-sm" onclick="go('bridging')">Anticoagulación</button></div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Esquemas orientativos; la técnica real, en los atlas/PDF colgados debajo.</div>
+</div>`+guidesView('cirugia');
 
 VIEWS.prof_atb=()=>`<div class="card">
 <h2>Profilaxis antibiótica en cirugía cutánea</h2>
