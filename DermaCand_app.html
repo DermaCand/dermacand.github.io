@@ -3045,6 +3045,15 @@ cec:[
 melanoma:[
 {c:'Fotoprotección muy alta',a:'prevención secundaria y autoexploración',op:[{m:'Anthelios UVMune SPF50+',lab:'La Roche-Posay'},{m:'Heliocare 360 SPF50+',lab:'Cantabria Labs'},{m:'Photoderm MAX SPF50+',lab:'Bioderma'}]},
 {c:'Fotoprotección con color',a:'cara y cuello a diario',op:[{m:'Anthelios SPF50+ color',lab:'La Roche-Posay'},{m:'Heliocare 360 Color',lab:'Cantabria Labs'},{m:'Fusion Water Color',lab:'ISDIN'}]}
+],
+ictiosis:[
+{c:'Emoliente con urea (queratolítico)',a:'humectante-desescamante diario',op:[{m:'Ureadin 10/30',lab:'ISDIN'},{m:'UreaRepair Plus 10%',lab:'Eucerin'},{m:'Xerial 30/50',lab:'SVR'}]},
+{c:'Relipidizante intensivo',a:'reparación de barrera en piel muy seca',op:[{m:'Lipikar Baume AP+M',lab:'La Roche-Posay'},{m:'Atoderm Intensive baume',lab:'Bioderma'},{m:'Cold Cream',lab:'Avène'}]},
+{c:'Higiene sin jabón',a:'baño corto, syndet/aceite de ducha',op:[{m:'Lipikar Syndet AP+',lab:'La Roche-Posay'},{m:'Atoderm gel douche',lab:'Bioderma'},{m:'Trixera Nutrition gel',lab:'Avène'}]}
+],
+porfirias:[
+{c:'Fotoprotección MINERAL (clave, cubre luz visible)',a:'óxido de zinc/dióxido de titanio',op:[{m:'Anthelios Mineral SPF50+',lab:'La Roche-Posay'},{m:'Mineral 50+',lab:'Avène'},{m:'Photoderm Mineral SPF50+',lab:'Bioderma'}]},
+{c:'Fotoprotección con color',a:'pigmento, mejor frente a luz visible',op:[{m:'Anthelios SPF50+ color',lab:'La Roche-Posay'},{m:'Heliocare 360 Color',lab:'Cantabria Labs'},{m:'Fusion Water Color',lab:'ISDIN'}]}
 ]
 };
 // Tarjeta de productos comerciales de referencia (>=3 opciones por categoria) para una patologia,
@@ -4470,19 +4479,60 @@ ${productosCard('qa')}
 
 VIEWS.lcut=()=>`<div class="card">
 <h2>Linfomas cutáneos</h2>
-<p class="intro">Linfomas primarios de la piel; los más frecuentes son los de células T (micosis fungoide). Curso y pronóstico muy variables según el tipo.</p>
-<h3>Micosis fungoide (la más común)</h3>
-<ul style="line-height:1.6">
-<li><strong>Parches</strong> — placas eritematodescamativas en zonas no fotoexpuestas ("en bañador"), simulan eccema/psoriasis durante años.</li>
-<li><strong>Placas</strong> infiltradas y, en fases avanzadas, <strong>tumores</strong>.</li>
-<li><strong>Síndrome de Sézary</strong> — variante leucémica (eritrodermia + células de Sézary en sangre).</li>
-</ul>
-<h3>Diagnóstico y extensión</h3>
-<p>Biopsias repetidas (linfocitos atípicos epidermotropos, microabscesos de Pautrier), inmunofenotipo y reordenamiento clonal del TCR. Estadiaje TNMB; carga cutánea con mSWAT.</p>
+<p class="intro">Linfomas primarios de la piel; el más frecuente es la <strong>micosis fungoide</strong> (células T). Síndrome de Sézary = variante leucémica (eritrodermia + células de Sézary). Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, estadifica TNMB</strong> (ISCL/EORTC) y mide la carga cutánea con <strong>mSWAT</strong>. Separa <strong>inicial IA-IIA</strong> (T1-T2, sin sangre/ganglio → dirigido a piel) de <strong>avanzado IIB-IVB / Sézary</strong> (tumores, eritrodermia T4, ganglio o B2 → sistémico). Tratamiento <strong>secuencial adaptado al riesgo</strong>, de intención control/paliativa salvo trasplante en seleccionados. Dx: biopsias repetidas (epidermotropismo, Pautrier), inmunofenotipo y clonalidad TCR.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma:</strong> eritrodermia exfoliativa con fallo de barrera (escalofríos/fiebre, hipotermia, inestabilidad) → reposición hidroelectrolítica, emolientes oclusivos, cobertura anti-<em>S. aureus</em> si sobreinfección y manejo hospitalario por riesgo de sepsis.</div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('mswat')">mSWAT</button></div>
-<h3>Manejo</h3>
-<p>Dirigido a la piel en fases iniciales (corticoides, fototerapia, bexaroteno/mostaza tópica, radioterapia local) y sistémico en avanzados. Manejo multidisciplinar.</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Clasificación WHO-EORTC.</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Inicial IA-IIA — dirigido a piel</div></div>
+<div class="chips"><span class="chip">clobetasol</span><span class="chip">clormetina gel</span><span class="chip">bexaroteno gel</span><span class="chip">fototerapia UVB-BE/PUVA</span><span class="chip">RT localizada</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('lc_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="lc_hc1">LINFOMA CUTANEO T (MF) - estadio IA-IIA (dirigido a piel)
+- Lesiones limitadas: clobetasol 0,05% 1-2/dia en lesiones, en ciclos.
+- Clormetina (mecloretamina) gel 0,016% 1/dia en zonas afectas (vigilar dermatitis de contacto, espaciar si irrita).
+- Bexaroteno gel 1% en placas resistentes localizadas.
+- Mas extenso (T2): fototerapia UVB-BE (parches) o PUVA (placas) 2-3/sem y mantenimiento.
+- Placa/tumor unico o paliacion: radioterapia local; TSEBT (haz de electrones total) si piel muy extensa.
+- Si refractario tras 2 tratamientos dirigidos a piel -> escalar.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">IIB-IVA / Sézary — sistémico 1ª línea</div></div>
+<div class="chips"><span class="chip">bexaroteno oral</span><span class="chip">interferón α pegilado</span><span class="chip">metotrexato</span><span class="chip">fotoaféresis (Sézary)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('lc_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="lc_hc2">LINFOMA CUTANEO T - estadio IIB-IVA / Sezary (sistemico 1a linea)
+- Bexaroteno oral 300 mg/m2/dia; tratar hipertrigliceridemia (estatina/fibrato, no gemfibrozilo) e hipotiroidismo central (levotiroxina); controlar lipidos y TSH.
+- Interferon alfa-2a pegilado SC semanal, titulando.
+- Metotrexato a dosis baja semanal (eritrodermia/Sezary).
+- Sezary/eritrodermico (B2): fotoaferesis extracorporea, sola o con IFN-peg +/- bexaroteno.
+- TSEBT si alta carga tumoral cutanea.
+- CD30+: brentuximab vedotin (ver escalon 3).</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Avanzado refractario / IVB / Sézary multitratado — diana</div></div>
+<div class="chips"><span class="chip">brentuximab vedotin (CD30+)</span><span class="chip">mogamulizumab</span><span class="chip">romidepsina</span><span class="chip">alo-TPH (seleccionados)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('lc_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="lc_hc3">LINFOMA CUTANEO T - avanzado refractario / IVB / Sezary multitratado
+- Brentuximab vedotin 1,8 mg/kg IV/3 sem si CD30+ (vigilar neuropatia periferica).
+- Mogamulizumab (anti-CCR4) 1 mg/kg IV semanal x5 y luego c/2 sem (eficaz en sangre/Sezary; vigilar rash por mogamulizumab).
+- Romidepsina IV dias 1-8-15 c/28 dias (control K/Mg y QT).
+- Denileukin diftitox-cxdl en R/R tras >=1 sistemico (vigilar sindrome de fuga capilar).
+- Quimio paliativa: gemcitabina o doxorrubicina liposomal.
+- Joven con enfermedad avanzada/Sezary: alo-TPH (unica opcion curativa). Valorar ensayo clinico.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Denileukin diftitox-cxdl</strong> (Lymphir): aprobado por la FDA (2024) para LCCT recidivante/refractario tras ≥1 sistémico.</li>
+<li><strong>Guía EORTC 2023</strong>: incorpora clormetina gel, brentuximab vedotin y mogamulizumab; interferón α <strong>pegilado</strong> (el no pegilado se retiró).</li>
+<li>Anticuerpos consolidados: brentuximab vedotin (ALCANZA, CD30+) y mogamulizumab (MAVORIC, mejor en sangre/Sézary).</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>EORTC</b> — Latzka J, et al. Recommendations for the treatment of mycosis fungoides/Sézary — update 2023. <em>Eur J Cancer</em> 2023;195:113343 · <a href="https://pubmed.ncbi.nlm.nih.gov/37890355/" target="_blank" rel="noopener">PubMed</a>.</li>
+<li>Olsen E, et al. Revisions to the staging and classification of MF/Sézary (ISCL/EORTC). <em>Blood</em> 2007;110(6):1713-1722 · <a href="https://ashpublications.org/blood/article/110/6/1713/24087" target="_blank" rel="noopener">Blood</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong>; manejo multidisciplinar.</div>
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Dermatología pediátrica =====
@@ -4575,18 +4625,60 @@ VIEWS.panal=()=>`<div class="card">
 
 VIEWS.ictiosis=()=>`<div class="card">
 <h2>Ictiosis y genodermatosis</h2>
-<p class="intro">Trastornos hereditarios de la queratinización con piel seca y descamación generalizada (ictiosis), y otras genodermatosis.</p>
-<h3>Ictiosis frecuentes</h3>
-<ul style="line-height:1.6">
-<li><strong>Vulgar</strong> — la más común (filagrina); escamas finas, respeta pliegues, hiperlinealidad palmar, asocia atopia.</li>
-<li><strong>Ligada al X</strong> — varones; escamas grandes oscuras (déficit de sulfatasa esteroidea).</li>
-<li>Formas congénitas graves (bebé colodión, ictiosis lamelar) → derivación.</li>
+<p class="intro">Trastornos hereditarios de la queratinización con descamación generalizada. No se curan: el objetivo es reducir escama, restaurar la barrera y prevenir complicaciones. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica tipo y gravedad.</strong> <strong>Ictiosis vulgar</strong> (filagrina; leve, escama fina en superficies extensoras, respeta flexuras, atopia) vs <strong>congénitas</strong> (ARCI lamelar/eritrodermia ictiosiforme, epidermolítica, ligada al X). Complicaciones a vigilar: prurito, sobreinfección, ectropion e hipohidrosis. <em>Otras genodermatosis a reconocer</em>: neurofibromatosis, esclerosis tuberosa, epidermólisis ampollosa.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma:</strong> ectropion progresivo con exposición corneal → lubricación corneal intensiva (lágrimas/pomada nocturna) + intensificar emoliente/queratolítico periocular y valorar retinoide oral; en neonato con eclabion/defecto corneal, oftalmología urgente y soporte de barrera en unidad neonatal.</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Ictiosis vulgar / formas leves — base de barrera</div></div>
+<div class="chips"><span class="chip">emoliente con urea 5-10%</span><span class="chip">petrolato/vaselina</span><span class="chip">ác. láctico</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ic_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="ic_hc1">ICTIOSIS - base de barrera (todos los tipos; vulgar/formas leves)
+- Emoliente abundante 2-3/dia, mejor tras el bano con piel humeda.
+- Urea 5-10% 1-2/dia (humectante-queratolitico suave); alternar con petrolato/vaselina en zonas muy secas.
+- Banos cortos templados + syndet sin jabon; secar a toques.
+- Ictiosis vulgar: controlar prurito y dermatitis atopica asociada (emoliente intensivo +/- corticoide topico en brotes).
+- Evitar ambientes secos; humidificar.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Congénitas moderadas — queratolíticos potentes</div></div>
+<div class="chips"><span class="chip">urea 10-40%</span><span class="chip">α-hidroxiácidos</span><span class="chip">propilenglicol 40-60%</span><span class="chip">N-acetilcisteína tóp.</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ic_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="ic_hc2">ICTIOSIS CONGENITA (lamelar, eritrodermia ictiosiforme, ligada al X) - escama gruesa
+- Urea 10-40% segun grosor (concentraciones altas en palmas/plantas/placas).
+- Acido lactico/alfa-hidroxiacidos para favorecer la descamacion.
+- Propilenglicol 40-60% acuoso en oclusion nocturna en placas gruesas.
+- N-acetilcisteina topica como antiproliferativo en casos seleccionados.
+- Retinoide topico solo en areas limitadas (irritacion).
+- PRECAUCION lactante/superficie amplia: evitar salicilico y limitar urea/lactico altos (absorcion -> salicilismo/acidosis).
+- Prurito: emoliente +/- antihistaminico; cultivo + antibiotico dirigido si sobreinfeccion.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Formas graves / refractarias — retinoide oral</div></div>
+<div class="chips"><span class="chip">acitretina</span><span class="chip">isotretinoína oral</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ic_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="ic_hc3">ICTIOSIS CONGENITA GRAVE o refractaria a topicos
+- Acitretina oral a dosis baja-eficaz (uso potencialmente cronico); reduce escama/engrosamiento, mejora ectropion/eclabion e hipohidrosis.
+- Alternativa: isotretinoina oral (preferida en mujer fertil por vida media corta).
+- ANTICONCEPCION estricta (teratogenia): tras acitretina evitar embarazo 3 anos; isotretinoina 1 mes.
+- Monitorizar lipidos y perfil hepatico; vigilar toxicidad osea/hiperostosis en uso prolongado y crecimiento en ninos.
+- Mantener la base topica de barrera durante el sistemico.</pre></div>
+
+${productosCard('ictiosis')}
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Guías internacionales de ictiosis congénita 2024-2025</strong> (BJD): emolientes/queratolíticos graduados y retinoides orales reservados a formas graves, a la mínima dosis eficaz.</li>
+<li><strong>TMB-001</strong> (isotretinoína tópica 0,05%): el ensayo fase 3 ASCEND (2024) no alcanzó el objetivo primario; el retinoide tópico en ictiosis sigue sin posicionarse.</li>
+<li><strong>Trifaroteno</strong> tópico mantiene la designación de fármaco huérfano para ictiosis congénita.</li>
 </ul>
-<h3>Otras genodermatosis a conocer</h3>
-<p>Neurofibromatosis (manchas café con leche, neurofibromas), esclerosis tuberosa (máculas hipocrómicas, angiofibromas), epidermólisis ampollosa.</p>
-<h3>Manejo</h3>
-<p>Base: hidratación intensiva con emolientes y queratolíticos (urea, ácido láctico). Casos graves: retinoides sistémicos, manejo multidisciplinar y consejo genético.</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Mazereeuw-Hautier J, et al. Management of congenital ichthyoses: guidelines of care, part 1 (2024 update). <em>Br J Dermatol</em> 2025;193(1):16-27 · <a href="https://doi.org/10.1093/bjd/ljaf076" target="_blank" rel="noopener">doi.org</a>.</li>
+<li><b>DermNet</b> — Ichthyosis · <a href="https://dermnetnz.org/topics/ichthyosis" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.nevus_cong=()=>`<div class="card">
@@ -5480,17 +5572,62 @@ VIEWS.amiloidosis=()=>`<div class="card">
 
 VIEWS.porfirias=()=>`<div class="card">
 <h2>Porfirias cutáneas</h2>
-<p class="intro">Trastornos del metabolismo del hemo con acumulación de porfirinas fotosensibilizantes. La piel se afecta en las formas con fotosensibilidad.</p>
-<h3>Principales con afectación cutánea</h3>
-<ul>
-<li><strong>Porfiria cutánea tarda (PCT)</strong> — la más frecuente; fragilidad y ampollas en dorso de manos, hipertricosis, milia; asocia hepatopatía (VHC, alcohol, hierro, estrógenos). Uroporfirinas elevadas en orina.</li>
-<li><strong>Protoporfiria eritropoyética</strong> — dolor/quemazón inmediatos tras el sol, sin ampollas; inicio infantil.</li>
-<li><strong>Porfirias agudas</strong> — algunas con lesiones tipo PCT (p. ej. variegata).</li>
+<p class="intro">Trastornos del metabolismo del hemo con porfirinas fotosensibilizantes. Las dos cutáneas clave: <strong>porfiria cutánea tarda (PCT)</strong> y <strong>protoporfiria eritropoyética (EPP)</strong>. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, distingue el tipo por la clínica.</strong> <strong>PCT</strong>: fragilidad, ampollas y erosiones en dorso de manos/zonas fotoexpuestas, milia, hipertricosis (uroporfirinas urinarias altas). <strong>EPP/XLP</strong>: dolor/quemazón/eritema-edema <em>inmediato</em> con el sol, SIN ampollas (protoporfirina eritrocitaria elevada). Confirmar con porfirinas (orina/heces/sangre). Objetivo: en PCT depletar hierro y retirar gatillos hasta remisión; en EPP mejorar la tolerancia al sol.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma:</strong> EPP con transaminasas en ascenso, colestasis o dolor abdominal → hepatopatía protoporfírica (riesgo de fallo hepático): perfil hepático urgente, ecografía y unidad de porfirias/trasplante. PCT con nódulo/úlcera persistente o masa hepática → imagen + alfafetoproteína (hepatocarcinoma).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Medidas comunes y cribado</div></div>
+<div class="chips"><span class="chip">fotoprotección física</span><span class="chip">retirar gatillos (PCT)</span><span class="chip">cribado VHC/VIH/HFE</span><span class="chip">vacuna VHA/VHB</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('po_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="po_hc1">PORFIRIAS CUTANEAS - medidas comunes y cribado
+- Fotoproteccion FISICA: filtros con oxido de zinc/dioxido de titanio (cubren luz visible), ropa opaca, sombrero, guantes, film UV en cristales.
+PCT:
+- Retirar gatillos: suspender alcohol, estrogenos/anticonceptivos y suplementos de hierro.
+- Cribar VHC, VIH, ferritina/saturacion de transferrina y HFE (hemocromatosis).
+EPP/XLP:
+- Control anual del perfil hepatico; suplementar 25-OH-vitamina D; corregir ferropenia (ferritina objetivo 50-100).
+- Vacunar frente a VHA y VHB; evitar alcohol.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Tratamiento dirigido de 1ª línea</div></div>
+<div class="chips"><span class="chip">flebotomía (PCT)</span><span class="chip">hidroxicloroquina dosis baja (PCT)</span><span class="chip">afamelanotida (EPP)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('po_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="po_hc2">PORFIRIAS CUTANEAS - tratamiento dirigido de 1a linea
+PCT (depletar hierro / aclarar porfirinas):
+- Flebotomia: 450 mL c/1-2 sem hasta ferritina objetivo ~50 ng/mL (vigilar Hb).
+- Alternativa: hidroxicloroquina 100 mg 2/semana (o cloroquina 125 mg 2/semana) hasta normalizar porfirinas; NO dosis altas (hepatotoxicidad aguda).
+EPP/XLP:
+- Afamelanotida (analogo de alfa-MSH) implante SC 16 mg c/2 meses en temporada de sol; control de nevus c/6 meses.
+- Mantener fotoproteccion estricta.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Comorbilidad / resistencia / complejos</div></div>
+<div class="chips"><span class="chip">AAD anti-VHC (PCT)</span><span class="chip">quelación de hierro</span><span class="chip">colestiramina (EPP)</span><span class="chip">trasplante hepático</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('po_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="po_hc3">PORFIRIAS CUTANEAS - comorbilidad / resistencia / casos complejos
+PCT:
+- VHC concurrente: antivirales de accion directa (ledipasvir/sofosbuvir) pueden resolver la PCT por si solos.
+- Anemia/insuf. renal que impide flebotomia: deferasirox u otra quelacion de hierro.
+EPP/XLP con afectacion hepatica:
+- Reducir protoporfirina: colestiramina/secuestradores biliares; valorar transfusion/intercambio.
+- Hepatopatia protoporfirica grave: unidad de porfirias; trasplante hepatico +/- de medula segun curso.</pre></div>
+
+${productosCard('porfirias')}
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Guía de consenso EPP/XLP</strong> (JAAD 2023): la <strong>afamelanotida</strong> es el único tratamiento aprobado; NO se recomiendan betacaroteno, cisteína ni N-acetilcisteína (evidencia insuficiente).</li>
+<li><strong>Dersimelagon</strong> (agonista MC1R ORAL): ensayo ENDEAVOR (2023) positivo; alternativa oral a la afamelanotida en desarrollo.</li>
+<li>En PCT con VHC, los <strong>antivirales de acción directa</strong> pueden inducir remisión sin flebotomía/antimaláricos.</li>
 </ul>
-<h3>Manejo</h3>
-<p>Confirmar con porfirinas (orina, heces, sangre). PCT: retirar desencadenantes, flebotomías o hidroxicloroquina a dosis bajas. <strong>Fotoprotección</strong> con filtros físicos en todas.</p>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/porphyria" target="_blank" rel="noopener">DermNet — Porphyria</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Dickey AK, et al. Consensus guidelines for the diagnosis and management of EPP and XLP. <em>J Am Acad Dermatol</em> 2023;89(6):1227-1237 · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9968824/" target="_blank" rel="noopener">PMC</a>.</li>
+<li>Balwani M, et al. Dersimelagon in erythropoietic protoporphyrias (ENDEAVOR). <em>N Engl J Med</em> 2023;388(15):1376-1385 · <a href="https://www.nejm.org/doi/10.1056/NEJMoa2208754" target="_blank" rel="noopener">nejm.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.deposito=()=>`<div class="card">
@@ -5634,37 +5771,114 @@ DERMATOSIS IgA LINEAL:
 
 VIEWS.epidermolisis=()=>`<div class="card">
 <h2>Epidermólisis ampollosa</h2>
-<p class="intro">Grupo con <strong>fragilidad cutánea</strong> y formación de ampollas ante mínimos traumatismos. Mayoritariamente hereditarias (genodermatosis); existe una forma adquirida autoinmune.</p>
-<h3>Formas hereditarias (por nivel de despegamiento)</h3>
-<ul>
-<li><strong>Simple</strong> — intraepidérmica (queratinas 5/14); ampollas que curan sin cicatriz.</li>
-<li><strong>Juntural</strong> — en la lámina lúcida; formas graves neonatales.</li>
-<li><strong>Distrófica</strong> — bajo la lámina densa (colágeno VII); cura con cicatriz, milia y sinequias (seudosindactilia), afectación mucosa; riesgo de CEC.</li>
+<p class="intro"><strong>Fragilidad cutánea</strong> con ampollas ante mínimos traumatismos. Hereditarias (genodermatosis) y una forma adquirida autoinmune (EBA, anti-colágeno VII → inmunosupresión). Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica por nivel de separación</strong> (mapeo antigénico/IF + genética): <strong>simple</strong> (intraepidérmica, KRT5/14), <strong>juntural</strong> (lámina lúcida), <strong>distrófica</strong> (sublámina densa, COL7A1; cicatriz, seudosindactilia, mucosas) y <strong>Kindler</strong>. La base es cuidado de heridas + soporte multisistémico; <strong>vigilar carcinoma escamoso</strong> en la distrófica recesiva.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma:</strong> herida crónica que no cicatriza, hiperqueratósica, friable o con borde sobreelevado en EA distrófica recesiva → biopsia incisional con mapeo de toda lesión sospechosa y vigilancia cutánea cada 3-6 meses desde la adolescencia (CEC agresivo).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Base universal — heridas, nutrición y dolor</div></div>
+<div class="chips"><span class="chip">apósitos no adherentes (silicona)</span><span class="chip">emolientes/antisépticos diluidos</span><span class="chip">soporte nutricional</span><span class="chip">analgesia OMS</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ep_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="ep_hc1">EPIDERMOLISIS AMPOLLOSA - base universal (todos los tipos)
+- Curas atraumaticas: apositos no adherentes de silicona o malla lipidocoloide; humedecer antes de retirar; NO adhesivos.
+- Drenar ampollas tensas con aguja esteril dejando el techo; no desbridar el techo.
+- Lavado suave con suero/agua + antiseptico diluido (hipoclorito 0,005-0,01% o clorhexidina acuosa) si colonizada; cultivo + antibiotico dirigido solo si infeccion clinica.
+- Piel periherida: emoliente + barrera de silicona.
+- Mucosas: higiene oral suave, dieta blanda, dilatacion esofagica si disfagia; lubricacion ocular.
+- Nutricion hiperproteica-hipercalorica + hierro/vitamina D/zinc/selenio segun deficit; gastrostomia si fallo de medro.
+- Dolor: escalado OMS +/- gabapentina/pregabalina; premedicar antes de las curas.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Tópica avanzada de heridas (distrófica y juntural)</div></div>
+<div class="chips"><span class="chip">oleogel-S10 / triterpenos de abedul (Filsuvez)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ep_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="ep_hc2">EPIDERMOLISIS AMPOLLOSA - terapia topica avanzada de heridas (distrofica y juntural)
+- Oleogel-S10 (triterpenos de abedul, Filsuvez): capa de ~1 mm sobre la herida en cada cambio de aposito, cubrir con aposito no adherente.
+- Indicacion: heridas de espesor parcial en EA distrofica y juntural (UE 2022, FDA 2024, desde los 6 meses).
+- Objetivo: acelerar el cierre y reducir la carga de heridas; mantener las medidas de base.
+- Continuar mientras persistan heridas; reevaluar superficie afecta periodicamente.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Terapia génica tópica (EAD con mutación COL7A1)</div></div>
+<div class="chips"><span class="chip">beremagene geperpavec (B-VEC / Vyjuvek)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ep_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="ep_hc3">EPIDERMOLISIS AMPOLLOSA - terapia genica topica (EAD con mutacion COL7A1)
+- Beremagene geperpavec (B-VEC, Vyjuvek): gel de vector HSV-1 no integrativo con doble copia de COL7A1.
+- Aplicar por personal sanitario sobre la/s herida/s UNA vez por semana; mantener aposito; redosificar semanalmente segun cierre.
+- Indicacion: EA distrofica (dominante o recesiva) con mutacion confirmada en COL7A1, desde el nacimiento (ficha FDA 2025).
+- Restaura COL7 y fibrillas de anclaje; usar sobre heridas que no cierran pese a escalones 1-2; combinable con el cuidado estandar.
+- Mantener vigilancia de CEC (no elimina el riesgo).</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Beremagene geperpavec</strong> (B-VEC, Vyjuvek): 1ª terapia génica tópica aprobada (FDA 2023) para EA distrófica con mutación COL7A1 (GEM-3: 67 % de cierre a 6 meses); en 2025 se amplió a uso desde el nacimiento y aplicación domiciliaria.</li>
+<li><strong>Oleogel-S10</strong> (triterpenos de abedul, Filsuvez): 1ª terapia aprobada (EMA 2022, FDA 2024) para heridas de espesor parcial en EA distrófica y juntural.</li>
+<li>Clasificación 2020 por nivel de separación + diagnóstico molecular, que guía la elegibilidad para terapias dirigidas.</li>
 </ul>
-<h3>Adquirida</h3>
-<p><strong>Epidermólisis ampollosa adquirida</strong> — autoinmune, autoanticuerpos anti-colágeno VII; ampollas en zonas de roce que curan con cicatriz y milia.</p>
-<h3>Manejo</h3>
-<p>Hereditarias: cuidado de heridas, prevención del traumatismo, nutrición y manejo multidisciplinar; vigilar CEC en la distrófica. Adquirida: inmunosupresión. Diagnóstico con mapeo antigénico/estudio genético.</p>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/epidermolysis-bullosa" target="_blank" rel="noopener">DermNet — Epidermolysis bullosa</a> · <a href="https://www.orpha.net" target="_blank" rel="noopener">Orphanet</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Has C, et al. Consensus reclassification of inherited epidermolysis bullosa. <em>Br J Dermatol</em> 2020;183(4):614-627 · <a href="https://doi.org/10.1111/bjd.18921" target="_blank" rel="noopener">doi.org</a>.</li>
+<li>Guide SV, et al. Trial of beremagene geperpavec (B-VEC) for dystrophic EB. <em>N Engl J Med</em> 2022;387(24):2211-2219 · <a href="https://doi.org/10.1056/NEJMoa2206663" target="_blank" rel="noopener">doi.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong>; manejo multidisciplinar.</div>
 </div>`;
 
 // ===== VISTA DE PATOLOGÍA · Dermato-oncología (ampliación) =====
 VIEWS.merkel=()=>`<div class="card">
 <h2>Carcinoma de células de Merkel</h2>
-<p class="intro">Tumor cutáneo neuroendocrino raro pero <strong>agresivo</strong>. Relacionado con el poliomavirus de células de Merkel, la exposición solar y la inmunosupresión.</p>
-<h3>Sospecha — regla "AEIOU"</h3>
-<ul>
-<li><strong>A</strong>sintomático (no doloroso), <strong>E</strong>xpansión rápida, <strong>I</strong>nmunosupresión, <strong>O</strong>lder (mayor de 50 años), piel fotoexpuesta (<strong>U</strong>V).</li>
-<li>Nódulo rojo-violáceo firme de crecimiento rápido (cara, cuero cabelludo, extremidades).</li>
-</ul>
-<h3>Diagnóstico y estadificación</h3>
-<p>Biopsia + inmunohistoquímica (CK20 con patrón paranuclear "en punto", marcadores neuroendocrinos). Alta tendencia a metástasis ganglionar → <strong>ganglio centinela</strong> e imagen para estadiaje.</p>
-<h3>Manejo</h3>
-<p>Cirugía con márgenes ± radioterapia (muy radiosensible). Enfermedad avanzada: <strong>inmunoterapia anti-PD1/PD-L1</strong> (avelumab). Manejo multidisciplinar y seguimiento estrecho.</p>
+<p class="intro">Tumor neuroendocrino raro pero <strong>agresivo</strong> (poliomavirus/UV/inmunosupresión). Sospecha por <strong>AEIOU</strong> (Asintomático, Expansión rápida, Inmunosupresión, Older &gt;50, UV). Dx: biopsia + IHQ (CK20 "en punto"). Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, estadifica (AJCC 8ª).</strong> <strong>Localizado resecable (I-II)</strong>, <strong>regional/ganglionar (III)</strong> — con biopsia de ganglio centinela como estándar en N0 clínico — o <strong>irresecable/metastásico (IV)</strong>. Objetivo: en local-regional, control quirúrgico + márgenes ± radioterapia adyuvante; en avanzado, inmunoterapia anti-PD-(L)1 de 1ª línea. Valora siempre el estado inmune.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma:</strong> nódulo rojo-violáceo indoloro de crecimiento rápido con adenopatía regional o síntomas sistémicos → imagen de estadificación urgente (TC/PET-TC), comité multidisciplinar de tumores cutáneos y circuito oncológico preferente sin demora.</div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('melanoma')">Melanoma</button><button class="btn btn-out btn-sm" onclick="go('cirugia')">Cirugía</button></div>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/merkel-cell-carcinoma" target="_blank" rel="noopener">DermNet — Merkel cell carcinoma</a> · <a href="https://www.aad.org/member/clinical-quality/guidelines" target="_blank" rel="noopener">AAD Guidelines</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Estadio I-II (localizado resecable)</div></div>
+<div class="chips"><span class="chip">escisión amplia</span><span class="chip">ganglio centinela</span><span class="chip">RT adyuvante del lecho</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('mk_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="mk_hc1">CARCINOMA DE MERKEL - estadio I-II (localizado resecable)
+- Escision amplia: margenes 1-2 cm hasta fascia segun viabilidad (no precisa Mohs de rutina).
+- Biopsia de ganglio centinela en todo N0 clinico (alto riesgo de afectacion oculta; guia estadiaje y RT).
+- Radioterapia adyuvante del lecho (50-56 Gy) tras cicatrizar, idealmente antes de 8 semanas; sobre todo si margenes estrechos, >1 cm, invasion linfovascular o inmunosupresion.
+- NO quimioterapia adyuvante (sin beneficio en supervivencia).
+- Inmunoterapia adyuvante solo en ensayo.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Estadio III (afectación ganglionar)</div></div>
+<div class="chips"><span class="chip">linfadenectomía y/o RT ganglionar</span><span class="chip">RT adyuvante</span><span class="chip">ctDNA seriado</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('mk_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="mk_hc2">CARCINOMA DE MERKEL - estadio III (afectacion ganglionar)
+- Centinela positivo -> linfadenectomia de la cuenca y/o radioterapia ganglionar (segun carga y morbilidad).
+- Radioterapia adyuvante sobre primario y cuenca muy recomendada.
+- Neoadyuvancia con nivolumab valorable en casos resecables seleccionados.
+- Adyuvancia anti-PD-1 NO estandar fuera de ensayo (STAMP no mejoro la SLR global; ADMEC-O senalo mejoria de DFS con nivolumab).
+- Seguimiento estrecho; valorar ctDNA seriado.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Estadio IV / irresecable (avanzado)</div></div>
+<div class="chips"><span class="chip">avelumab</span><span class="chip">pembrolizumab</span><span class="chip">retifanlimab</span><span class="chip">nivolumab</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('mk_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="mk_hc3">CARCINOMA DE MERKEL - estadio IV / irresecable (avanzado)
+- 1a linea = inmunoterapia anti-PD-(L)1 (preferente a quimioterapia):
+  Avelumab 800 mg IV c/2 sem; o pembrolizumab 200 mg c/3 sem (o 400 mg c/6 sem); o retifanlimab-dlwr 500 mg c/4 sem; nivolumab alternativa.
+- Mantener hasta progresion/toxicidad/respuesta completa duradera (respuestas prolongadas frecuentes).
+- Contraindicacion absoluta a ICI (p. ej. trasplante de organo): quimioterapia platino-etoposido paliativa (respuestas no duraderas).
+- Tras progresion: ensayo clinico, combinaciones o rescate locorregional (RT/cirugia).
+- Vigilar irAE: tiroiditis, neumonitis, colitis, hepatitis, endocrinopatias.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Anti-PD-(L)1 de 1ª línea</strong> consolidado con durabilidad a largo plazo (JAVELIN Merkel 200 &gt;5 años; KEYNOTE-017); incorporación de <strong>retifanlimab</strong> y de la monitorización con <strong>ctDNA</strong>.</li>
+<li><strong>Adyuvancia</strong> anti-PD-1 aún no estándar: STAMP (2025) no mejoró la SLR global (sí redujo metástasis a distancia); ADMEC-O (2023) mejoró la DFS con nivolumab.</li>
+<li>La quimioterapia adyuvante NO aporta beneficio en supervivencia.</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>D'Angelo SP, et al. Avelumab in metastatic Merkel cell carcinoma (JAVELIN Merkel 200), &gt;5 años. <em>ESMO Open</em> 2021;6(6):100290 · <a href="https://doi.org/10.1016/j.esmoop.2021.100290" target="_blank" rel="noopener">doi.org</a>.</li>
+<li>Becker JC, et al. Adjuvant nivolumab vs observation in resected MCC (ADMEC-O). <em>Lancet</em> 2023;402(10404):798-808 · <a href="https://doi.org/10.1016/S0140-6736(23)00769-9" target="_blank" rel="noopener">doi.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong>; manejo multidisciplinar.</div>
 </div>`;
 
 // ===== VISTA DE PATOLOGÍA · Enfermedades vasculares =====
