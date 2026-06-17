@@ -4798,18 +4798,59 @@ VIEWS.urticaria=()=>`<div class="card">
 
 VIEWS.derm_gest=()=>`<div class="card">
 <h2>Dermatosis del embarazo</h2>
-<p class="intro">Erupciones específicas de la gestación. Clave: distinguir las benignas (frecuentes) de las que implican <strong>riesgo fetal</strong>.</p>
-<h3>Cuadros</h3>
-<ul style="line-height:1.6">
-<li><strong>Erupción polimorfa (PUPPP)</strong> — pápulas/placas urticariformes en estrías abdominales, 3.<sup>er</sup> trimestre; benigna, respeta el ombligo.</li>
-<li><strong>Penfigoide gestacional</strong> — ampollas tensas periumbilicales (autoinmune, anti-BP180); riesgo de prematuridad/bajo peso.</li>
-<li><strong>Colestasis intrahepática</strong> — prurito intenso <em>sin lesiones primarias</em> (palmas/plantas), sales biliares elevadas; <strong>riesgo fetal</strong> → control obstétrico.</li>
-<li><strong>Erupción atópica del embarazo</strong> — la más frecuente; eccema/prurigo, benigna.</li>
-</ul>
-<h3>Manejo</h3>
-<p>Emolientes, corticoide tópico y antihistamínicos seguros según el caso. Colestasis: ácido ursodesoxicólico y vigilancia obstétrica. Penfigoide gestacional: corticoides. Emplear fármacos seguros en el embarazo.</p>
+<p class="intro">Erupciones específicas de la gestación. Lo clave es distinguir las <strong>benignas</strong> de las que implican <strong>riesgo fetal</strong>. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, estratifica por RIESGO FETAL</strong> (no por la intensidad del prurito). <strong>Sin riesgo</strong>: erupción polimorfa (PUPPP; 3.<sup>er</sup> trimestre, primigesta, en estrías, respeta el ombligo) y erupción atópica del embarazo (más precoz). <strong>Con riesgo</strong>: penfigoide gestacional (placas que ampollan; <strong>IFD C3 lineal</strong>, anti-BP180) y colestasis intrahepática (prurito palmoplantar nocturno SIN lesiones; <strong>ácidos biliares</strong> elevados).</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma:</strong> prurito palmoplantar nocturno sin lesiones primarias → medir <strong>ácidos biliares totales</strong> y transaminasas el mismo día; si ≥100 µmol/L iniciar ácido ursodesoxicólico, monitorizar seriados y programar <strong>finalización a las 36 semanas</strong> (riesgo de muerte fetal).</div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('embarazo')">Fármacos en embarazo</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Benignas (PUPPP / atópica) — tópico sintomático</div></div>
+<div class="chips"><span class="chip">emolientes</span><span class="chip">corticoide tóp.</span><span class="chip">antihistamínico seguro</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dg_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="dg_hc1">DERMATOSIS BENIGNA (PUPPP o erupcion atopica) - sin riesgo fetal
+- Emoliente abundante 2-3/dia.
+- Corticoide topico potencia media-alta: mometasona 0,1% 1/dia o betametasona valerato 0,1% 1-2/dia x1-2 sem en placas.
+- Banos con avena coloidal / compresas frias.
+- Antihistaminico oral si el prurito interfiere el sueno: clorfenamina 4 mg/8h (preferida 1er trimestre) o cetirizina 10 mg/dia / loratadina 10 mg/dia (2-3er trimestre).
+- Resolucion habitual en posparto; PUPPP no suele recurrir.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Brote intenso / penfigoide leve — corticoide sistémico corto</div></div>
+<div class="chips"><span class="chip">clobetasol tóp.</span><span class="chip">prednisona oral (corta)</span><span class="chip">IFD si ampollas</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dg_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="dg_hc2">BROTE SEVERO (dermatosis benigna o penfigoide gestationis LEVE)
+- Penfigoide leve (placas urticariformes sin ampollas extensas): clobetasol 0,05% topico + antihistaminico.
+- Si no controla o es muy extenso: prednisona/prednisolona oral 0,5 mg/kg/dia, bajar a la minima dosis eficaz.
+- Mantener emolientes y antihistaminico.
+- Si confirmas penfigoide -> IFD (C3 lineal) + anti-BP180; vigilar al neonato (lesiones transitorias, bajo peso/prematuridad).</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Con riesgo fetal — penfigoide activo / colestasis</div></div>
+<div class="chips"><span class="chip">prednisona sistémica (penfigoide)</span><span class="chip">ác. ursodesoxicólico (colestasis)</span><span class="chip">control obstétrico</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dg_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="dg_hc3">DERMATOSIS DEL EMBARAZO CON RIESGO FETAL
+A) PENFIGOIDE GESTATIONIS activo (ampollas):
+- Prednisona/prednisolona 0,5-1 mg/kg/dia hasta cese de ampollas nuevas, luego descenso lento.
+- Corticoide topico potente coadyuvante; antihistaminico.
+- Refractario: dapsona, azatioprina, ciclosporina o IGIV. Puede haber brote posparto.
+B) COLESTASIS INTRAHEPATICA:
+- Acido ursodesoxicolico 10-15 mg/kg/dia (alivia el prurito materno).
+- Medir acidos biliares totales y transaminasas (seriados); vitamina K oral si TP prolongado.
+- Finalizacion segun acidos biliares: >=100 micromol/L a las 36 sem; 40-99 a las 36-39 sem; <40 a las 38-39 sem.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Ácidos biliares ≥100 µmol/L</strong>: principal predictor de muerte fetal (Ovadia, Lancet 2019); SMFM 2021 y RCOG 2022 lo usan para indicar finalización a las 36 semanas.</li>
+<li>El <strong>ácido ursodesoxicólico</strong> alivia el prurito materno pero (ensayo PITCHES) no reduce de forma robusta los desenlaces perinatales: 1ª línea por síntomas, sin sobreestimar el efecto fetal.</li>
+<li><strong>Dupilumab</strong> y rituximab como ahorradores de corticoide en penfigoide gestacional refractario (casos 2023-2025).</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>SMFM</b> — Consult Series #53: Intrahepatic cholestasis of pregnancy. <em>Am J Obstet Gynecol</em> 2021;224(2):B2-B9 · <a href="https://doi.org/10.1016/j.ajog.2020.11.002" target="_blank" rel="noopener">doi.org</a>.</li>
+<li><b>RCOG</b> — Green-top Guideline No. 43: Intrahepatic cholestasis of pregnancy. <em>BJOG</em> 2022;129(13):e95-e114 · <a href="https://doi.org/10.1111/1471-0528.17206" target="_blank" rel="noopener">doi.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y seguridad en embarazo</strong> (ficha técnica) y coordinar con obstetricia.</div>
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Procedimientos y cirugía =====
@@ -5629,20 +5670,57 @@ VIEWS.merkel=()=>`<div class="card">
 // ===== VISTA DE PATOLOGÍA · Enfermedades vasculares =====
 VIEWS.malf_vascular=()=>`<div class="card">
 <h2>Malformaciones vasculares</h2>
-<p class="intro">Anomalías estructurales de los vasos, presentes al nacer, que crecen con el niño y <strong>no involucionan</strong> (a diferencia de los hemangiomas, que son tumores). Se clasifican por el vaso predominante y el flujo (clasificación ISSVA).</p>
-<h3>Tipos</h3>
-<ul>
-<li><strong>Capilar</strong> — "mancha en vino de Oporto", persistente. En distribución trigeminal (V1) valorar <em>síndrome de Sturge-Weber</em> (glaucoma, afectación leptomeníngea).</li>
-<li><strong>Venosa</strong> — masa azulada compresible, de bajo flujo; se rellena en declive.</li>
-<li><strong>Linfática</strong> — vesículas o masas (linfangioma).</li>
-<li><strong>Arteriovenosa</strong> — <em>alto flujo</em>, con frémito/soplo; potencialmente complejas.</li>
-<li><strong>Combinadas / síndromes</strong> — Klippel-Trénaunay, etc.</li>
-</ul>
-<h3>Manejo</h3>
-<p>Diagnóstico clínico + imagen (eco-Doppler, RM) para definir flujo y extensión. Tratamiento según tipo: <strong>láser de colorante pulsado</strong> (capilar), escleroterapia (venosa/linfática), embolización/cirugía (arteriovenosa). Manejo multidisciplinar.</p>
+<p class="intro">Anomalías estructurales presentes al nacer que crecen con el niño y <strong>no involucionan</strong> (a diferencia del hemangioma, que es un tumor). Clasificación ISSVA. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica (ISSVA).</strong> <strong>Malformación</strong> (al nacer, crece proporcional, no involuciona) vs <strong>tumor</strong> (hemangioma: tras nacer, prolifera-involuciona, GLUT1+). Luego por flujo: <strong>bajo</strong> (capilar, venosa, linfática) vs <strong>alto</strong> (arteriovenosa). Un fenotipo sindrómico/segmentario (Sturge-Weber, CLOVES, Klippel-Trénaunay) sugiere mosaicismo somático (<strong>PIK3CA</strong>/PROS, GNAQ) y obliga a manejo multidisciplinar.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma:</strong> alto flujo (MAV) con soplo/frémito, ulceración, sangrado o insuficiencia cardiaca de alto gasto → <strong>NO</strong> láser ni escleroterapia de inicio: angiografía y embolización por radiología intervencionista. Mancha en vino de Oporto en V1/frontoparietal → RM cerebral con contraste y valoración oftalmológica precoz (Sturge-Weber: crisis, glaucoma).</div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('hemangioma')">Hemangiomas infantiles</button></div>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/vascular-malformations" target="_blank" rel="noopener">DermNet — Vascular malformations</a> · <a href="https://www.issva.org" target="_blank" rel="noopener">Clasificación ISSVA</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Capilar (mancha en vino de Oporto)</div></div>
+<div class="chips"><span class="chip">láser de colorante pulsado (595 nm)</span><span class="chip">maquillaje correctivo</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('mv_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="mv_hc1">MALFORMACION CAPILAR (mancha en vino de Oporto) - sin signos de alto flujo
+- Tratamiento de eleccion: laser de colorante pulsado (PDL) 595 nm con enfriamiento epidermico.
+- Sesiones c/6-8 sem; iniciar precozmente (lactante) por mejor respuesta; aclaramiento variable y posible reactivacion.
+- Adyuvante en investigacion: sirolimus 1% o timolol 0,5% topico tras PDL (vigilar ulceracion/absorcion).
+- Distribucion V1/frontoparietal: descartar Sturge-Weber (RM cerebral + oftalmologia).</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Venosa / linfática de bajo flujo</div></div>
+<div class="chips"><span class="chip">escleroterapia</span><span class="chip">compresión</span><span class="chip">cirugía / láser Nd:YAG</span><span class="chip">sirolimus oral (difusa)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('mv_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="mv_hc2">MALFORMACION VENOSA o LINFATICA de bajo flujo (confirmar con eco-Doppler/RM)
+- Focal/macroquistica: escleroterapia guiada por imagen (polidocanol, bleomicina; OK-432 en linfatica macroquistica) +/- cirugia o laser Nd:YAG.
+- Venosa: medias de compresion; valorar HBPM perioperatoria si coagulopatia localizada (D-dimero alto).
+- Difusa/microquistica/refractaria: sirolimus oral.
+  Inicio orientativo 0,8 mg/m2/dosis c/12h; ajustar por nivel valle (4-6 ng/mL si no vital; 10-12 si lesion de riesgo).
+  Profilaxis de neumocistis y control de lipidos/mucositis/citopenias.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Compleja / sindrómica (PROS, Sturge-Weber) o alto flujo</div></div>
+<div class="chips"><span class="chip">sirolimus oral (mTOR)</span><span class="chip">alpelisib (PROS)</span><span class="chip">embolización (MAV)</span><span class="chip">multidisciplinar</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('mv_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="mv_hc3">MALFORMACION COMPLEJA / SINDROMICA / ALTO FLUJO (unidad multidisciplinar)
+- Estudio genetico de mosaicismo (PIK3CA en PROS: CLOVES, Klippel-Trenaunay; GNAQ en Sturge-Weber).
+- PROS grave que requiere terapia sistemica: alpelisib (inhibidor PI3K-alfa, FDA 2022).
+  Adulto 250 mg/dia con alimento; pediatrico (>=2 anos) 50 mg/dia segun edad/peso. Vigilar hiperglucemia, diarrea, mucositis, crecimiento.
+- Alternativa: sirolimus oral (valle segun gravedad).
+- Sturge-Weber: PDL facial + control de crisis y glaucoma.
+- Alto flujo (MAV): embolizacion +/- cirugia; evitar la ligadura proximal aislada (favorece el reclutamiento).</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Alpelisib</strong> (Vijoice): 1er fármaco aprobado por la FDA (2022) para el espectro de sobrecrecimiento PIK3CA (PROS) grave en ≥2 años (estudio EPIK-P1).</li>
+<li><strong>Sirolimus</strong> (mTOR) consolidado en malformaciones linfáticas/venosas extensas, con tendencia a dosis baja guiada por nivel valle para reducir toxicidad.</li>
+<li>Revisión de la <strong>clasificación ISSVA 2024</strong>: correlación genotipo-fenotipo y enfoque de medicina de precisión sobre la vía PI3K-AKT-mTOR.</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Singh S, et al. FDA approval summary: alpelisib for PIK3CA-related overgrowth spectrum. <em>Clin Cancer Res</em> 2024;30(1):23-28 · <a href="https://pubmed.ncbi.nlm.nih.gov/37624421/" target="_blank" rel="noopener">PubMed</a>.</li>
+<li>Adams DM, et al. Efficacy and safety of sirolimus in complicated vascular anomalies. <em>Pediatrics</em> 2016;137(2):e20153257 · <a href="https://pubmed.ncbi.nlm.nih.gov/26783326/" target="_blank" rel="noopener">PubMed</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong>; manejo en unidad de anomalías vasculares.</div>
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Misceláneas =====
@@ -5698,17 +5776,64 @@ VIEWS.oclusion_micro=()=>`<div class="card">
 
 VIEWS.granulomatosas=()=>`<div class="card">
 <h2>Enfermedades granulomatosas cutáneas</h2>
-<p class="intro">Dermatosis con <strong>granulomas</strong> (acúmulos de histiocitos) en la histología. Pueden ser idiopáticas, infecciosas o manifestación de enfermedad sistémica.</p>
-<h3>No infecciosas frecuentes</h3>
-<ul>
-<li><strong>Granuloma anular</strong> — pápulas anulares en dorso de manos/pies; suele ser autolimitado. La forma diseminada puede asociar diabetes/dislipemia.</li>
-<li><strong>Necrobiosis lipoídica</strong> — placas amarillentas atróficas con telangiectasias en zona pretibial; asociación con diabetes.</li>
-<li><strong>Sarcoidosis cutánea</strong> — "gran simuladora"; pápulas/placas, lupus pernio; granulomas no caseificantes. Cribar afectación sistémica (pulmón).</li>
+<p class="intro">Dermatosis con <strong>granulomas</strong> en la histología (idiopáticas, infecciosas o sistémicas). Biopsia para caracterizar y <strong>descartar infección</strong> (tinciones/cultivos). Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, define entidad y extensión.</strong> <strong>Granuloma anular</strong>: localizado (autolimitado, ~50 % resuelve en &lt;2 años) vs diseminado (cribar diabetes/dislipemia). <strong>Sarcoidosis cutánea</strong>: SIEMPRE cribar afectación sistémica (lupus pernio/placas = más riesgo visceral). <strong>Necrobiosis lipoídica</strong>: placa pretibial atrófica; estratificar por actividad del borde, ulceración y control glucémico.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma:</strong> necrobiosis ulcerada o con borde indurado de crecimiento → biopsiar (descartar <strong>carcinoma escamoso</strong> sobre lesión crónica) + cura de herida/compresión. Sarcoidosis con afectación cardiaca, ocular, neurológica o hipercalcemia → <strong>corticoide oral</strong> y estudio dirigido sin demora.</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Localizado / pocas lesiones — tópico e intralesional</div></div>
+<div class="chips"><span class="chip">clobetasol tóp.</span><span class="chip">triamcinolona intralesional</span><span class="chip">tacrolimus tóp.</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('gr_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="gr_hc1">GRANULOMATOSAS - localizado / pocas lesiones (topico e intralesional)
+GRANULOMA ANULAR localizado (autolimitado; observacion valida):
+- Clobetasol 0,05% 1/dia 2-4 sem en ciclos; o triamcinolona intralesional 2,5-5 mg/ml en borde activo c/4-6 sem.
+SARCOIDOSIS CUTANEA limitada:
+- Clobetasol 0,05% 1-2/dia; triamcinolona intralesional 5-10 mg/ml c/3-4 sem.
+- OBLIGATORIO cribado sistemico: Rx torax, ECG, funcion renal/hepatica, calcio, examen oftalmologico.
+NECROBIOSIS LIPOIDICA placa estable:
+- Clobetasol 0,05% en el borde activo o tacrolimus 0,1% en el centro atrofico.
+- Triamcinolona intralesional 5 mg/ml SOLO en el borde (evitar el centro atrofico: riesgo de ulcera).
+- Optimizar control glucemico/lipidico y cese de tabaco.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Diseminado / refractario — fototerapia y sistémico clásico</div></div>
+<div class="chips"><span class="chip">hidroxicloroquina</span><span class="chip">metotrexato</span><span class="chip">fototerapia (PUVA/UVA1)</span><span class="chip">pentoxifilina (necrobiosis)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('gr_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="gr_hc2">GRANULOMATOSAS - diseminado / refractario (fototerapia y sistemico clasico)
+GRANULOMA ANULAR diseminado:
+- Fototerapia (PUVA > UVA1 > UVB-BE) 2-3/sem; hidroxicloroquina 200-400 mg/dia (<=5 mg/kg/dia, control oftalmologico).
+- Alternativa: isotretinoina o dapsona.
+SARCOIDOSIS CUTANEA refractaria a topico:
+- Hidroxicloroquina 200 mg/12h; metotrexato 10-25 mg/sem + acido folico (ahorrador de corticoide, sistemico de eleccion).
+NECROBIOSIS LIPOIDICA progresiva / extensa:
+- Pentoxifilina 400 mg/8h +/- AAS 100 mg/dia; terapia fotodinamica (mejor evidencia); compresion si estasis.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Resistente / grave — biológicos y dianas</div></div>
+<div class="chips"><span class="chip">anti-TNF</span><span class="chip">inhibidores JAK</span><span class="chip">deucravacitinib (TYK2)</span><span class="chip">metotrexato/ciclosporina</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('gr_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="gr_hc3">GRANULOMATOSAS - resistente / grave (biologicos y dianas)
+GRANULOMA ANULAR resistente:
+- Anti-TNF (off-label) o inhibidor JAK (upadacitinib, abrocitinib); alternativa metotrexato o ciclosporina.
+SARCOIDOSIS CUTANEA grave / refractaria:
+- Infliximab 3-5 mg/kg (sem 0-2-6 y c/8 sem) o adalimumab 40 mg/2 sem tras fallo de metotrexato.
+- Cribar TBC/hepatitis antes de anti-TNF. Emergente: JAK (tofacitinib) o TYK2 (deucravacitinib).
+NECROBIOSIS LIPOIDICA ulcerada / refractaria:
+- Anti-TNF (infliximab/adalimumab); ruxolitinib topico (estudio 2024); manejo agresivo de la herida; biopsia si sospecha de CEC.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li>Los <strong>inhibidores de JAK/TYK2</strong> emergen como diana común (vía JAK-STAT/interferón): upadacitinib/abrocitinib en granuloma anular, tofacitinib/deucravacitinib en sarcoidosis y ruxolitinib tópico en necrobiosis (estudio 2024).</li>
+<li>Revisión sistemática 2025 del granuloma anular generalizado: HCQ/fototerapia en 1ª línea, anti-TNF o JAK en refractarios.</li>
+<li>Revisión 2023 de necrobiosis lipoídica: la <strong>terapia fotodinámica</strong> con mejor evidencia; anti-TNF en enfermedad ulcerada.</li>
 </ul>
-<h3>Manejo</h3>
-<p>Biopsia para caracterizar el granuloma y <strong>descartar infección</strong> (tinciones/cultivos). Tratar la causa o asociación (control de la diabetes); corticoides tópicos/intralesionales o sistémicos según la extensión.</p>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/granuloma-annulare" target="_blank" rel="noopener">DermNet — Granuloma annulare</a> · <a href="https://dermnetnz.org/topics/cutaneous-sarcoidosis" target="_blank" rel="noopener">DermNet — Cutaneous sarcoidosis</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Bettolini L, et al. Management strategies for generalised granuloma annulare (revisión sistemática). <em>Australas J Dermatol</em> 2025;66(6):329-337 · <a href="https://pubmed.ncbi.nlm.nih.gov/40586485/" target="_blank" rel="noopener">PubMed</a>.</li>
+<li>Nihal A, et al. Treatment options for necrobiosis lipoidica: a systematic review. <em>Int J Dermatol</em> 2023;62(12):1529-1537 · <a href="https://pubmed.ncbi.nlm.nih.gov/37772666/" target="_blank" rel="noopener">PubMed</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 // ===== ASISTENTE VIRTUAL (chatbot local, indexa todo el contenido de la app) =====
