@@ -934,10 +934,12 @@ const MENU=[
 ];
 
 function getAll(){return MENU.flatMap(s=>s.items)}
+function _hpAdminUI(){ return !!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin()); }
+function _hpItemAllowed(it){ if(!it) return false; if(it.admin && !_hpAdminUI()) return false; return true; }
 
 function renderMenu(filter=''){
 const f=filter.toLowerCase().trim();
-const favs=S.favs.slice(0,4);
+const favs=S.favs.filter(id=>{const it=getAll().find(x=>x.id===id);return it&&_hpItemAllowed(it);}).slice(0,4);
 let h='';
 if(favs.length){
 h+='<div class="menu-section"><div style="font-size:11px;text-transform:uppercase;color:var(--mut);font-weight:600;padding:8px 6px 4px;letter-spacing:.5px">Acceso Rápido</div>';
@@ -1039,8 +1041,8 @@ const ICON_PHONE=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 
 function homeView() {
     const byId=id=>getAll().find(x=>x.id===id);
-    const favs=(S.favs||[]).map(byId).filter(Boolean);
-    const rec=(S.recent||[]).map(byId).filter(Boolean).slice(0,6);
+    const favs=(S.favs||[]).map(byId).filter(Boolean).filter(_hpItemAllowed);
+    const rec=(S.recent||[]).map(byId).filter(Boolean).filter(_hpItemAllowed).slice(0,6);
     const tile=(it,ic)=>{const fav=(S.favs||[]).includes(it.id);return `<div class="home-tile" role="button" tabindex="0" onclick="go('${it.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('${it.id}')}">${ic?'<span class="ht-ic">'+ic+'</span>':''}<span class="ht-nm">${it.name}</span><button class="ht-fav ${fav?'on':''}" onclick="event.stopPropagation();homeFav('${it.id}')" aria-label="${fav?'Quitar de favoritos':'Añadir a favoritos'}" title="${fav?'Quitar de favoritos':'Añadir a favoritos'}">${fav?'★':'☆'}</button></div>`;};
     let secs='';
     if(favs.length) secs+=`<div class="home-sec"><div class="home-sec-h">★ Favoritos</div><div class="home-tiles">${favs.map(it=>tile(it,'')).join('')}</div></div>`;
@@ -7173,7 +7175,7 @@ const CHAT_SYN={
 };
 function chatNorm(s){return (s||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9ñ\s]/g,' ').replace(/\s+/g,' ').trim();}
 // resalta los términos buscados (q en minúsculas) dentro de un texto, ya escapado a HTML
-function hlMark(text,q){const esc=chatEsc(text);if(!q)return esc;const toks=q.split(/\s+/).filter(t=>t.length>=2).map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));if(!toks.length)return esc;try{return esc.replace(new RegExp('('+toks.join('|')+')','gi'),'<mark>$1</mark>');}catch(e){return esc;}}
+function hlMark(text,q){const esc=chatEsc(text);if(!q)return esc;const _ax={a:'[aáà]',e:'[eéè]',i:'[iíì]',o:'[oóò]',u:'[uúùü]',n:'[nñ]',c:'[cç]'};const toks=q.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').split(/\s+/).filter(t=>t.length>=2).map(function(t){return t.replace(/[.*+?^${}()|[\]\\]/g,function(m){return '\\'+m;}).replace(/[aeiounc]/g,function(ch){return _ax[ch]||ch;});});if(!toks.length)return esc;try{return esc.replace(new RegExp('('+toks.join('|')+')','gi'),'<mark>$1</mark>');}catch(e){return esc;}}
 function chatTokens(s){return chatNorm(s).split(' ').filter(t=>t.length>=2);}
 function chatEsc(s){return (s||'').toString().replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function chatExpand(tokens){const out=[],seen=new Set();tokens.forEach(t=>{if(!seen.has(t)){seen.add(t);out.push({t,w:1});}if(CHAT_SYN[t])CHAT_SYN[t].split(' ').forEach(s=>{if(s&&!seen.has(s)){seen.add(s);out.push({t:s,w:.5});}});});return out;}
@@ -7607,13 +7609,14 @@ VIEWS.phone_post=()=>renderDir();
 
 function renderDir(){
 const q=($('ph_q')?.value||'').toLowerCase().trim();
+const _strip=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'');const qn=_strip(q);
 const el=$('ph_list'); if(!el) return;
 let groups=0, rows=0, html='';
 for(const [svc,items] of HOSP_DIR){
   let matched=items;
-  const svcMatch = !q || svc.toLowerCase().includes(q);
+  const svcMatch = !q || _strip(svc.toLowerCase()).includes(qn);
   if(q && !svcMatch){
-    matched=items.filter(it=>(it[0]+' '+it[1]+' '+it[2]+' '+it[3]).toLowerCase().includes(q));
+    matched=items.filter(it=>_strip((it[0]+' '+it[1]+' '+it[2]+' '+it[3]).toLowerCase()).includes(qn));
     if(!matched.length) continue;
   }
   groups++; rows+=matched.length;
@@ -8376,7 +8379,7 @@ function closeCmd(){$('cmd_bg')?.classList.remove('show')}
 function cmdBuildIndex(){
 const idx=[];
 try{MENU.forEach(sec=>sec.items.forEach(it=>{if(it.sub)return;
-  idx.push({kind:'tool',id:it.id,name:it.name,sec:sec.h,_new:it.new,nf:chatNorm(it.name),nb:chatNorm(it.name+' '+(it.kw||'')+' '+sec.h)});}));}catch(e){}
+  idx.push({kind:'tool',id:it.id,name:it.name,sec:sec.h,_new:it.new,adm:!!it.admin,nf:chatNorm(it.name),nb:chatNorm(it.name+' '+(it.kw||'')+' '+sec.h)});}));}catch(e){}
 try{HOSP_DIR.forEach(sec=>{const sn=sec[0];(sec[1]||[]).forEach(e=>{const nm=(e[0]||'').replace(/\n/g,' ');
   idx.push({kind:'phone',name:nm,sec:sn,ext:e[3],phone:e[2],loc:e[1],nf:chatNorm(nm),nb:chatNorm(sn+' '+nm+' '+(e[1]||'')+' '+(e[3]||''))});});});}catch(e){}
 idx.push({kind:'eri',id:'__eri',name:'Asistente Kera',sec:'Asistente',nf:chatNorm('asistente mel'),nb:chatNorm('mel chat asistente ayuda preguntar bot dermatologia melanocito piel')});
@@ -8407,19 +8410,19 @@ const list=$('cmd_list');_cmdResults=[];
 if(!qtokens.length){   // estado vacío: recientes + favoritos
   let html='';
   const byId=id=>getAll().find(x=>x.id===id);
-  const recents=(S.recent||[]).map(byId).filter(Boolean).slice(0,5);
-  const favs=(S.favs||[]).map(byId).filter(Boolean).filter(f=>!recents.some(r=>r.id===f.id));
+  const recents=(S.recent||[]).map(byId).filter(Boolean).filter(_hpItemAllowed).slice(0,5);
+  const favs=(S.favs||[]).map(byId).filter(Boolean).filter(_hpItemAllowed).filter(f=>!recents.some(r=>r.id===f.id));
   const grp=(title,arr)=>{if(!arr.length)return '';let h=`<div class="cmd-grp">${title}</div>`;arr.forEach(it=>{const i=_cmdResults.length;_cmdResults.push({kind:'tool',id:it.id,name:it.name,sec:''});h+=cmdRow(_cmdResults[i],i);});return h;};
   html+=grp('Recientes',recents);
   html+=grp('Favoritos',favs);
-  if(!_cmdResults.length)html+=grp('Sugerencias',getAll().filter(it=>!it.sub).slice(0,6));
+  if(!_cmdResults.length)html+=grp('Sugerencias',getAll().filter(it=>!it.sub&&_hpItemAllowed(it)).slice(0,6));
   if(_cmdSel>=_cmdResults.length)_cmdSel=0;
   list.innerHTML=html;return;
 }
 const scored=[];
 _cmdIndex.forEach(it=>{const sc=cmdScore(it,qtokens,raw);if(sc>0)scored.push({it,sc});});
 scored.sort((a,b)=>b.sc-a.sc);
-_cmdResults=scored.slice(0,40).map(x=>x.it);
+const _admC=_hpAdminUI();_cmdResults=scored.map(x=>x.it).filter(it=>{if(it.kind!=='tool')return true;if(it.adm&&!_admC)return false;return true;}).slice(0,40);
 if(_cmdSel>=_cmdResults.length)_cmdSel=Math.max(0,_cmdResults.length-1);
 if(!_cmdResults.length){list.innerHTML='<div class="cmd-empty">Sin resultados</div>';return}
 list.innerHTML=_cmdResults.map((it,i)=>cmdRow(it,i)).join('');
