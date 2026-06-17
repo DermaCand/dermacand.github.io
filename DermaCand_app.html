@@ -829,6 +829,7 @@ const MENU=[
 {id:'psoriasis',name:'Psoriasis',kw:'psoriasis placas vulgar guttata pustulosa eritrodermica artritis psoriasica biologicos metotrexato'},
 {id:'datopica',name:'Dermatitis atópica',kw:'dermatitis atopica eccema atopico eccema prurito dupilumab emolientes corticoides inhibidores calcineurina'},
 {id:'dcontacto',name:'Dermatitis de contacto',kw:'dermatitis contacto alergica irritativa eccema pruebas epicutaneas patch test alergeno'},
+{id:'urticaria',name:'Urticaria crónica',kw:'urticaria cronica espontanea habones ronchas angioedema antihistaminico omalizumab dupilumab ciclosporina remibrutinib uas7'},
 {id:'liquen',name:'Liquen plano',kw:'liquen plano papulas purpuricas pruriginosas wickham mucosa oral'},
 {id:'pit_liquenoide',name:'Pitiriasis liquenoide',kw:'pitiriasis liquenoide aguda pleva mucha habermann cronica plc varioliforme'},
 {id:'parapsoriasis',name:'Parapsoriasis',kw:'parapsoriasis pequena gran placa premicotica micosis fungoide digitiforme'},
@@ -4504,21 +4505,58 @@ VIEWS.ped_exant=()=>`<div class="card">
 
 VIEWS.hemangioma=()=>`<div class="card">
 <h2>Hemangiomas infantiles</h2>
-<p class="intro">Tumor vascular benigno más frecuente de la infancia. Ausente o mínimo al nacer, con fase de <strong>proliferación</strong> (primeros meses) e <strong>involución</strong> lenta posterior.</p>
-<h3>Claves</h3>
-<ul style="line-height:1.6">
-<li>Superficial ("fresa"), profundo o mixto.</li>
-<li>La mayoría no requieren tratamiento (involucionan).</li>
+<p class="intro">Tumor vascular benigno más frecuente de la infancia: mínimo al nacer, con fase de <strong>proliferación</strong> (primeros meses) e <strong>involución</strong> lenta. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica por RIESGO</strong> (no por el tamaño aislado): localización (segmentario facial, periocular, punta nasal/labio, área del pañal, barba), profundidad y momento evolutivo. La <strong>ventana es precoz</strong>: identifica antes de las 4-6 semanas los de alto riesgo (funcional —ambliopía, vía aérea, audición—, ulceración, desfigurante o marcador de síndrome). El de bajo riesgo solo necesita observación y fotos.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Cribado sindrómico antes de tratar:</strong> segmentario facial grande (&gt;5 cm) → RM cerebro/cuello + ecocardiograma + oftalmología (descartar <strong>PHACE</strong>) ANTES del betabloqueante; segmentario lumbosacro/perineal → eco/RM medular y abdominopélvica (LUMBAR/PELVIS); barba o disfonía/estridor → evaluar vía aérea (subglótico).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Bajo riesgo — observación activa</div></div>
+<div class="chips"><span class="chip">observación</span><span class="chip">fotos seriadas</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('hem_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="hem_hc1">HEMANGIOMA INFANTIL - bajo riesgo (observacion activa)
+IH pequeno, localizado, NO funcional ni desfigurante:
+- Conducta expectante: la mayoria involuciona.
+- Fotografia seriada + medicion en cada visita.
+- Control estrecho en fase proliferativa (cada 2-4 sem los primeros 3 meses).
+- Vigilar ulceracion o crecimiento rapido para reevaluar.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Superficial pequeño — timolol tópico</div></div>
+<div class="chips"><span class="chip">timolol maleato gel 0,5%</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('hem_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="hem_hc2">HEMANGIOMA INFANTIL - superficial pequeno (timolol topico)
+- Timolol maleato gel 0,5%: 1 gota (~0,25 mg) 2/dia sobre la lesion (tope ~0,5 mg/kg/dia).
+- NO sobre piel ulcerada/mucosa ni en area periorificial extensa (absorcion sistemica); evitar oclusion; precaucion en prematuros/bajo peso.
+- Reevaluar a las 4-8 sem; si crece o es de riesgo, escalar a propranolol oral.
+- Ulceracion: cura humeda + analgesia.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Alto riesgo — propranolol oral (1ª línea)</div></div>
+<div class="chips"><span class="chip">propranolol oral 2-3 mg/kg/día</span><span class="chip">nadolol (alternativa)</span><span class="chip">láser / cirugía (residuo)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('hem_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="hem_hc3">HEMANGIOMA INFANTIL - alto riesgo (propranolol oral, 1a linea)
+Indicacion: riesgo funcional, ulceracion, desfigurante o segmentario.
+- Propranolol solucion oral: inicio 1 mg/kg/dia en 2-3 tomas con/tras alimento.
+- Subir en 1-2 sem hasta 2-3 mg/kg/dia (habitual 2; 3 si respuesta insuficiente).
+- Dar con las tomas; suspender si no come o esta enfermo (riesgo hipoglucemia).
+- Vigilar bradicardia, hipotension, broncoespasmo, hipoglucemia.
+- Mantener toda la fase proliferativa (en general hasta ~12 meses; prolongar si rebrote).
+- PHACE: descartar anomalia arterial/coartacion antes; repartir en 3 tomas.
+- Alternativa: nadolol oral (no inferior). Residuos fibroadiposos: laser pulsado/cirugia.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Nadolol</strong> demostró no inferioridad frente a propranolol (ECA, JAMA Pediatr 2022): alternativa ante intolerancia o respuesta insuficiente.</li>
+<li>Inicio <strong>ambulatorio</strong> de propranolol en lactantes a término, sanos y &gt;5 semanas, sin monitorización hospitalaria sistemática salvo factores de riesgo.</li>
+<li>Énfasis en la <strong>ventana terapéutica precoz</strong> (&lt;4-6 semanas) para frenar la proliferación y minimizar secuelas.</li>
 </ul>
-<h3>Indicaciones de tratamiento / derivación</h3>
-<ul style="line-height:1.6">
-<li><strong>Riesgo funcional</strong> — periocular (ambliopía), labio, vía aérea (subglótico), pañal (ulceración).</li>
-<li>Ulceración (dolor), gran tamaño o desfigurante.</li>
-<li>Múltiples (≥5) → cribar hemangiomas viscerales; segmentarios faciales → síndrome PHACE.</li>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>AAP</b> — Krowchuk DP, et al. Clinical practice guideline for the management of infantile hemangiomas. <em>Pediatrics</em> 2019;143(1):e20183475 · <a href="https://pubmed.ncbi.nlm.nih.gov/30584062/" target="_blank" rel="noopener">PubMed</a>.</li>
+<li>Pope E, et al. Noninferiority and safety of nadolol vs propranolol (ECA). <em>JAMA Pediatr</em> 2022;176(1):34-41 · <a href="https://pubmed.ncbi.nlm.nih.gov/34747977/" target="_blank" rel="noopener">PubMed</a>.</li>
 </ul>
-<h3>Tratamiento</h3>
-<p><strong>Propranolol oral</strong> de primera línea en los de riesgo (precoz, en fase proliferativa). Timolol tópico en lesiones pequeñas superficiales.</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> (peso/edad) antes de prescribir.</div>
 </div>`;
 
 VIEWS.panal=()=>`<div class="card">
@@ -4647,18 +4685,115 @@ VIEWS.eritrodermia=()=>`<div class="card">
 
 VIEWS.vasculitis=()=>`<div class="card">
 <h2>Vasculitis cutánea</h2>
-<p class="intro">Inflamación de los vasos de la piel. La forma más frecuente es la <strong>vasculitis leucocitoclástica</strong> de pequeño vaso, que se manifiesta como <strong>púrpura palpable</strong>.</p>
-<h3>Clínica</h3>
-<ul style="line-height:1.6">
-<li>Púrpura palpable en zonas declives (piernas), a veces con ampollas, necrosis o úlceras.</li>
-<li>Causas: infecciones, fármacos, conectivopatías, neoplasias; o idiopática. La IgA orienta a púrpura de Schönlein-Henoch (valorar afectación renal/digestiva).</li>
-</ul>
-<h3>Estudio</h3>
-<p>Biopsia (leucocitoclasia) + IFD (depósitos, IgA). Cribar afectación sistémica: orina (hematuria/proteinuria), función renal, hemograma, complemento, ANA/ANCA y serologías según contexto.</p>
+<p class="intro">Inflamación de los vasos de la piel; la más frecuente es la <strong>leucocitoclástica</strong> de pequeño vaso (<strong>púrpura palpable</strong> en zonas declives). Causas: infección, fármaco, conectivopatía, neoplasia o idiopática. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica</strong> (Chapel Hill 2012) y por extensión: <strong>cutánea aislada</strong> vs <strong>sistémica</strong> de pequeño vaso (IgA, crioglobulinémica, ANCA, asociada a conectivopatía). La IgA orienta a vasculitis IgA (antes Schönlein-Henoch). Confirma con biopsia (leucocitoclasia) + IFD (IgA). El objetivo: estratificar por gravedad/cronicidad para elegir entre medidas, ahorradores o inmunosupresión.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Criba sistémico en TODO caso:</strong> tira/sedimento de orina, proteína/creatinina, creatinina-FGe, TA, hemograma. Si hematuria/proteinuria, dolor abdominal intenso, melenas, mononeuritis o creatinina al alza → <strong>corticoide sistémico</strong> (pulsos de metilprednisolona si glomerulonefritis rápidamente progresiva) + cribado de causa (crioglobulinas/VHC, ANCA, complemento, paraproteína).</div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('autoac')">Autoanticuerpos</button></div>
-<h3>Manejo</h3>
-<p>Tratar/retirar la causa. Cutánea limitada: reposo, soporte y, si precisa, corticoide; sistémica o con afectación de órganos: inmunosupresión según el órgano afectado.</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Autolimitada / leve — medidas + tratar causa</div></div>
+<div class="chips"><span class="chip">reposo + elevación</span><span class="chip">compresión</span><span class="chip">retirar fármaco</span><span class="chip">antihistamínico / AINE</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('vas_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="vas_hc1">VASCULITIS CUTANEA - autolimitada / leve (medidas + tratar causa)
+- Mayoria autolimitada en 3-4 sem: manejo de soporte.
+- Reposo relativo, elevacion de piernas, evitar bipedestacion prolongada.
+- Medias de compresion 15-20 mmHg si edema/ortostatismo (excluir arteriopatia).
+- Retirar farmaco sospechoso (betalactamicos, AINE, diureticos) y tratar infeccion/causa.
+- Prurito: antihistaminico H1 (cetirizina 10 mg/dia). Artralgias: AINE salvo afectacion renal.
+- Recribar orina y TA a las 1-2 sem.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Crónica / recurrente cutánea — ahorradores</div></div>
+<div class="chips"><span class="chip">colchicina</span><span class="chip">dapsona</span><span class="chip">hidroxicloroquina</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('vas_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="vas_hc2">VASCULITIS CUTANEA - cronica / recurrente (ahorradores de corticoide)
+- Colchicina 0,5-0,6 mg/12h VO (ajustar a FGe; vigilar diarrea).
+- Dapsona 50 mg/dia, subir a 100-150 mg/dia (cribar G6PD; control Hb/reticulocitos/metahemoglobina).
+- Combinar colchicina + dapsona si respuesta parcial.
+- Alternativa: hidroxicloroquina 200-400 mg/dia.
+- Curso corto de prednisona 0,5 mg/kg/dia para control rapido mientras hace efecto el ahorrador.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Grave / sistémica — corticoide + inmunosupresor</div></div>
+<div class="chips"><span class="chip">prednisona / pulsos</span><span class="chip">azatioprina / micofenolato</span><span class="chip">rituximab</span><span class="chip">ciclofosfamida</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('vas_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="vas_hc3">VASCULITIS CUTANEA - grave / sistemica (corticoide + inmunosupresor)
+- Prednisona 0,5-1 mg/kg/dia con descenso progresivo.
+- Glomerulonefritis rapidamente progresiva: metilprednisolona 0,5-1 g/dia IV x3, luego oral.
+- Ahorrador segun organo: azatioprina 1-2 mg/kg/dia (cribar TPMT) o micofenolato.
+- Vasculitis IgA con nefritis progresiva/recidivante: rituximab; ciclofosfamida + corticoide si es rapidamente progresiva.
+- IgA CUTANEA aislada: NO dar corticoide para PREVENIR la nefritis (KDIGO 2025).
+- Crioglobulinemica/VHC: tratar el VHC + rituximab segun gravedad.
+- Soporte renal: IECA/ARA-II si proteinuria, control de TA.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>KDIGO 2025</strong>: en vasculitis IgA extrarrenal aislada, <strong>no</strong> usar corticoides para prevenir la nefritis; en formas rápidamente progresivas, ciclofosfamida + corticoide.</li>
+<li><strong>Rituximab</strong> consolidado como ahorrador de corticoide en vasculitis IgA del adulto recidivante/corticodependiente.</li>
+<li>Ensayo <strong>ARAMIS</strong>: primera evidencia comparativa prospectiva (azatioprina vs colchicina vs dapsona) en vasculitis cutánea aislada.</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Micheletti RG. Cutaneous small vessel vasculitis: a practical guide. <em>Am J Clin Dermatol</em> 2023;24(1):89-95 · <a href="https://link.springer.com/article/10.1007/s40257-022-00736-6" target="_blank" rel="noopener">Springer</a>.</li>
+<li><b>KDIGO 2025</b> — Guideline for IgA nephropathy and IgA vasculitis (resumen). <em>Kidney Int</em> 2025;108(4):548-554 · <a href="https://www.kidney-international.org/article/S0085-2538(25)00278-9/fulltext" target="_blank" rel="noopener">kidney-international.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
+</div>`;
+
+VIEWS.urticaria=()=>`<div class="card">
+<h2>Urticaria crónica</h2>
+<p class="intro">Habones y/o angioedema recurrentes &gt;6 semanas (espontánea). Cada escalón trae la <strong>pauta lista para copiar</strong>; objetivo: control completo (UAS7=0, UCT≥12) con la mínima escala.</p>
+
+<div class="perla"><div><strong>Primero, clasifica.</strong> Confirma cronicidad (&gt;6 sem) y descarta <strong>urticaria aguda</strong> (&lt;6 sem) y <strong>inducible</strong> (gatillo físico reproducible: dermografismo, frío, colinérgica, presión). Distingue el <strong>angioedema aislado sin habones</strong> (sospecha bradicinérgico: IECA, déficit C1-INH) que NO responde a antihistamínicos. Estratifica la respuesta cada 2-4 semanas (UAS7/UCT) para subir o bajar escalón.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma:</strong> habón que dura &gt;24-48 h, doloroso/quemante, con púrpura residual o síntomas sistémicos → biopsiar (descartar <strong>vasculitis urticarial</strong>). Angioedema SIN habones que no cede con anti-H1 ×4 → suspender IECA, pedir C4 y C1-INH (angioedema bradicinérgico) y tratar con icatibant/concentrado de C1-INH, NO con adrenalina/antihistamínico como única medida.</div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('uas7')">UAS7</button><button class="btn btn-out btn-sm" onclick="go('antihistaminicos')">Antihistamínicos</button></div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Anti-H1 de 2ª generación, dosis estándar</div></div>
+<div class="chips"><span class="chip">bilastina</span><span class="chip">fexofenadina</span><span class="chip">cetirizina</span><span class="chip">desloratadina</span><span class="chip">rupatadina</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('urt_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="urt_hc1">URTICARIA CRONICA - escalon 1 (anti-H1 2a generacion, dosis estandar)
+- 1a linea: anti-H1 de 2a generacion NO sedante, dosis estandar, pauta diaria continua (no a demanda).
+- Bilastina 20 mg/24h; o fexofenadina 180 mg/24h; o cetirizina 10 mg/24h; o desloratadina 5 mg/24h; o rupatadina 10 mg/24h.
+- Evitar anti-H1 de 1a generacion (sedantes/anticolinergicos).
+- Reevaluar a las 2-4 sem con UAS7/UCT; si no controla, subir escalon (no asociar otro anti-H1 distinto).
+- Pediatria: misma molecula ajustada por edad/peso.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Anti-H1 de 2ª generación hasta ×4</div></div>
+<div class="chips"><span class="chip">misma molécula ×4</span><span class="chip">tanda corta de corticoide (puntual)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('urt_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="urt_hc2">URTICARIA CRONICA - escalon 2 (anti-H1 2a gen hasta x4)
+- Subir el MISMO anti-H1 hasta 4 veces la dosis estandar (off-label, recomendado por guia).
+- Ej.: bilastina 20 mg hasta 4/dia; fexofenadina 180 mg hasta 4/dia; cetirizina/desloratadina/rupatadina x4.
+- Mantener pauta continua; reevaluar a las 2-4 sem.
+- Exacerbacion grave puntual: tanda corta de prednisona 0,5 mg/kg/dia (<=10 dias), NO de mantenimiento.
+- Si persiste sin control con dosis x4, pasar a escalon 3.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Omalizumab; refractario: ciclosporina</div></div>
+<div class="chips"><span class="chip">omalizumab</span><span class="chip">dupilumab</span><span class="chip">ciclosporina</span><span class="chip">remibrutinib (BTK-i)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('urt_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="urt_hc3">URTICARIA CRONICA - escalon 3 (anadir omalizumab; refractario: ciclosporina)
+- Anadir al anti-H1 (x4) omalizumab 300 mg SC/4 sem (anti-IgE); respuesta parcial: valorar 300 mg/2 sem o prolongar.
+- Alternativa biologica reciente: dupilumab SC (anti-IL-4/13) en no controlada.
+- Refractario a omalizumab: ciclosporina 3-5 mg/kg/dia en 2 tomas (vigilar TA, creatinina, niveles; uso temporal).
+- Novedad oral: remibrutinib (inhibidor de BTK) 25 mg/12h.
+- Reevaluar control y desescalar al lograr UAS7=0 mantenido.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Dupilumab</strong> (anti-IL-4/13): aprobado (2025) para urticaria crónica espontánea no controlada con anti-H1; opción en fallo/respuesta parcial a omalizumab.</li>
+<li><strong>Remibrutinib</strong> (1er inhibidor oral de BTK): aprobado (2025) en UCE no controlada con anti-H1; inicio rápido y eficacia sostenida.</li>
+<li><strong>Guía EAACI/GA²LEN 2022</strong>: consolida la escalera de 3 pasos y el objetivo de control completo guiado por UAS7/UCT (sin anti-H1 sedantes ni corticoides crónicos).</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>EAACI/GA²LEN/EuroGuiDerm/APAAACI</b> — Zuberbier T, et al. Guideline for urticaria. <em>Allergy</em> 2022;77(3):734-766 · <a href="https://onlinelibrary.wiley.com/doi/10.1111/all.15090" target="_blank" rel="noopener">Wiley</a>.</li>
+<li>Maurer M, et al. Remibrutinib in chronic spontaneous urticaria (REMIX-1/2). <em>N Engl J Med</em> 2025;392(10):984-994 · <a href="https://www.nejm.org/doi/abs/10.1056/NEJMoa2408792" target="_blank" rel="noopener">nejm.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.derm_gest=()=>`<div class="card">
@@ -4902,7 +5037,7 @@ VIEWS.antihistaminicos=()=>`<div class="card">
 </ul>
 <h3>Primera generación</h3>
 <p>Hidroxizina, dexclorfeniramina: sedantes y anticolinérgicos; uso puntual. Evitar de forma crónica y en ancianos.</p>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('uas7')">UAS7 (urticaria)</button><button class="btn btn-sm" onclick="goPauta('urticaria')">💊 Pauta (urticaria)</button></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('uas7')">UAS7 (urticaria)</button><button class="btn btn-out btn-sm" onclick="go('urticaria')">Urticaria crónica</button></div>
 <div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
 </div>`;
 
@@ -5352,17 +5487,55 @@ VIEWS.nutricionales=()=>`<div class="card">
 // ===== VISTAS DE PATOLOGÍA · Enfermedades de la grasa =====
 VIEWS.paniculitis=()=>`<div class="card">
 <h2>Paniculitis</h2>
-<p class="intro">Inflamación del tejido graso subcutáneo, que se manifiesta como nódulos o placas profundos. Se clasifica por el patrón histológico (septal vs lobulillar) y la presencia de vasculitis.</p>
-<h3>Más frecuentes</h3>
-<ul>
-<li><strong>Eritema nudoso</strong> — paniculitis <em>septal</em> sin vasculitis; nódulos dolorosos en cara anterior de piernas que no se ulceran. Reactivo (infección estreptocócica, sarcoidosis, EII, fármacos, embarazo). Es la más frecuente.</li>
-<li><strong>Paniculitis lobulillar</strong> — p. ej. por déficit de alfa-1-antitripsina, lúpica, pancreática o facticia.</li>
-<li><strong>Eritema indurado de Bazin</strong> — lobulillar con vasculitis; relación con tuberculosis.</li>
+<p class="intro">Inflamación del tejido graso subcutáneo (nódulos/placas profundos). Se clasifica por patrón (septal vs lobulillar) y vasculitis; el prototipo es el <strong>eritema nodoso</strong>. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica.</strong> El <strong>eritema nodoso</strong> es paniculitis <em>septal sin vasculitis</em>: nódulos dolorosos simétricos en cara anterior de piernas que <strong>no ulceran ni cicatrizan</strong>. Distínguelo de las <strong>lobulillares</strong> (eritema indurado de Bazin/TBC, déficit de α1-antitripsina, lúpica, pancreática). El objetivo no es solo la piel: <strong>buscar y tratar la causa</strong> (estreptococo, sarcoidosis/Löfgren, EII, fármacos, embarazo, TBC; idiopático 30-50 %).</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Antes de cualquier corticoide sistémico:</strong> descartar infección activa (TBC con PPD/IGRA + Rx tórax, estreptococo, micosis profunda) y linfoma. Estudio mínimo: hemograma, PCR/VSG, ASLO, frotis faríngeo, Rx tórax e IGRA. Si los nódulos ulceran, cicatrizan o asientan en pantorrilla posterior → replantear hacia paniculitis lobulillar/vasculitis y <strong>biopsiar en cuña profunda</strong>.</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Brote leve / autolimitado — medidas + AINE</div></div>
+<div class="chips"><span class="chip">reposo + elevación</span><span class="chip">compresión</span><span class="chip">naproxeno / ibuprofeno</span><span class="chip">tratar la causa</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pan_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="pan_hc1">ERITEMA NODOSO - brote leve / autolimitado (medidas + AINE)
+- Buscar y RETIRAR la causa: revisar farmacos (ACO, sulfamidas, BB), tratar foco estreptococico, cribar sarcoidosis/EII/embarazo/TBC.
+- Reposo relativo con elevacion de piernas + medias de compresion.
+- Naproxeno 500 mg/12h VO con alimento; alternativas: indometacina 25-50 mg/8h o ibuprofeno 600 mg/8h.
+- Autolimitado en 3-6 sem; control en 2-4 sem.
+- Pediatria: ibuprofeno 10 mg/kg/8h o naproxeno 5-7 mg/kg/12h.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Persistente / muy sintomático (infección descartada)</div></div>
+<div class="chips"><span class="chip">yoduro potásico (SSKI)</span><span class="chip">colchicina</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pan_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="pan_hc2">ERITEMA NODOSO - persistente / muy sintomatico (INFECCION DESCARTADA)
+- Yoduro potasico (SSKI) 300 mg/8h VO (o 2-10 gotas/8h); respuesta en 1-2 sem, mejor si precoz.
+- Vigilar tiroides: contraindicado en embarazo, hipertiroidismo y enf. tiroidea; controlar TSH si uso prolongado.
+- Colchicina 0,5 mg/12h VO (util sobre todo en EN asociado a Behcet); ajustar a funcion renal.
+- Mantener reposo + AINE de base.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Grave / crónico / refractario</div></div>
+<div class="chips"><span class="chip">prednisona (causa descartada)</span><span class="chip">tratar la enfermedad de base</span><span class="chip">hidroxicloroquina / anti-TNF</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pan_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="pan_hc3">ERITEMA NODOSO - grave / cronico / refractario
+- SOLO con infeccion (TBC, estrepto, micosis) y linfoma DESCARTADOS.
+- Prednisona 0,5-1 mg/kg/dia (40-60 mg) en pauta corta con descenso en 2-4 sem; recidiva si no se trata la causa.
+- Priorizar tratar la enfermedad subyacente (EII, sarcoidosis, infeccion).
+- Refractario cronico: hidroxicloroquina 200 mg/12h o anti-TNF (infliximab) en casos seleccionados.
+- Embarazo: medidas + AINE solo en 2o trimestre; preferir reposo; evitar yoduro.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Algoritmo escalonado</strong> (Pérez-Garza, 2021): medidas + AINE → yoduro potásico o colchicina → corticoide solo en casos graves con infección descartada.</li>
+<li>Series 2021-2025: el eritema nodoso crónico/refractario (incluso sin EII) puede responder a <strong>anti-TNF</strong> (infliximab) tras fallo de yoduro, colchicina, dapsona, HCQ y MTX.</li>
+<li>Farmacovigilancia 2024: amplía los fármacos y vacunas asociados a eritema nodoso → reforzar la anamnesis farmacológica.</li>
 </ul>
-<h3>Manejo</h3>
-<p>Biopsia <strong>incisional profunda</strong> que incluya grasa. Buscar y tratar la causa. Eritema nudoso: reposo, AINE, yoduro potásico; suele autolimitarse.</p>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/panniculitis" target="_blank" rel="noopener">DermNet — Panniculitis</a> · <a href="https://dermnetnz.org/topics/erythema-nodosum" target="_blank" rel="noopener">DermNet — Erythema nodosum</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Pérez-Garza DM, et al. Erythema nodosum: a practical approach and diagnostic algorithm. <em>Am J Clin Dermatol</em> 2021;22(3):367-378 · <a href="https://doi.org/10.1007/s40257-021-00592-w" target="_blank" rel="noopener">doi.org</a>.</li>
+<li>Hafsi W, Badri T. Erythema nodosum. <em>StatPearls</em> (act. 2022) · <a href="https://www.ncbi.nlm.nih.gov/books/NBK470369/" target="_blank" rel="noopener">NCBI</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.lipodistrofia=()=>`<div class="card">
