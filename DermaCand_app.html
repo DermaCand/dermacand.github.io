@@ -5344,40 +5344,88 @@ VIEWS.farmacogen=()=>`<div class="card">
 // ===== VISTAS DE PATOLOGÍA · Tratamientos =====
 VIEWS.cort_topicos=()=>`<div class="card">
 <h2>Corticoides tópicos</h2>
-<p class="intro">Pilar del tratamiento antiinflamatorio cutáneo. Se eligen por potencia, vehículo y zona; el equilibrio eficacia/seguridad depende del uso correcto.</p>
-<h3>Potencia</h3>
+<p class="intro">Ficha de clase. La eficacia/seguridad depende de elegir <strong>potencia + vehículo + zona + pauta</strong>: la potencia más alta que controle el brote en el menor tiempo, luego escalar a la baja; zonas finas (cara, pliegues, genitales, lactante) → potencia baja o ahorradores.</p>
+<h3>Clases de potencia (I-VII) y ejemplos</h3>
 <ul style="line-height:1.6">
-<li><strong>Baja</strong> — hidrocortisona; cara, pliegues, niños.</li>
-<li><strong>Media</strong> — betametasona valerato, clobetasona.</li>
-<li><strong>Alta</strong> — mometasona, metilprednisolona aceponato.</li>
-<li><strong>Muy alta</strong> — clobetasol propionato; placas gruesas, palmoplantar, pautas cortas.</li>
+<li><strong>I superpotente</strong>: clobetasol 0,05%, betametasona dipropionato optimizado, halobetasol (~50 g/sem, rara vez &gt;2-4 sem seguidas).</li>
+<li><strong>II-III alta</strong>: fluocinonida, mometasona <em>ungüento</em>, diflucortolona, desoximetasona.</li>
+<li><strong>IV-V media</strong>: mometasona crema, metilprednisolona aceponato, fluticasona, prednicarbato, betametasona valerato, triamcinolona.</li>
+<li><strong>VI-VII baja</strong>: desonida, fluocinolona 0,01%; hidrocortisona 0,5-2,5% (única segura en uso prolongado en cara/pliegues/lactante).</li>
+<li><em>Clave:</em> la potencia depende del <strong>vehículo</strong> (un mismo activo sube de clase en ungüento) y de la molécula, NO del % rotulado. Las moléculas modernas (mometasona, MPA, fluticasona, prednicarbato) tienen alto índice terapéutico (eficaces con menos atrofia).</li>
 </ul>
-<h3>Uso correcto (FTU)</h3>
-<p>Dosifica con la <strong>unidad de la punta del dedo (FTU)</strong> ≈ 0,5 g, que cubre 2 palmas de adulto. Vehículo según zona (crema en agudo/pliegues, pomada en seco/liquenificado, loción/espuma en cuero cabelludo).</p>
+<h3>Dosis: unidad falángica (FTU)</h3>
+<ul style="line-height:1.6">
+<li><strong>1 FTU ≈ 0,5 g</strong> = cubre 2 palmas de adulto (~2% SC). Por región: cara-cuello 2,5 · una mano 1 · un brazo 3 · una pierna 6 · tórax+abdomen 7 · espalda+glúteos 7 · un pie 2. Cuerpo entero ~30-40 FTU.</li>
+<li>Pediatría: dosis-adulto × fracción por edad (lactante ~¼, 1-2 a ~⅓, 3-5 a ~½, 6-10 a ~⅔).</li>
+<li>Capa fina en el sentido del vello; la mayoría modernas, 1 vez/día. <strong>Prescribir gramaje suficiente</strong>: el infratratamiento es la causa nº 1 de "corticoide que no funciona".</li>
+</ul>
+<h3>Vehículo por localización</h3>
+<ul style="line-height:1.6">
+<li>Cuero cabelludo/pilosas → loción, gel o <strong>espuma</strong>. Placas secas/liquenificadas (palmas, codos) → <strong>ungüento</strong> (más penetración). Pliegues/cara/genitales → <strong>crema</strong> (el pliegue ya es semioclusivo → más riesgo de atrofia). Exudativo agudo → crema/loción ("mojado sobre mojado, graso sobre seco").</li>
+</ul>
+<h3>Pauta: descendente y proactiva</h3>
+<ul style="line-height:1.6">
+<li>Inducción hasta control (1-3 sem); luego <strong>descenso</strong> (bajar clase o espaciar) para evitar rebote.</li>
+<li><strong>Proactiva</strong> (atópica/dermatitis recidivante): 2 días no consecutivos/semana en zonas-diana + emoliente diario → menos recaídas y menos corticoide total.</li>
+<li><strong>Taquifilaxia</strong>: antes de subir potencia, descartar falta de adherencia, infección sobreañadida o diagnóstico erróneo. Combinar con ahorradores (tacrolimus/pimecrolimus, ruxolitinib tópico) en cara/pliegues y mantenimiento.</li>
+</ul>
+<h3>Efectos adversos y zonas de cuidado</h3>
+<ul style="line-height:1.6">
+<li><strong>Locales:</strong> atrofia, estrías (irreversibles), telangiectasias, púrpura, dermatitis perioral/rosácea-acné esteroideos, infección enmascarada ("incógnito"), síndrome de retirada de corticoide tópico.</li>
+<li><strong>Periocular:</strong> glaucoma/catarata. <strong>Sistémicos</strong> (supresión HHA/Cushing): riesgo con clase I-II, oclusión, superficie amplia, barrera alterada y <em>lactantes</em>.</li>
+<li><strong>Máximo cuidado</strong> (cara, párpados, pliegues, genitales, lactante): baja potencia + ciclos cortos o inhibidor de calcineurina; nunca clase I-II salvo indicación reglada (p. ej. clobetasol en liquen escleroso vulvar).</li>
+</ul>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('ftu')">Calculadora FTU</button></div>
-<h3>Efectos adversos / precauciones</h3>
-<p>Atrofia, estrías, telangiectasias, dermatitis perioral, taquifilaxia; absorción sistémica en uso extenso/oclusión. Cara y pliegues: baja potencia y pautas cortas; preferir ahorradores (inhibidores de calcineurina) en mantenimiento.</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>DermNet</b> — Topical steroids (potencia, FTU, efectos adversos) · <a href="https://dermnetnz.org/topics/topical-steroid" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+<li><b>BAD</b> — Topical corticosteroids (FTU ≈ 0,5 g) · <a href="https://www.bad.org.uk/pils/topical-corticosteroids" target="_blank" rel="noopener">bad.org.uk</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para validación clínica</strong> (García Silvera, D.).</div>
 </div>`;
 
 VIEWS.antifungicos=()=>`<div class="card">
 <h2>Antifúngicos</h2>
-<p class="intro">Tópicos en infecciones limitadas; sistémicos en tiña de pelo/uña, formas extensas o resistentes. Confirmar micología antes del tratamiento sistémico.</p>
-<h3>Tópicos</h3>
+<p class="intro">Ficha de clase: elección por espectro (dermatofitos / <em>Candida</em> / <em>Malassezia</em>), pautas por cuadro, hepatotoxicidad e interacciones. Filtro decisivo: <strong>confirmar el hongo</strong> antes de pautar oral (uñas, cuero cabelludo).</p>
+<h3>Espectro y elección racional</h3>
 <ul style="line-height:1.6">
-<li><strong>Azoles</strong> (clotrimazol, ketoconazol, sertaconazol) — amplio espectro (dermatofitos y Candida).</li>
-<li><strong>Alilaminas</strong> (terbinafina tópica) — muy eficaces frente a dermatofitos.</li>
-<li><strong>Ciclopirox</strong> — incluye uñas (laca) y dermatitis seborreica.</li>
+<li><strong>Alilaminas (terbinafina)</strong>: fungicidas, óptimas en <em>dermatofitos</em>; malas en Candida y prácticamente NULAS en Malassezia → no usar en versicolor ni candidiasis.</li>
+<li><strong>Azoles</strong> (clotrimazol, ketoconazol, sertaconazol): amplio espectro (dermatofitos + Candida + Malassezia) → elección si agente dudoso/mixto, candidiasis y versicolor.</li>
+<li><strong>Ciclopirox</strong>: muy amplio + antiinflamatorio (seborreica, intertrigo mixto).</li>
+<li><strong>Capitis y onicomicosis → SIEMPRE oral</strong> (los tópicos no penetran a concentración curativa); la laca solo como adyuvante o afectación distal mínima sin matriz.</li>
 </ul>
-<h3>Sistémicos</h3>
+<h3>Tópicos por cuadro</h3>
 <ul style="line-height:1.6">
-<li><strong>Terbinafina oral</strong> — primera línea en onicomicosis/tiña por dermatofitos.</li>
-<li><strong>Itraconazol / fluconazol</strong> — Candida, pitiriasis versicolor, alternativa en uñas.</li>
-<li><strong>Griseofulvina</strong> — clásica en tiña capitis infantil.</li>
+<li><strong>Tinea corporis/cruris/pedis:</strong> terbinafina 1% 1-2/día (1-2 sem pie, 2-4 sem cuerpo) o azol 2-4 sem; tratar 1-2 cm de piel sana y seguir 1 sem tras curar.</li>
+<li><strong>Versicolor:</strong> ketoconazol gel/champú 5 min/día 5-7 días (la hipopigmentación tarda meses, NO es fallo). <strong>Seborreica:</strong> ketoconazol/ciclopirox 2/sem + corticoide en brote.</li>
+<li><strong>Candidiasis/intertrigo:</strong> azol + secado/barrera. <strong>Lacas</strong> (amorolfina 1/sem, ciclopirox diario): onicomicosis distal sin matriz, tratamiento largo (6-12 m), baja curación en monoterapia.</li>
 </ul>
-<p>Vigilar interacciones (azoles inhiben el CYP3A4) y hepatotoxicidad; control analítico en tratamientos prolongados.</p>
+<h3>Terbinafina oral (dermatofito = 1ª línea)</h3>
+<ul style="line-height:1.6">
+<li>Onicomicosis 250 mg/día: manos 6 sem, pies 12 sem (patrón oro en dermatofitos). Tinea capitis por peso (&gt;40 kg 250; 20-40 kg 125; &lt;20 kg 62,5 mg) 2-4 sem; <strong>menos eficaz en <em>Microsporum</em></strong>.</li>
+<li><strong>Hepatotoxicidad</strong> idiosincrásica (latencia 4-6 sem) → transaminasas basales, repetir si curso largo; contraindicada en hepatopatía. Avisar de <em>disgeusia</em> y posible lupus cutáneo subagudo. Inhibe CYP2D6 (betabloqueantes, ISRS/tricíclicos).</li>
+</ul>
+<h3>Itraconazol, fluconazol, griseofulvina</h3>
+<ul style="line-height:1.6">
+<li><strong>Itraconazol:</strong> onicomicosis en pulsos 200 mg/12h 1 sem/mes (manos ×2, pies ×3); útil si Candida/moho. <strong>Inhibidor potente de CYP3A4</strong> (estatinas, DOAC, ergóticos…); <strong>contraindicado en insuficiencia cardiaca</strong>.</li>
+<li><strong>Fluconazol:</strong> candidiasis 150 mg/sem; inhibe CYP2C9 (warfarina, fenitoína). <strong>Griseofulvina:</strong> tinea capitis por <em>Microsporum</em> (de elección), 20-25 mg/kg/día con comida grasa; inductor enzimático (↓ anticonceptivos/warfarina), contraindicada en embarazo/porfiria.</li>
+<li>Transaminasas basales en todos; periódicas en cursos largos. Confirmar micología antes de un oral de uñas/cuero cabelludo.</li>
+</ul>
+<h3>Resistencia (<em>T. indotineae</em>)</h3>
+<ul style="line-height:1.6">
+<li><em>Trichophyton indotineae</em>: tiña extensa/recalcitrante, hasta ~67 % resistente a terbinafina (mutación <strong>SQLE</strong>). Ante fallo o viaje a Asia del Sur → <strong>itraconazol</strong> 200 mg/día 6-8 sem + cultivo/identificación molecular (puede haber resistencia cruzada parcial a azoles).</li>
+</ul>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('inf_mic')">Infecciones micóticas</button><button class="btn btn-out btn-sm" onclick="go('micologia_lab')">Micología</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>StatPearls</b> — Terbinafine (dosis, hepatotoxicidad, monitorización) · <a href="https://www.ncbi.nlm.nih.gov/books/NBK545218/" target="_blank" rel="noopener">NCBI</a>.</li>
+<li><b>CDC</b> — <em>Trichophyton indotineae</em> · <a href="https://www.cdc.gov/ringworm/causes/index.html" target="_blank" rel="noopener">cdc.gov</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para validación clínica</strong> (García Silvera, D.).</div>
 </div>`;
 
 VIEWS.antihistaminicos=()=>`<div class="card">
