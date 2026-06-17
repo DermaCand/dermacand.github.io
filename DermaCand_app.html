@@ -3946,23 +3946,39 @@ Autolimitada, pero el tratamiento acorta el prurito y la duracion.</pre></div>
 // ===== VISTAS DE PATOLOGÍA · Tricología =====
 VIEWS.tric_alg=()=>`<div class="card">
 <h2>Algoritmo de alopecias</h2>
-<p class="intro">Primer paso: diferenciar <strong>cicatricial</strong> (pérdida del ostium folicular, irreversible) de <strong>no cicatricial</strong> (folículo conservado).</p>
+<p class="intro">El paso decisivo es diferenciar <strong>cicatricial</strong> (pérdida del ostium folicular en la tricoscopia → fibrosis irreversible, urge biopsiar) de <strong>no cicatricial</strong> (folículo conservado). Después, localizada vs difusa.</p>
+<div class="alert r">🔍 <strong>Banderas de alopecia cicatricial</strong> (ventana terapéutica corta): ausencia de orificios foliculares, eritema/descamación perifolicular, pústulas, "mechón polifolicular" (>5 pelos por ostium = foliculitis decalvante), retroceso de la línea de implantación con pérdida de cejas (AFF). → <strong>biopsia del borde activo</strong> y tratamiento precoz.</div>
 <h3>No cicatricial</h3>
 <ul style="line-height:1.6">
-<li><strong>Androgenética</strong> — patrón (Hamilton/Ludwig), miniaturización.</li>
-<li><strong>Areata</strong> — placas, pelos en "signo de exclamación", autoinmune.</li>
-<li><strong>Efluvio telógeno</strong> — caída difusa 2-3 meses tras un desencadenante.</li>
-<li><strong>Tracción / tricotilomanía</strong>.</li>
+<li><strong>Androgenética (AGA)</strong> — patrón (Hamilton-Norwood en varón, Ludwig/parte ensanchada en mujer), miniaturización y diversidad de diámetros &gt;20% en la tricoscopia. Pull test negativo salvo brote.</li>
+<li><strong>Areata</strong> — placas bien delimitadas, pelos en "signo de exclamación" y peládicos; autoinmune. Cuantificar con <strong>SALT</strong>; formas ofiásica/universal peor pronóstico.</li>
+<li><strong>Efluvio telógeno</strong> — caída difusa 2-3 meses tras desencadenante (parto, fiebre, dieta, fármaco, ferropenia/tiroides). Pull test positivo difuso; tricograma con &gt;20-25% telógenos.</li>
+<li><strong>Efluvio anágeno</strong> — caída masiva días-semanas tras quimioterapia/radioterapia.</li>
+<li><strong>Tracción</strong> (peinados de tensión, retroceso bitemporal con "signo del flequillo") y <strong>tricotilomanía</strong> (pelos rotos a distinta altura).</li>
+<li><strong>Tiña capitis</strong> (niños): descamación, pelos rotos, adenopatía → micología antes de tratar.</li>
 </ul>
 <h3>Cicatricial (derivar / biopsiar)</h3>
 <ul style="line-height:1.6">
-<li><strong>Liquen plano pilar / alopecia frontal fibrosante</strong>.</li>
-<li><strong>Lupus discoide</strong>, foliculitis decalvante.</li>
+<li><strong>Linfocítica:</strong> liquen plano pilar, <strong>alopecia frontal fibrosante</strong> (retroceso frontotemporal + alopecia de cejas en mujer peri/posmenopáusica), lupus discoide (tapones córneos, discromía), pseudopelada de Brocq.</li>
+<li><strong>Neutrofílica:</strong> foliculitis decalvante (pústulas, mechones polifoliculares), celulitis/foliculitis disecante.</li>
+<li><strong>Mixta:</strong> acné queloideo de la nuca, foliculitis (acné) necrótica.</li>
 </ul>
-<h3>Aproximación</h3>
-<p>Anamnesis (tiempo, difusa vs localizada, fármacos, ferropenia/tiroides), tricoscopia y, si hay duda o sospecha cicatricial, biopsia del borde activo. Analítica orientada: ferritina, TSH.</p>
+<h3>Aproximación práctica</h3>
+<ul style="line-height:1.6">
+<li><strong>Anamnesis</strong> (curso, difusa vs localizada, fármacos, dieta, antecedentes androgénicos/autoinmunes) + <strong>pull test</strong> + <strong>tricoscopia</strong>.</li>
+<li><strong>Analítica orientada:</strong> ferritina, TSH, hemograma; añadir andrógenos si hay signos de hiperandrogenismo, ANA si se sospecha lupus, serologías si procede.</li>
+<li><strong>Biopsia</strong> (2 punches de 4 mm del borde activo, idealmente corte transversal + vertical) cuando hay duda o sospecha cicatricial.</li>
+</ul>
+<div class="perla"><b>Perla:</b> en una mujer con retroceso de la línea frontal y pérdida de cejas, piensa en <strong>AFF</strong> y trátala pronto (la fibrosis no se recupera). El tratamiento de la AGA (minoxidil, antiandrógenos, finasterida/dutasterida) no sirve para las cicatriciales.</div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('tricoscopia')">Tricoscopia</button><button class="btn btn-out btn-sm" onclick="go('salt')">SALT (areata)</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>Kanti V, et al.</b> Guideline androgenetic alopecia in women and men. <em>JEADV</em> 2018;32(1):11-22 · <a href="https://doi.org/10.1111/jdv.14624" target="_blank" rel="noopener">doi.org</a>.</li>
+<li><b>Vañó-Galván S, et al.</b> Frontal fibrosing alopecia — multicentre review. <em>J Am Acad Dermatol</em> 2014;70(4):670-678 · <a href="https://doi.org/10.1016/j.jaad.2013.12.003" target="_blank" rel="noopener">doi.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para validación clínica</strong> (García Silvera, D.).</div>
 </div>`;
 
 VIEWS.aga=()=>`<div class="card">
@@ -4123,17 +4139,31 @@ ${productosCard('lpp_ffa')}
 
 VIEWS.tricoscopia=()=>`<div class="card">
 <h2>Tricoscopia</h2>
-<p class="intro">Dermatoscopia del cuero cabelludo y el pelo. Apoya el diagnóstico diferencial de las alopecias, a menudo sin necesidad de biopsia.</p>
-<h3>Signos orientativos</h3>
+<p class="intro">Dermatoscopia del cuero cabelludo y el tallo piloso. Orienta el diagnóstico de las alopecias y, sobre todo, distingue cicatricial de no cicatricial: la <strong>conservación de los orificios foliculares</strong> es el signo clave de buen pronóstico.</p>
+<h3>No cicatriciales</h3>
 <ul style="line-height:1.6">
-<li><strong>Androgenética</strong> — diversidad de diámetros (>20%), miniaturización, puntos amarillos, predominio de unidades de 1 pelo.</li>
-<li><strong>Areata</strong> — puntos amarillos y negros, pelos en exclamación, pelos cadavéricos, repoblación.</li>
-<li><strong>Cicatricial (LPP/AFF)</strong> — pérdida de ostium foliculares, eritema y descamación perifolicular.</li>
-<li><strong>Tiña capitis</strong> — pelos en coma, en sacacorchos, en código Morse.</li>
-<li><strong>Tricotilomanía</strong> — pelos rotos a distinta altura, tricoptilosis.</li>
+<li><strong>Androgenética</strong> — <strong>diversidad de diámetros &gt;20%</strong> (signo más sensible), miniaturización, predominio de unidades de 1 pelo, halo peripilar pardo y puntos amarillos; cambios más marcados en vértex que en occipucio.</li>
+<li><strong>Areata</strong> — puntos amarillos, puntos negros (pelos cadavéricos), <strong>pelos en signo de exclamación</strong> y peládicos; pelos en "porra"/repoblación vellosa indican actividad/recuperación.</li>
+<li><strong>Efluvio telógeno</strong> — pelos cortos en repoblación con punta afilada y unidades vacías, sin diversidad significativa de diámetros (clave para separarlo de la AGA).</li>
+<li><strong>Tricotilomanía</strong> — pelos rotos a distinta altura, tricoptilosis, pelos en llama/enrollados; sin pelos en exclamación.</li>
+<li><strong>Tiña capitis</strong> — pelos en <strong>coma</strong>, en sacacorchos, en código Morse (zigzag) y pelos rotos en "i".</li>
 </ul>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('tric_alg')">Algoritmo</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+<h3>Cicatriciales (orificios ausentes)</h3>
+<ul style="line-height:1.6">
+<li><strong>Liquen plano pilar / AFF</strong> — descamación e <strong>hiperqueratosis perifolicular tubular</strong>, eritema perifolicular, ausencia de orificios; en AFF, pelos solitarios y "puntos rojos/blancos" en la línea frontal.</li>
+<li><strong>Lupus discoide</strong> — tapones queratósicos, puntos rojos foliculares, vasos arborizantes gruesos y discromía.</li>
+<li><strong>Foliculitis decalvante</strong> — <strong>mechones polifoliculares</strong> (&gt;5-6 pelos por ostium), pústulas y costras, hiperplasia perifolicular en "estallido estelar".</li>
+</ul>
+<div class="perla"><b>Perla:</b> ante una alopecia difusa, la <strong>diversidad de diámetros del tallo</strong> es lo que separa AGA (presente) de efluvio telógeno (ausente). La pérdida de orificios foliculares es la frontera entre cicatricial y no cicatricial.</div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('tric_alg')">Algoritmo</button><button class="btn btn-out btn-sm" onclick="go('dermatoscopia')">Atlas de dermatoscopia</button></div>
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>Rudnicka L, et al.</b> Trichoscopy update / Atlas of Trichoscopy. <em>J Dermatol Case Rep</em> 2011;5(4):82-88 · <a href="https://doi.org/10.3315/jdcr.2011.1083" target="_blank" rel="noopener">doi.org</a>.</li>
+<li><b>Waśkiel A, et al.</b> Trichoscopy of alopecia areata: an update. <em>J Dermatol</em> 2018;45(6):692-700 · <a href="https://doi.org/10.1111/1346-8138.14283" target="_blank" rel="noopener">doi.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para validación clínica</strong> (García Silvera, D.).</div>
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Enfermedades ampollosas =====
@@ -4224,18 +4254,34 @@ Manejo especializado.</pre></div>
 
 VIEWS.ampoll_alg=()=>`<div class="card">
 <h2>Algoritmo diagnóstico · ampollosas</h2>
-<p class="intro">Ante ampollas, orienta por el <strong>nivel de despegamiento</strong> y la <strong>inmunofluorescencia</strong>.</p>
+<p class="intro">Las autoinmunes ampollosas se ordenan por el <strong>nivel de despegamiento</strong> (clínica + H-E) y se confirman con <strong>inmunofluorescencia directa</strong> y autoanticuerpos circulantes. La IFD sobre piel perilesional es el patrón de referencia.</p>
 <h3>1. Clínica</h3>
 <ul style="line-height:1.6">
-<li>Ampolla <strong>fláccida</strong> + Nikolsky (+) + erosiones/mucosas → grupo <strong>pénfigo</strong> (intraepidérmico).</li>
-<li>Ampolla <strong>tensa</strong> + Nikolsky (−) + prurito en anciano → grupo <strong>penfigoide</strong> (subepidérmico).</li>
+<li>Ampolla <strong>fláccida</strong> + Nikolsky (+) + erosiones, afectación de <strong>mucosas</strong> → grupo <strong>pénfigo</strong> (despegamiento intraepidérmico, acantólisis).</li>
+<li>Ampolla <strong>tensa</strong> sobre base eritematosa + Nikolsky (−) + prurito intenso en anciano → <strong>penfigoide ampolloso</strong> (subepidérmico).</li>
+<li>Vesículas agrupadas muy pruriginosas en codos/rodillas/glúteos + enteropatía → <strong>dermatitis herpetiforme</strong>.</li>
+<li>Mucosa dominante con cicatrización (ocular, oral) → <strong>penfigoide de mucosas</strong> (riesgo de simbléfaron → derivar a oftalmología).</li>
 </ul>
-<h3>2. Biopsias</h3>
-<p>Lesión para H-E (nivel de la ampolla) + piel perilesional para <strong>IFD</strong> (patrón de depósito).</p>
+<h3>2. Biopsias (dos muestras)</h3>
+<ul style="line-height:1.6">
+<li><strong>Lesional</strong> (ampolla reciente) en formol para H-E → define el <strong>nivel</strong> del despegamiento.</li>
+<li><strong>Perilesional</strong> (piel sana adyacente, NO la ampolla) en medio de Michel/suero salino para <strong>IFD</strong> → patrón de depósito: intercelular "en panal" (pénfigo) vs lineal en la unión dermoepidérmica (penfigoide); granular en papilas dérmicas (dermatitis herpetiforme).</li>
+</ul>
 <h3>3. Suero</h3>
-<p>IFI / ELISA: anti-desmogleína 1 y 3 (pénfigo), anti-BP180/BP230 (penfigoide). El sal-split orienta techo vs suelo en los subepidérmicos.</p>
+<ul style="line-height:1.6">
+<li><strong>ELISA / IFI:</strong> anti-desmogleína 1 (pénfigo foliáceo / pénfigo vulgar mucocutáneo) y 3 (pénfigo vulgar); anti-<strong>BP180</strong> (NC16A, se correlaciona con actividad) y BP230 (penfigoide); anti-transglutaminasa tisular/endomisio (dermatitis herpetiforme).</li>
+<li><strong>Salt-split skin:</strong> separa epidermólisis ampollosa adquirida (suelo) de penfigoide (techo) en los subepidérmicos.</li>
+</ul>
+<div class="alert r">⚠️ <strong>Banderas:</strong> erosiones mucosas extensas + Nikolsky (+) en adulto → urgencia diagnóstica (pénfigo). Nuevo penfigoide bajo <strong>gliptinas</strong> (DPP-4) o tras <strong>anti-PD-1/PD-L1</strong>: retirar/replantear el fármaco. Brote en gestante en 2.º-3.<sup>er</sup> trimestre → penfigoide gestacional.</div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('ifd_ihq')">IFD / IHQ</button><button class="btn btn-out btn-sm" onclick="go('autoac')">Autoanticuerpos</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>Joly P, et al.</b> S2k guideline on the management of pemphigus (EADV/EDF). <em>JEADV</em> 2020;34(9):1900-1913 · <a href="https://doi.org/10.1111/jdv.16752" target="_blank" rel="noopener">doi.org</a>.</li>
+<li><b>Borradori L, et al.</b> Updated S2k guidelines for bullous pemphigoid. <em>JEADV</em> 2022;36(10):1689-1704 · <a href="https://doi.org/10.1111/jdv.18220" target="_blank" rel="noopener">doi.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para validación clínica</strong> (García Silvera, D.).</div>
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Dermato-oncología =====
@@ -5081,22 +5127,48 @@ VIEWS.cirugia=()=>`<div class="card">
 </div>
 
 <div class="btns" style="margin-top:6px"><button class="btn btn-out btn-sm" onclick="go('prof_atb')">Profilaxis ATB</button><button class="btn btn-out btn-sm" onclick="go('bridging')">Anticoagulación</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Esquemas orientativos; la técnica real, en los atlas/PDF colgados debajo.</div>
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>Connolly SM, et al.</b> AUC for Mohs micrographic surgery (AAD/ACMS/ASDSA/ASMS). <em>J Am Acad Dermatol</em> 2012;67(4):531-550 · <a href="https://doi.org/10.1016/j.jaad.2012.06.009" target="_blank" rel="noopener">doi.org</a>.</li>
+<li><b>NCCN</b> — Basal &amp; Squamous Cell Skin Cancer (márgenes y alto riesgo) · <a href="https://www.nccn.org/guidelines/category_1" target="_blank" rel="noopener">nccn.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para validación clínica</strong> (García Silvera, D.). Esquemas orientativos; la técnica real, en los atlas/PDF colgados debajo.</div>
 </div>`+guidesView('cirugia');
 
 VIEWS.prof_atb=()=>`<div class="card">
 <h2>Profilaxis antibiótica en cirugía cutánea</h2>
-<p class="intro">La mayoría de la cirugía dermatológica es limpia y <strong>no requiere</strong> profilaxis. Se reserva para casos seleccionados por riesgo de infección de herida o a distancia.</p>
-<h3>Valorar profilaxis si</h3>
+<p class="intro">La mayoría de la cirugía dermatológica es <strong>limpia</strong> (tasa de infección &lt;5%) y <strong>no requiere</strong> profilaxis. Se reserva, en <strong>dosis única preoperatoria</strong>, para prevenir tres escenarios distintos: infección de la herida quirúrgica, endocarditis y prótesis articular.</p>
+<h3>1. Prevención de infección de la herida</h3>
 <ul style="line-height:1.6">
-<li>Localización de alto riesgo (extremidades inferiores, ingle), cuña de labio/oreja, colgajos/injertos extensos.</li>
-<li>Heridas contaminadas/infectadas o úlceras.</li>
-<li>Inmunodepresión significativa.</li>
-<li>Riesgo de endocarditis o de infección de prótesis articular en pacientes seleccionados.</li>
+<li><strong>Localización de alto riesgo:</strong> por debajo de la rodilla, ingle, cuña de labio/oreja; injertos cutáneos y colgajos extensos; cirugía sobre piel infectada/inflamada o úlceras.</li>
+<li><strong>Paciente:</strong> inmunodepresión significativa, diabetes mal controlada.</li>
+<li>Mucho más eficaz la <strong>técnica aséptica y la hemostasia</strong> que el antibiótico sistémico de rutina.</li>
+</ul>
+<h3>2. Prevención de endocarditis (cardiopatía de alto riesgo)</h3>
+<ul style="line-height:1.6">
+<li>Solo si <strong>condición cardiaca de alto riesgo</strong> (válvula protésica, endocarditis previa, cardiopatía congénita cianótica, valvulopatía del trasplantado) <strong>Y</strong> cirugía a través de <strong>piel infectada/mucosa oral</strong>.</li>
+<li>La piel intacta no es indicación de profilaxis de endocarditis.</li>
+</ul>
+<h3>3. Prótesis articular</h3>
+<ul style="line-height:1.6">
+<li>Solo casos seleccionados (prótesis reciente o alto riesgo) y cirugía sobre piel infectada; decisión compartida con traumatología. No se recomienda de forma sistemática.</li>
 </ul>
 <h3>Pauta orientativa</h3>
-<p>Dosis única oral 30-60 min antes (p. ej. amoxicilina/cefalosporina; clindamicina en alérgicos). Ajustar al protocolo local y a la guía de profilaxis de endocarditis cuando proceda.</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Seguir el protocolo del centro.</div>
+<ul style="line-height:1.6">
+<li><strong>Dosis única oral 30-60 min antes:</strong> cefalexina o amoxicilina 2 g; en zonas potencialmente contaminadas por <em>S. aureus</em> (nariz, axila, ingle) cefalexina o cloxacilina; <strong>clindamicina 600 mg</strong> en alérgicos a betalactámicos.</li>
+<li>Ajustar siempre al <strong>protocolo del centro</strong> y a la guía local de profilaxis de endocarditis.</li>
+</ul>
+<div class="perla"><b>Perla:</b> la indicación más frecuente y rentable de profilaxis en cirugía dermatológica es la <strong>localización en la pierna y la reconstrucción compleja</strong> (injerto/colgajo), no el "paciente cardiópata" con piel sana.</div>
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>Wright TI, et al.</b> Antibiotic prophylaxis in dermatologic surgery — advisory statement. <em>J Am Acad Dermatol</em> 2008;59(3):464-473 · <a href="https://doi.org/10.1016/j.jaad.2008.04.031" target="_blank" rel="noopener">doi.org</a>.</li>
+<li><b>Wilson WR, et al.</b> Prevention of viridans group streptococcal IE — AHA update. <em>Circulation</em> 2021;143(20):e963-e978 · <a href="https://doi.org/10.1161/CIR.0000000000000969" target="_blank" rel="noopener">doi.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para validación clínica</strong> (García Silvera, D.). Seguir el protocolo del centro.</div>
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Dermatopatología y laboratorio =====
