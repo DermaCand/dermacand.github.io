@@ -8586,7 +8586,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 13;
+  var DC_BUILD = 14;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -8626,7 +8626,7 @@ if(document.readyState!=='loading')init();
 </script>
 <div id="modal-aviso-legal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; padding:1rem;" role="dialog" aria-modal="true">
   <div style="background:var(--card); color:var(--txt); border-radius:12px; padding:1.5rem; max-width:600px; width:100%; max-height:85vh; overflow-y:auto; position:relative;">
-    <button onclick="cerrarAvisoLegal()" style="position:absolute; top:0.8rem; right:0.8rem; background:none; border:none; font-size:1.3rem; cursor:pointer; color:var(--mut);" aria-label="Cerrar">✕</button>
+    <button id="aviso-cerrar-x" onclick="cerrarAvisoLegal()" style="position:absolute; top:0.8rem; right:0.8rem; background:none; border:none; font-size:1.3rem; cursor:pointer; color:var(--mut);" aria-label="Cerrar">✕</button>
 
     <h2 style="color:#0d7d8c; margin-bottom:1rem; font-size:1.1rem;">⚖️ Aviso Legal — DermaCand</h2>
 
@@ -8648,6 +8648,11 @@ if(document.readyState!=='loading')init();
 
     <h3 style="color:#0d7d8c; font-size:0.9rem; border-bottom:1px solid #bfe3e8; padding-bottom:0.3rem; margin-top:1rem;">Uso permitido</h3>
     <p style="font-size:0.85rem; line-height:1.6; color:var(--txt);">De uso libre para profesionales sanitarios. Queda expresamente prohibido el uso comercial o la redistribución del código sin autorización expresa de los autores.</p>
+
+    <div id="aviso-aceptar-wrap" style="display:none; margin-top:1.5rem; padding-top:1rem; border-top:1px solid #bfe3e8; text-align:center;">
+      <p style="font-size:0.85rem; line-height:1.6; color:var(--txt); margin-bottom:0.8rem;">Para usar DermaCand, confirme que ha leído y acepta este Aviso Legal y que utilizará la aplicación como <strong>herramienta de apoyo</strong>, sin que sustituya el juicio clínico ni los protocolos oficiales del centro.</p>
+      <button onclick="aceptarLegal()" style="background:#0d7d8c; color:#fff; border:none; border-radius:8px; padding:0.6rem 1.4rem; font-size:0.9rem; font-weight:600; cursor:pointer;">He leído y acepto</button>
+    </div>
 
     <p style="margin-top:1.5rem; font-size:0.75rem; color:var(--mut); text-align:center;">© 2026 Busnego Barreto, M.T. y García Silvera, D. · DermaCand</p>
   </div>
@@ -8690,17 +8695,39 @@ function abrirAvisoLegal() {
   document.body.style.overflow = 'hidden';
 }
 function cerrarAvisoLegal() {
+  if (window._hpLegalForcing) return;   // no se puede cerrar mientras se exige aceptar
   const m = document.getElementById('modal-aviso-legal');
   m.style.display = 'none';
   document.body.style.overflow = '';
 }
+// Aceptacion del Aviso Legal en el primer uso, anclada a la CUENTA (una sola vez por usuario).
+window.mostrarAceptacionLegal = async function() {
+  try {
+    if (window.hpHasAcceptedTerms) { if (await window.hpHasAcceptedTerms()) return; }
+    else if (localStorage.getItem('hp_legalAccepted')) return;
+  } catch (e) {
+    try { if (localStorage.getItem('hp_legalAccepted')) return; } catch (_) {}
+  }
+  window._hpLegalForcing = true;
+  abrirAvisoLegal();
+  var x = document.getElementById('aviso-cerrar-x'); if (x) x.style.display = 'none';
+  var w = document.getElementById('aviso-aceptar-wrap'); if (w) w.style.display = 'block';
+};
+window.aceptarLegal = function() {
+  try { localStorage.setItem('hp_legalAccepted', '1'); } catch (e) {}
+  try { if (window.hpRecordTermsAcceptance) window.hpRecordTermsAcceptance(); } catch (e) {}
+  window._hpLegalForcing = false;
+  var x = document.getElementById('aviso-cerrar-x'); if (x) x.style.display = '';
+  var w = document.getElementById('aviso-aceptar-wrap'); if (w) w.style.display = 'none';
+  cerrarAvisoLegal();
+};
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') cerrarAvisoLegal();
+  if (e.key === 'Escape' && !window._hpLegalForcing) cerrarAvisoLegal();
 });
 document.addEventListener('DOMContentLoaded', function() {
   const m = document.getElementById('modal-aviso-legal');
   if (m) m.addEventListener('click', function(e) {
-    if (e.target === this) cerrarAvisoLegal();
+    if (e.target === this && !window._hpLegalForcing) cerrarAvisoLegal();
   });
 });
 </script>
@@ -8984,6 +9011,29 @@ function loadCloud(uid){
 
 // ── Registro de cuentas con aprobación del administrador ──
 const TERMS_VERSION = '2026-06-15';
+// Aceptacion legal anclada a la CUENTA: si el usuario ya acepto los terminos vigentes (al
+// registrarse o aceptar) NO se le vuelve a pedir aunque entre en un ordenador nuevo.
+window.hpHasAcceptedTerms = async function(){
+  try { var la = localStorage.getItem('hp_legalAccepted'); if (la === TERMS_VERSION || la === '1') return true; } catch(e){}
+  const uid = (auth && auth.currentUser && auth.currentUser.uid) || curUid;
+  if (!uid || !navigator.onLine) return false;
+  try {
+    const s = await getDoc(doc(fs, 'cuentas', uid));
+    if (s.exists() && s.data().aceptaTerminos === true && s.data().versionTerminos === TERMS_VERSION){
+      try { localStorage.setItem('hp_legalAccepted', TERMS_VERSION); } catch(e){}
+      return true;
+    }
+  } catch(e){ /* offline o reglas: no bloquear, se mostrara el aviso */ }
+  return false;
+};
+// Guarda la aceptacion en la CUENTA (vale para cualquier equipo). updateDoc NO crea ficha:
+// en un usuario heredado sin ficha falla sin riesgo y basta la marca local.
+window.hpRecordTermsAcceptance = async function(){
+  try { localStorage.setItem('hp_legalAccepted', TERMS_VERSION); } catch(e){}
+  const uid = (auth && auth.currentUser && auth.currentUser.uid) || curUid;
+  if (!uid || !navigator.onLine) return;
+  try { await updateDoc(doc(fs, 'cuentas', uid), { aceptaTerminos: true, versionTerminos: TERMS_VERSION, fechaAceptacion: serverTimestamp() }); } catch(e){}
+};
 
 function hidePending(){ const pe=document.getElementById('hp-pending-overlay'); if(pe) pe.style.display='none'; }
 function showPending(name){
@@ -9008,6 +9058,7 @@ function revealAndEnter(user){
   window.__hpUid=user.uid;
   HemoCloud.loadRole(user.uid).then(()=>{ if(window.hpOnRoleLoaded) window.hpOnRoleLoaded(); });
   if(window.syncCloudGuides) setTimeout(()=>window.syncCloudGuides(true),800);
+  setTimeout(()=>{ if(window.mostrarAceptacionLegal) window.mostrarAceptacionLegal(); }, 600);
 }
 async function enterAppGated(user){
   let blocked=false, name='';

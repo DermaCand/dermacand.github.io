@@ -83,7 +83,15 @@ service cloud.firestore {
                     && request.resource.data.estado == 'pendiente'
                     && request.resource.data.aceptaTerminos == true;
       allow read:   if request.auth != null && (request.auth.uid == uid || isAdmin());
-      allow update, delete: if isAdmin();
+      // El admin gestiona la ficha; ademas, el PROPIO usuario puede registrar SOLO su
+      // aceptacion de terminos (sin auto-aprobarse ni tocar otros campos).
+      allow update: if isAdmin()
+                    || ( request.auth != null
+                         && request.auth.uid == uid
+                         && request.resource.data.diff(resource.data).affectedKeys()
+                              .hasOnly(['aceptaTerminos','versionTerminos','fechaAceptacion'])
+                         && request.resource.data.aceptaTerminos == true );
+      allow delete: if isAdmin();
     }
 
     match /config/{doc} {
