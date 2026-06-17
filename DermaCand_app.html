@@ -2842,10 +2842,16 @@ const btnDisabled=!online;
 const btnText=!online?'Sin Internet':'Descargar todo ahora';
 // ¿La app está guardada para funcionar sin conexión? Si el SW ya controla la página, el armazón está cacheado.
 const swReady=('serviceWorker' in navigator)&&!!navigator.serviceWorker.controller;
+const persisted=window.__hpPersisted;
+const persistNote=(persisted===true)
+  ? '<br>🔒 <strong>Almacenamiento protegido:</strong> este equipo recordará la app y tu acceso aunque cierres o apagues.'
+  : (persisted===false)
+    ? '<br>⚠️ <strong>Este navegador podría borrar los datos al cerrar.</strong> Si al volver te vuelve a pedir conexión, instala la app (menú del navegador → «Instalar DermaCand») o pide a Informática que no borre los datos del sitio al cerrar sesión.'
+    : '';
 const offlineReady='<div class="alert '+(swReady?'g':'y')+'" style="margin:14px 0">'+
   (swReady
     ? '✅ <strong>Listo para usar sin conexión.</strong> La app está guardada en este dispositivo.'
-    : '⏳ <strong>Aún no está guardada del todo para sin conexión.</strong> Mantén la app abierta unos segundos con Internet y vuelve a esta pantalla.')+
+    : '⏳ <strong>Aún no está guardada del todo para sin conexión.</strong> Mantén la app abierta unos segundos con Internet y vuelve a esta pantalla.')+persistNote+
   '</div>';
 return `<div class="card">
 <h2>Actualizar la app</h2>
@@ -8577,7 +8583,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 12;
+  var DC_BUILD = 13;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -8989,7 +8995,7 @@ function revealAndEnter(user){
   const userLabel=document.getElementById('hp_user_label');
   const loginBtn=document.getElementById('hp_login_btn');
   curUid=user.uid;
-  try{ localStorage.setItem('hp_everLoggedIn','1'); }catch(e){}
+  try { (window.hpMarkValidated ? window.hpMarkValidated() : localStorage.setItem('hp_everLoggedIn', '1')); } catch(e) {}
   hidePending();
   if(overlay) overlay.classList.add('hidden');
   if(userBtn){ userBtn.classList.add('visible'); userBtn.title='Cerrar sesión'; }
@@ -9106,7 +9112,7 @@ if(!DC_BACKEND_READY || !auth){
       enterAppGated(user);
     } else {
       curUid=null; window.__hpUid=null; HemoCloud.role=null; pending={}; hidePending();
-      let everLogged=false; try{ everLogged=localStorage.getItem('hp_everLoggedIn')==='1'; }catch(e){}
+      const everLogged = !!(window.hpEverValidated && window.hpEverValidated());
       if(everLogged && !window.__hpExplicitSignOut){
         if(overlay) overlay.classList.add('hidden');
         if(userBtn){ userBtn.classList.add('visible'); userBtn.title='Iniciar sesión'; }
@@ -9153,7 +9159,7 @@ window.hpShowLoginOverlay=function(){
   const em=document.getElementById('hp_email'); if(em) setTimeout(()=>{ try{ em.focus(); }catch(e){} },50);
 };
 window.hpSignOut=function(){
-  const doIt=()=>{ window.__hpExplicitSignOut=true; try{ localStorage.removeItem('hp_everLoggedIn'); }catch(e){} if(auth) signOut(auth); };
+  const doIt=()=>{ window.__hpExplicitSignOut=true; try { if (window.hpClearValidated) window.hpClearValidated(); else localStorage.removeItem('hp_everLoggedIn'); } catch(e) {} if(auth) signOut(auth); };
   if(window.hpConfirm) window.hpConfirm('¿Cerrar sesión? Tendrás que iniciar sesión de nuevo para volver a entrar.',doIt);
   else doIt();
 };
@@ -9170,10 +9176,52 @@ window.hpTogglePw=function(){ const inp=document.getElementById('hp_pw'); inp.ty
 ['hp_email','hp_pw'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('keydown',e=>{ if(e.key==='Enter') window.hpLogin(); }); });
 </script>
 
+<!-- ══ Persistencia DURADERA del modo sin conexión (clave en equipos compartidos del hospital) ══ -->
+<script>
+/* Por defecto localStorage y la caché del SW son "desechables": el navegador (sobre todo en equipos
+   compartidos/bloqueados) puede BORRARLOS al cerrar sesión de Windows, reiniciar o por falta de espacio,
+   y entonces se pierden a la vez la marca de "equipo ya validado" y el armazón cacheado, y la app vuelve a
+   pedir conexión como si fuera la primera vez. Solución en dos capas: (1) pedir almacenamiento PERSISTENTE
+   al navegador; (2) guardar la marca de validación por DUPLICADO (localStorage + cookie de ~2 años). */
+(function(){
+  window.__hpPersisted = null; // null = aún sin resolver; true/false = respuesta del navegador
+  function requestPersist(){
+    try{
+      if(navigator.storage && navigator.storage.persist){
+        navigator.storage.persisted().then(function(already){
+          if(already){ window.__hpPersisted = true; return; }
+          navigator.storage.persist().then(function(granted){ window.__hpPersisted = !!granted; }).catch(function(){});
+        }).catch(function(){});
+      }
+    }catch(e){}
+  }
+  window.hpRequestPersist = requestPersist;
+  requestPersist();
+  var CK = 'hp_everLoggedIn';
+  function setCookie(){ try{ document.cookie = CK+'=1; path=/; max-age=63072000; SameSite=Lax'; }catch(e){} }
+  function delCookie(){ try{ document.cookie = CK+'=; path=/; max-age=0; SameSite=Lax'; }catch(e){} }
+  function hasCookie(){ try{ return ('; '+document.cookie).indexOf('; '+CK+'=1') !== -1; }catch(e){ return false; } }
+  window.hpEverValidated = function(){
+    var inLS = false; try{ inLS = localStorage.getItem(CK) === '1'; }catch(e){}
+    return inLS || hasCookie();
+  };
+  window.hpMarkValidated = function(){
+    try{ localStorage.setItem(CK, '1'); }catch(e){}
+    setCookie();
+    requestPersist();
+  };
+  window.hpClearValidated = function(){
+    try{ localStorage.removeItem(CK); }catch(e){}
+    delCookie();
+  };
+  try{ if(localStorage.getItem(CK) === '1') setCookie(); }catch(e){}
+})();
+</script>
+
 <!-- ══ Apertura inmediata + entrada en modo consulta (no depende de Firebase) ══ -->
 <script>
 (function(){
-  function everLogged(){ try{ return localStorage.getItem('hp_everLoggedIn')==='1'; }catch(e){ return false; } }
+  function everLogged(){ return !!(window.hpEverValidated && window.hpEverValidated()); }
   function hideOverlay(){ var ov=document.getElementById('hp-auth-overlay'); if(ov) ov.classList.add('hidden'); }
   window.hpOfflineEnter=hideOverlay;   // botón «Continuar sin conexión» (siempre disponible)
   function revealNow(){ if(everLogged()) hideOverlay(); }
@@ -9248,7 +9296,7 @@ window.hpTogglePw=function(){ const inp=document.getElementById('hp_pw'); inp.ty
       else{queueReport(meta);}
     }catch(e){}
   };
-  window.addEventListener('error',function(e){if(!e||!e.message)return;try{var src=e.filename?(' @ '+(''+e.filename).split('/').pop()+':'+e.lineno+':'+e.colno):'';autoReport('[JS] '+e.message+src);}catch(_){}});
+  window.addEventListener('error',function(e){if(!e||!e.message)return;try{var m=''+e.message;if(!e.filename&&!e.error&&/^script error\.?$/i.test(m.trim()))return;var src=e.filename?(' @ '+(''+e.filename).split('/').pop()+':'+e.lineno+':'+e.colno):'';autoReport('[JS] '+m+src);}catch(_){}});
   window.addEventListener('unhandledrejection',function(e){try{var r=e&&e.reason;var m=(r&&r.message)||(''+r)||'promesa rechazada';autoReport('[Promise] '+m);}catch(_){}});
   function flush(){try{if(window.hpFlushReportQueue)window.hpFlushReportQueue();}catch(e){}}
   if(document.readyState==='complete')setTimeout(flush,2500);else window.addEventListener('load',function(){setTimeout(flush,2500);});
