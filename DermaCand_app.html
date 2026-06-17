@@ -5517,34 +5517,104 @@ ${productosCard('esclerosis_sist')}
 // ===== VISTAS DE PATOLOGÍA · Enfermedades metabólicas =====
 VIEWS.mucinosis=()=>`<div class="card">
 <h2>Mucinosis cutáneas</h2>
-<p class="intro">Grupo heterogéneo por depósito anómalo de mucina en la dermis. Pueden ser primarias o asociarse a enfermedad tiroidea o a paraproteinemia.</p>
-<h3>Entidades</h3>
-<ul>
-<li><strong>Mixedema pretibial</strong> — placas induradas en piernas, asociado a enfermedad de Graves (autoinmunidad tiroidea).</li>
-<li><strong>Liquen mixedematoso / escleromixedema</strong> — pápulas firmes; el escleromixedema es difuso y asocia gammapatía monoclonal (estudio hematológico).</li>
-<li><strong>Mucinosis folicular</strong> — placas alopécicas; puede asociarse a micosis fungoide.</li>
+<p class="intro">Depósito anómalo de mucina en la dermis. El subtipo cambia todo el manejo. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica el subtipo</strong> (y pide proteinograma/inmunofijación suero-orina + panel tiroideo en toda mucinosis difusa): <strong>mixedema pretibial</strong> (Graves → control tiroideo) · <strong>escleromixedema</strong> (gammapatía monoclonal, sin tiroideopatía; criterios de Rongioletti) · <strong>liquen mixedematoso localizado</strong> (sin gammapatía, mejor pronóstico) · <strong>mucinosis folicular</strong> (descartar micosis fungoide foliculotropa con biopsia + clonalidad TCR).</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma:</strong> escleromixedema con fiebre, cefalea, convulsiones o deterioro de consciencia (síndrome dermato-neurológico de Arndt-Gottron) → IgIV a dosis altas y/o plasmaféresis + corticoide sistémico de inmediato (potencialmente mortal).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Mixedema pretibial (Graves)</div></div>
+<div class="chips"><span class="chip">control tiroideo + no fumar</span><span class="chip">clobetasol oclusión</span><span class="chip">triamcinolona intralesional</span><span class="chip">rituximab (refractario)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('mu_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="mu_hc1">MIXEDEMA PRETIBIAL (Graves) - escalonado
+PRIMERO: normalizar funcion tiroidea (control de Graves) + dejar de fumar; compresion 20-40 mmHg si edema/linfedema.
+- 1a linea: clobetasol 0,05% 1/dia bajo oclusion (film/hidrocoloide) 12h, 4-6 sem; luego mantenimiento intermitente.
+- 2a: triamcinolona intralesional 5-10 mg/ml en placas resistentes, c/4-6 sem.
+- Grave/elefantiasico refractario: pentoxifilina, octreotido, plasmaferesis o IgIV; rituximab 1 g IV dias 0 y 14; teprotumumab si orbitopatia asociada.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Escleromixedema (gammapatía monoclonal)</div></div>
+<div class="chips"><span class="chip">IgIV (1ª línea)</span><span class="chip">talidomida/lenalidomida</span><span class="chip">bortezomib-dexametasona</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('mu_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="mu_hc2">ESCLEROMIXEDEMA (gammapatia monoclonal) - valorar con Hematologia (clon plasmocitario, descartar mieloma)
+- 1a linea (consenso EADV 2024): IgIV 2 g/kg por ciclo (en 2-5 dias) c/4 sem; espaciar en mantenimiento (suele requerir reinfusiones).
+- Asociar/2a: talidomida 100-200 mg/dia o lenalidomida; corticoide sistemico adyuvante.
+- Refractario: bortezomib-dexametasona o lenalidomida-dexametasona; trasplante autologo de progenitores.
+- Sindrome dermato-neurologico (Arndt-Gottron): IgIV altas dosis +/- plasmaferesis + corticoide urgente.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Liquen mixedematoso localizado / mucinosis folicular</div></div>
+<div class="chips"><span class="chip">corticoide tóp./intralesional</span><span class="chip">hidroxicloroquina</span><span class="chip">biopsia + clonalidad (folicular)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('mu_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="mu_hc3">LIQUEN MIXEDEMATOSO LOCALIZADO (sin gammapatia ni afectacion sistemica) - mejor pronostico
+- Observacion o conservador; corticoide topico potente o intralesional (triamcinolona 5-10 mg/ml); tacrolimus topico; valorar fototerapia. NO precisa sistemico agresivo.
+MUCINOSIS FOLICULAR: biopsia obligada con IHQ y reordenamiento clonal TCR (descartar micosis fungoide foliculotropa).
+- Idiopatica/primaria: corticoide topico/intralesional; hidroxicloroquina 200-400 mg/dia; muchos resuelven.
+- Asociada a micosis fungoide: manejar como linfoma cutaneo (PUVA, retinoides/interferon, radioterapia segun estadio).</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Consenso EADV/EDF 2024</strong> (Knobler): IgIV a dosis altas como 1ª línea del escleromixedema; corticoide y talidomida/lenalidomida coadyuvantes; trasplante autólogo en refractarios.</li>
+<li>En mixedema pretibial elefantiásico/refractario: <strong>rituximab</strong> y <strong>teprotumumab</strong> (este último si coexiste orbitopatía de Graves).</li>
 </ul>
-<h3>Diagnóstico y manejo</h3>
-<p>Biopsia (mucina con azul alcián). Estudiar tiroides y proteinograma/inmunofijación. Tratar la causa; en el escleromixedema, inmunoglobulinas y manejo de la gammapatía.</p>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/mucinoses" target="_blank" rel="noopener">DermNet — Cutaneous mucinoses</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>EADV/EDF</b> — Knobler R, et al. Consensus on sclerosing skin diseases, part 2: scleromyxoedema and scleroedema. <em>JEADV</em> 2024;38(7):1281-1299 · <a href="https://doi.org/10.1111/jdv.19937" target="_blank" rel="noopener">doi.org</a>.</li>
+<li>Nguyen VB, et al. Pretibial myxedema in Graves disease: treatment review. <em>Clin Case Rep</em> 2024;12(2):e8478 · <a href="https://doi.org/10.1002/ccr3.8478" target="_blank" rel="noopener">doi.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.amiloidosis=()=>`<div class="card">
 <h2>Amiloidosis cutánea</h2>
-<p class="intro">Depósito de material amiloide en la piel. Puede ser <strong>primaria cutánea</strong> (limitada a la piel) o manifestación de amiloidosis <strong>sistémica</strong>.</p>
-<h3>Formas cutáneas primarias</h3>
-<ul>
-<li><strong>Macular</strong> — máculas marronáceas reticuladas y pruriginosas (espalda); relación con el rascado crónico.</li>
-<li><strong>Liquenoide (papular)</strong> — pápulas hiperqueratósicas pruriginosas en piernas.</li>
-<li><strong>Nodular</strong> — nódulos; puede asociar amiloidosis sistémica.</li>
+<p class="intro">Depósito de amiloide en la piel: <strong>primaria localizada</strong> (PLCA: macular, liquenoide/liquen amiloide, nodular) o manifestación de amiloidosis <strong>sistémica (AL)</strong>. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, separa localizada de sistémica.</strong> En la <strong>PLCA macular/liquenoide</strong> el motor es el ciclo <em>prurito-rascado-fricción</em> (queratinocito), sin paraproteína → manejo dermatológico. La variante <strong>NODULAR</strong> es de cadenas ligeras (origen plasmocitario local) → cribar AL sistémica. Si hay paraproteína o afectación orgánica = AL, tratamiento hematológico (la piel no es la diana). Biopsia: rojo Congo, birrefringencia verde manzana.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma (AL sistémica):</strong> amiloidosis nodular, o macroglosia/púrpura periorbitaria/síndrome nefrótico/insuficiencia cardiaca → electroforesis e inmunofijación (suero y orina), cadenas ligeras libres, NT-proBNP/troponina, función renal y proteinuria; estudio de discrasia de células plasmáticas con Hematología.</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">PLCA (macular/liquenoide) — cortar el rascado</div></div>
+<div class="chips"><span class="chip">emolientes</span><span class="chip">mentol/pramoxina</span><span class="chip">corticoide tóp. potente</span><span class="chip">antihistamínico nocturno</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('am_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="am_hc1">AMILOIDOSIS CUTANEA LOCALIZADA (macular/liquenoide) - prioridad: cortar el rascado
+- Educar: evitar friccion/rascado/estropajo; emoliente 2/dia.
+- Antipruriginoso topico: mentol 1-2% o pramoxina.
+- Corticoide topico potente: clobetasol 0,05% o betametasona dipropionato 1/dia 2-4 sem; oclusion nocturna en placas liquenificadas.
+- Prurito nocturno: hidroxizina 25 mg noche o gabapentina si neuropatico.
+- Reevaluar a las 4-6 semanas.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Persistente — intralesional + ahorrador</div></div>
+<div class="chips"><span class="chip">triamcinolona intralesional</span><span class="chip">tacrolimus tóp.</span><span class="chip">calcipotriol / retinoico tóp.</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('am_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="am_hc2">AMILOIDOSIS CUTANEA - si persiste tras escalon 1
+- Triamcinolona intralesional 5-10 mg/ml en placas/papulas resistentes, c/3-4 sem.
+- Mantenimiento ahorrador de corticoide: tacrolimus 0,1% 2/dia.
+- Alternativas topicas: calcipotriol 2/dia o tretinoina 0,05-0,1% noche (irritacion local).
+- DMSO topico opcional (evidencia debil).</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Extensa / refractaria — fototerapia, sistémico, procedimientos</div></div>
+<div class="chips"><span class="chip">fototerapia NB-UVB/UVA1</span><span class="chip">acitretina</span><span class="chip">dupilumab</span><span class="chip">láser/dermoabrasión (nodular)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('am_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="am_hc3">AMILOIDOSIS CUTANEA - extensa o refractaria
+- Fototerapia NB-UVB o UVA1 2-3/sem segun extension.
+- Acitretina 25 mg/dia (control lipidico/hepatico; teratogeno).
+- Refractaria con prurito tipo 2: dupilumab (carga 600 mg, luego 300 mg/2 sem).
+- NODULAR: ablativo (laser CO2/Nd:YAG, dermoabrasion o exeresis); ANTES cribar AL sistemica.
+- AL SISTEMICA: Hematologia trata la discrasia de celulas plasmaticas (daratumumab/bortezomib).</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Dupilumab</strong> (anti-IL-4/13) logra remisión del liquen amiloide refractario, incluso en no atópicos (eje IL-4/13/31).</li>
+<li>Señales con <strong>nemolizumab</strong> (anti-IL-31RA) y <strong>upadacitinib</strong> en PLCA refractaria (casos 2024-2025).</li>
 </ul>
-<h3>Sistémica (alarma)</h3>
-<p>Púrpura periorbitaria ("ojos de mapache"), macroglosia y equimosis fáciles → sospechar amiloidosis sistémica AL (gammapatía) y derivar para estudio de órganos.</p>
-<h3>Manejo</h3>
-<p>Biopsia (rojo Congo con birrefringencia verde manzana). Cutánea: control del prurito/rascado, corticoide tópico, fototerapia. Sistémica: tratamiento hematológico.</p>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/cutaneous-amyloidosis" target="_blank" rel="noopener">DermNet — Cutaneous amyloidosis</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Weidner T, et al. Primary localized cutaneous amyloidosis: a systematic treatment review. <em>Am J Clin Dermatol</em> 2017;18(5):629-642 · <a href="https://doi.org/10.1007/s40257-017-0278-9" target="_blank" rel="noopener">doi.org</a>.</li>
+<li>Wang Y, et al. Dupilumab for refractory lichen amyloidosis. <em>JAAD Case Rep</em> 2024;53:130-131 · <a href="https://doi.org/10.1016/j.jdcr.2024.09.006" target="_blank" rel="noopener">doi.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.porfirias=()=>`<div class="card">
@@ -5609,34 +5679,117 @@ ${productosCard('porfirias')}
 
 VIEWS.deposito=()=>`<div class="card">
 <h2>Enfermedades por depósito</h2>
-<p class="intro">Acumulación de sustancias (calcio, lípidos, urato, pigmentos) en la piel, a menudo como signo de enfermedad metabólica subyacente.</p>
-<h3>Entidades</h3>
-<ul>
-<li><strong>Calcinosis cutis</strong> — depósito de calcio; distrófica (sobre tejido dañado, p. ej. dermatomiositis/esclerodermia), metastásica (hipercalcemia) o idiopática.</li>
-<li><strong>Xantomas</strong> — depósito de lípidos; marcador de dislipemia (xantelasma, tendinoso, eruptivo por hipertrigliceridemia). Estudiar el perfil lipídico.</li>
-<li><strong>Gota / tofos</strong> — depósito de urato; nódulos en hélix, dedos, codos.</li>
-<li><strong>Ocronosis</strong> — depósito de homogentísico (alcaptonuria) o exógena (hidroquinona).</li>
+<p class="intro">Acumulación de sustancias (calcio, urato, lípidos) en la piel, a menudo signo de enfermedad metabólica. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, identifica el depósito y su causa.</strong> <strong>Calcinosis</strong>: distrófica (tejido dañado, Ca/P normales: esclerodermia/dermatomiositis) vs metastásica (Ca/P altos: ERC, hiperPTH) vs calcifilaxis (urgencia en ERC) → pide Ca, P, PTH, función renal. <strong>Gota tofácea</strong>: urato sérico ± cristales (birrefringencia negativa). <strong>Xantomas</strong>: el subtipo orienta el lípido (tendinoso/tuberoso = LDL/HF; eruptivo = TG muy altos; xantelasma a veces normolipémico) → perfil lipídico + cribado familiar.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Calcifilaxis</strong> (placas reticuladas violáceas dolorosas que se ulceran/necrosan en ERC): control de Ca-P (suspender calcio/vitamina D/quelantes cálcicos y warfarina) + cuidado de herida + analgesia + Nefrología el mismo día; tiosulfato sódico IV (su beneficio fue cuestionado por un metaanálisis de 2023).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Calcinosis cutis</div></div>
+<div class="chips"><span class="chip">diltiazem</span><span class="chip">tiosulfato sódico</span><span class="chip">colchicina</span><span class="chip">cirugía/curetaje</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('de_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="de_hc1">CALCINOSIS CUTIS
+DISTROFICA localizada (esclerodermia/dermatomiositis):
+- Diltiazem VO 120-480 mg/dia (titular por TA/FC) - opcion mas usada de 1a linea.
+- Tiosulfato sodico topico 10-25% 2/dia o intralesional 150-250 mg/ml en lesiones pequenas.
+- Colchicina 0,5-1 mg/dia si componente inflamatorio.
+- Optimizar la enfermedad de base (inmunosupresion).
+METASTASICA (ERC/hiperPTH): corregir producto Ca x P, quelantes de fosforo NO calcicos, valorar paratiroidectomia.
+- Lesiones grandes/dolorosas/ulceradas: extirpacion o curetaje. Evidencia limitada; reevaluar a 3-6 meses.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Gota tofácea</div></div>
+<div class="chips"><span class="chip">alopurinol</span><span class="chip">febuxostat</span><span class="chip">colchicina (profilaxis)</span><span class="chip">pegloticasa</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('de_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="de_hc2">GOTA TOFACEA - objetivo urato <5 mg/dL si hay tofos (de por vida; <6 sin tofos)
+- 1a linea: alopurinol inicio 100 mg/dia (50 si FGe<60), titular c/2-4 sem hasta objetivo, max 800; cribar HLA-B*5801 en asiaticos/afrodescendientes.
+- Alternativa: febuxostat 40 mg/dia, subir a 80 (precaucion cardiovascular).
+- Profilaxis de crisis al iniciar/titular: colchicina 0,5-1 mg/dia (o AINE / prednisona dosis baja) 3-6 meses.
+- Si no se alcanza objetivo: anadir uricosurico (probenecid).
+- Refractaria/incapacitante: pegloticasa IV 8 mg/2 sem (suspender el hipouricemiante oral).
+- Crisis aguda: AINE o colchicina o prednisona corta; NO suspender el hipouricemiante ya iniciado.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Xantomas</div></div>
+<div class="chips"><span class="chip">estatina alta intensidad</span><span class="chip">ezetimiba</span><span class="chip">PCSK9</span><span class="chip">fibrato (eruptivo)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('de_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="de_hc3">XANTOMAS - tratar la dislipemia; descartar hipercolesterolemia familiar (HF) + cribado familiar en cascada
+TENDINOSO/TUBEROSO (LDL alto / HF): estatina alta intensidad (atorvastatina 40-80 o rosuvastatina 20-40), objetivo LDL <55 (muy alto riesgo) o <70.
+- Anadir ezetimiba 10 mg/dia; si persiste, inhibidor PCSK9 (evolocumab/alirocumab).
+- HF homocigota: aferesis de LDL +/- lomitapida/evinacumab.
+ERUPTIVO (TG muy altos): fibrato (fenofibrato) + dieta muy baja en grasa + control de diabetes/alcohol (previene pancreatitis).
+XANTELASMA normolipemico persistente: extirpacion, laser (CO2/erbio), TCA o electrodesecacion (estetico; recidiva frecuente).
+Los xantomas regresan en meses al normalizar los lipidos.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Calcifilaxis</strong>: un metaanálisis 2023 (JAMA Netw Open) no demostró mejoría con tiosulfato sódico IV; el control de Ca-P y el cuidado de herida siguen siendo los pilares.</li>
+<li>Gota: objetivo de urato <strong>&lt;5 mg/dL</strong> con tofos (treat-to-target, ACR 2020) y cribado de <strong>HLA-B*5801</strong> en poblaciones de riesgo.</li>
+<li><strong>PCSK9</strong>, evinacumab y aféresis logran regresión de xantomas en hipercolesterolemia familiar.</li>
 </ul>
-<h3>Manejo</h3>
-<p>Tratar la causa metabólica (lípidos, calcio/fósforo, urato). Extirpación o medidas locales según el caso.</p>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/calcinosis-cutis" target="_blank" rel="noopener">DermNet — Calcinosis cutis</a> · <a href="https://dermnetnz.org/topics/xanthoma" target="_blank" rel="noopener">DermNet — Xanthomas</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>ACR</b> — FitzGerald JD, et al. 2020 guideline for the management of gout. <em>Arthritis Care Res</em> 2020;72(6):744-760 · <a href="https://doi.org/10.1002/acr.24180" target="_blank" rel="noopener">doi.org</a>.</li>
+<li>Wen W, et al. IV sodium thiosulphate for calciphylaxis in CKD (revisión sistemática). <em>JAMA Netw Open</em> 2023;6(4):e2310068 · <a href="https://doi.org/10.1001/jamanetworkopen.2023.10068" target="_blank" rel="noopener">doi.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.nutricionales=()=>`<div class="card">
 <h2>Enfermedades nutricionales</h2>
-<p class="intro">Manifestaciones cutáneas de déficits (o excesos) nutricionales. La piel puede ser la primera pista de una carencia.</p>
-<h3>Déficits clásicos</h3>
-<ul>
-<li><strong>Zinc (acrodermatitis enteropática)</strong> — dermatitis periorificial y acral, alopecia y diarrea; hereditaria o adquirida.</li>
-<li><strong>Niacina / B3 (pelagra)</strong> — las "3 D": dermatitis fotodistribuida (collar de Casal), diarrea y demencia.</li>
-<li><strong>Vitamina C (escorbuto)</strong> — púrpura perifolicular, pelos "en sacacorchos", gingivorragia.</li>
-<li><strong>Otros</strong> — déficit de biotina, ácidos grasos esenciales, vitamina A; kwashiorkor (desnutrición proteica).</li>
+<p class="intro">Manifestaciones cutáneas de déficits. La piel suele ser la primera pista; <strong>reponer el nutriente</strong> es diagnóstico y terapéutico. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica por la tríada clínica.</strong> <strong>Zinc</strong> = dermatitis periorificial + acral + alopecia + diarrea (genética o adquirida). <strong>Pelagra (niacina)</strong> = dermatitis fotodistribuida (collar de Casal) + diarrea + demencia (buscar alcohol, isoniazida, carcinoide, Hartnup). <strong>Escorbuto (vit C)</strong> = púrpura perifolicular + pelos en sacacorchos + gingivorragia (dieta restrictiva, alcohol, autismo). La respuesta rápida (días) a la reposición confirma el diagnóstico.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma:</strong> con diarrea grave/deshidratación, deterioro neuropsiquiátrico o sangrado mucoso con anemia → reponer el nutriente <strong>de inmediato sin esperar niveles</strong> (el zinc sérico normal NO excluye déficit) y dar <strong>tiamina antes que glucosa</strong> en alcohólicos.</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Déficit de ZINC / acrodermatitis enteropática</div></div>
+<div class="chips"><span class="chip">zinc elemental VO</span><span class="chip">tratar la malabsorción</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('nu_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="nu_hc1">DEFICIT DE ZINC / acrodermatitis enteropatica
+- Zinc elemental VO 1-3 mg/kg/dia (adulto adquirido tipico 30-60 mg/dia).
+- Acrodermatitis enteropatica genetica: 1-2 mg/kg/dia DE POR VIDA.
+- Sulfato de zinc 220 mg = ~50 mg elemental; gluconato/acetato menos irritante gastrico.
+- Tomar lejos de comidas/fitatos/hierro/calcio (reducen la absorcion).
+- Respuesta en 5-10 dias; resolucion en ~2-4 semanas.
+- Tratar la causa (Crohn, cirugia bariatrica, intestino corto, leche materna baja en zinc).
+- Monitor: zinc y COBRE serico (deficit de cobre con dosis altas prolongadas), fosfatasa alcalina.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Déficit de NIACINA / pelagra (B3)</div></div>
+<div class="chips"><span class="chip">nicotinamida</span><span class="chip">complejo B</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('nu_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="nu_hc2">DEFICIT DE NIACINA / pelagra (vit B3)
+- Nicotinamida VO 100-300 mg/dia en 3-4 tomas hasta mejoria, luego 50 mg 2-3/dia.
+- Preferir nicotinamida sobre niacina/acido nicotinico (evita flushing/prurito/quemazon).
+- Si no tolera VO: 100 mg parenteral c/8-12h.
+- Anadir complejo B (deficits asociados frecuentes).
+- Mucosas y diarrea mejoran en dias; piel en ~2 semanas.
+- Tratar la causa: alcoholismo (dar tiamina), isoniazida (anadir piridoxina), carcinoide, Hartnup, dieta a base de maiz.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Déficit de VITAMINA C / escorbuto</div></div>
+<div class="chips"><span class="chip">ácido ascórbico VO</span><span class="chip">IV si no tolera</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('nu_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="nu_hc3">DEFICIT DE VITAMINA C / escorbuto
+- Adulto: acido ascorbico VO 100 mg 3-5/dia hasta acumular ~4 g, luego 100 mg/dia; alternativa 500-1000 mg/dia.
+- Nino: 100-300 mg/dia VO hasta normalizar, luego mantenimiento.
+- IV (acido ascorbico) si no es posible VO.
+- Sangrado/gingivorragia mejoran en 24-48h; piel y purpura en 1-2 semanas.
+- Tratar la causa: dieta restrictiva, alcoholismo, tabaquismo, trastorno psiquiatrico/autismo, malabsorcion.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Pelagra</strong> resurge por isoniazida en profilaxis de TB con TAR en zonas endémicas; se reafirma la nicotinamida (sin flushing).</li>
+<li>El <strong>zinc sérico normal no excluye déficit</strong> (solo 0,1 % del pool corporal, reactante de fase aguda negativo): la respuesta clínica rápida es diagnóstica.</li>
+<li><strong>Escorbuto</strong> emergente en dietas ultraprocesadas, autismo y cirugía bariátrica; respuesta en 24-48 h apoya la prueba terapéutica.</li>
 </ul>
-<h3>Manejo</h3>
-<p>Reconocer el patrón, confirmar con niveles y <strong>reponer</strong> el nutriente; buscar la causa (malabsorción, dieta, alcohol, cirugía bariátrica).</p>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/acrodermatitis-enteropathica" target="_blank" rel="noopener">DermNet — Acrodermatitis enteropathica</a> · <a href="https://dermnetnz.org/topics/pellagra" target="_blank" rel="noopener">DermNet — Pellagra</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Prabhu D, et al. Pellagra: causes and mechanisms, incl. isoniazid-induced. <em>Photodermatol Photoimmunol Photomed</em> 2021;37(2):99-104 · <a href="https://onlinelibrary.wiley.com/doi/10.1111/phpp.12659" target="_blank" rel="noopener">Wiley</a>.</li>
+<li>Ogawa Y, et al. Zinc and skin disorders. <em>Nutrients</em> 2018;10(2):199 · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5852775/" target="_blank" rel="noopener">PMC</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong>; investigar siempre la causa de base.</div>
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Enfermedades de la grasa =====
@@ -5695,17 +5848,53 @@ VIEWS.paniculitis=()=>`<div class="card">
 
 VIEWS.lipodistrofia=()=>`<div class="card">
 <h2>Lipodistrofia</h2>
-<p class="intro">Alteración del tejido adiposo con pérdida (lipoatrofia) o acumulación (lipohipertrofia) anómala de grasa. Puede asociar alteraciones metabólicas (resistencia a insulina, dislipemia).</p>
-<h3>Tipos</h3>
-<ul>
-<li><strong>Congénitas</strong> — generalizada (Berardinelli-Seip) o parcial familiar; suelen asociar complicaciones metabólicas.</li>
-<li><strong>Adquiridas</strong> — generalizada o parcial (Barraquer-Simons).</li>
-<li><strong>Localizadas</strong> — por presión, paniculitis o <strong>inyecciones</strong> repetidas (insulina, corticoides) en el punto de punción.</li>
+<p class="intro">Pérdida (lipoatrofia) o acumulación (lipohipertrofia) anómala de grasa, con complicaciones metabólicas. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica</strong> por extensión (generalizada vs parcial) y origen (congénita vs adquirida, incluida la asociada a <strong>VIH/TAR</strong>). La decisión de tratar deriva del grado de <strong>hipoleptinemia</strong> y de las complicaciones: resistencia a insulina/DM, hipertrigliceridemia y esteatosis hepática. Objetivo: controlar las complicaciones metabólicas (metreleptina si leptina baja). La forma localizada por inyecciones se previene rotando los puntos.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma:</strong> triglicéridos &gt;1000 mg/dL o dolor abdominal → dieta muy baja en grasa (&lt;20 g/día), suspender alcohol y estrógenos, fibrato + omega-3 a dosis plena y reducción intensiva de TG (riesgo de pancreatitis aguda).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Base en todos los subtipos — dieta + sensibilizadores</div></div>
+<div class="chips"><span class="chip">dieta</span><span class="chip">metformina</span><span class="chip">estatina</span><span class="chip">fibrato + omega-3</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('li_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="li_hc1">LIPODISTROFIA - base en todos los subtipos
+DIETA (piedra angular): hipocalorica equilibrada (50-60% HC, 20-30% grasa, ~20% proteina); si TG>500 o pancreatitis previa, muy baja en grasa <20 g/dia. Ejercicio aerobico; evitar alcohol.
+DM/RESISTENCIA INSULINA: metformina 1a linea (hasta 850-1000 mg/12h); insulina a dosis altas (a menudo U-500) si no se controla.
+DISLIPEMIA: estatina 1a linea (LDL <100, <70 si alto riesgo); TG>500: fenofibrato + omega-3 (2-4 g/dia).
+CRIBADO ANUAL: HbA1c, lipidos, transaminasas, ecografia hepatica, funcion renal y cardiaca.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Generalizada o parcial hipoleptinémica — metreleptina</div></div>
+<div class="chips"><span class="chip">metreleptina (SC)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('li_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="li_hc2">LIPODISTROFIA - metreleptina
+INDICACION: generalizada (congenita/adquirida) = 1a linea de las complicaciones; parcial = solo si leptina <4 ng/mL Y HbA1c >8% y/o TG >500.
+PAUTA (SC 1/dia): peso <=40 kg: 0,06 mg/kg/dia (titular hasta 0,13); hombre >40 kg: inicio 2,5 mg/dia; mujer >40 kg: inicio 5 mg/dia (titular hasta 10).
+EFECTO: baja HbA1c ~2%, TG ~60% y mejora la esteatosis en 6-12 meses.
+VIGILAR: hipoglucemia (reducir insulina/secretagogo), anticuerpos neutralizantes, riesgo de linfoma en LD adquirida. Programa REMS.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Asociada a VIH / TAR</div></div>
+<div class="chips"><span class="chip">optimizar TAR</span><span class="chip">tesamorelina (grasa visceral)</span><span class="chip">metformina/estatina</span><span class="chip">relleno (lipoatrofia)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('li_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="li_hc3">LIPODISTROFIA ASOCIADA A VIH / TAR
+1) Optimizar TAR: evitar/retirar timidinicos (estavudina, zidovudina) y considerar cambio desde IP antiguos; ojo a la ganancia de grasa visceral con INSTI/TAF.
+2) Grasa visceral (lipohipertrofia): tesamorelina (analogo GHRH) 1,4-2 mg SC/dia (reduce grasa visceral y hepatica); efecto reversible al suspender; vigilar IGF-1 y glucemia.
+3) Metabolico: metformina + estatina segun perfil.
+4) Lipoatrofia facial / buffalo hump: relleno o cirugia para lesiones localizadas (efecto variable).</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Agonistas GLP-1 e iSGLT2</strong>: evidencia creciente para el control glucémico/peso/TG en lipodistrofia parcial cuando la metreleptina no aplica o es insuficiente.</li>
+<li><strong>Volanesorsen</strong> (anti-apoC-III) reduce ~88 % los TG en FPLD; <strong>REGN4461</strong> (agonista del receptor de leptina) útil si hay anticuerpos neutralizantes a metreleptina.</li>
+<li><strong>Tesamorelina</strong> confirma reducción de grasa visceral y hepática en VIH (metaanálisis 2026).</li>
 </ul>
-<h3>Manejo</h3>
-<p>Tratar las complicaciones metabólicas (dieta, control de lípidos/glucemia; metreleptina en formas con leptina baja). Rotar los puntos de inyección para prevenir la localizada. Opciones estéticas (rellenos) en la lipoatrofia.</p>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/lipodystrophy" target="_blank" rel="noopener">DermNet — Lipodystrophy</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Brown RJ, et al. Diagnosis and management of lipodystrophy syndromes: multi-society practice guideline. <em>J Clin Endocrinol Metab</em> 2016;101(12):4500-4511 · <a href="https://doi.org/10.1210/jc.2016-2466" target="_blank" rel="noopener">doi.org</a>.</li>
+<li>Gilio D, et al. Clinical guidance for lipodystrophy syndromes. <em>Curr Diab Rep</em> 2025;25(1):47 · <a href="https://doi.org/10.1007/s11892-025-01603-4" target="_blank" rel="noopener">doi.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Ampollosas (ampliación) =====
