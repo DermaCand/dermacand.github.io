@@ -5325,58 +5325,163 @@ VIEWS.embarazo=()=>`<div class="card">
 // ===== VISTAS DE PATOLOGÍA · Dermatosis inflamatorias (ampliación) =====
 VIEWS.pit_liquenoide=()=>`<div class="card">
 <h2>Pitiriasis liquenoide</h2>
-<p class="intro">Grupo de dermatosis inflamatorias idiopáticas (proceso linfoproliferativo T benigno / hipersensibilidad). Forma un espectro entre las variantes aguda y crónica.</p>
-<h3>Formas</h3>
-<ul>
-<li><strong>Aguda (PLEVA, enf. de Mucha-Habermann)</strong> — brotes de pápulas que se necrosan y dejan costra y cicatriz varioliforme; predominio en jóvenes.</li>
-<li><strong>Crónica (PLC)</strong> — pápulas marronáceas con escama central adherida ("en oblea"), curso prolongado en brotes.</li>
-<li><strong>Febril ulceronecrótica</strong> — variante grave (fiebre, úlceras), rara.</li>
+<p class="intro">Dermatosis inflamatoria idiopática (proceso linfoproliferativo T benigno). Espectro agudo-crónico. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, ubica en el espectro:</strong> <strong>PLC</strong> (crónica; pápulas marrón-rojizas con escama central "en oblea", curso indolente) · <strong>PLEVA</strong> (aguda; pápulas vesículo-necróticas en brotes, cicatriz varioliforme) · <strong>FUMHD</strong> (febril ulceronecrótica, grave). La clonalidad T puede solaparse con papulosis linfomatoide/micosis fungoide → vigilancia. Dx: biopsia (paraqueratosis, exocitosis, queratinocitos necróticos).</div></div>
+<div class="alert r" style="margin:8px 0"><strong>FUMHD:</strong> placas ulceronecróticas confluentes de inicio brusco + fiebre/afectación sistémica → <strong>metotrexato sistémico precoz</strong> (± pulsos de corticoide o IVIG) y soporte hospitalario (mortalidad descrita ~20-25 %).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Localizada / leve — antibiótico inmunomodulador</div></div>
+<div class="chips"><span class="chip">eritromicina</span><span class="chip">doxiciclina</span><span class="chip">azitromicina</span><span class="chip">corticoide tóp. (prurito)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('plv_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="plv_hc1">PITIRIASIS LIQUENOIDE - localizada/leve (PLC o PLEVA limitada)
+- Antibiotico inmunomodulador en ciclo prolongado (semanas-meses); reevaluar a las 4-8 sem:
+  Eritromicina 30-50 mg/kg/dia (eleccion en ninos) o 250-500 mg/6-8h en adulto; o doxiciclina 100 mg/12h (>8 anos/adulto); o azitromicina en pauta intermitente.
+- Corticoide topico medio-alto solo para prurito/inflamacion (no cambia el curso).
+- Si no responde a las 8-12 sem -> fototerapia.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Extensa / resistente — fototerapia</div></div>
+<div class="chips"><span class="chip">NB-UVB</span><span class="chip">PUVA</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('plv_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="plv_hc2">PITIRIASIS LIQUENOIDE - extensa o resistente
+- Fototerapia de eleccion: NB-UVB 311 nm, 2-3 sesiones/sem, escalado por fototipo; mantener hasta aclaramiento (20-40 sesiones).
+- PUVA si fracaso de NB-UVB.
+- Corticoide topico para el prurito.
+- Recaida frecuente al suspender: valorar mantenimiento espaciado o reintroducir el antibiotico.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Grave / refractaria / FUMHD — metotrexato</div></div>
+<div class="chips"><span class="chip">metotrexato</span><span class="chip">corticoide sistémico (FUMHD)</span><span class="chip">IVIG (FUMHD)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('plv_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="plv_hc3">PITIRIASIS LIQUENOIDE - grave / refractaria / FUMHD
+- Metotrexato 7,5-25 mg/sem VO o SC (pediatrico 0,2-0,4 mg/kg/sem) + acido folico 5 mg/sem (otro dia).
+- Control basal y periodico: hemograma, transaminasas, funcion renal; cribar VHB/VHC/TB; anticoncepcion.
+- FUMHD: iniciar MTX precoz + corticoide sistemico +/- IVIG + soporte hospitalario.
+- Refractaria: ciclosporina, dapsona, acitretina; casos con dupilumab o JAK (upadacitinib).</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Metotrexato a dosis baja</strong> confirmado como opción eficaz en PLEVA/PLC grave o refractaria (JAAD 2022).</li>
+<li><strong>NB-UVB</strong> logró remisión en ~80 % vs 57 % con antibióticos en una serie pediátrica (2024).</li>
+<li>Casos de respuesta a <strong>dupilumab</strong> e inhibidores <strong>JAK</strong> en formas refractarias (dianas emergentes).</li>
 </ul>
-<h3>Diagnóstico</h3>
-<p>Clínico + biopsia (paraqueratosis, exocitosis linfocitaria, queratinocitos necróticos). Diferenciar de varicela, vasculitis, pitiriasis rosada y, en formas atípicas, papulosis linfomatoide.</p>
-<h3>Tratamiento</h3>
-<ul>
-<li>Fototerapia (UVB-BE) de elección en formas extensas.</li>
-<li>Antibióticos inmunomoduladores (tetraciclinas, eritromicina/azitromicina).</li>
-<li>Corticoide tópico para el prurito; metotrexato en casos graves/refractarios.</li>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Bellinato F, et al. A systematic review of treatments for pityriasis lichenoides. <em>JEADV</em> 2019;33(11):2039-2049 · <a href="https://doi.org/10.1111/jdv.15813" target="_blank" rel="noopener">doi.org</a>.</li>
+<li>Hrin ML, et al. Methotrexate for PLEVA and PLC (serie de 33). <em>J Am Acad Dermatol</em> 2022;86(2):433-437 · <a href="https://doi.org/10.1016/j.jaad.2021.09.040" target="_blank" rel="noopener">doi.org</a>.</li>
 </ul>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/pityriasis-lichenoides" target="_blank" rel="noopener">DermNet — Pityriasis lichenoides</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>. Verifica la versión vigente.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.parapsoriasis=()=>`<div class="card">
 <h2>Parapsoriasis</h2>
-<p class="intro">Grupo de dermatosis crónicas eritematodescamativas. Su relevancia está en la relación con el linfoma cutáneo de células T (micosis fungoide).</p>
-<h3>Formas</h3>
-<ul>
-<li><strong>De pequeña placa</strong> — placas menores de 5 cm, digitiformes en flancos; curso benigno, riesgo mínimo de progresión.</li>
-<li><strong>De gran placa</strong> — placas mayores de 5 cm, a veces poiquilodérmicas; <strong>premicótica</strong> (puede evolucionar a micosis fungoide) → biopsias y seguimiento.</li>
-</ul>
-<h3>Diagnóstico</h3>
-<p>Clínico + biopsia (a menudo inespecífica); en la de gran placa, biopsias seriadas y correlación. Vigilar signos de progresión a micosis fungoide.</p>
-<h3>Tratamiento</h3>
-<ul>
-<li>Emolientes y corticoide tópico; fototerapia (UVB-BE) en formas extensas o de gran placa.</li>
-<li>Seguimiento periódico, sobre todo en la de gran placa.</li>
-</ul>
+<p class="intro">Dermatosis crónica eritematodescamativa; su relevancia está en la relación con la micosis fungoide. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica por tamaño/morfología.</strong> <strong>Pequeña placa</strong> (&lt;5 cm, digitiforme, escama fina; curso benigno, progresión mínima). <strong>Gran placa</strong> (&gt;5 cm, atrófica/poiquilodérmica, en zonas cubiertas/nalgas/mamas; <strong>premicótica</strong>: progresión a micosis fungoide del 7-30 %). Objetivo: confirmar histología, controlar prurito/descamación y <strong>vigilar la transformación</strong> en la gran placa.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Vigilar:</strong> gran placa con induración, infiltración, nódulos, ulceración, atipia histológica (epidermotropismo) o clonalidad T → biopsiar de nuevo y manejar como <strong>micosis fungoide / linfoma cutáneo</strong>.</div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('lcut')">Linfomas cutáneos</button></div>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/parapsoriasis" target="_blank" rel="noopener">DermNet — Parapsoriasis</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Pequeña placa o gran placa leve — tópico</div></div>
+<div class="chips"><span class="chip">emolientes</span><span class="chip">corticoide tóp. potente</span><span class="chip">tacrolimus (cara/pliegues)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pps_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="pps_hc1">PARAPSORIASIS - pequena placa o gran placa leve/limitada
+- Emoliente 1-2/dia (mantener barrera).
+- Mometasona furoato 0,1% (o metilprednisolona aceponato 0,1%) 1/dia 4-6 sem, luego 2 dias/sem.
+- Cara/pliegues: tacrolimus 0,1% 2/dia.
+- Pequena placa: biopsia inicial; control clinico anual.
+- Gran placa: biopsia inicial + reevaluacion cada 6-12 meses (premicotica).</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Extensa / gran placa que no responde — fototerapia</div></div>
+<div class="chips"><span class="chip">NB-UVB</span><span class="chip">PUVA (gran placa/gruesa)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pps_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="pps_hc2">PARAPSORIASIS - extensa o gran placa que no responde a topicos
+- NB-UVB 311 nm 2-3/sem, 20-36 sesiones hasta aclaramiento.
+- Gran placa/poiquilodermica o lesiones gruesas: PUVA (mayor penetracion).
+- Mantenimiento topico entre ciclos; documentar dosis UV acumulada.
+- Gran placa: biopsias seriadas de lesiones cambiantes, seguimiento cada 6 meses.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Gran placa refractaria / progresión a micosis fungoide</div></div>
+<div class="chips"><span class="chip">re-biopsia + clonalidad TCR</span><span class="chip">clormetina gel</span><span class="chip">manejo como LCCT</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pps_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="pps_hc3">PARAPSORIASIS - gran placa refractaria o con signos de progresion
+- Repetir biopsia + IHQ (CD3/CD4/CD8/CD7) + reordenamiento clonal TCR ante lesion infiltrada/cambiante.
+- Si confirma micosis fungoide precoz: tratar como linfoma cutaneo (PUVA, clormetina gel topico, o corticoide potente).
+- Estadificar y manejo conjunto con linfoma cutaneo/oncologia.
+- Seguimiento cada 3-6 meses con mapeo + fotografia.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li>Las guías EORTC/ISCL mantienen la <strong>gran placa</strong> dentro del espectro inicial (parche) de la micosis fungoide → seguimiento prolongado y biopsias seriadas; la pequeña placa es benigna.</li>
+<li>El gel de <strong>clormetina</strong> (mecloretamina) 0,016 % se consolida como terapia dirigida a la piel en lesiones que progresan a MF.</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>EORTC</b> — Latzka J, et al. Recommendations for the treatment of mycosis fungoides/Sézary — update 2023. <em>Eur J Cancer</em> 2023;195:113343 · <a href="https://pubmed.ncbi.nlm.nih.gov/37890355/" target="_blank" rel="noopener">PubMed</a>.</li>
+<li><b>DermNet</b> — Parapsoriasis · <a href="https://dermnetnz.org/topics/parapsoriasis" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.derm_neutro=()=>`<div class="card">
 <h2>Dermatosis neutrofílicas</h2>
-<p class="intro">Grupo caracterizado por infiltrados de neutrófilos sin infección. Frecuente asociación con enfermedad sistémica (EII, hematológica, autoinmune) → estudiar.</p>
-<h3>Entidades principales</h3>
-<ul>
-<li><strong>Síndrome de Sweet</strong> — placas/nódulos eritematosos dolorosos, fiebre y neutrofilia; gatillos: infección, fármacos, neoplasia hematológica. Responde a corticoides.</li>
-<li><strong>Pioderma gangrenoso</strong> — úlcera dolorosa de borde violáceo socavado, patergia; asocia EII, artritis, gammapatía. <em>No desbridar</em>.</li>
-<li><strong>Otras</strong> — hidradenitis ecrina neutrofílica, pustulosis subcórnea (Sneddon-Wilkinson).</li>
+<p class="intro">Infiltrados de neutrófilos sin infección; asociación sistémica frecuente. Las dos clave: <strong>síndrome de Sweet</strong> y <strong>pioderma gangrenoso</strong>. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, distingue la entidad y criba el gatillo.</strong> <strong>Sweet</strong>: placas/nódulos edematosos dolorosos + fiebre + neutrofilia → infección, fármaco (G-CSF, ATRA, azatioprina), <strong>neoplasia hematológica (LMA/SMD)</strong>, embarazo, EII. <strong>PG</strong>: úlcera de borde violáceo socavado, dolor desproporcionado, <strong>patergia</strong> (dx de exclusión, criterios Delphi/PARACELSUS) → EII, artritis, <strong>gammapatía IgA</strong>, hematológico, PAPA/PASH. En el PG <strong>NO desbridar</strong> (induce patergia).</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma:</strong> PG con úlcera rápidamente progresiva, citopenias o gammapatía IgA → hemograma, frotis, EFP/inmunofijación y valoración hematológica. Sweet con síndrome general/citopenias persistentes → descartar <strong>LMA/SMD</strong> (aspirado medular). <strong>No desbridar ni biopsiar el centro</strong> de la úlcera del PG (patergia).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Sweet limitado / PG localizado leve — tópico-local</div></div>
+<div class="chips"><span class="chip">clobetasol</span><span class="chip">tacrolimus tóp.</span><span class="chip">triamcinolona intralesional</span><span class="chip">yoduro K / colchicina (Sweet)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dn_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="dn_hc1">DERMATOSIS NEUTROFILICAS - Sweet limitado / PG localizado leve
+SWEET LIMITADO:
+- Clobetasol 0,05% 1-2/dia en placas + frio local y analgesia; pocas lesiones: triamcinolona intralesional 5-10 mg/ml en borde.
+- Sistemico suave alternativo: yoduro potasico 300 mg/8h o colchicina 0,5 mg/12h.
+PG LOCALIZADO LEVE:
+- Clobetasol 0,05% 1-2/dia en el borde inflamatorio o tacrolimus 0,1% 2/dia.
+- Triamcinolona intralesional 5-10 mg/ml SOLO en el borde (no en el lecho).
+- NO desbridar; cura humeda no adherente, control del dolor. Reevaluar a 2-3 sem.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Moderado-grave — corticoide sistémico ± ahorrador / ciclosporina</div></div>
+<div class="chips"><span class="chip">prednisona</span><span class="chip">colchicina / dapsona (Sweet)</span><span class="chip">ciclosporina (PG)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dn_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="dn_hc2">DERMATOSIS NEUTROFILICAS - moderado-grave
+SWEET moderado-grave (1a linea):
+- Prednisona 0,5-1 mg/kg/dia VO (respuesta en 24-72h); descenso lento en 4-6 sem.
+- Ahorrador/recidivas: colchicina 0,5 mg/12h o dapsona 50-100 mg/dia (cribar G6PD).
+PG moderado-grave (1a linea):
+- Prednisona 0,5-1 mg/kg/dia VO O ciclosporina 4-5 mg/kg/dia (equivalentes, STOP-GAP); vigilar TA/creatinina.
+- Cura humeda, NO desbridar, analgesia potente. Si no controla en 2-4 sem -> biologico.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Refractario / corticodependiente — biológico / JAK</div></div>
+<div class="chips"><span class="chip">infliximab / adalimumab</span><span class="chip">anakinra (IL-1)</span><span class="chip">ustekinumab</span><span class="chip">JAK</span><span class="chip">spesolimab</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dn_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="dn_hc3">DERMATOSIS NEUTROFILICAS - refractario / corticodependiente
+PG REFRACTARIO:
+- Infliximab 5 mg/kg IV sem 0-2-6 y luego /8 sem (unico ECA positivo en PG) o adalimumab.
+- Dirigidas: anakinra/canakinumab (IL-1), ustekinumab (IL-12/23), JAK (tofacitinib/upadacitinib); emergente tras anti-TNF: spesolimab (anti-IL-36R).
+SWEET REFRACTARIO/CORTICODEPENDIENTE:
+- Anti-TNF, anakinra o JAK (upadacitinib) como ahorrador.
+EN AMBOS: tratar la causa (suspender el farmaco gatillo, tratar la EII, derivar a hematologia si neoplasia).</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>STOP-GAP</strong> (BMJ 2015): prednisolona y ciclosporina son <strong>equivalentes</strong> en el PG → elegir según comorbilidad (HTA/renal → corticoide; metabólico → ciclosporina).</li>
+<li>Terapias dirigidas en PG refractario (2020-2025): IL-1 (anakinra/canakinumab), ustekinumab, JAK; <strong>spesolimab</strong> (anti-IL-36R) tras fallo de anti-TNF.</li>
+<li>Criterios Delphi (Maverakis 2018) para el diagnóstico del PG ulceroso.</li>
 </ul>
-<h3>Diagnóstico y manejo</h3>
-<p>Clínico + biopsia (infiltrado neutrofílico denso, sin vasculitis). Descartar infección y cribar enfermedad asociada/neoplasia. Tratamiento: corticoides sistémicos, ahorradores (dapsona, colchicina, ciclosporina) y biológicos (anti-TNF en el pioderma).</p>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/sweet-syndrome" target="_blank" rel="noopener">DermNet — Sweet</a> · <a href="https://dermnetnz.org/topics/pyoderma-gangrenosum" target="_blank" rel="noopener">DermNet — Pioderma gangrenoso</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>STOP-GAP</b> — Ormerod AD, et al. Prednisolona vs ciclosporina en pioderma gangrenoso (ECA). <em>BMJ</em> 2015;350:h2958 · <a href="https://doi.org/10.1136/bmj.h2958" target="_blank" rel="noopener">doi.org</a>.</li>
+<li>Maverakis E, et al. Diagnostic criteria of ulcerative pyoderma gangrenosum (Delphi). <em>JAMA Dermatol</em> 2018;154(4):461-466 · <a href="https://doi.org/10.1001/jamadermatol.2017.5980" target="_blank" rel="noopener">doi.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.morfea=()=>`<div class="card">
