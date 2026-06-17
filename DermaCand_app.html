@@ -918,27 +918,13 @@ const MENU=[
 {id:'g_proc',name:'Guías clínicas',kw:'guias clinicas procedimientos cirugia dermatologica mohs biopsia pdf'}
 ]},
 {h:'DERMATOPATOLOGÍA Y LABORATORIO',items:[
-{id:'histopat',name:'Patrones histopatológicos',kw:'histopatologia patron histologico epidermis dermis infiltrado espongiosis acantosis interface'},
-{id:'ifd_ihq',name:'IFD e inmunohistoquímica',kw:'inmunofluorescencia directa ifd inmunohistoquimica ihq depositos igg c3 marcadores'},
-{id:'autoac',name:'Autoanticuerpos',kw:'autoanticuerpos ana anca desmogleina bp180 antimembrana basal serologia conectivopatia'},
-{id:'micologia_lab',name:'Micología (KOH/cultivo)',kw:'micologia koh hidroxido potasio cultivo hongos dermatofitos examen directo lampara wood'},
-{id:'farmacogen',name:'Farmacogenética',kw:'farmacogenetica hla b 5701 tpmt dihidropirimidina g6pd dapsona reaccion farmaco'},
-{id:'g_patol',name:'Guías clínicas',kw:'guias clinicas dermatopatologia laboratorio histopatologia inmunofluorescencia pdf'}
+{id:'patologia_lab',name:'Dermatopatología y laboratorio',kw:'dermatopatologia laboratorio histopatologia patron histologico inmunofluorescencia ifd ihq inmunohistoquimica autoanticuerpos ana anca micologia koh cultivo farmacogenetica hla tpmt g6pd subir pdf documentos referencias'}
 ]},
 {h:'MISCELÁNEAS',items:[
 {id:'eritemas_fig',name:'Eritemas figurados',kw:'eritema figurado anular centrifugo gyratum repens marginatum migrans reactivo'},
 {id:'purpuras',name:'Púrpuras',kw:'purpura petequias equimosis trombopenia vasculitis senil actinica coagulopatia palpable'},
 {id:'oclusion_micro',name:'Síndromes de oclusión microvascular',kw:'oclusion microvascular livedo racemosa necrosis cumarinica saf embolia colesterol calcifilaxis cid'},
 {id:'granulomatosas',name:'Enfermedades granulomatosas cutáneas',kw:'granuloma anular necrobiosis lipoidica sarcoidosis cutanea granulomatosa cuerpo extrano'}
-]},
-{h:'TRATAMIENTOS',items:[
-{id:'cort_topicos',name:'Corticoides tópicos',kw:'corticoides topicos potencia baja media alta muy alta clobetasol betametasona hidrocortisona ftu efectos'},
-{id:'antifungicos',name:'Antifúngicos',kw:'antifungicos topicos sistemicos terbinafina itraconazol fluconazol azoles alilaminas onicomicosis'},
-{id:'antihistaminicos',name:'Antihistamínicos',kw:'antihistaminicos h1 segunda generacion cetirizina bilastina urticaria prurito sedante'},
-{id:'atb_topicos',name:'Antibióticos tópicos',kw:'antibioticos topicos mupirocina acido fusidico clindamicina eritromicina acne impetigo'},
-{id:'biologicos',name:'Biológicos y sistémicos',kw:'biologicos sistemicos adalimumab dupilumab secukinumab ustekinumab metotrexato ciclosporina cribado'},
-{id:'embarazo',name:'Fármacos en embarazo',kw:'farmacos embarazo lactancia seguridad categoria teratogenia isotretinoina contraindicado dermatologia'},
-{id:'g_tto',name:'Guías clínicas',kw:'guias clinicas tratamientos corticoides biologicos antifungicos dermatologia pdf'}
 ]},
 {h:'INFORMACIÓN Y SINCRONIZACIÓN',items:[
 {id:'acerca',name:'Acerca de',kw:'acerca informacion aviso legal privacidad autores equipo colaboradores revisores creditos objetivo'},
@@ -2132,7 +2118,8 @@ const DEFAULT_CONTACTS=[
 ];
 const DEFAULT_SUBTYPES={
 dermato:[{id:'melano',name:'Lesiones melanocíticas (nevus / melanoma)'},{id:'nomelano',name:'Tumores no melanocíticos'},{id:'inflam_inf',name:'Inflamatorias e infecciosas'},{id:'acral_ung',name:'Acral, ungueal y mucosas'},{id:'tricoscopia',name:'Tricoscopia (cuero cabelludo)'},{id:'atlas',name:'Atlas y libros generales'}],
-cirugia:[{id:'colgajos',name:'Colgajos (atlas)'},{id:'injertos',name:'Injertos'},{id:'cierres',name:'Cierres, husos y líneas de tensión'},{id:'tecnicas',name:'Técnicas y vídeos'},{id:'guias',name:'Guías y protocolos'}]
+cirugia:[{id:'colgajos',name:'Colgajos (atlas)'},{id:'injertos',name:'Injertos'},{id:'cierres',name:'Cierres, husos y líneas de tensión'},{id:'tecnicas',name:'Técnicas y vídeos'},{id:'guias',name:'Guías y protocolos'}],
+patol:[{id:'docs',name:'Documentos y referencias (PDF)'}]
 };
 
 function getSubtypes(id){return ls.g('subtypes_'+id)||DEFAULT_SUBTYPES[id]||[]}
@@ -2201,12 +2188,12 @@ return `<div class="card">
 };
 let _editGuide=null;
 
-function guidesView(id){
+function guidesView(id,headTitle){
 const title=GUIDES_TITLES[id];
 const subs=getSubtypes(id);
 const lastUpd=ls.g('lastUpdate');
 const editing=_editGuide===id;
-let h=`<div class="card"><h2>Guías Clínicas - ${title}</h2>`;
+let h=`<div class="card"><h2>${headTitle||('Guías Clínicas - '+title)}</h2>`;
 h+=renderCollaboratorsBlock(id);
 if(!lastUpd){
 h+='<div class="alert y" style="margin-bottom:14px">⚠️ <strong>Sin sincronizar todavía.</strong> Ve a <a onclick="go(\'sync\')" style="cursor:pointer;text-decoration:underline">Actualizar</a> cuando tengas Internet.</div>';
@@ -3058,6 +3045,10 @@ ictiosis:[
 porfirias:[
 {c:'Fotoprotección MINERAL (clave, cubre luz visible)',a:'óxido de zinc/dióxido de titanio',op:[{m:'Anthelios Mineral SPF50+',lab:'La Roche-Posay'},{m:'Mineral 50+',lab:'Avène'},{m:'Photoderm Mineral SPF50+',lab:'Bioderma'}]},
 {c:'Fotoprotección con color',a:'pigmento, mejor frente a luz visible',op:[{m:'Anthelios SPF50+ color',lab:'La Roche-Posay'},{m:'Heliocare 360 Color',lab:'Cantabria Labs'},{m:'Fusion Water Color',lab:'ISDIN'}]}
+],
+panal:[
+{c:'Crema barrera (óxido de zinc)',a:'capa gruesa en cada cambio',op:[{m:'Mitosyl',lab:'Sanofi'},{m:'Eryplast pasta al agua',lab:'Uriage'},{m:'Halibut',lab:'Stada'}]},
+{c:'Reparador / calmante',a:'irritación o erosión de la zona',op:[{m:'Cicalfate+',lab:'Avène'},{m:'Cicaplast Baume B5',lab:'La Roche-Posay'},{m:'Bepanthol pomada',lab:'Bayer'}]}
 ]
 };
 // Tarjeta de productos comerciales de referencia (>=3 opciones por categoria) para una patologia,
@@ -4542,19 +4533,60 @@ VIEWS.lcut=()=>`<div class="card">
 // ===== VISTAS DE PATOLOGÍA · Dermatología pediátrica =====
 VIEWS.ped_exant=()=>`<div class="card">
 <h2>Exantemas infantiles</h2>
-<p class="intro">Erupciones febriles frecuentes en la infancia, mayoritariamente víricas y autolimitadas. Orienta por morfología, pródromos y enantema.</p>
-<h3>Clásicos</h3>
-<ul style="line-height:1.6">
-<li><strong>Sarampión</strong> — exantema maculopapuloso craneocaudal, fiebre alta, catarro, manchas de Koplik.</li>
-<li><strong>Rubéola</strong> — exantema tenue + adenopatías retroauriculares.</li>
-<li><strong>Escarlatina</strong> — (estreptococo) exantema en papel de lija, lengua aframbuesada, líneas de Pastia; requiere antibiótico.</li>
-<li><strong>Eritema infeccioso (parvovirus B19)</strong> — "mejillas abofeteadas" + exantema reticulado.</li>
-<li><strong>Exantema súbito (VHH-6)</strong> — fiebre alta 3 días que cede al aparecer el exantema.</li>
-<li><strong>Boca-mano-pie (coxsackie)</strong> — vesículas en manos y pies + enantema.</li>
+<p class="intro">Erupciones febriles, mayoritariamente víricas y autolimitadas. Cada escalón trae la <strong>pauta lista para copiar</strong> (dosis pediátricas por peso).</p>
+
+<div class="perla"><div><strong>Primero, orienta por morfología + pródromos + enantema.</strong> <em>Maculopapuloso</em>: sarampión (Koplik + tos/coriza/conjuntivitis), rubéola (adenopatías retroauriculares), exantema súbito/VHH-6 (fiebre alta 3-5 d que cede al brotar), eritema infeccioso/parvovirus (mejillas abofeteadas + reticulado). <em>Vesicular</em>: boca-mano-pie. <em>Áspero "papel de lija" + lengua aframbuesada</em>: escarlatina. Objetivo: separar el <strong>vírico</strong> (soporte) de la <strong>escarlatina</strong> (antibiótico) y descartar las 2 emergencias.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Antes de etiquetar como vírico, descarta:</strong> <strong>meningococemia</strong> (petequias/púrpura que NO blanquean + mal estado → ceftriaxona sin demora, ver escalón 3) y <strong>Kawasaki</strong> (fiebre ≥5 días + criterios mucocutáneos → IGIV + ecocardiograma). <strong>NO dar AAS</strong> en vírico activo (síndrome de Reye).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Exantema vírico autolimitado — soporte</div></div>
+<div class="chips"><span class="chip">paracetamol</span><span class="chip">ibuprofeno</span><span class="chip">hidratación</span><span class="chip">aislamiento según agente</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pe_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="pe_hc1">EXANTEMA VIRICO AUTOLIMITADO (sarampion, rubeola, exantema subito/VHH-6, parvovirus B19, boca-mano-pie) - SOPORTE (no antibiotico)
+- Paracetamol 15 mg/kg/dosis VO c/4-6h (max 60-75 mg/kg/dia).
+- Ibuprofeno 5-10 mg/kg/dosis VO c/6-8h (>6 meses).
+- Hidratacion oral; en boca-mano-pie, liquidos frescos por la odinofagia.
+- NO AAS (riesgo de sindrome de Reye).
+Aislamiento/exclusion segun agente:
+- Sarampion: aislamiento respiratorio + declaracion obligatoria; contactos MMR <72h o inmunoglobulina.
+- Rubeola y parvovirus B19: evitar contacto con embarazadas (riesgo fetal); parvovirus + anemia hemolitica: vigilar crisis aplasica.
+- Boca-mano-pie: higiene de manos.
+Revisar el estado vacunal (triple virica).</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Escarlatina (estreptococo grupo A) — antibiótico</div></div>
+<div class="chips"><span class="chip">penicilina V</span><span class="chip">amoxicilina</span><span class="chip">cefalexina/azitromicina (alergia)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pe_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="pe_hc2">ESCARLATINA (estreptococo grupo A) - confirmar (clinica + test rapido/cultivo) y tratar 10 dias
+- Penicilina V: <27 kg 250 mg c/8-12h; >=27 kg 500 mg c/12h x10d.
+- Amoxicilina: 50 mg/kg/dia en 1 dosis (max 1000 mg) x10d (o 25 mg/kg c/12h).
+- Alergia no anafilactica: cefalexina 20 mg/kg/dosis c/12h (max 500 mg) x10d.
+- Alergia anafilactica: azitromicina 12 mg/kg dia 1 luego 6 mg/kg/dia x4d, o clindamicina.
+- Iniciar en <=9 dias previene la fiebre reumatica. Reincorporar tras 12-24h de antibiotico y afebril.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Emergencias — meningococemia / Kawasaki</div></div>
+<div class="chips"><span class="chip">ceftriaxona (meningococemia)</span><span class="chip">IGIV + AAS (Kawasaki)</span><span class="chip">ecocardiograma</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pe_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="pe_hc3">EXANTEMA - emergencias a descartar ANTES de etiquetar como virico
+MENINGOCOCEMIA (petequias/purpura que NO blanquean a la vitropresion + mal estado / relleno capilar >2s):
+- Ceftriaxona 100 mg/kg/dia IV/IM (max 4 g) SIN demora + fluidos + traslado urgente; profilaxis a contactos estrechos.
+KAWASAKI (fiebre >=5 dias + >=4 de 5: conjuntivitis bilateral no exudativa, labios/lengua aframbuesada, exantema polimorfo, cambios en extremidades, adenopatia cervical >1,5 cm):
+- IGIV 2 g/kg dosis unica + AAS; ecocardiograma basal y seguimiento; alto riesgo de aneurisma: anadir corticoide.
+- Lactante <6m con fiebre prolongada inexplicada: sospechar Kawasaki incompleto + ecocardiograma.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Aumento de parvovirus B19</strong> (alerta CDC 2024): vigilar embarazadas (hidrops fetal) y anemia hemolítica/drepanocitosis (crisis aplásica).</li>
+<li><strong>Kawasaki (AHA 2024)</strong>: diagnóstico precoz, estratificación del riesgo de aneurisma y corticoide adyuvante a la IGIV en alto riesgo.</li>
+<li><strong>Amoxicilina en dosis única diaria</strong> (50 mg/kg, máx. 1 g) 10 días: alternativa cómoda a penicilina V en la faringoamigdalitis/escarlatina por EGA.</li>
 </ul>
-<h3>Signos de alarma</h3>
-<p>Petequias que no desaparecen a la digitopresión + mal estado general → descartar <strong>meningococemia</strong> (urgencia). Valorar enfermedad de Kawasaki si fiebre ≥5 días.</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>AHA</b> — Jone PN, et al. Update on diagnosis and management of Kawasaki disease. <em>Circulation</em> 2024;150(23):e481-e500 · <a href="https://doi.org/10.1161/CIR.0000000000001295" target="_blank" rel="noopener">doi.org</a>.</li>
+<li><b>CDC</b> — Clinical guidance for group A streptococcal pharyngitis · <a href="https://www.cdc.gov/group-a-strep/hcp/clinical-guidance/strep-throat.html" target="_blank" rel="noopener">cdc.gov</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis pediátricas y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.hemangioma=()=>`<div class="card">
@@ -4615,16 +4647,59 @@ Indicacion: riesgo funcional, ulceracion, desfigurante o segmentario.
 
 VIEWS.panal=()=>`<div class="card">
 <h2>Dermatitis del pañal</h2>
-<p class="intro">Dermatitis irritativa del área del pañal por oclusión, humedad, orina y heces. Muy frecuente en lactantes.</p>
-<h3>Diferenciar</h3>
-<ul style="line-height:1.6">
-<li><strong>Irritativa</strong> — eritema en superficies convexas, <em>respeta los pliegues</em>.</li>
-<li><strong>Candidiásica</strong> — afecta a los pliegues, eritema intenso con pápulo-pústulas satélite. Sospechar si dura >3 días.</li>
-<li>Otras: dermatitis seborreica, psoriasis del pañal, acrodermatitis enteropática (déficit de zinc).</li>
+<p class="intro">Dermatitis del área del pañal por oclusión, humedad, orina y heces; muy frecuente en lactantes. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica por topografía.</strong> <strong>Irritativa</strong>: eritema en convexidades que <em>respeta los pliegues</em>. <strong>Candidiásica</strong>: eritema confluente en <em>pliegues</em> con pápulo-pústulas satélite (sospechar si dura &gt;3 días). <strong>Seborreica/psoriasis</strong>: afectan pliegues + otras zonas. La barrera con óxido de zinc es la base de todo.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Replantear el diagnóstico</strong> (no es dermatitis simple) si: recalcitrante a barrera correcta + <strong>periorificial/acral + alopecia + diarrea</strong> → déficit de zinc/acrodermatitis enteropática (pedir zinc sérico y fosfatasa alcalina); lesiones <strong>purpúricas/erosivas persistentes</strong> en pliegues → biopsiar (histiocitosis de Langerhans); mal estado general, fiebre o lesión necrótica → valorar sepsis.</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Irritativa — barrera (ABCDE)</div></div>
+<div class="chips"><span class="chip">óxido de zinc 10-40%</span><span class="chip">vaselina</span><span class="chip">cambio frecuente</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pa_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="pa_hc1">DERMATITIS DEL PANAL - irritativa (convexidades, respeta pliegues): barrera (ABCDE)
+- Aire/cambio frecuente: cambiar cada 2-3h y tras cada deposicion; ratos sin panal.
+- Barrera: oxido de zinc 10-40% o vaselina en capa gruesa en CADA cambio (no hace falta retirar todo el resto, limpiar suave por encima).
+- Limpieza suave: agua tibia o toallitas sin alcohol/perfume/jabon, pH neutro; secar a toques.
+- Dejar secar antes de cerrar; panal superabsorbente.
+- Evitar talco en polvo libre, antisepticos y corticoides potentes en zona ocluida.
+Resolucion esperada en 2-3 dias con barrera correcta.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Candidiásica / inflamación marcada</div></div>
+<div class="chips"><span class="chip">nistatina / azol tóp.</span><span class="chip">hidrocortisona 0,5-1% (corta)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pa_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="pa_hc2">DERMATITIS DEL PANAL - candidiasica (pliegues + papulopustulas satelite) o inflamacion marcada
+- Candida: nistatina topica en cada cambio, o azol topico (clotrimazol 1% / miconazol 2%) 2/dia 7-10 dias; mantener la barrera de oxido de zinc por encima.
+- Muguet oral asociado/recidivas: nistatina oral 100.000 UI/ml, 1-2 ml en cada lado 4/dia.
+- Inflamacion intensa: hidrocortisona 0,5-1% 1-2/dia, pauta CORTA 3-7 dias (max 2 sem), aplicar antes de la barrera.
+- NO corticoides fluorados/potentes ni combinaciones con corticoide potente en zona ocluida (atrofia/absorcion).</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Refractaria / atípica — replantear</div></div>
+<div class="chips"><span class="chip">mupirocina (sobreinfección)</span><span class="chip">ketoconazol (seborreica)</span><span class="chip">zinc (si déficit)</span><span class="chip">biopsia</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pa_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="pa_hc3">DERMATITIS DEL PANAL - refractaria / atipica: replantear si no mejora en 2-3 dias
+- Sobreinfeccion (S. aureus/Strep): pustulas, costra melicerica, ampollas -> mupirocina topica; oral antiestafilococico si extenso.
+- Seborreica: placas untuosas en pliegues + cuero cabelludo -> ketoconazol topico +/- hidrocortisona baja.
+- Psoriasis del panal: placas bien delimitadas, brillantes, resistentes -> derivar.
+- Deficit de zinc / acrodermatitis enteropatica: periorificial + acral + diarrea + alopecia -> zinc serico + fosfatasa alcalina, suplementar zinc.
+- Histiocitosis: lesiones purpuricas/erosivas persistentes -> biopsia.
+Mantener la barrera de base en todos los casos.</pre></div>
+
+${productosCard('panal')}
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li>El <strong>óxido de zinc</strong> sigue siendo 1ª línea y el más usado; combinarlo con tocoferol (vit. E) aceleraría la cicatrización.</li>
+<li>Las <strong>toallitas modernas</strong> (pH tamponado, sin jabón/perfume) ya no se desaconsejan: equivalentes o superiores al agua para la barrera.</li>
+<li>Descrita <strong>hiperzincemia</strong> por óxido de zinc tópico en dermatitis extensa: no abusar en piel muy erosionada.</li>
 </ul>
-<h3>Manejo</h3>
-<p>Cambios frecuentes, higiene suave y secado, pasta al agua / óxido de zinc como barrera. Antifúngico tópico si candidiasis; corticoide tópico de baja potencia en brote inflamatorio (pauta corta).</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Benitez Ojeda AB, Mendez MD. Diaper dermatitis. <em>StatPearls</em> (act. 2023) · <a href="https://www.ncbi.nlm.nih.gov/books/NBK559067/" target="_blank" rel="noopener">NCBI</a>.</li>
+<li><b>DermNet</b> — Napkin dermatitis · <a href="https://dermnetnz.org/topics/napkin-dermatitis" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis pediátricas y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.ictiosis=()=>`<div class="card">
@@ -4687,20 +4762,55 @@ ${productosCard('ictiosis')}
 
 VIEWS.nevus_cong=()=>`<div class="card">
 <h2>Nevus melanocíticos congénitos</h2>
-<p class="intro">Presentes al nacer o en las primeras semanas. Se clasifican por el tamaño proyectado en la edad adulta.</p>
-<h3>Clasificación por tamaño (adulto)</h3>
-<ul style="line-height:1.6">
-<li>Pequeño (<1,5 cm), mediano (1,5-20 cm), grande (>20 cm) y gigante.</li>
-</ul>
-<h3>Riesgos</h3>
-<ul style="line-height:1.6">
-<li>Riesgo de <strong>melanoma</strong> proporcional al tamaño (sobre todo en grandes/gigantes).</li>
-<li>Nevus grandes en línea media posterior + satélites → riesgo de <strong>melanosis neurocutánea</strong> (valorar RM).</li>
-</ul>
-<h3>Manejo</h3>
-<p>Vigilancia clínica y dermatoscópica con fotografía; educación familiar sobre cambios. Valoración multidisciplinar de exéresis en grandes/gigantes (estética, función y riesgo).</p>
+<p class="intro">Presentes al nacer o en las primeras semanas. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica por el tamaño proyectado en el adulto (TPA):</strong> pequeño (&lt;1,5 cm), mediano (1,5-20), grande (20-40) y gigante (≥40). Estratifica además por nº de satélites y localización axial (cabeza/cuello/línea media posterior). El riesgo de <strong>melanoma</strong> y de <strong>melanosis neurocutánea</strong> sube con el tamaño, los satélites y el patrón axial (mutación NRAS Q61). No existe quimioprevención.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarmas:</strong> melanosis neurocutánea → si grande/gigante, múltiple (≥4) o satelitosis, RM craneoespinal con gadolinio precoz (4-6 meses). Melanoma → nódulo de crecimiento rápido, ulceración, sangrado, cambio de color/forma, dolor o adenopatía (a cualquier tamaño): biopsia urgente y oncodermatología. Síntomas neurológicos en lactante con NMC → RM urgente.</div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('melanoma')">Melanoma</button><button class="btn btn-out btn-sm" onclick="go('dermatoscopia')">Dermatoscopia</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Pequeño-mediano (&lt;20 cm TPA)</div></div>
+<div class="chips"><span class="chip">dermatoscopia + foto seriada</span><span class="chip">exéresis electiva (si procede)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('nc_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="nc_hc1">NEVUS MELANOCITICO CONGENITO - pequeno-mediano (<20 cm TPA)
+- Riesgo de melanoma muy bajo (~1%); NO precisa RM cerebral de cribado.
+- Vigilancia: control clinico + dermatoscopico + fotografia seriada anual (semestral si dudoso); regla ABCD y comparacion de imagenes.
+- Educacion: fotoproteccion, autoexamen mensual, consultar si hay cambios.
+- Exeresis: por sospecha, motivo funcional o estetico; programar segun el crecimiento del nino, NO urgente si no hay datos de alarma.
+- NO laser como tratamiento curativo (aclara el pigmento, recidiva).</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Grande-gigante (≥20 cm TPA) o múltiple/axial</div></div>
+<div class="chips"><span class="chip">RM craneoespinal (gadolinio)</span><span class="chip">vigilancia intensiva</span><span class="chip">exéresis seriada/expansor</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('nc_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="nc_hc2">NEVUS MELANOCITICO CONGENITO - grande-gigante (>=20 cm TPA) o multiple/axial
+- Riesgo de melanoma mayor (grande ~2-5%); el 70% aparecen en la 1a decada -> vigilancia estrecha temprana.
+- RM craneoespinal con gadolinio precoz (4-6 meses) si grande/gigante, multiple (>=4) o satelitosis o localizacion axial (descartar melanosis neurocutanea); valorar sin contraste/anestesia si es posible.
+- Vigilancia cutanea de por vida: palpacion de nodulos + dermatoscopia + fotografia.
+- Exeresis si sospecha de malignidad; la reseccion profilactica completa es controvertida y a menudo no factible (no elimina el riesgo de melanoma profundo ni del SNC). Tecnicas: exeresis seriada, expansores, injertos/colgajos.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Soporte psicosocial y multidisciplinar</div></div>
+<div class="chips"><span class="chip">apoyo psicológico</span><span class="chip">equipo multidisciplinar</span><span class="chip">consejo genético</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('nc_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="nc_hc3">NEVUS MELANOCITICO CONGENITO - soporte psicosocial y seguimiento multidisciplinar
+- Impacto en calidad de vida frecuente (hasta ~54% en gigantes): derivar a psicologia/psiquiatria infantil segun necesidad.
+- Manejo conjunto: dermatologia, cirugia plastica, neurologia/neurocirugia, oncologia, pediatria.
+- Decision de exeresis estetica individualizada (la satisfaccion baja con TPA mayor).
+- Grupos de apoyo y consejo genetico (mosaicismo NRAS Q61; riesgo de recurrencia bajo).</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li>Cribado por <strong>RM guiado por el número</strong> de nevus más que por el tamaño (el 83 % de las RM anormales tenían ≥4 NMC); RM precoz, a ser posible sin anestesia/contraste.</li>
+<li><strong>Inhibidores de MEK</strong> (trametinib) con respuesta en melanoma/melanosis del SNC NRAS-mutados (1ª terapia dirigida con beneficio en enfermedad avanzada).</li>
+<li>Descritas <strong>fusiones de BRAF</strong> como causa recurrente de NMC, potencialmente diana de inhibición MEK.</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Mologousis MA, et al. Updates in the management of congenital melanocytic nevi. <em>Children (Basel)</em> 2024;11(1):62 · <a href="https://doi.org/10.3390/children11010062" target="_blank" rel="noopener">doi.org</a>.</li>
+<li>Neale H, et al. Guidance on screening MRI decisions for congenital melanocytic nevi. <em>J Am Acad Dermatol</em> 2024;90(3):e107-e108 · <a href="https://doi.org/10.1016/j.jaad.2023.10.061" target="_blank" rel="noopener">doi.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). Manejo multidisciplinar.</div>
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Urgencias dermatológicas =====
@@ -5008,6 +5118,17 @@ VIEWS.prof_atb=()=>`<div class="card">
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Dermatopatología y laboratorio =====
+VIEWS.patologia_lab=()=>{
+var sec=function(id,name){return '<div class="coll"><div class="coll-h" onclick="this.parentElement.classList.toggle(\'open\')"><span>'+name+'</span><span class="ar">▶</span></div><div class="coll-c">'+VIEWS[id]()+'</div></div>';};
+return `<div class="card"><h2>Dermatopatología y laboratorio</h2><p class="intro">Toda la referencia de laboratorio y dermatopatología en un sitio. Despliega el apartado que necesites; al final puedes <strong>subir PDF</strong> de referencia (activa <strong>✏️ Editar</strong>).</p></div>`
++sec('histopat','Patrones histopatológicos')
++sec('ifd_ihq','IFD e inmunohistoquímica')
++sec('autoac','Autoanticuerpos')
++sec('micologia_lab','Micología (KOH/cultivo)')
++sec('farmacogen','Farmacogenética')
++guidesView('patol','Documentos y PDF (referencias)');
+};
+
 VIEWS.histopat=()=>`<div class="card">
 <h2>Patrones histopatológicos</h2>
 <p class="intro">Reconocer el patrón de reacción tisular ayuda a correlacionar la clínica con la biopsia. Marco básico para entender el informe.</p>
@@ -7720,7 +7841,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 7;
+  var DC_BUILD = 8;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
