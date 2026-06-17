@@ -3027,6 +3027,23 @@ aga:[
 lpp_ffa:[
 {c:'Champú suave (sin sulfatos)',a:'higiene poco irritante del cuero cabelludo',op:[{m:'Sensinol champú',lab:'Ducray'},{m:'Kerium extra suave',lab:'La Roche-Posay'},{m:'Nodé fluido',lab:'Bioderma'}]},
 {c:'Reparador / calmante',a:'borde activo, cejas y zona frontal',op:[{m:'Cicalfate+',lab:'Avène'},{m:'Cicaplast Baume B5',lab:'La Roche-Posay'},{m:'Bepanthol',lab:'Bayer'}]}
+],
+qa:[
+{c:'Fotoprotección muy alta (clave)',a:'SPF50+ diario en todo el campo fotoexpuesto',op:[{m:'Anthelios UVMune SPF50+',lab:'La Roche-Posay'},{m:'Heliocare 360 SPF50+',lab:'Cantabria Labs'},{m:'Photoderm MAX SPF50+',lab:'Bioderma'}]},
+{c:'Stick / labial (queilitis, orejas)',a:'zonas localizadas y labio',op:[{m:'Photoderm stick SPF50+',lab:'Bioderma'},{m:'Anthelios stick SPF50+',lab:'La Roche-Posay'},{m:'Heliocare stick',lab:'Cantabria Labs'}]},
+{c:'Reparador post-tratamiento',a:'tras crioterapia / 5-FU / PDT',op:[{m:'Cicalfate+',lab:'Avène'},{m:'Cicaplast Baume B5',lab:'La Roche-Posay'},{m:'Bepanthol',lab:'Bayer'}]}
+],
+cbc:[
+{c:'Fotoprotección muy alta',a:'prevención secundaria (daño solar acumulado)',op:[{m:'Anthelios UVMune SPF50+',lab:'La Roche-Posay'},{m:'Heliocare 360 SPF50+',lab:'Cantabria Labs'},{m:'Photoderm MAX SPF50+',lab:'Bioderma'}]},
+{c:'Fotoprotección con color',a:'cara, mejor cobertura visible',op:[{m:'Anthelios SPF50+ color',lab:'La Roche-Posay'},{m:'Heliocare 360 Color',lab:'Cantabria Labs'},{m:'Fusion Water Color',lab:'ISDIN'}]}
+],
+cec:[
+{c:'Fotoprotección muy alta',a:'prevención del campo de cancerización',op:[{m:'Anthelios UVMune SPF50+',lab:'La Roche-Posay'},{m:'Heliocare 360 SPF50+',lab:'Cantabria Labs'},{m:'Photoderm MAX SPF50+',lab:'Bioderma'}]},
+{c:'Stick / labial (queilitis, orejas)',a:'zonas de alto riesgo',op:[{m:'Photoderm stick SPF50+',lab:'Bioderma'},{m:'Anthelios stick SPF50+',lab:'La Roche-Posay'},{m:'Heliocare stick',lab:'Cantabria Labs'}]}
+],
+melanoma:[
+{c:'Fotoprotección muy alta',a:'prevención secundaria y autoexploración',op:[{m:'Anthelios UVMune SPF50+',lab:'La Roche-Posay'},{m:'Heliocare 360 SPF50+',lab:'Cantabria Labs'},{m:'Photoderm MAX SPF50+',lab:'Bioderma'}]},
+{c:'Fotoprotección con color',a:'cara y cuello a diario',op:[{m:'Anthelios SPF50+ color',lab:'La Roche-Posay'},{m:'Heliocare 360 Color',lab:'Cantabria Labs'},{m:'Fusion Water Color',lab:'ISDIN'}]}
 ]
 };
 // Tarjeta de productos comerciales de referencia (>=3 opciones por categoria) para una patologia,
@@ -4221,69 +4238,233 @@ VIEWS.ampoll_alg=()=>`<div class="card">
 // ===== VISTAS DE PATOLOGÍA · Dermato-oncología =====
 VIEWS.melanoma=()=>`<div class="card">
 <h2>Melanoma</h2>
-<p class="intro">Tumor maligno de los melanocitos; principal causa de muerte por cáncer cutáneo. El diagnóstico precoz es determinante en el pronóstico.</p>
-<h3>Sospecha clínica</h3>
-<ul style="line-height:1.6">
-<li><strong>Regla ABCDE</strong> — Asimetría, Bordes irregulares, Color heterogéneo, Diámetro >6 mm, Evolución.</li>
-<li><strong>Signo del patito feo</strong> — lesión distinta al resto de los nevus del paciente.</li>
-<li>Dermatoscopia: red atípica, velo azul-blanquecino, estructuras de regresión.</li>
-</ul>
-<h3>Subtipos</h3>
-<p>Extensión superficial (el más frecuente), nodular (peor pronóstico, crecimiento vertical), lentigo maligno (cara, anciano), lentiginoso acral (palmas/plantas/uñas).</p>
-<h3>Diagnóstico y estadificación</h3>
-<p>Biopsia <strong>escisional</strong> con margen estrecho. El <strong>índice de Breslow</strong> (grosor) guía el margen de ampliación y la indicación de ganglio centinela. Estadiaje AJCC (T por Breslow/ulceración, N, M + LDH).</p>
+<p class="intro">Tumor maligno de los melanocitos; el diagnóstico precoz es determinante. Sospecha por ABCDE y "patito feo"; subtipos: extensión superficial, nodular, lentigo maligno y lentiginoso acral. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, estadifica (AJCC 8ª)</strong> tras biopsia escisional completa: el <strong>Breslow + ulceración</strong> definen el T y el <strong>ganglio centinela</strong> (si T1b-T4 con N0 clínico) define el N. Mapea el estadio — <strong>localizado (I-II)</strong>, <strong>regional (III)</strong> o <strong>avanzado/metastásico (IV)</strong> — porque decide márgenes, centinela, adyuvancia/neoadyuvancia y tratamiento sistémico.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Atención:</strong> en melanoma desmoplásico puro o lentigo maligno extenso los márgenes de 1 cm suelen quedar cortos por extensión subclínica (planificar márgenes guiados por histología). En estadio III-IV con síntomas neurológicos, RM cerebral con gadolinio y priorizar <strong>nivolumab+ipilimumab</strong> (mayor actividad intracraneal).</div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('dermatoscopia')">Dermatoscopia</button><button class="btn btn-out btn-sm" onclick="go('biopsia')">Biopsia</button></div>
-<h3>Manejo</h3>
-<p>Ampliación de márgenes según Breslow; ganglio centinela en ≥0,8 mm o con factores de riesgo. Enfermedad avanzada: inmunoterapia (anti-PD1) y terapia dirigida (BRAF/MEK). Educación en fotoprotección y autoexploración.</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Estadiaje AJCC 8.ª ed.</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Localizado (estadio I-II)</div></div>
+<div class="chips"><span class="chip">escisión amplia</span><span class="chip">ganglio centinela</span><span class="chip">pembrolizumab/nivolumab adyuvante (IIB-IIC)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('mel_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="mel_hc1">MELANOMA - localizado (estadio I-II)
+- Biopsia escisional completa para estadificar (Breslow + ulceracion).
+- Margenes de ampliacion segun Breslow:
+  in situ 0,5-1 cm | <=1 mm: 1 cm | 1,01-2 mm: 1-2 cm | >2 mm: 2 cm.
+- Lentigo maligno: valorar Mohs/margen ampliado (extension subclinica).
+- Ganglio centinela si Breslow >0,8 mm o T1b-T4 con N0 clinico (estadificador, no terapeutico).
+- Estadio IIB-IIC resecado: adyuvancia con pembrolizumab 200 mg c/3 sem o nivolumab 480 mg c/4 sem hasta 1 ano.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Regional (estadio III resecable)</div></div>
+<div class="chips"><span class="chip">nivolumab+ipilimumab neoadyuvante</span><span class="chip">nivolumab/pembrolizumab adyuvante</span><span class="chip">dabrafenib+trametinib (BRAF)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('mel_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="mel_hc2">MELANOMA - regional (estadio III resecable)
+- Estandar emergente (NADINA) en III macroscopico: nivolumab 240 mg + ipilimumab 80 mg IV, 2 ciclos c/3 sem NEOADYUVANTE -> linfadenectomia.
+  Si respuesta patologica mayor: observar sin adyuvancia.
+  Si respuesta parcial/nula: adyuvancia segun BRAF.
+- Alternativa post-cirugia (adyuvante x1 ano): nivolumab 480 mg c/4 sem o pembrolizumab 200 mg c/3 sem; BRAF V600: dabrafenib 150 mg/12h + trametinib 2 mg/dia.
+- Ya NO se hace linfadenectomia completa de rutina tras centinela positivo (vigilancia ecografica).</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Avanzado irresecable / estadio IV</div></div>
+<div class="chips"><span class="chip">nivolumab+ipilimumab</span><span class="chip">nivolumab+relatlimab</span><span class="chip">pembrolizumab</span><span class="chip">BRAF/MEK</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('mel_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="mel_hc3">MELANOMA - avanzado irresecable / estadio IV
+- 1a linea inmunoterapia (independiente de BRAF):
+  nivolumab 1 mg/kg + ipilimumab 3 mg/kg c/3 sem x4 -> nivolumab 480 mg c/4 sem (mejor en enf. cerebral/alta carga), o
+  nivolumab 480 mg + relatlimab 160 mg c/4 sem (anti-LAG3, menos toxica), o
+  monoterapia pembrolizumab 200 mg c/3 sem / nivolumab 480 mg c/4 sem.
+- BRAF V600 (respuesta rapida o tras fallo inmuno): encorafenib 450 mg/dia + binimetinib 45 mg/12h, o dabrafenib + trametinib.
+- Metastasis cerebrales: priorizar nivolumab+ipilimumab +/- radiocirugia.
+- Acral/mucoso: misma inmunoterapia; KIT mutado considerar imatinib.</pre></div>
+
+${productosCard('melanoma')}
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>NADINA</strong> (NEJM 2024): la inmunoterapia <strong>neoadyuvante</strong> nivolumab+ipilimumab supera a la adyuvancia en estadio III macroscópico; ~59 % logran respuesta patológica mayor y evitan adyuvancia.</li>
+<li><strong>Adyuvancia en estadio II de alto riesgo</strong> (IIB/IIC): pembrolizumab (KEYNOTE-716) y nivolumab (CheckMate 76K), aprobados.</li>
+<li><strong>Nivolumab+relatlimab</strong> (anti-LAG3, RELATIVITY-047): nueva combinación de 1ª línea, menos tóxica que ipilimumab+nivolumab.</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>ESMO</b> — Amaral T, et al. Cutaneous melanoma: ESMO Clinical Practice Guideline. <em>Ann Oncol</em> 2025;36(1):10-30 · <a href="https://doi.org/10.1016/j.annonc.2024.11.006" target="_blank" rel="noopener">doi.org</a>.</li>
+<li>Blank CU, et al. Neoadjuvant nivolumab and ipilimumab in resectable stage III melanoma (NADINA). <em>N Engl J Med</em> 2024;391(18):1696-1708 · <a href="https://pubmed.ncbi.nlm.nih.gov/38828984/" target="_blank" rel="noopener">PubMed</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> · estadiaje AJCC 8ª ed.</div>
 </div>`;
 
 VIEWS.cbc=()=>`<div class="card">
 <h2>Carcinoma basocelular</h2>
-<p class="intro">El cáncer cutáneo más frecuente. Crecimiento local lento y metástasis excepcionales. Relacionado con la exposición solar acumulada.</p>
-<h3>Formas</h3>
-<ul style="line-height:1.6">
-<li><strong>Nodular</strong> — pápula perlada con telangiectasias y borde brillante; puede ulcerarse.</li>
-<li><strong>Superficial</strong> — placa eritematosa descamativa (tronco), simula eccema.</li>
-<li><strong>Infiltrante / morfeiforme</strong> — placa esclerosa mal delimitada (más agresivo).</li>
-<li><strong>Pigmentado</strong> — diferencial con melanoma.</li>
-</ul>
-<h3>Diagnóstico y manejo</h3>
-<p>Dermatoscopia (telangiectasias arboriformes, nidos ovoides azul-grisáceos, áreas en hoja de arce) y biopsia. Tratamiento: cirugía (Mohs en zonas de riesgo/recidiva), curetaje-electrocoagulación, imiquimod/5-FU (superficial), radioterapia o inhibidores de la vía hedgehog (avanzado).</p>
+<p class="intro">El cáncer cutáneo más frecuente; crecimiento local lento y metástasis excepcional. Formas: nodular, superficial (tronco, simula eccema), infiltrante/morfeiforme (agresivo) y pigmentado. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica por riesgo (EADO).</strong> <strong>Fácil de tratar / bajo riesgo</strong>: superficial o nodular pequeño (&lt;10-20 mm), tronco-extremidades, primario, bien definido. <strong>Difícil de tratar / alto riesgo</strong>: zona H facial, &gt;20 mm, mal definido, recidivante, subtipo agresivo (morfeiforme/infiltrante/micronodular/basoescamoso), perineural o inmunodeprimido. Objetivo: máxima curación con mínima morbilidad (cirugía estándar; tópicos/destrucción solo en bajo riesgo, Mohs en alto riesgo).</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Avanzado:</strong> BCC localmente avanzado (no resecable/irradiable) o metastásico, o invasión perineural sintomática → comité multidisciplinar e <strong>inhibidor de Hedgehog</strong> (vismodegib); si progresa/intolerancia/contraindicación, <strong>cemiplimab</strong>.</div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('dermatoscopia')">Dermatoscopia</button><button class="btn btn-out btn-sm" onclick="go('cirugia')">Cirugía / Mohs</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Bajo riesgo / superficial — tópico o destrucción</div></div>
+<div class="chips"><span class="chip">imiquimod 5%</span><span class="chip">5-FU 5%</span><span class="chip">curetaje-electrodesecación</span><span class="chip">crioterapia</span><span class="chip">TFD-MAL</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('cbc_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="cbc_hc1">CARCINOMA BASOCELULAR - bajo riesgo / superficial
+(tronco-extremidades, bien definido, NO zona H ni subtipo agresivo; confirmar con biopsia)
+- Imiquimod 5% crema 5 noches/sem x6 sem (lavar a las 8h); o
+- 5-FU 5% crema 2/dia x3-4 sem.
+- Destruccion (superficial o nodular pequeno bien definido): curetaje + electrodesecacion 2-3 ciclos, o crioterapia.
+- TFD-MAL: 2 sesiones separadas 1 sem (superficial extenso/multiple).
+- Control clinico-dermatoscopico a las 12 sem y a los 12 meses.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Riesgo estándar resecable — cirugía con márgenes</div></div>
+<div class="chips"><span class="chip">exéresis margen 4-5 mm</span><span class="chip">radioterapia (no operable)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('cbc_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="cbc_hc2">CARCINOMA BASOCELULAR - resecable de riesgo estandar
+- Exeresis con margen clinico 4-5 mm hasta TCS + estudio histologico de margenes.
+- Si margen afecto: reampliacion.
+- Radioterapia si no es candidato a cirugia (anciano, comorbilidad); evitar en <60 anos y en sindrome de Gorlin.
+- Seguimiento anual (prolongado si alto riesgo o BCC multiples).</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Alto riesgo / avanzado — Mohs y sistémico</div></div>
+<div class="chips"><span class="chip">cirugía de Mohs</span><span class="chip">vismodegib</span><span class="chip">sonidegib</span><span class="chip">cemiplimab</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('cbc_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="cbc_hc3">CARCINOMA BASOCELULAR - alto riesgo / avanzado
+ALTO RIESGO resecable (zona H, mal definido, recidivante, agresivo, perineural):
+- Cirugia de Mohs (control completo de margenes) de eleccion.
+AVANZADO (no resecable/irradiable o metastasico), en comite multidisciplinar:
+- 1a linea inhibidor de Hedgehog: vismodegib 150 mg/dia o sonidegib 200 mg/dia.
+- Vigilar espasmos musculares, disgeusia, alopecia, perdida de peso; teratogeno (anticoncepcion estricta); valorar pauta intermitente.
+- 2a linea (progresion/intolerancia/contraindicacion): cemiplimab 350 mg IV c/3 sem.</pre></div>
+
+${productosCard('cbc')}
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Cemiplimab</strong> (anti-PD1): aprobado (2021) para BCC avanzado tras inhibidor de Hedgehog o cuando este no es apropiado.</li>
+<li><strong>Guía EADO 2023</strong>: clasificación clínica "fácil" vs "difícil de tratar"; Mohs en alto riesgo y cemiplimab como 2ª línea.</li>
+<li><strong>Pautas intermitentes</strong> de Hedgehog (ciclos on/off) para reducir toxicidad en tratamiento prolongado y síndrome de Gorlin.</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>EADO</b> — Peris K, et al. Guideline for basal cell carcinoma — update 2023. <em>Eur J Cancer</em> 2023;192:113254 · <a href="https://doi.org/10.1016/j.ejca.2023.113254" target="_blank" rel="noopener">doi.org</a>.</li>
+<li>Stratigos AJ, et al. Cemiplimab in locally advanced BCC after hedgehog inhibitor (fase 2). <em>Lancet Oncol</em> 2021;22(6):848-857 · <a href="https://doi.org/10.1016/S1470-2045(21)00126-1" target="_blank" rel="noopener">doi.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.cec=()=>`<div class="card">
 <h2>Carcinoma escamoso (epidermoide)</h2>
-<p class="intro">Segundo cáncer cutáneo más frecuente. Deriva del campo de cancerización (queratosis actínica) y puede metastatizar, sobre todo en zonas y pacientes de riesgo.</p>
-<h3>Clínica</h3>
-<ul style="line-height:1.6">
-<li>Pápula/placa o nódulo hiperqueratósico, costroso o ulcerado en zonas fotoexpuestas.</li>
-<li><strong>Enfermedad de Bowen</strong> — CEC in situ (placa eritematodescamativa bien definida).</li>
-<li>Crecimiento rápido con cráter central → valorar queratoacantoma.</li>
-</ul>
-<h3>Factores de alto riesgo</h3>
-<p>Tamaño >2 cm, invasión profunda, mala diferenciación, labio/oreja, invasión perineural, inmunodepresión, recidiva. Valorar adenopatías.</p>
+<p class="intro">Segundo cáncer cutáneo más frecuente; deriva del campo de cancerización (QA) y puede metastatizar en zonas/pacientes de riesgo. Incluye la enfermedad de Bowen (in situ) y el queratoacantoma. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, estratifica bajo vs alto riesgo</strong> (EADO + AJCC8/BWH). <strong>Alto riesgo</strong> (BWH T2b/T3): diámetro &gt;2 cm, espesor &gt;6 mm o invasión más allá de la grasa, mala diferenciación, invasión perineural (≥0,1 mm), oreja/labio/sien, recidiva o inmunosupresión. En bajo riesgo, curación con cirugía simple; en alto riesgo, control estricto de margen, valorar estadificación ganglionar y prevenir recurrencia.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alto riesgo con adenopatía sospechosa:</strong> ecografía/TC-RM regional + PAAF/biopsia ganglionar y comité multidisciplinar; tras cirugía + radioterapia, valorar <strong>cemiplimab adyuvante</strong> (C-POST: −68 % de riesgo de recurrencia).</div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('qa')">Queratosis actínica</button><button class="btn btn-out btn-sm" onclick="go('cirugia')">Cirugía</button></div>
-<h3>Manejo</h3>
-<p>Escisión con márgenes (Mohs en alto riesgo); radioterapia o cemiplimab (anti-PD1) en avanzado/irresecable. Fotoprotección y seguimiento del campo.</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Bajo riesgo (resecable)</div></div>
+<div class="chips"><span class="chip">exéresis margen 4-5 mm</span><span class="chip">curetaje-electrocoagulación</span><span class="chip">radioterapia (no operable)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('cec_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="cec_hc1">CARCINOMA ESPINOCELULAR - bajo riesgo (resecable)
+(BWH T1, <2 cm, bien diferenciado, sin perineural, fuera de zona de riesgo)
+- 1a linea: exeresis con margen clinico 4-5 mm hasta TCS + estudio de margenes.
+- Lesion muy pequena / paciente fragil: curetaje + electrocoagulacion o crioterapia (sin control histologico).
+- No candidato a cirugia: radioterapia.
+- No precisa ganglio centinela ni imagen de rutina.
+- Seguimiento cada 6 meses x2 anos, luego anual; fotoproteccion.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Alto riesgo / localmente avanzado resecable</div></div>
+<div class="chips"><span class="chip">Mohs / margen 6-10 mm</span><span class="chip">RT adyuvante</span><span class="chip">estadificación ganglionar</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('cec_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="cec_hc2">CARCINOMA ESPINOCELULAR - alto riesgo / localmente avanzado resecable
+(BWH T2b/T3, >6 mm o invasion subgrasa, mal diferenciado, perineural, oreja/labio/sien, recidiva, inmunosupresion)
+- 1a linea: cirugia con control histologico de margenes -> Mohs preferida; si convencional, margen 6-10 mm.
+- Re-exeresis si margen afecto; si no resecable, radioterapia radical.
+- RT adyuvante si margen positivo no reampliable, perineural extensa o afectacion ganglionar.
+- Estadificacion ganglionar por imagen (eco/TC/RM); ganglio centinela no es estandar (valorar en T2b/T3).</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Avanzado (ganglionar / metastásico / no resecable)</div></div>
+<div class="chips"><span class="chip">cemiplimab</span><span class="chip">pembrolizumab</span><span class="chip">linfadenectomía + RT</span><span class="chip">cetuximab/QT (2ª línea)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('cec_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="cec_hc3">CARCINOMA ESPINOCELULAR - avanzado (ganglionar / metastasico / no resecable)
+- 1a linea sistemica: cemiplimab (anti-PD1) 350 mg IV c/3 sem (ORR ~46%).
+- Alternativa anti-PD1: pembrolizumab.
+- Enf. ganglionar operable: linfadenectomia + RT adyuvante; valorar cemiplimab ADYUVANTE tras cirugia+RT en alto riesgo (C-POST).
+- Contraindicacion/progresion a anti-PD1: ensayo clinico, cetuximab +/- QT, RT paliativa.
+- Precaucion con anti-PD1 en trasplantados (riesgo de rechazo) y autoinmunidad: comite multidisciplinar.</pre></div>
+
+${productosCard('cec')}
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Cemiplimab adyuvante</strong> (C-POST, NEJM 2025): en CEC de alto riesgo tras cirugía + RT reduce un 68 % el riesgo de recurrencia o muerte (SLE a 24 m 87 % vs 64 %); aprobado en adyuvancia.</li>
+<li><strong>Anti-PD1</strong> consolidado como 1ª línea sistémica en CEC avanzado (EMPOWER-CSCC-1).</li>
+<li><strong>Guía europea EADO/EDF</strong>: cirugía con control de margen como 1ª elección y anti-PD1 en avanzado.</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>EADO/EDF</b> — Stratigos AJ, et al. Invasive cutaneous SCC, Part 2: Treatment — update 2023. <em>Eur J Cancer</em> 2023;193:113252 · <a href="https://doi.org/10.1016/j.ejca.2023.113252" target="_blank" rel="noopener">doi.org</a>.</li>
+<li>Rischin D, et al. Adjuvant cemiplimab or placebo in high-risk cutaneous SCC (C-POST). <em>N Engl J Med</em> 2025 · <a href="https://doi.org/10.1056/NEJMoa2502449" target="_blank" rel="noopener">doi.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.qa=()=>`<div class="card">
 <h2>Queratosis actínica</h2>
-<p class="intro">Lesión precancerosa intraepidérmica por daño actínico crónico. Marcador de campo de cancerización; una fracción progresa a carcinoma escamoso.</p>
-<h3>Clínica</h3>
-<ul style="line-height:1.6">
-<li>Mácula/pápula eritematosa con escama rasposa ("se palpa mejor que se ve") en zonas fotoexpuestas (cara, calva, dorso de manos).</li>
-<li>Queilitis actínica en el labio inferior.</li>
-<li>Alarma de progresión a CEC: induración, dolor, crecimiento, ulceración.</li>
+<p class="intro">Lesión precancerosa intraepidérmica por daño actínico crónico y marcador de <strong>campo de cancerización</strong>; una fracción progresa a carcinoma escamoso. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica.</strong> <strong>Lesión aislada</strong> (1-2 QA discretas) → destructivo. <strong>Campo de cancerización</strong> (múltiples QA + daño difuso en un área) → tratamiento de campo. Marca el <strong>alto riesgo de progresión</strong>: inmunosupresión (trasplante), QA hiperqueratósica (Olsen 3), induración/dolor/sangrado o antecedente de CEC. Objetivo: aclarar lo visible Y tratar el campo subclínico.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma:</strong> QA indurada, dolorosa, sangrante, de crecimiento rápido o que no responde a un tratamiento de campo correcto → sospecha de <strong>CEC invasivo</strong>: biopsiar (punch/incisional) ANTES de re-tratar, no insistir con tópicos sobre una posible lesión infiltrante.</div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('cec')">CEC</button></div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Lesión aislada (1-2, bajo riesgo)</div></div>
+<div class="chips"><span class="chip">crioterapia</span><span class="chip">curetaje</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('qa_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="qa_hc1">QUERATOSIS ACTINICA - lesion aislada (1-2, bajo riesgo)
+- Crioterapia con nitrogeno liquido: 1-2 ciclos congelacion-descongelacion (5-10 s, halo 1-2 mm).
+- Repetir a las 3-4 sem si persiste.
+- Alternativa: curetaje +/- electrocoagulacion en lesion hiperqueratosica unica.
+- Revision a las 4-8 sem; biopsiar si induracion o no respuesta.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Campo de cancerización (múltiples QA)</div></div>
+<div class="chips"><span class="chip">5-FU 5%</span><span class="chip">tirbanibulina 1%</span><span class="chip">imiquimod</span><span class="chip">diclofenaco 3%</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('qa_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="qa_hc2">QUERATOSIS ACTINICA - campo de cancerizacion (multiples lesiones)
+- 5-FU 5% crema 2/dia 2-4 sem (el mas eficaz de campo); o 5-FU 0,5% + ac. salicilico 10% 1/dia hasta 12 sem si hiperqueratosis.
+- Tirbanibulina 1% pomada 1/dia x5 dias (cara/cuero cabelludo, hasta 100 cm2); evaluar a las 8 sem.
+- Imiquimod 5% 3/sem x4 sem (ciclos repetibles); o 3,75% 1/dia (2 sem si / 2 no / 2 si).
+- Diclofenaco 3% gel 2/dia 60-90 dias (mejor tolerado, menos eficaz).
+- Reevaluar el campo a las 8-12 sem. Fotoproteccion estricta de base.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Campo extenso / refractario / inmunosuprimido</div></div>
+<div class="chips"><span class="chip">TFD (MAL/ALA)</span><span class="chip">TFD luz de día</span><span class="chip">TFD + 5-FU</span><span class="chip">acitretina (quimioprofilaxis)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('qa_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="qa_hc3">QUERATOSIS ACTINICA - campo extenso / refractario / inmunosuprimido
+- Terapia fotodinamica (MAL/ALA): incubacion 3h + luz roja; 2 sesiones separadas 1-2 sem (ideal en campo extenso).
+- TFD con luz de dia en grado I-II: protector solar + MAL/ALA + exposicion 2h (menos dolor).
+- Secuenciar/combinar TFD con 5-FU en refractarios.
+- Trasplantado: vigilancia estrecha + quimioprofilaxis con acitretina 10-25 mg/dia; tratar el campo de forma proactiva.</pre></div>
+
+${productosCard('qa')}
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Tirbanibulina 1%</strong>: pauta corta de 5 días, muy bien tolerada; aprobada para campo de hasta 100 cm² en cara/cuero cabelludo.</li>
+<li><strong>Guía europea interdisciplinar 2024</strong> (Kandolf): destructivos para lesiones aisladas y tratamiento de campo (tópicos/TFD) para lesiones múltiples.</li>
+<li><strong>5-FU 5%</strong> confirmado como el tratamiento de campo más eficaz a 12 meses (NEJM 2019); el ingenol mebutato fue retirado (2020).</li>
 </ul>
-<h3>Manejo</h3>
-<p>Lesión aislada: crioterapia. <strong>Campo de cancerización</strong>: tratamiento dirigido al campo (5-fluorouracilo, imiquimod, tirbanibulina, terapia fotodinámica). Fotoprotección estricta y revisión.</p>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('cec')">CEC</button><button class="btn btn-sm" onclick="goPauta('qa_rx')">💊 Pauta y fotoprotección</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>EADO/EDF/EADV/UEMS</b> — Kandolf L, et al. Guideline for actinic keratoses and field cancerization. <em>JEADV</em> 2024;38(6):1024-1047 · <a href="https://doi.org/10.1111/jdv.19897" target="_blank" rel="noopener">doi.org</a>.</li>
+<li>Jansen MHE, et al. Randomized trial of four treatment approaches for actinic keratosis. <em>N Engl J Med</em> 2019;380(10):935-946 · <a href="https://doi.org/10.1056/NEJMoa1811850" target="_blank" rel="noopener">doi.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.lcut=()=>`<div class="card">
