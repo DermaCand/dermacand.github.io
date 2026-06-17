@@ -7223,7 +7223,7 @@ const CHAT_STOP=new Set(['de','la','el','los','las','en','y','a','del','un','una
   // negaciones, conjunciones, pronombres y conectores (no deben anclar la búsqueda)
   'no','ni','pero','sino','porque','pues','aunque','si','tampoco','mas','muy','ya','aun','asi','entonces','luego','mientras','tan','tanto','nada','nadie','alguien','mucho','mucha','muchos','muchas','poco','poca','pocos','pocas','todo','toda','todos','todas','cada','ser','estar','soy','eres','son','era','fue','fui','fuiste','sido','estoy','estan','han','ha','he','hemos','le','les','te','nos','os','yo','tu','ella','ellos','ellas','usted','nosotros','vosotros','ustedes','ese','esa','esos','esas','aquel','aquella','aquellos','aquellas','aqui','ahi','alli','ahora','hoy','tambien','quiza','quizas','desde','hasta','entre','hacia','durante','antes','despues','tras']);
 // términos genéricos (intención, no objetivo): no deben anclar un resultado por sí solos
-const CHAT_GENERIC=new Set(['dosis','dosi','esquema','esquemas','protocolo','protocolos','guia','guias','algoritmo','tratamiento','manejo','ciclo','ciclos','via','administracion','pauta','regimen','quimio','quimioterapia','farmaco','farmacos','medicamento','profilaxis','profilactico','profilactica','prevencion','sindrome','sindromes','telefono','telefonico','numero','extension','ext','contacto','informacion','info','datos','quiero','saber','necesito','busco','dame','muestrame','cuales','seccion','paciente','pacientes','enfermo','enfermos','enferma','enfermas','caso','casos','persona','personas','sujeto']);
+const CHAT_GENERIC=new Set(['dosis','dosi','esquema','esquemas','protocolo','protocolos','guia','guias','algoritmo','tratamiento','manejo','ciclo','ciclos','via','administracion','pauta','regimen','quimio','quimioterapia','farmaco','farmacos','medicamento','profilaxis','profilactico','profilactica','prevencion','sindrome','sindromes','telefono','telefonico','numero','extension','ext','contacto','informacion','info','datos','quiero','saber','necesito','busco','dame','muestrame','cuales','seccion','paciente','pacientes','enfermo','enfermos','enferma','enfermas','caso','casos','clinico','clinica','clinicos','clinicas','persona','personas','sujeto']);
 function chatSearch(query,limit){
   limit=limit||6;_chatNear=[];const idx=chatIndexAll();if(!idx.length)return [];
   const qTok=chatTokens(query).filter(t=>!CHAT_STOP.has(t));
@@ -7357,14 +7357,14 @@ function chatSmallTalk(q){
     return chatBotBox('Soy <strong>Kera</strong> 🔬, tu asistente de DermaCand. Puedo ayudarte a encontrar:'+
       '<ul style="margin:7px 0 2px;padding-left:18px;line-height:1.65">'+
       '<li><strong>Dosis y pautas</strong> — p. ej. «dosis de isotretinoína» o «metotrexato en psoriasis»</li>'+
-      '<li><strong>Teléfonos y extensiones</strong> internas — p. ej. «teléfono del banco de sangre»</li>'+
-      '<li><strong>Guías clínicas</strong> y protocolos — p. ej. «neutropenia febril»</li>'+
+      '<li><strong>Teléfonos y extensiones</strong> internas — p. ej. «teléfono de dermatología»</li>'+
+      '<li><strong>Guías clínicas</strong> y protocolos — p. ej. «psoriasis» o «melanoma»</li>'+
       '<li><strong>Calculadoras y herramientas</strong> de la app</li></ul>'+
       '<div style="margin-top:7px">Escríbeme el fármaco, el esquema, la sección o lo que necesites 😊</div>');
   }
   // «No sé» y dudas sueltas (mensaje completo): orienta, no repitas el saludo
   if(/^(no se|no lo se|nose|ni idea|ni zorra|no estoy segur\w*|no lo tengo claro|no sabria( decirte| que decir| que)?|que se yo|y yo que se|no se nada|no se la verdad|la verdad no se|pues no se|no sabria que decirte)$/.test(n))
-    return chatBotBox('Sin problema 🙂 Dime un <strong>tema</strong>, un <strong>fármaco</strong> o una <strong>sección</strong> y lo busco por ti — por ejemplo «neutropenia febril», «dosis de azacitidina» o «teléfono del banco de sangre».');
+    return chatBotBox('Sin problema 🙂 Dime un <strong>tema</strong>, un <strong>fármaco</strong> o una <strong>sección</strong> y lo busco por ti — por ejemplo «psoriasis moderada-grave», «dosis de isotretinoína» o «teléfono de dermatología».');
   // Asentimientos sueltos: responde breve, no fuerces una búsqueda de «ok»
   if(/^(ok|oka|okey|okay|vale|vale vale|listo|perfecto|genial|guay|estupendo|de acuerdo|entendido|correcto|claro|muy bien|esta bien|de lujo)$/.test(n))
     return chatBotBox('👍 Cuando necesites algo más, dime un fármaco, un esquema, un teléfono o un tema clínico y lo busco.');
@@ -7451,7 +7451,7 @@ function chatNoPrecise(query){
   const isCase=CASE_RX.test(nq);
   // Caso clínico sin guía aproximable: sé honesta, no inventes una recomendación
   if(isCase&&!near.length)
-    return `<div style="${CHAT_BOT}">${hi}Soy un asistente de <strong>consulta rápida</strong>: no puedo razonar un caso clínico concreto ni recomendarte un manejo 🙏. Lo que sí hago es abrirte la <strong>guía</strong>, el <strong>protocolo</strong>, el <strong>esquema</strong> o la <strong>calculadora</strong> que necesites. Dime el tema —p. ej. «neutropenia febril», «bridging perioperatorio» o «reversión de anticoagulación»— y te llevo a la fuente.</div>`;
+    return `<div style="${CHAT_BOT}">${hi}Soy un asistente de <strong>consulta rápida</strong>: no puedo razonar un caso clínico concreto ni recomendarte un manejo 🙏. Lo que sí hago es abrirte la <strong>guía</strong>, el <strong>protocolo</strong>, el <strong>esquema</strong> o la <strong>calculadora</strong> que necesites. Dime el tema —p. ej. «psoriasis moderada-grave», «melanoma sospechoso» o «dermatitis atópica»— y te llevo a la fuente.</div>`;
   // mensaje puramente conversacional (sin ningún término clínico): no finjas que buscaste, pide contexto
   if(!meaningful.length&&!near.length)
     return `<div style="${CHAT_BOT}">${hi}Mmm, con eso no estoy segura de qué necesitas 🤔. Soy tu asistente de consulta rápida —no recuerdo el hilo anterior—, así que dame el dato concreto.${tip}</div>`;
