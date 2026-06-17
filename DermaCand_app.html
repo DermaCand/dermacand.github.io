@@ -1100,11 +1100,11 @@ VIEWS.crcl=()=>`<div class="card">
 <h3>Ajuste de fármacos dermatológicos según función renal</h3>
 <div class="alert b">
 <ul style="padding-left:20px;line-height:1.7">
-<li><strong>Valaciclovir / aciclovir / famciclovir</strong> (herpes zóster y simple): reducir dosis e intervalo si CrCl &lt; 50 mL/min. Aciclovir IV: hidratar para evitar nefropatía por cristales y ajustar por CrCl.</li>
+<li><strong>Valaciclovir / aciclovir / famciclovir</strong> (herpes zóster y simple): reducir dosis e intervalo si CrCl &lt; 50 mL/min; en zóster con CrCl &lt; 10 mL/min, valaciclovir 500 mg/24 h. Aciclovir IV: hidratar para evitar nefropatía por cristales y ajustar por CrCl.</li>
 <li><strong>Metotrexato</strong> (psoriasis): evitar si CrCl &lt; 30 mL/min; reducir dosis y extremar monitorización si 30–60 (riesgo de mielosupresión). Contraindicado asociar AINE en insuficiencia renal.</li>
 <li><strong>Fluconazol</strong> (candidiasis, onicomicosis): reducir el 50&nbsp;% de la dosis de mantenimiento si CrCl ≤ 50 mL/min.</li>
 <li><strong>Terbinafina</strong>: no recomendada si CrCl &lt; 50 mL/min (datos farmacocinéticos insuficientes).</li>
-<li><strong>Apremilast</strong> (psoriasis / artritis psoriásica): reducir a 30 mg/24 h si CrCl &lt; 30 mL/min.</li>
+<li><strong>Apremilast</strong> (psoriasis / artritis psoriásica): si CrCl &lt; 30 mL/min reducir a 30 mg/24 h Y emplear solo las dosis matutinas del esquema de titulación.</li>
 <li><strong>Alopurinol</strong>: iniciar a dosis baja y titular en enfermedad renal crónica; la dosis alta inicial aumenta el riesgo de <strong>DRESS / SCAR</strong> (cribado HLA-B*58:01 en poblaciones de riesgo).</li>
 <li><strong>Cockcroft-Gault</strong> es la fórmula de referencia para el ajuste de dosis en ficha técnica; <strong>CKD-EPI 2021</strong> se usa para clasificar la función renal.</li>
 </ul>
@@ -1346,8 +1346,8 @@ VIEWS.dosispeso=()=>`<div class="card">
 <tr><td>Ciclosporina</td><td>2,5–5 mg/kg/día (en 2 tomas)</td><td>TA y función renal; máx. ~1 año</td></tr>
 <tr><td>Isotretinoína</td><td>0,5–1 mg/kg/día</td><td>Objetivo acumulado 120–150 mg/kg; gestación contraindicada</td></tr>
 <tr><td>Acitretina</td><td>0,3–0,5 mg/kg/día</td><td>Teratógena hasta 3 años tras suspender</td></tr>
-<tr><td>Hidroxicloroquina</td><td>≤ 5 mg/kg/día (peso real)</td><td>Riesgo de retinopatía; cribado oftalmológico</td></tr>
-<tr><td>Dapsona</td><td>1–2 mg/kg/día</td><td>Cribado G6PD; metahemoglobinemia</td></tr>
+<tr><td>Hidroxicloroquina</td><td>≤ 5 mg/kg/día (peso real)</td><td>Riesgo de retinopatía; cribado oftalmológico basal y, a partir de los 5 años, OCT + campo visual 10-2 anuales</td></tr>
+<tr><td>Dapsona</td><td>1–2 mg/kg/día</td><td>Cribado G6PD; metahemoglobinemia. Valorar HLA-B*13:01 en poblaciones de riesgo (síndrome de hipersensibilidad a dapsona)</td></tr>
 </table>
 <div class="row2" style="margin-top:10px">
 <div class="fld"><label class="lbl">Objetivo acumulado isotretinoína (mg/kg, opc.)</label><input type="number" step="1" id="dp_acum" placeholder="ej: 120" oninput="calcDP()"></div>
@@ -1421,6 +1421,7 @@ ${FOTO.map((f,i)=>`<option value="${i}">Tipo ${f.t}</option>`).join('')}
 </select></div>
 <div id="ft_res" style="margin-top:14px"></div>
 <div class="alert y" style="margin-top:6px;font-size:12.5px">El fototipo se asigna <strong>clínicamente</strong>; las preguntas son orientativas. La DEM (dosis eritematógena mínima) son rangos aproximados para UVB de banda estrecha y deben individualizarse antes de iniciar fototerapia.</div>
+<div class="alert b" style="margin-top:6px;font-size:12.5px">El fototipo de Fitzpatrick mide la <strong>respuesta a la UV</strong>, no el tono cutáneo. En fototipos V–VI vigilar especialmente el <strong>melanoma acral, subungueal y mucoso</strong>, de peor pronóstico por diagnóstico tardío.</div>
 <div class="ref">Fitzpatrick TB. The validity and practicality of sun-reactive skin types I through VI. Arch Dermatol. 1988;124(6):869-871.</div>
 </div>`;
 VIEWS.fototipo_post=()=>{};
@@ -1482,6 +1483,7 @@ ${PASI_REG.map(r=>`<div style="border:1px solid var(--bd);border-radius:var(--rs
 </div></div>`).join('')}
 <div class="btns"><button class="btn btn-out btn-sm" onclick="copyPASI()">Copiar</button></div>
 <div id="pasi_res" class="res" style="display:none"></div>
+<div class="perla" style="margin-top:10px"><strong>Derivación a sistémico (regla de los 10):</strong> PASI &gt; 10 <em>o</em> BSA &gt; 10 % <em>o</em> DLQI &gt; 10. Con los biológicos actuales (anti-IL17 / anti-IL23) el objetivo realista es <strong>PASI 90–100</strong>, no solo PASI 75.</div>
 <div class="ref">Fredriksson T, Pettersson U. Severe psoriasis—oral therapy with a new retinoid. Dermatologica. 1978;157(4):238-244.</div>
 </div>`;
 VIEWS.pasi_post=()=>calcPASI();
@@ -1524,6 +1526,8 @@ ${EASI_REG.map(r=>`<div style="border:1px solid var(--bd);border-radius:var(--rs
 </div></div>`).join('')}
 <div class="btns"><button class="btn btn-out btn-sm" onclick="copyEASI()">Copiar</button></div>
 <div id="easi_res" class="res" style="display:none"></div>
+<div class="perla" style="margin-top:10px"><strong>Dianas de respuesta modernas:</strong> EASI-75 / EASI-90 con dupilumab, tralokinumab, lebrikizumab y los JAKi orales (upadacitinib, abrocitinib, baricitinib).</div>
+<div class="alert r" style="margin-top:6px;font-size:12.5px"><strong>Advertencia de clase EMA 2023 sobre los JAKi:</strong> riesgo cardiovascular, neoplásico y tromboembólico; restringir en mayores de 65 años, fumadores y factores de riesgo CV/oncológico.</div>
 <div class="ref">Hanifin JM et al. The eczema area and severity index (EASI). Exp Dermatol. 2001;10(1):11-18. Leshem YA et al. EASI severity strata. Br J Dermatol. 2015;172(5):1353-1357.</div>
 </div>`;
 VIEWS.easi_post=()=>calcEASI();
@@ -1637,6 +1641,7 @@ VIEWS.iga=()=>`<div class="card">
 <div id="iga_res" class="res" style="display:none"></div>
 <table class="tbl" style="margin-top:12px"><tr><th>Grado</th><th>Categoría</th><th>Descripción</th></tr>
 ${IGA_SCALE.map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td><td>${s[2]}</td></tr>`).join('')}</table>
+<div class="perla" style="margin-top:10px">El <em>endpoint</em> validado de los ensayos suele exigir además una <strong>reducción ≥ 2 puntos</strong> respecto al basal (no basta llegar a 0/1 si se partía de 2). En acné moderado-grave, el <strong>IGA 0/1</strong> es el objetivo de los ensayos.</div>
 <div class="ref">Escala IGA estática de 5 puntos (FDA/EMA). El descriptor concreto varía según la patología (sPGA en psoriasis, vIGA-AD en dermatitis atópica, IGA de acné).</div>
 </div>`;
 VIEWS.iga_post=()=>calcIGA();
@@ -1679,6 +1684,7 @@ ${SCORTEN_C.map(c=>`<label style="display:flex;align-items:center;gap:10px;paddi
 <div id="sct_res" class="res" style="display:none"></div>
 <table class="tbl" style="margin-top:12px"><tr><th>SCORTEN</th><th>Mortalidad estimada</th></tr>
 <tr><td>0–1</td><td>3.2 %</td></tr><tr><td>2</td><td>12.1 %</td></tr><tr><td>3</td><td>35.3 %</td></tr><tr><td>4</td><td>58.3 %</td></tr><tr><td>≥ 5</td><td>&gt; 90 %</td></tr></table>
+<div class="alert" style="margin-top:12px"><strong>Cautela interpretativa:</strong> con el manejo intensivo actual SCORTEN tiende a <strong>sobreestimar la mortalidad</strong> y pierde calibración fuera de las primeras 24–72 h. Considerar <strong>ABCD-10</strong> (2019) como alternativa o complemento. El <strong>traslado precoz a una unidad de quemados</strong> mejora el pronóstico con independencia de la puntuación.</div>
 <div class="ref">Bastuji-Garin S, et al. SCORTEN: a severity-of-illness score for toxic epidermal necrolysis. J Invest Dermatol. 2000;115(2):149-53.</div>
 </div>`;
 VIEWS.scorten_post=()=>calcSCORTEN();
@@ -1713,6 +1719,7 @@ VIEWS.hurley=()=>`<div class="card">
 <div id="hur_res" class="res" style="display:none"></div>
 <table class="tbl" style="margin-top:12px"><tr><th>Estadio</th><th>Descripción</th></tr>
 ${HURLEY.map(h=>`<tr><td><strong>${['','I','II','III'][h[0]]}</strong></td><td>${h[2]}</td></tr>`).join('')}</table>
+<div class="perla" style="margin-top:12px"><strong>Orientación por estadio:</strong> en Hurley II–III refractario, las opciones biológicas aprobadas en HS incluyen <strong>adalimumab</strong>, <strong>secukinumab</strong> (2023) y <strong>bimekizumab</strong> (2024); en enfermedad cicatricial fija, valorar <strong>cirugía / deroofing</strong>.</div>
 <div class="ref">Hurley HJ. Axillary hyperhidrosis, apocrine bromhidrosis, hidradenitis suppurativa and familial benign pemphigus: surgical approach. En: Dermatologic Surgery. 1989.</div>
 </div>`;
 VIEWS.hurley_post=()=>calcHurley();
@@ -1739,6 +1746,7 @@ VIEWS.salt=()=>`<div class="card">
 ${SALT_REG.map(r=>`<div class="fld"><label class="lbl">${r[1]} <small style="color:var(--mut)">(${Math.round(r[2]*100)}% del cuero cabelludo)</small></label><input type="number" min="0" max="100" step="1" id="salt_${r[0]}" placeholder="% pérdida" oninput="calcSALT()"></div>`).join('')}
 <div class="btns"><button class="btn" onclick="calcSALT()">Calcular</button><button class="btn btn-out btn-sm" onclick="copySALT()">Copiar</button></div>
 <div id="salt_res" class="res" style="display:none"></div>
+<div class="perla" style="margin-top:12px"><strong>JAKi en alopecia areata grave (SALT ≥ 50):</strong> aprobados <strong>baricitinib</strong> (2022), <strong>ritlecitinib</strong> (≥ 12 años, 2023) y <strong>deuruxolitinib</strong> (2024). Criterios de respuesta habituales: <strong>SALT ≤ 20</strong> o <strong>SALT ≤ 10</strong>.</div>
 <div class="ref">SALT = Σ (% pérdida en cada región × peso de la región). S0 = 0% · S1 &lt;25% · S2 25–49% · S3 50–74% · S4 75–99% · S5 100%. Olsen EA, et al. J Am Acad Dermatol. 2004;51(3):440-7.</div>
 </div>`;
 VIEWS.salt_post=()=>calcSALT();
@@ -1855,6 +1863,7 @@ ${BPDAI_MUC.map((r,i)=>`<tr><td>${r}</td><td>${escOptSel('bp_mu'+i,BPDAI_OPTS,'c
 </table>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="copyBPDAI()">Copiar</button></div>
 <div id="bp_res" class="res" style="display:none"></div>
+<div class="perla" style="margin-top:12px"><strong>Novedad terapéutica:</strong> además de corticoides ± doxiciclina / inmunosupresores ahorradores, el <strong>dupilumab</strong> demostró eficacia y obtuvo aprobación FDA para el penfigoide ampolloso (2025).</div>
 <div class="ref">Actividad total BPDAI = piel (ampollas/erosiones + eritema/urticaria) + mucosa. Gravedad por actividad cutánea: leve ≤19 · moderada 20–56 · grave ≥57. Murrell DF, et al. J Am Acad Dermatol. 2012;66(3):479-85; cortes: Wijayanti A, et al. 2017.</div>
 </div>`;
 VIEWS.bpdai_post=()=>calcBPDAI();
@@ -3614,7 +3623,9 @@ Mantener emoliente. Solicito inicio de [farmaco]; revision tras la induccion.</p
 <li><strong>Nemolizumab</strong> — anti-IL-31, 2024; útil si predomina el prurito.</li>
 <li><strong>Abrocitinib</strong> y <strong>upadacitinib</strong> — JAK orales, 2022.</li>
 <li><strong>Ruxolitinib tópico</strong> — JAK tópico, 2021.</li>
+<li><strong>Dupilumab</strong> aprobado también en <strong>prurigo nodular</strong> (2022); no requiere analítica de rutina, a diferencia de los JAKi (monitorización periódica).</li>
 </ul>
+<div class="alert r" style="margin-top:10px"><strong>Restricción EMA de clase JAK (Art. 20, 2023):</strong> usar los JAK orales (upadacitinib, abrocitinib, baricitinib) <strong>solo si no hay alternativa adecuada</strong> en pacientes ≥65 años, fumadores o exfumadores, con riesgo cardiovascular/trombótico o antecedente neoplásico, y a la <strong>dosis mínima eficaz</strong>.</div>
 
 ${productosCard('datopica')}
 
@@ -3646,13 +3657,20 @@ VIEWS.dcontacto=()=>`<div class="card">
 Revision en 2-4 semanas.</pre></div>
 
 <div class="step-h l2"><div class="sn">2</div><div class="st">Extensa o crónica (p. ej. manos)</div></div>
-<div class="chips"><span class="chip">corticoide oral corto</span><span class="chip">fototerapia</span><span class="chip">alitretinoína (manos crónica)</span></div>
+<div class="chips"><span class="chip">corticoide oral corto</span><span class="chip">fototerapia</span><span class="chip">alitretinoína (manos crónica)</span><span class="chip">delgocitinib tóp.</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dc_hc2').innerText)">Copiar</button></div>
 <div class="rxcard l2"><pre id="dc_hc2">DERMATITIS DE CONTACTO - extensa o cronica (p. ej. manos)
 - Evitacion estricta del alergeno/irritante + proteccion de barrera.
 - Brote extenso: corticoide oral en pauta corta descendente (p. ej. prednisona 0,5 mg/kg/dia con descenso en 2-3 semanas).
 - Eccema cronico de manos refractario: valorar alitretinoina oral; fototerapia.
 Solicito patch test (bateria estandar + series dirigidas segun exposicion). Revision segun evolucion.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Delgocitinib tópico</strong> (JAK pan-inhibidor; aprobado EMA 2024) para el <strong>eccema crónico de manos moderado-grave</strong>, antes o junto a alitretinoína.</li>
+<li><strong>Refractario:</strong> también dupilumab y JAKi orales.</li>
+<li><strong>Patch test:</strong> recordar la <strong>lectura tardía a día 7</strong> para alérgenos como corticoides o neomicina (reacciones tardías).</li>
+</ul>
 
 ${productosCard('dcontacto')}
 
@@ -3698,6 +3716,12 @@ LIQUEN PLANO ORAL EROSIVO:
 - 1a linea: corticoide topico (gel en orabase o enjuague de dexametasona).
 - Refractario: tacrolimus topico; sistemico si extenso.
 - Vigilar malignizacion con controles periodicos.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Inhibidores JAK</strong> (tofacitinib, baricitinib) — evidencia creciente 2021-2025 en liquen plano refractario/erosivo y en <strong>liquen planopilar</strong>.</li>
+<li><strong>Apremilast</strong> — opción en liquen plano cutáneo refractario.</li>
+</ul>
 
 <div class="refbox">
 <b>Referencias</b> (verifica la fuente):
@@ -3765,6 +3789,12 @@ VIEWS.rosacea=()=>`<div class="card">
 
 <div class="perla"><div><strong>Base para todos:</strong> evitar desencadenantes (calor, sol, alcohol, picantes, estrés), fotoprotector mineral y limpiador suave. <strong>Nunca corticoides tópicos</strong> (empeoran / rosácea esteroidea).</div></div>
 
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Minociclina tópica 1,5% en espuma</strong> — papulopustulosa, alternativa a ivermectina/metronidazol.</li>
+<li><strong>Minociclina oral de liberación modificada 40 mg</strong> (aprobada 2024) — opción sistémica con menor exposición que la dosis estándar.</li>
+</ul>
+
 <h3>Tratamiento por fenotipo</h3>
 <div class="dxgrid">
 <div class="dxrow"><div><strong>Eritema / flushing</strong> → brimonidina 0,33% u oximetazolina (puntual) · evitar desencadenantes</div></div>
@@ -3775,7 +3805,7 @@ VIEWS.rosacea=()=>`<div class="card">
 </div>
 
 <div class="step-h l1"><div class="sn">1</div><div class="st">Pápulo-pustulosa leve-moderada — tópico</div></div>
-<div class="chips"><span class="chip">ivermectina 1%</span><span class="chip">metronidazol 0,75%</span><span class="chip">ác. azelaico 15%</span><span class="chip">brimonidina (eritema)</span></div>
+<div class="chips"><span class="chip">ivermectina 1%</span><span class="chip">metronidazol 0,75%</span><span class="chip">ác. azelaico 15%</span><span class="chip">minociclina tóp. 1,5% (espuma)</span><span class="chip">brimonidina (eritema)</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ro_hc1').innerText)">Copiar</button></div>
 <div class="rxcard l1"><pre id="ro_hc1">ROSACEA PAPULO-PUSTULOSA leve-moderada
 - Topico: ivermectina 1% crema 1 vez/dia (o metronidazol 0,75%, o acido azelaico 15%).
@@ -3784,7 +3814,7 @@ VIEWS.rosacea=()=>`<div class="card">
 Revision en 8-12 semanas.</pre></div>
 
 <div class="step-h l2"><div class="sn">2</div><div class="st">Moderada-grave / refractaria — oral, láser, cirugía</div></div>
-<div class="chips"><span class="chip">doxiciclina 40 mg</span><span class="chip">isotretinoína dosis baja</span><span class="chip">láser/IPL</span></div>
+<div class="chips"><span class="chip">doxiciclina 40 mg</span><span class="chip">minociclina LM 40 mg</span><span class="chip">isotretinoína dosis baja</span><span class="chip">láser/IPL</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ro_hc2').innerText)">Copiar</button></div>
 <div class="rxcard l2"><pre id="ro_hc2">ROSACEA moderada-grave / refractaria
 - Anadir doxiciclina oral a dosis antiinflamatoria (40 mg/dia liberacion modificada, o 100 mg/dia).
@@ -3798,6 +3828,7 @@ ${productosCard('rosacea')}
 <b>Referencias</b> (verifica la fuente):
 <ul style="margin:6px 0 0;padding-left:18px">
 <li><b>ROSCO</b> — Schaller M, et al. Rosacea treatment update (global ROSacea COnsensus, enfoque por fenotipo): <em>Br J Dermatol</em> 2017;176(2):465-471 · <a href="https://pubmed.ncbi.nlm.nih.gov/27861741/" target="_blank" rel="noopener">PubMed</a>.</li>
+<li><b>AAD</b> — Guidelines of care for the management of rosacea: <em>J Am Acad Dermatol</em> 2025 · <a href="https://www.jaad.org/" target="_blank" rel="noopener">jaad.org</a>.</li>
 <li><b>DermNet</b> — Rosacea · <a href="https://dermnetnz.org/topics/rosacea" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
 </ul>
 </div>
@@ -3830,13 +3861,20 @@ Revision en 8-12 semanas.</pre></div>
 Si no control, pasar a biologico. Deroofing de trayectos recidivantes.</pre></div>
 
 <div class="step-h l3"><div class="sn">3</div><div class="st">Moderada-grave (Hurley II-III) — biológico / cirugía</div></div>
-<div class="chips"><span class="chip">adalimumab (TNF)</span><span class="chip">secukinumab (IL-17A)</span><span class="chip">bimekizumab (IL-17A/F)</span><span class="chip">cirugía amplia</span></div>
+<div class="chips"><span class="chip">adalimumab (TNF, 2015)</span><span class="chip">secukinumab (IL-17A, 2023)</span><span class="chip">bimekizumab (IL-17A/F, 2024)</span><span class="chip">povorcitinib (JAK1, pipeline)</span><span class="chip">cirugía amplia</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('hs_hc3').innerText)">Copiar</button></div>
 <div class="rxcard l3"><pre id="hs_hc3">HIDROSADENITIS SUPURATIVA - moderada-grave (biologico)
 - Biologico aprobado: adalimumab SC (anti-TNF), o secukinumab (anti-IL-17A), o bimekizumab (anti-IL-17A/F).
 - Cribado pre-biologico: TB latente (IGRA + Rx torax), VHB/VHC, hemograma, descartar infeccion activa.
 - Cirugia: exeresis amplia de zonas fibrosadas/trayectos establecidos (Hurley III).
 Mantener medidas de base y manejo del dolor. Solicito inicio de [biologico].</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Biológicos aprobados:</strong> adalimumab (anti-TNF), <strong>secukinumab</strong> (anti-IL-17A, 2023) y <strong>bimekizumab</strong> (anti-IL-17A/F, 2024).</li>
+<li><strong>Povorcitinib</strong> (JAK1 oral) — pipeline en fase 3.</li>
+<li><strong>En la mujer:</strong> evidencia de <strong>metformina</strong> y de <strong>antiandrógenos</strong> (espironolactona, ACO antiandrogénico) como adyuvantes.</li>
+</ul>
 
 ${productosCard('hs')}
 
@@ -4049,6 +4087,9 @@ Autolimitada, pero el tratamiento acorta el prurito y la duracion.</pre></div>
 <ul style="line-height:1.7;font-size:13px;margin:4px 0">
 <li><strong>Guía 2024</strong>: confirma permetrina 5% e <strong>ivermectina oral en 2 dosis (días 1 y 8)</strong> como tratamientos de elección; los "fracasos" suelen deberse a errores de aplicación o a no tratar a los convivientes.</li>
 <li>Recordar el <strong>prurito postescabiótico</strong> para no sobretratar.</li>
+<li><strong>Resistencia/tolerancia crecientes</strong> a permetrina e ivermectina: ante un fallo real (no reinfestación ni mala técnica), rotar de fármaco y reforzar el tratamiento simultáneo de contactos.</li>
+<li><strong>Sarna costrosa (Noruega)</strong>: pauta intensiva de ivermectina oral en los días 1, 2, 8, 9 y 15 (añadir &plusmn;22 y &plusmn;29 en casos graves), junto a permetrina/queratolítico tópicos y aislamiento de contacto.</li>
+<li><strong>Embarazo/lactancia y &lt;15 kg</strong>: preferir <strong>permetrina 5%</strong> tópica y evitar la ivermectina oral (seguridad no establecida).</li>
 </ul>
 
 <div class="refbox">
@@ -4143,6 +4184,7 @@ ${productosCard('aga')}
 <li><strong>Minoxidil oral en baja dosis</strong>: eficacia dosis-dependiente bien documentada; práctica habitual en no respondedores al tópico.</li>
 <li><strong>Dutasterida 0,5 mg</strong>: el más eficaz en metaanálisis en red (off-label); finasterida sigue siendo 1ª línea por aprobación.</li>
 <li><strong>Finasterida tópica</strong>: opción con menor exposición sistémica.</li>
+<li><strong>Señal de seguridad EMA/AEMPS y FDA (2024-2025)</strong> para finasterida y dutasterida, <em>incluida la formulación tópica</em>: posibles <strong>efectos psiquiátricos</strong> (depresión, ideación suicida) y <strong>disfunción sexual</strong> que puede ser <strong>persistente</strong> tras suspender (síndrome post-finasterida). Debe constar en el <strong>consentimiento informado</strong>; matizar que los efectos sexuales no siempre son reversibles.</li>
 </ul>
 
 <div class="refbox">
@@ -4192,6 +4234,7 @@ VIEWS.alopareata=()=>`<div class="card">
 <ul style="line-height:1.7;font-size:13px;margin:4px 0">
 <li><strong>Inhibidores de JAK</strong>: primer tratamiento dirigido aprobado para AA grave — <strong>baricitinib</strong> (2022), <strong>ritlecitinib</strong> (2023) y <strong>deuruxolitinib</strong> (2024).</li>
 <li>Consenso europeo 2024: baricitinib 2-4 mg/día y ritlecitinib 50 mg/día como opciones formalmente aprobadas.</li>
+<li><strong>Advertencia de clase de los JAKi</strong> (recuadro EMA 2023, tras el estudio ORAL Surveillance): precaución en <strong>&ge;65 años</strong>, fumadores o exfumadores de larga data y pacientes con riesgo <strong>cardiovascular, neoplásico o tromboembólico</strong>; usar la <strong>dosis mínima eficaz</strong>.</li>
 </ul>
 
 <div class="refbox">
@@ -4357,9 +4400,11 @@ Vigilar efectos del corticoide. Curso cronico con remisiones.</pre></div>
 <div class="chips"><span class="chip">rituximab</span><span class="chip">omalizumab</span><span class="chip">dupilumab</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pb_hc3').innerText)">Copiar</button></div>
 <div class="rxcard l3"><pre id="pb_hc3">PENFIGOIDE AMPOLLOSO - refractario
-- Rituximab; omalizumab o dupilumab (emergentes; utiles si prurito/eosinofilia marcados).
+- DUPILUMAB 300 mg/2 sem (carga 600 mg): aprobado por la FDA (jun-2025) para penfigoide ampolloso, primer biologico on-label; ahorrador de corticoide en moderado-grave con prurito/eosinofilia.
+- Rituximab; omalizumab (off-label; utiles si prurito/eosinofilia marcados).
 Manejo especializado.</pre></div>
 
+<div class="alert b" style="margin-top:12px"><strong>Dupilumab (junio 2025):</strong> la FDA lo aprobó para penfigoide ampolloso (ensayo <strong>ADEPT</strong>; 300 mg cada 2 semanas tras dosis de carga de 600 mg), <strong>primer biológico con indicación on-label</strong>; útil como ahorrador de corticoide en enfermedad moderada-grave con prurito/eosinofilia. <strong>Rituximab y omalizumab</strong> siguen siendo off-label.</div>
 <div class="refbox">
 <b>Referencias</b> (verifica la fuente y la ficha técnica):
 <ul style="margin:6px 0 0;padding-left:18px">
@@ -4451,6 +4496,8 @@ ${productosCard('melanoma')}
 <li><strong>NADINA</strong> (NEJM 2024): la inmunoterapia <strong>neoadyuvante</strong> nivolumab+ipilimumab supera a la adyuvancia en estadio III macroscópico; ~59 % logran respuesta patológica mayor y evitan adyuvancia.</li>
 <li><strong>Adyuvancia en estadio II de alto riesgo</strong> (IIB/IIC): pembrolizumab (KEYNOTE-716) y nivolumab (CheckMate 76K), aprobados.</li>
 <li><strong>Nivolumab+relatlimab</strong> (anti-LAG3, RELATIVITY-047): nueva combinación de 1ª línea, menos tóxica que ipilimumab+nivolumab.</li>
+<li><strong>Márgenes en Breslow 2,01-4 mm</strong>: muchas guías aceptan un margen de <strong>1-2 cm</strong> (no obligan a 2 cm); solo el Breslow <strong>&gt;4 mm</strong> exige 2 cm.</li>
+<li><strong>Emergentes en estadio IV tras fallo de inmunoterapia</strong>: <strong>lifileucel</strong> (linfocitos infiltrantes de tumor, TIL) y la <strong>vacuna individualizada ARNm-4157/V940 + pembrolizumab</strong>.</li>
 </ul>
 
 <div class="refbox">
@@ -4915,7 +4962,10 @@ ${productosCard('ictiosis')}
 <li><strong>Guías internacionales de ictiosis congénita 2024-2025</strong> (BJD): emolientes/queratolíticos graduados y retinoides orales reservados a formas graves, a la mínima dosis eficaz.</li>
 <li><strong>TMB-001</strong> (isotretinoína tópica 0,05%): el ensayo fase 3 ASCEND (2024) no alcanzó el objetivo primario; el retinoide tópico en ictiosis sigue sin posicionarse.</li>
 <li><strong>Trifaroteno</strong> tópico mantiene la designación de fármaco huérfano para ictiosis congénita.</li>
+<li><strong>Síndrome de Netherton</strong>: los biológicos anti-IL-17 (secukinumab) y anti-IL-4/13 (dupilumab) están en investigación, con respuestas en casos aislados sobre el componente inflamatorio/atópico.</li>
+<li><strong>Gentamicina</strong> tópica o sistémica como agente de <em>readthrough</em> (lectura a través del codón de parada) en mutaciones <em>nonsense</em> seleccionadas, en contexto de investigación.</li>
 </ul>
+<div class="perla"><div><strong>Bebé colodión:</strong> el manejo inicial es de soporte en <strong>incubadora humidificada</strong> con cuidado estricto de barrera (emolientes blandos, control de equilibrio hidroelectrolítico, temperatura y sobreinfección); los queratolíticos (urea/salicílico) se posponen hasta superada la fase aguda neonatal.</div></div>
 
 <div class="refbox">
 <b>Referencias</b> (verifica la fuente):
@@ -4986,6 +5036,8 @@ VIEWS.sjs_net=()=>`<div class="card">
 <p class="intro">Necrólisis epidérmica (Stevens-Johnson <10% SC · solapamiento 10-30% · NET >30%), casi siempre <strong>farmacológica</strong>. Despegamiento + Nikolsky + afectación de ≥2 mucosas. <strong>Urgencia vital.</strong></p>
 
 <div class="perla"><div><strong>Lo primero: RETIRAR el fármaco sospechoso</strong> (alopurinol, anticomiciales, sulfamidas, AINE, nevirapina). Pronóstico con <strong>SCORTEN</strong>. Soporte tipo gran quemado + cuidado ocular precoz. Los <strong>corticoides sistémicos NO se recomiendan de rutina</strong> (guía UK); ciclosporina o etanercept son lo más prometedor (multidisciplinar).</div></div>
+<div class="perla"><div><strong>Imputabilidad del fármaco — algoritmo ALDEN</strong> (cronología, presencia/notoriedad del fármaco, antecedente de reacción, descartar otras causas): puntúa la probabilidad de cada fármaco para decidir cuál retirar y cuál contraindicar de por vida. <strong>Cribado HLA antes de (re)exponer</strong> a fármacos de riesgo: <strong>HLA-B*15:02</strong> (carbamazepina y otros aromáticos, sobre todo en asiáticos) y <strong>HLA-B*58:01</strong> (alopurinol).</div></div>
+<div class="perla"><div><strong>Imputabilidad del fármaco — algoritmo ALDEN</strong> (cronología, presencia/notoriedad del fármaco, antecedente de reacción, descartar otras causas): puntúa la probabilidad de cada fármaco para decidir cuál retirar y cuál contraindicar de por vida. <strong>Cribado HLA antes de (re)exponer</strong> a fármacos de riesgo: <strong>HLA-B*15:02</strong> (carbamazepina y otros aromáticos, sobre todo en asiáticos) y <strong>HLA-B*58:01</strong> (alopurinol).</div></div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('scorten')">SCORTEN</button><button class="btn btn-out btn-sm" onclick="go('regla9')">Superficie</button></div>
 
 <div class="cplab"><span>Manejo (pauta para HC):</span><button class="btn btn-g btn-sm" onclick="copy($('net_hc').innerText)">Copiar</button></div>
@@ -4994,7 +5046,7 @@ VIEWS.sjs_net=()=>`<div class="card">
 2. Calcular SCORTEN; ingreso en unidad de grandes quemados/UCI si NET o inestable.
 3. Soporte tipo gran quemado: fluidoterapia, control de temperatura, analgesia, soporte nutricional, curas (no desbridar de rutina).
 4. Cuidado OCULAR precoz (oftalmologia) y de mucosas (oral, genital).
-5. Inmunomodulacion bajo decision multidisciplinar: ciclosporina 3-5 mg/kg/dia, o etanercept 50 mg SC. Corticoides sistemicos NO de rutina (guia UK).
+5. Inmunomodulacion bajo decision multidisciplinar: ciclosporina 3-5 mg/kg/dia, o etanercept 50 mg SC (dosis unica, repetible a las 24-72 h si progresa el despegamiento). Corticoides sistemicos NO de rutina (guia UK).
 6. Notificar a farmacovigilancia; carnet de alergia al alta.</pre></div>
 
 <div class="refbox">
@@ -5017,11 +5069,12 @@ VIEWS.dress=()=>`<div class="card">
 <div class="rxcard"><pre id="dr_hc">DRESS - manejo
 1. RETIRAR el farmaco sospechoso (latencia 2-6 semanas).
 2. Confirmar con RegiSCAR (exantema + fiebre + eosinofilia/linfocitos atipicos + adenopatias + afectacion visceral).
-3. Analitica: hemograma con eosinofilos, perfil hepatico y renal; valorar afectacion cardiaca/pulmonar.
+3. Analitica: hemograma con eosinofilos, perfil hepatico y renal; valorar afectacion cardiaca (TROPONINA + ECG en DRESS grave: descartar miocarditis aguda por hipersensibilidad), pulmonar y renal.
 4. Corticoide segun gravedad:
    - Leve: corticoide topico superpotente, descenso 6 sem - 3 meses.
    - Moderado-grave o afectacion visceral: prednisona 1 mg/kg/dia, descenso LENTO en 3-6 meses.
-5. Vigilar reactivacion de VHH-6 y secuelas tardias (tiroiditis autoinmune): control posterior.</pre></div>
+   - Ahorradores de corticoide / refractario: ciclosporina; en refractario, mepolizumab o benralizumab (anti-IL5) o inhibidor de JAK.
+5. Vigilar reactivacion de VHH-6 y secuelas autoinmunes tardias (tiroiditis, diabetes tipo 1, LES): control clinico-analitico prolongado.</pre></div>
 
 <div class="refbox">
 <b>Referencias</b> (verifica la fuente):
@@ -5043,14 +5096,27 @@ VIEWS.eritrodermia=()=>`<div class="card">
 <div class="rxcard"><pre id="er_hc">ERITRODERMIA (>90% SC) - manejo
 1. Es un sindrome: BUSCAR la causa (psoriasis, eccema/contacto, FARMACO, linfoma cutaneo/Sezary, idiopatica). Retirar farmacos sospechosos.
 2. Ingreso si inestable: control de temperatura, fluidoterapia e hidroelectrolitos, soporte nutricional (hipoalbuminemia); vigilar insuficiencia cardiaca de alto gasto y sobreinfeccion.
-3. Cuidado cutaneo: emolientes abundantes + corticoide topico de potencia media; ambiente calido y humedo.
+3. Cuidado cutaneo: emolientes abundantes + corticoide topico de potencia BAJA-MEDIA; ambiente calido y humedo.
+   EVITAR corticoide SISTEMICO empirico hasta descartar psoriasis (riesgo de rebote/pustulosis generalizada) y linfoma cutaneo.
+4b. Despistaje farmacologico estructurado: revisar TODOS los farmacos (incluidos los recientes y de venta libre) con cronologia de inicio; retirar los sospechosos.
+4c. Sospecha de Sezary: citometria de sangre periferica buscando clon T (cociente CD4/CD8 alterado, perdida de CD7/CD26) y reordenamiento del receptor de celulas T (TCR).
 4. Estudio: biopsia cutanea (a veces repetida), hemograma (Sezary: linfocitos atipicos + citometria de sangre periferica), perfil hepatorrenal.
 5. Tratar la causa subyacente una vez identificada.</pre></div>
+
+<div class="alert r" style="margin:8px 0"><strong>Cautela con el corticoide sistémico:</strong> evita la corticoterapia sistémica <strong>empírica</strong> hasta descartar <strong>psoriasis</strong> (riesgo de rebote y pustulosis generalizada al retirarlo) y <strong>linfoma cutáneo</strong>. Prioriza el soporte y el cuidado tópico (potencia baja-media) mientras se filia la causa.</div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Despistaje farmacológico estructurado</strong>: cronología de todos los fármacos (incluidos recientes y de venta libre) y retirada de los sospechosos como paso inicial.</li>
+<li><strong>Sospecha de síndrome de Sézary</strong>: citometría de sangre periférica con <strong>clon T</strong> (cociente CD4/CD8 alterado, pérdida de CD7/CD26) y <strong>reordenamiento del TCR</strong>; correlacionar con biopsia.</li>
+<li><strong>Causa inflamatoria refractaria</strong>: biológicos dirigidos — anti-IL17/IL23 si psoriasis subyacente, <strong>dupilumab</strong> si eccema/dermatitis atópica.</li>
+</ul>
 
 <div class="refbox">
 <b>Referencias</b> (verifica la fuente):
 <ul style="margin:6px 0 0;padding-left:18px">
 <li><b>DermNet</b> — Erythroderma · <a href="https://dermnetnz.org/topics/erythroderma" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+<li><b>Cuellar-Barboza A, et al.</b> A practical approach to the diagnosis and management of adult erythroderma. <em>Actas Dermosifiliogr</em> 2023;114(2):116-126 · <a href="https://www.actasdermo.org" target="_blank" rel="noopener">actasdermo.org</a>.</li>
 </ul>
 </div>
 <div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
@@ -5233,7 +5299,7 @@ VIEWS.cirugia=()=>`<div class="card">
 <h2>Cirugía dermatológica</h2>
 <p class="intro">Ejemplos de <strong>cierres y colgajos</strong> más usados y repositorio para <strong>colgar atlas/guías y PDF</strong> de técnica quirúrgica. Esquemas orientativos: <span style="color:var(--c1)">azul</span> = colgajo/tejido que se moviliza · <span style="color:var(--er)">rojo discontinuo</span> = defecto o lesión.</p>
 
-<div class="perla"><div><strong>Márgenes orientativos:</strong> basocelular 3-5 mm · escamoso 4-6 mm (más en alto riesgo) · melanoma según Breslow (in situ 0,5-1 cm; ≤1 mm → 1 cm; &gt;1-2 mm → 1-2 cm; &gt;2 mm → 2 cm). Huso siguiendo las líneas de tensión relajadas (≈ 3:1). <strong>Mohs</strong> (control del 100 % del margen intraoperatorio): tumores de alto riesgo, zonas críticas (cara central/periorificial), recidivas y bordes mal definidos.</div></div>
+<div class="perla"><div><strong>Márgenes orientativos:</strong> basocelular 3-5 mm · escamoso 4-6 mm (más en alto riesgo) · melanoma según Breslow (in situ 0,5-1 cm; ≤1 mm → 1 cm; &gt;1-2 mm → 1-2 cm; &gt;2 mm → 2 cm). Huso siguiendo las líneas de tensión relajadas (≈ 3:1). <strong>Mohs</strong> (control del 100 % del margen intraoperatorio): tumores de alto riesgo, zonas críticas (cara central/periorificial), recidivas y bordes mal definidos. En <strong>CEC</strong>, el margen estándar de bajo riesgo es <strong>4-6 mm</strong>, pero el <strong>alto riesgo</strong> (&gt;2 cm, mal diferenciado, invasión perineural, inmunodeprimido) exige <strong>Mohs o margen ampliado</strong>; el melanoma in situ tipo <strong>lentigo maligno</strong> suele requerir <strong>5-10 mm</strong>. <strong>Cemiplimab</strong> (anti-PD-1) en CEC avanzado/irresecable —y CBC avanzado tras inhibidor de hedgehog— como contexto de derivación a oncología.</div></div>
 
 <h3>Opciones de reconstrucción</h3>
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:6px 0">
@@ -5393,6 +5459,7 @@ VIEWS.ifd_ihq=()=>`<div class="card">
 <li><strong>Langerhans:</strong> CD1a + CD207 (langerina) + S100; BRAF V600E como diana. <strong>Mastocitosis:</strong> triptasa, CD117, <strong>CD25 aberrante</strong> (apoya clonalidad).</li>
 <li><strong>Regla de oro de la muestra:</strong> IHQ exige <strong>formol</strong>; IFD exige <strong>Michel/congelado</strong>. Invertirlos invalida la muestra. Toma <em>dos biopsias</em> ante sospecha ampollar autoinmune.</li>
 <li>Pide <strong>IHQ</strong> para tumor mal diferenciado, melanoma vs nevus (PRAME/Ki67/HMB-45), confirmar Merkel, tipificar linfomas, origen de metástasis y dianas (CD30, BRAF, PD-L1).</li>
+<li><strong>Genómica/FISH:</strong> en lesiones melanocíticas <em>ambiguas</em>, el <strong>array CGH</strong> o la <strong>FISH</strong> (RREB1, MYB, CCND1, 6p25) y los ensayos de <strong>metilación</strong> ayudan a separar nevus de melanoma. <strong>PD-L1</strong> y <strong>TMB</strong> (carga mutacional) actúan como biomarcadores predictivos de inmunoterapia en melanoma y en CEC/Merkel avanzados.</li>
 </ul>
 <div class="perla"><div><strong>Perlas:</strong> invertir el medio (IFD↔IHQ) es el error clásico. Para IFD ampollar, piel perilesional (nunca el centro); para vasculitis IgA, lesión &lt;24-48 h. <strong>PRAME</strong> difuso apoya melanoma pero da falsos +/-: nunca como prueba aislada.</div></div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('autoac')">Autoanticuerpos</button><button class="btn btn-out btn-sm" onclick="go('ampoll_alg')">Ampollosas</button></div>
@@ -5419,7 +5486,7 @@ VIEWS.autoac=()=>`<div class="card">
 <h3>Subepidérmicas (anti-membrana basal)</h3>
 <ul style="line-height:1.6">
 <li><strong>Anti-BP180 (NC16A)</strong> → penfigoide ampolloso; el título <em>correlaciona con actividad</em>. <strong>Anti-BP230</strong> refuerza pero peor correlación.</li>
-<li><strong>Salt-split:</strong> techo → penfigoide; suelo → EBA (anti-colágeno VII) y anti-p200. <strong>Anti-laminina-332</strong> (penfigoide de mucosas) → <span style="color:var(--er)">cribar neoplasia interna</span>.</li>
+<li><strong>Salt-split:</strong> techo → penfigoide; suelo → EBA (anti-colágeno VII) y anti-p200. <strong>Anti-laminina-332</strong> (penfigoide de mucosas) → <span style="color:var(--er)">cribar neoplasia interna</span>. Otras dianas del <strong>penfigoide de mucosas</strong>: <strong>BP180 mucoso</strong> (porción C-terminal) e <strong>integrina α6/β4</strong> (β4 → fenotipo ocular cicatricial, α6 → oral).</li>
 <li><strong>Anti-transglutaminasa epidérmica (TG3)</strong> → dermatitis herpetiforme; <strong>anti-TG2 tisular IgA</strong> + gliadina deamidada → celiaquía (pedir IgA total).</li>
 </ul>
 <h3>ANA y conectivopatías</h3>
@@ -5438,7 +5505,7 @@ VIEWS.autoac=()=>`<div class="card">
 <li><strong>Anti-MDA5</strong> → DM amiopática con <em>úlceras</em> y <strong>EPI rápidamente progresiva</strong> (alta mortalidad). <strong>Anti-Mi2</strong> → DM clásica florida, buena respuesta, bajo riesgo. <strong>Anti-sintetasa (Jo1…)</strong> → manos de mecánico, EPI, artritis.</li>
 </ul>
 
-<div class="perla"><div><strong>Perlas:</strong> pide <strong>Ro52</strong> desglosado (bloqueo neonatal; EPI en miositis). Cuatro obligan a <strong>cribado de neoplasia</strong>: TIF1-γ y NXP2 (DM del adulto), ARN pol III (esclerosis) y anti-laminina-332 (penfigoide de mucosas). Un ANA negativo no excluye DM por MDA5 ni dermatitis herpetiforme: pide el panel específico según fenotipo.</div></div>
+<div class="perla"><div><strong>Perlas:</strong> pide <strong>Ro52</strong> desglosado (bloqueo neonatal; EPI en miositis). Cuatro obligan a <strong>cribado de neoplasia</strong>: TIF1-γ y NXP2 (DM del adulto), ARN pol III (esclerosis) y anti-laminina-332 (penfigoide de mucosas). Un ANA negativo no excluye DM por MDA5 ni dermatitis herpetiforme: pide el panel específico según fenotipo. Ojo: <strong>rituximab</strong> (1.ª línea en pénfigo moderado-grave) y <strong>dupilumab</strong> (off-label en penfigoide) reconfiguran la utilidad del <strong>seguimiento serológico</strong> (los títulos pueden disociarse de la clínica tras depleción B o bloqueo Th2).</div></div>
 <div class="refbox">
 <b>Referencias</b> (verifica la fuente):
 <ul style="margin:6px 0 0;padding-left:18px">
@@ -5703,7 +5770,8 @@ VIEWS.biologicos=()=>`<div class="card">
 <h3>Psoriasis: anti-IL17 e IL-23</h3>
 <ul style="line-height:1.6">
 <li><strong>Anti-IL17:</strong> secukinumab, ixekizumab; <strong>bimekizumab</strong> (IL17A+F, máxima PASI100; nueva indicación <strong>HS</strong> 2024; más candidiasis).</li>
-<li><strong>Anti-IL23 (p19):</strong> risankizumab, guselkumab (también HS/EII), tildrakizumab — excelente seguridad y comodidad (/8-12 sem). <strong>Ustekinumab</strong> (IL12/23) también en EII. IL-17/IL-23 no precisan analítica repetida obligada.</li>
+<li><strong>Anti-IL23 (p19):</strong> risankizumab, guselkumab, tildrakizumab — excelente seguridad y comodidad (/8-12 sem). <strong>Guselkumab</strong> está aprobado además en <strong>EII</strong> (colitis ulcerosa 2024, Crohn 2025) y en HS. <strong>Ustekinumab</strong> (IL12/23) también en EII. IL-17/IL-23 no precisan analítica repetida obligada.</li>
+<li><strong>Psoriasis pustulosa generalizada (GPP):</strong> <strong>spesolimab</strong> (anti-IL36R) IV para el <strong>brote agudo</strong> (y SC en mantenimiento); diana específica de la vía IL-36 implicada en la GPP.</li>
 </ul>
 <h3>Eccema, prurito y urticaria (Th2/IgE)</h3>
 <ul style="line-height:1.6">
@@ -5718,7 +5786,7 @@ VIEWS.biologicos=()=>`<div class="card">
 <div class="refbox">
 <b>Referencias</b> (verifica la fuente):
 <ul style="margin:6px 0 0;padding-left:18px">
-<li><b>EuroGuiDerm</b> — Nast A, et al. Systemic treatment of psoriasis, Part 1. <em>JEADV</em> 2020;34(11):2461-2498 · <a href="https://doi.org/10.1111/jdv.16915" target="_blank" rel="noopener">doi.org</a>.</li>
+<li><b>AAD-NPF</b> — Guidelines of care for the management of psoriasis with biologics (actualización). <em>J Am Acad Dermatol</em> · <a href="https://www.aad.org/member/clinical-quality/guidelines/psoriasis" target="_blank" rel="noopener">aad.org</a>. <span style="color:var(--mut)">(EuroGuiDerm Nast 2020 como referencia europea complementaria).</span></li>
 <li><b>EMA</b> — Restricción de clase de los inhibidores JAK · <a href="https://www.ema.europa.eu/en/medicines/human/referrals/janus-kinase-inhibitors-jaki" target="_blank" rel="noopener">ema.europa.eu</a>.</li>
 </ul>
 </div>
@@ -5731,7 +5799,7 @@ VIEWS.embarazo=()=>`<div class="card">
 <div class="alert r">⛔ <strong>Contraindicados / teratógenos</strong> — descartar y prevenir embarazo antes de prescribir.
 <ul style="margin:6px 0 0;padding-left:18px">
 <li><strong>Retinoides sistémicos</strong> (isotretinoína, acitretina, alitretinoína): teratógenos potentes → <strong>programa de prevención del embarazo</strong>.</li>
-<li><strong>Metotrexato</strong> y <strong>micofenolato</strong>: abortivos/teratógenos. <strong>Talidomida</strong>. <strong>JAKi</strong> orales.</li>
+<li><strong>Metotrexato</strong> y <strong>micofenolato</strong>: abortivos/teratógenos. <strong>Talidomida</strong>.</li>
 <li><strong>Tetraciclinas</strong> (≥2.º trimestre: dientes/hueso), <strong>fluconazol</strong> a dosis altas, <strong>espironolactona</strong> (antiandrógeno), <strong>hidroquinona</strong>.</li>
 </ul>
 </div>
@@ -5745,6 +5813,8 @@ VIEWS.embarazo=()=>`<div class="card">
 <h3>Con cautela / valorar trimestre</h3>
 <ul style="line-height:1.6">
 <li><strong>Fototerapia UVB-NB</strong> (segura; suplementar folato). <strong>Prednisona</strong> oral en brotes (evitar 1.<sup>er</sup> trimestre, dosis baja). <strong>Ciclosporina</strong> y <strong>azatioprina</strong>: usables si es necesario (trasplante/EII). <strong>Certolizumab</strong>: anti-TNF preferido por su mínimo paso placentario.</li>
+<li><strong>JAKi orales</strong> (tofacitinib, upadacitinib, baricitinib, abrocitinib): <strong>evitar por datos insuficientes y señal preclínica</strong> (teratogenicidad en animales a dosis altas), no por teratogenicidad de clase demostrada en humanos; suspender antes de concebir según semivida y ficha técnica.</li>
+<li><strong>Dupilumab</strong>: perfil tranquilizador en la dermatitis atópica grave del embarazo según los registros disponibles (2021-2026), sin señal de teratogenicidad; opción a valorar cuando no basta el tratamiento tópico.</li>
 </ul>
 <h3>Lactancia</h3>
 <ul style="line-height:1.6">
@@ -5939,7 +6009,7 @@ VIEWS.morfea=()=>`<div class="card">
 - Alternativa topica: calcipotriol +/- corticoide.
 - Fototerapia de eleccion si varias placas o tronco: UVA1 (dosis media) o UVB de banda estrecha.
 - Emoliente diario; fotoproteccion de la piel no tratada.
-Reevaluar actividad (eritema/halo lila, induracion) en 2-3 meses.</pre></div>
+Reevaluar actividad (eritema/halo lila, induracion) en 2-3 meses; objetivar con mLoSSI/LoSCAT (+/- termografia o ecografia de alta frecuencia).</pre></div>
 
 <div class="step-h l2"><div class="sn">2</div><div class="st">Activa / extensa / lineal / profunda — metotrexato</div></div>
 <div class="chips"><span class="chip">metotrexato</span><span class="chip">+ corticoide sistémico (fase activa)</span><span class="chip">fototerapia adyuvante</span></div>
@@ -5965,6 +6035,7 @@ ${productosCard('morfea')}
 <li><strong>S2k europea 2024</strong>: confirma MTX (± corticoide sistémico en fase activa) como base de las formas graves; <strong>micofenolato, ác. micofenólico o abatacept</strong> como 2ª línea.</li>
 <li><strong>Injerto de grasa autóloga</strong> para corregir defectos de tejido en la morfea lineal (solo en fase inactiva).</li>
 <li><strong>UVA1</strong> consolidada para formas superficiales extensas.</li>
+<li><strong>Evaluación estandarizada de la actividad</strong> (mLoSSI/LoSCAT, y termografía o ecografía de alta frecuencia) para decidir inicio, escalada y suspensión del MTX, conforme a la guía S2k 2024.</li>
 </ul>
 
 <div class="refbox">
@@ -6015,7 +6086,7 @@ ${productosCard('liquen_escleroso')}
 
 <h3>Novedades</h3>
 <ul style="line-height:1.7;font-size:13px;margin:4px 0">
-<li><strong>Guía BAD 2018</strong>: el corticoide ultrapotente sigue siendo de elección; el <strong>mantenimiento proactivo</strong> controla la enfermedad y <strong>reduce el riesgo de CEC</strong>.</li>
+<li><strong>Guía europea EuroGuiDerm/EADV</strong> (Kirtschig et al., <em>JEADV</em> 2023) junto a la <strong>guía BAD 2018</strong>: el corticoide ultrapotente sigue siendo de elección; el <strong>mantenimiento proactivo de por vida</strong> controla la enfermedad y <strong>disminuye el riesgo de CEC vulvar</strong> con tratamiento mantenido y adherente.</li>
 <li>En el varón, la <strong>circuncisión</strong> es curativa en la mayoría de las fimosis cicatriciales.</li>
 </ul>
 
@@ -6023,6 +6094,7 @@ ${productosCard('liquen_escleroso')}
 <b>Referencias</b> (verifica la fuente):
 <ul style="margin:6px 0 0;padding-left:18px">
 <li><b>BAD</b> — Lewis FM, et al. Guidelines for the management of lichen sclerosus, 2018. <em>Br J Dermatol</em> 2018;178(4):839-853 · doi 10.1111/bjd.16241 · <a href="https://pubmed.ncbi.nlm.nih.gov/29313888/" target="_blank" rel="noopener">PubMed</a>.</li>
+<li><b>EuroGuiDerm/EADV</b> — Kirtschig G, et al. Evidence-based (S3) guideline on (anogenital) lichen sclerosus. <em>J Eur Acad Dermatol Venereol (JEADV)</em> 2023 · <a href="https://pubmed.ncbi.nlm.nih.gov/37503831/" target="_blank" rel="noopener">PubMed</a>.</li>
 <li><b>DermNet</b> — Lichen sclerosus · <a href="https://dermnetnz.org/topics/lichen-sclerosus" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
 </ul>
 </div>
@@ -6116,6 +6188,12 @@ Si no hay respuesta en 2-3 meses, anadir o cambiar el sistemico.</pre></div>
 Manejo conjunto con reumatologia. Vigilar cicatrices y alopecia cicatricial (discoide).</pre></div>
 
 ${productosCard('lupus')}
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Anifrolumab</strong> (anti-IFN tipo I): eficacia demostrada sobre la actividad cutánea (CLASI); se usa cada vez más en el <strong>lupus eritematoso cutáneo refractario</strong>, no solo en el LES sistémico.</li>
+<li><strong>Deucravacitinib</strong> (TYK2i): señal emergente en lupus cutáneo (ensayo <strong>PAISLEY</strong>).</li>
+</ul>
 
 <div class="refbox">
 <b>Referencias</b> (verifica la fuente):
@@ -6267,7 +6345,8 @@ VIEWS.amiloidosis=()=>`<div class="card">
 
 <h3>Novedades</h3>
 <ul style="line-height:1.7;font-size:13px;margin:4px 0">
-<li><strong>Dupilumab</strong> (anti-IL-4/13) logra remisión del liquen amiloide refractario, incluso en no atópicos (eje IL-4/13/31).</li>
+<li><strong>Dupilumab</strong> (anti-IL-4/13) logra remisión del liquen amiloide refractario, incluso en no atópicos (eje IL-4/13/31); su uso en el liquen amiloide es <strong>off-label</strong>.</li>
+<li>Ante amiloidosis <strong>sistémica o nodular</strong>, <strong>tipificar el amiloide</strong> (proteómica por espectrometría de masas) para no confundir <strong>AL</strong> con <strong>ATTR</strong> u otras formas, ya que el tratamiento difiere.</li>
 <li>Señales con <strong>nemolizumab</strong> (anti-IL-31RA) y <strong>upadacitinib</strong> en PLCA refractaria (casos 2024-2025).</li>
 </ul>
 
@@ -6475,12 +6554,14 @@ VIEWS.paniculitis=()=>`<div class="card">
 - Pediatria: ibuprofeno 10 mg/kg/8h o naproxeno 5-7 mg/kg/12h.</pre></div>
 
 <div class="step-h l2"><div class="sn">2</div><div class="st">Persistente / muy sintomático (infección descartada)</div></div>
-<div class="chips"><span class="chip">yoduro potásico (SSKI)</span><span class="chip">colchicina</span></div>
+<div class="chips"><span class="chip">yoduro potásico (SSKI)</span><span class="chip">dapsona</span><span class="chip">colchicina</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pan_hc2').innerText)">Copiar</button></div>
 <div class="rxcard l2"><pre id="pan_hc2">ERITEMA NODOSO - persistente / muy sintomatico (INFECCION DESCARTADA)
 - Yoduro potasico (SSKI) 300 mg/8h VO (o 2-10 gotas/8h); respuesta en 1-2 sem, mejor si precoz.
 - Vigilar tiroides: contraindicado en embarazo, hipertiroidismo y enf. tiroidea; controlar TSH si uso prolongado.
+- Dapsona 100 mg/dia VO como opcion intermedia (cribar G6PD; vigilar hemolisis y metahemoglobinemia).
 - Colchicina 0,5 mg/12h VO (util sobre todo en EN asociado a Behcet); ajustar a funcion renal.
+- Variante migratoria (sindrome de Vilanova / EN migrans, placa unilateral centrifuga): responde especialmente bien al yoduro potasico.
 - Mantener reposo + AINE de base.</pre></div>
 
 <div class="step-h l3"><div class="sn">3</div><div class="st">Grave / crónico / refractario</div></div>
@@ -6497,7 +6578,7 @@ VIEWS.paniculitis=()=>`<div class="card">
 <ul style="line-height:1.7;font-size:13px;margin:4px 0">
 <li><strong>Algoritmo escalonado</strong> (Pérez-Garza, 2021): medidas + AINE → yoduro potásico o colchicina → corticoide solo en casos graves con infección descartada.</li>
 <li>Series 2021-2025: el eritema nodoso crónico/refractario (incluso sin EII) puede responder a <strong>anti-TNF</strong> (infliximab) tras fallo de yoduro, colchicina, dapsona, HCQ y MTX.</li>
-<li>Farmacovigilancia 2024: amplía los fármacos y vacunas asociados a eritema nodoso → reforzar la anamnesis farmacológica.</li>
+<li>Farmacovigilancia 2024: amplía los fármacos y vacunas asociados a eritema nodoso → reforzar la anamnesis farmacológica. El eritema nodoso es una de las <strong>reacciones cutáneas más reportadas con inhibidores de checkpoint</strong> (anti-PD-1) y tras <strong>vacunas</strong>.</li>
 </ul>
 
 <div class="refbox">
@@ -6539,15 +6620,15 @@ VIGILAR: hipoglucemia (reducir insulina/secretagogo), anticuerpos neutralizantes
 <div class="chips"><span class="chip">optimizar TAR</span><span class="chip">tesamorelina (grasa visceral)</span><span class="chip">metformina/estatina</span><span class="chip">relleno (lipoatrofia)</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('li_hc3').innerText)">Copiar</button></div>
 <div class="rxcard l3"><pre id="li_hc3">LIPODISTROFIA ASOCIADA A VIH / TAR
-1) Optimizar TAR: evitar/retirar timidinicos (estavudina, zidovudina) y considerar cambio desde IP antiguos; ojo a la ganancia de grasa visceral con INSTI/TAF.
+1) Optimizar TAR: la lipoatrofia con TAR moderno es hoy INFRECUENTE (evitar/retirar timidinicos antiguos: estavudina, zidovudina). El problema DOMINANTE actual es la lipohipertrofia / ganancia ponderal por INSTI (dolutegravir, bictegravir) + TAF; en este escenario se estudian los GLP-1.
 2) Grasa visceral (lipohipertrofia): tesamorelina (analogo GHRH) 1,4-2 mg SC/dia (reduce grasa visceral y hepatica); efecto reversible al suspender; vigilar IGF-1 y glucemia.
 3) Metabolico: metformina + estatina segun perfil.
 4) Lipoatrofia facial / buffalo hump: relleno o cirugia para lesiones localizadas (efecto variable).</pre></div>
 
 <h3>Novedades</h3>
 <ul style="line-height:1.7;font-size:13px;margin:4px 0">
-<li><strong>Agonistas GLP-1 e iSGLT2</strong>: evidencia creciente para el control glucémico/peso/TG en lipodistrofia parcial cuando la metreleptina no aplica o es insuficiente.</li>
-<li><strong>Volanesorsen</strong> (anti-apoC-III) reduce ~88 % los TG en FPLD; <strong>REGN4461</strong> (agonista del receptor de leptina) útil si hay anticuerpos neutralizantes a metreleptina.</li>
+<li><strong>Agonistas GLP-1 (incluida la tirzepatida, doble GIP/GLP-1) e iSGLT2</strong>: evidencia creciente para el control glucémico/peso/TG en lipodistrofia parcial cuando la metreleptina no aplica o es insuficiente.</li>
+<li><strong>Volanesorsen</strong> (anti-apoC-III, <strong>aprobado por la EMA, no por la FDA</strong>) reduce ~88 % los TG en FPLD; <strong>REGN4461</strong> (agonista del receptor de leptina) útil si hay anticuerpos neutralizantes a metreleptina.</li>
 <li><strong>Tesamorelina</strong> confirma reducción de grasa visceral y hepática en VIH (metaanálisis 2026).</li>
 </ul>
 
@@ -6904,10 +6985,10 @@ VIEWS.oclusion_micro=()=>`<div class="card">
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('om_hc3').innerText)">Copiar</button></div>
 <div class="rxcard l3"><pre id="om_hc3">OCLUSION MICROVASCULAR - tratar el mecanismo (NO la piel)
 - TIH: SUSPENDER toda heparina + anticoagulante NO heparinico (argatroban o fondaparinux); NO transfundir plaquetas; NO iniciar warfarina hasta plaquetas >150.
-- SAF catastrofico (CAPS): triple terapia -> anticoagulacion plena + corticoide a dosis altas + IVIG o recambio plasmatico.
+- SAF catastrofico (CAPS): triple terapia -> anticoagulacion plena + corticoide a dosis altas + IVIG o recambio plasmatico; en refractarios, rescate con eculizumab o rituximab.
 - CID: tratar la causa + soporte (PFC/plaquetas/fibrinogeno solo si sangrado).
 - Necrosis cumarinica: parar warfarina, vitamina K IV, heparina/HBPM puente, PFC; concentrado de proteina C si deficit grave.
-- Calcifilaxis: tiosulfato sodico IV (25 g en dialisis), optimizar Ca/P/PTH, retirar calcio/quelantes calcicos y warfarina, analgesia, cura de heridas.
+- Calcifilaxis: PILAR = optimizar Ca/P/PTH, retirar quelantes calcicos y warfarina, analgesia, desbridamiento/cura de heridas y valorar paratiroidectomia. El tiosulfato sodico IV (25 g en dialisis) es practica habitual pero de BAJO nivel de evidencia (el ensayo CALCIPHYX no demostro beneficio claro), no de primera linea.
 - Purpura fulminans: antibiotico empirico precoz + soporte; concentrado de proteina C si deficit.
 - Embolos de colesterol: estatina, control de TA, evitar anticoagulacion/cateterismo no esencial.</pre></div>
 
@@ -6966,10 +7047,12 @@ NECROBIOSIS LIPOIDICA progresiva / extensa:
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('gr_hc3').innerText)">Copiar</button></div>
 <div class="rxcard l3"><pre id="gr_hc3">GRANULOMATOSAS - resistente / grave (biologicos y dianas)
 GRANULOMA ANULAR resistente:
-- Anti-TNF (off-label) o inhibidor JAK (upadacitinib, abrocitinib); alternativa metotrexato o ciclosporina.
+- Anti-TNF (off-label) o inhibidor JAK/deucravacitinib (upadacitinib, abrocitinib); en granuloma anular y sarcoidosis estos farmacos son OFF-LABEL, con evidencia anecdotica. Alternativa: metotrexato o ciclosporina.
+- ADVERTENCIA EMA/PRAC 2023 (JAKi: upadacitinib, abrocitinib, tofacitinib, baricitinib): usar con PRECAUCION y solo si no hay alternativa en >=65 anos, fumadores/exfumadores de larga data, riesgo cardiovascular o de neoplasia.
 SARCOIDOSIS CUTANEA grave / refractaria:
+- En sarcoidosis SISTEMICA grave (cardiaca, neurologica, ocular), el corticoide oral sigue siendo 1a linea.
 - Infliximab 3-5 mg/kg (sem 0-2-6 y c/8 sem) o adalimumab 40 mg/2 sem tras fallo de metotrexato.
-- Cribar TBC/hepatitis antes de anti-TNF. Emergente: JAK (tofacitinib) o TYK2 (deucravacitinib).
+- Cribar TBC/hepatitis antes de anti-TNF. Emergente y OFF-LABEL (evidencia anecdotica): JAK (tofacitinib) o TYK2 (deucravacitinib).
 NECROBIOSIS LIPOIDICA ulcerada / refractaria:
 - Anti-TNF (infliximab/adalimumab); ruxolitinib topico (estudio 2024); manejo agresivo de la herida; biopsia si sospecha de CEC.</pre></div>
 
@@ -8494,7 +8577,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 11;
+  var DC_BUILD = 12;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
