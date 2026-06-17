@@ -3715,63 +3715,212 @@ ${productosCard('hs')}
 // ===== VISTAS DE PATOLOGÍA · Infecciones cutáneas =====
 VIEWS.inf_bact=()=>`<div class="card">
 <h2>Infecciones bacterianas cutáneas</h2>
-<p class="intro">Mayoritariamente por <em>S. aureus</em> y <em>S. pyogenes</em>. Espectro desde superficial (impétigo) hasta profundo (celulitis, fascitis).</p>
-<h3>Cuadros frecuentes</h3>
-<ul style="line-height:1.6">
-<li><strong>Impétigo</strong> — costras melicéricas (no ampolloso) o ampollas (ampolloso, S. aureus). Tópico (mupirocina/ác. fusídico) u oral si extenso.</li>
-<li><strong>Foliculitis / forúnculo / ántrax</strong> — infección del folículo; drenaje si absceso.</li>
-<li><strong>Erisipela</strong> — placa eritematosa bien delimitada y brillante (dermis superficial, S. pyogenes), con fiebre.</li>
-<li><strong>Celulitis</strong> — bordes mal definidos, dermis profunda/TCS; a menudo S. aureus.</li>
+<p class="intro">Mayoritariamente <em>S. aureus</em> y <em>S. pyogenes</em>. Del más superficial al más profundo. Cada escalón trae la <strong>pauta lista para copiar</strong> (ajustar al protocolo local y a la función renal/peso).</p>
+
+<div class="perla"><div><strong>Primero, clasifica.</strong> <strong>Superficial</strong> (impétigo, foliculitis) → tópico. <strong>Dérmica</strong> (erisipela bien delimitada = estreptocócica; celulitis mal delimitada). <strong>Purulenta/absceso</strong> → drenaje + cubrir <em>S. aureus</em>/SARM. Marca el borde, eleva la zona y trata la puerta de entrada (tiña interdigital, fisuras).</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma — fascitis necrosante:</strong> dolor desproporcionado, ampollas hemorrágicas, crepitación, anestesia o deterioro sistémico rápido → <strong>desbridamiento quirúrgico urgente + antibioterapia IV de amplio espectro</strong>. No demorar por la imagen.</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Impétigo / foliculitis / absceso</div></div>
+<div class="chips"><span class="chip">mupirocina / ozenoxacino tóp.</span><span class="chip">cefalexina / cloxacilina v.o.</span><span class="chip">incisión y drenaje</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ib_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="ib_hc1">INFECCION BACTERIANA - superficial
+IMPETIGO localizado:
+- Mupirocina o ozenoxacino topico 2/dia, 5 dias.
+IMPETIGO extenso o multiples lesiones:
+- Cefalexina 500 mg/6-8h v.o. o cloxacilina; amoxicilina-clavulanico como alternativa, 7 dias.
+FORUNCULO / ABSCESO:
+- Incision y drenaje (gesto clave). Antibiotico solo si celulitis acompanante, sistemico o riesgo de SARM.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Erisipela / celulitis</div></div>
+<div class="chips"><span class="chip">penicilina / amoxicilina (erisipela)</span><span class="chip">cefalexina / cloxacilina (celulitis)</span><span class="chip">elevar + marcar borde</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ib_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="ib_hc2">INFECCION BACTERIANA - erisipela / celulitis
+ERISIPELA (placa brillante bien delimitada, estreptococica):
+- Amoxicilina o penicilina v.o.; cefalexina si dudas de S. aureus.
+CELULITIS no purulenta:
+- Cefalexina 500 mg/6h o cloxacilina 7-10 dias (cubrir estrepto + estafilo).
+CELULITIS purulenta o sospecha de SARM:
+- Cotrimoxazol o doxiciclina (+ cubrir estrepto si precisa).
+MEDIDAS: elevar la extremidad, marcar el borde y reevaluar a las 48-72h; tratar la puerta de entrada.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">SARM / forunculosis recurrente</div></div>
+<div class="chips"><span class="chip">cotrimoxazol / doxiciclina / clindamicina</span><span class="chip">descolonización</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ib_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="ib_hc3">INFECCION BACTERIANA - SARM / recurrente
+- SARM comunitario: cotrimoxazol, doxiciclina o clindamicina segun antibiograma local.
+- Forunculosis recurrente: descolonizacion -> mupirocina nasal 2/dia 5 dias + lavados con clorhexidina; tratar a convivientes si recurrencia familiar.
+- Cultivo si fracaso o recurrencia.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Ozenoxacino tópico</strong>: quinolona para impétigo, alternativa a mupirocina (útil ante resistencias).</li>
+<li>El <strong>drenaje</strong> es el pilar del absceso; el antibiótico se reserva a celulitis/sistémico/SARM.</li>
 </ul>
-<h3>Signos de alarma</h3>
-<p>Dolor desproporcionado, ampollas hemorrágicas, crepitación o deterioro sistémico rápido → sospechar <strong>fascitis necrosante</strong> (urgencia quirúrgica). Marca el borde y reevalúa.</p>
-<h3>Manejo</h3>
-<p>Antibioterapia según cuadro y gravedad (cobertura S. aureus/S. pyogenes; valorar SARM según factores de riesgo). Elevar la zona y tratar la puerta de entrada (tiña interdigital, eccema).</p>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Ajustar al protocolo local de antibioterapia.</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>IDSA</b> — Stevens DL, et al. Practice guidelines for skin and soft tissue infections. <em>Clin Infect Dis</em> 2014;59(2):e10-e52 · <a href="https://pubmed.ncbi.nlm.nih.gov/24973422/" target="_blank" rel="noopener">PubMed</a>.</li>
+<li><b>DermNet</b> — Bacterial skin infections · <a href="https://dermnetnz.org/topics/bacterial-skin-infections" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Ajustar al protocolo local de antibioterapia</strong> y a la ficha técnica.</div>
 </div>`;
 
 VIEWS.inf_vir=()=>`<div class="card">
 <h2>Infecciones víricas cutáneas</h2>
-<p class="intro">Las más frecuentes en consulta: herpesvirus, VPH y poxvirus.</p>
-<h3>Cuadros frecuentes</h3>
-<ul style="line-height:1.6">
-<li><strong>Herpes simple (VHS)</strong> — vesículas agrupadas recidivantes (oral/genital). Antivirales (aciclovir/valaciclovir) precoces; supresión si recurrencias frecuentes.</li>
-<li><strong>Herpes zóster (VVZ)</strong> — erupción metamérica dolorosa; antiviral en <48-72 h, sobre todo en >50 años o zóster oftálmico. Vigilar neuralgia postherpética.</li>
-<li><strong>Verrugas (VPH)</strong> — vulgares, plantares, planas, anogenitales (condilomas). Queratolíticos, crioterapia, etc.</li>
-<li><strong>Molusco contagioso</strong> — pápulas umbilicadas; autolimitado en inmunocompetentes.</li>
+<p class="intro">Las más frecuentes en consulta: herpesvirus, VPH y poxvirus. Cada cuadro trae la <strong>pauta lista para copiar</strong> (dosis de adulto; ajustar a función renal/peso).</p>
+
+<div class="perla"><div><strong>Primero, identifica virus y contexto.</strong> El antiviral del herpes es más eficaz cuanto más <strong>precoz</strong> (idealmente &lt;72 h). Inmunodeprimido, zóster oftálmico/ótico o eccema herpético → <strong>sistémico sin demora</strong> (valorar IV).</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Alarma:</strong> eccema herpético (Kaposi-Juliusberg) sobre dermatitis atópica, zóster diseminado o con afectación oftálmica → <strong>aciclovir IV</strong> y manejo conjunto (oftalmología si afectación ocular).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Herpes simple (VHS)</div></div>
+<div class="chips"><span class="chip">valaciclovir</span><span class="chip">aciclovir</span><span class="chip">supresión si recurrente</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('iv_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="iv_hc1">HERPES SIMPLE (VHS)
+- Episodico (iniciar precoz): valaciclovir 500 mg/12h 5 dias (orolabial/genital) o aciclovir 400 mg/8h 5 dias.
+- Supresion (>=6 recurrencias/ano o genital frecuente): valaciclovir 500 mg/dia.
+- Herpes labial leve: antiviral topico de escaso beneficio; valorar oral si frecuente.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Herpes zóster (VVZ)</div></div>
+<div class="chips"><span class="chip">valaciclovir &lt;72 h</span><span class="chip">analgesia (NPH)</span><span class="chip">vacuna recombinante</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('iv_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="iv_hc2">HERPES ZOSTER (VVZ)
+- Valaciclovir 1 g/8h v.o. 7 dias (o aciclovir 800 mg 5/dia), iniciar en <72h o mientras haya lesiones activas.
+- Analgesia escalonada; si neuralgia postherpetica: gabapentina/pregabalina o amitriptilina.
+- Zoster oftalmico/otico o inmunodeprimido: tratar siempre, valorar IV y derivar el ojo a oftalmologia.
+- Prevencion: vacuna recombinante (Shingrix) en >=50 anos e inmunodeprimidos.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">VPH (verrugas / condilomas) y molusco</div></div>
+<div class="chips"><span class="chip">crioterapia</span><span class="chip">ác. salicílico</span><span class="chip">imiquimod / podofilotoxina (condilomas)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('iv_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="iv_hc3">VPH y MOLUSCO
+VERRUGAS vulgares/plantares:
+- Acido salicilico topico (queratolitico) a diario +/- crioterapia cada 2-3 semanas; constancia (semanas).
+CONDILOMAS acuminados:
+- Domiciliario: imiquimod 5% o podofilotoxina. En consulta: crioterapia o acido tricloroacetico.
+MOLUSCO contagioso:
+- Autolimitado en inmunocompetente; si se trata: curetaje o crioterapia.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Vacuna recombinante (Shingrix)</strong>: muy eficaz frente a herpes zóster y neuralgia postherpética; recomendada en ≥50 años e inmunodeprimidos.</li>
+<li><strong>Valaciclovir</strong> simplifica la posología frente a aciclovir (mejor adherencia).</li>
 </ul>
-<h3>Signos de alarma</h3>
-<p>Eccema herpético (Kaposi-Juliusberg) sobre dermatitis atópica, zóster diseminado o afectación oftálmica → tratamiento sistémico urgente.</p>
-<div class="btns"><button class="btn btn-sm" onclick="goPauta('herpes')">💊 Pauta (herpes)</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>DermNet</b> — Herpes zoster · <a href="https://dermnetnz.org/topics/herpes-zoster" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+<li><b>DermNet</b> — Herpes simplex · <a href="https://dermnetnz.org/topics/herpes-simplex" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.inf_mic=()=>`<div class="card">
 <h2>Infecciones micóticas</h2>
-<p class="intro">Por dermatofitos (tiñas), levaduras (<em>Candida</em>, <em>Malassezia</em>) y mohos. Apoyo diagnóstico: KOH directo, cultivo y luz de Wood.</p>
-<h3>Cuadros frecuentes</h3>
-<ul style="line-height:1.6">
-<li><strong>Tiña corporal / cruris / pedis</strong> — placa anular de borde activo descamativo. Tópico; oral si extensa.</li>
-<li><strong>Tiña capitis</strong> — en niños; siempre tratamiento <strong>oral</strong> (griseofulvina/terbinafina).</li>
-<li><strong>Onicomicosis</strong> — confirmar antes de tratar; terbinafina/itraconazol oral.</li>
-<li><strong>Pitiriasis versicolor</strong> — máculas hipo/hiperpigmentadas en tronco (Malassezia).</li>
-<li><strong>Candidiasis</strong> — pliegues, intertrigo, mucosas; predisponen humedad, diabetes y antibióticos.</li>
+<p class="intro">Dermatofitos (tiñas), levaduras (<em>Candida</em>, <em>Malassezia</em>) y mohos. Cada cuadro trae la <strong>pauta lista para copiar</strong>. Apoyo: KOH directo, cultivo y luz de Wood.</p>
+
+<div class="perla"><div><strong>Primero, confirma y localiza.</strong> <strong>Tiña capitis y onicomicosis → siempre oral</strong> (y confirmar por cultivo/KOH antes de tratar). Cuerpo/ingle/pie → tópico, oral si es extensa, recidivante o foliculitis (Majocchi). <strong>No</strong> dar corticoide solo (tiña incógnito).</div></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('micologia_lab')">KOH / cultivo</button></div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Tiña corporal / cruris / pedis</div></div>
+<div class="chips"><span class="chip">azol o terbinafina tóp.</span><span class="chip">terbinafina / itraconazol v.o. (extensa)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('im_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="im_hc1">TINA corporal / cruris / pedis
+- Topico: terbinafina o un azol (clotrimazol, ketoconazol) 1-2/dia, 2-4 semanas (seguir 1 sem tras curar).
+- Extensa/recidivante/Majocchi: terbinafina 250 mg/dia v.o. 2-4 sem, o itraconazol 100-200 mg/dia.
+- Tina pedis: secar bien los pliegues; tratar el calzado y la onicomicosis asociada.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Tiña capitis / onicomicosis (oral)</div></div>
+<div class="chips"><span class="chip">terbinafina / griseofulvina (capitis)</span><span class="chip">terbinafina / itraconazol (uñas)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('im_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="im_hc2">TINA CAPITIS / ONICOMICOSIS (siempre oral, confirmar antes)
+TINA CAPITIS (ninos):
+- Terbinafina v.o. por peso, o griseofulvina (mejor para Microsporum), 6-8 semanas + champu antifungico (ketoconazol/sulfuro de selenio) coadyuvante.
+ONICOMICOSIS (confirmada):
+- Terbinafina 250 mg/dia: unas de mano 6 sem, de pie 12 sem; alternativa itraconazol en pulsos.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Pitiriasis versicolor / candidiasis</div></div>
+<div class="chips"><span class="chip">ketoconazol tóp. (PV)</span><span class="chip">azol tóp. + secar (candida)</span><span class="chip">fluconazol v.o.</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('im_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="im_hc3">PITIRIASIS VERSICOLOR / CANDIDIASIS
+PITIRIASIS VERSICOLOR:
+- Ketoconazol gel/champu (aplicar y dejar actuar) o azol topico 2-4 sem. Extensa/recidivante: itraconazol 200 mg/dia 5-7 dias.
+- Avisar: la hipopigmentacion tarda semanas-meses en repigmentar (no es fallo del tratamiento).
+CANDIDIASIS de pliegues/intertrigo:
+- Azol o nistatina topica + mantener la zona seca; tratar factores (humedad, diabetes).
+- Mucosa/extensa: fluconazol 50-150 mg v.o.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong><em>Trichophyton indotineae</em></strong>: dermatofito emergente (Asia del Sur, ya en otros países) que causa tiñas extensas <strong>resistentes a terbinafina</strong>; ante mala respuesta, cultivo/antifungigrama y valorar <strong>itraconazol</strong> prolongado.</li>
+<li>Recordar el <strong>tratamiento del reservorio</strong> (calzado, onicomicosis, convivientes) para evitar recidivas.</li>
 </ul>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('micologia_lab')">KOH / cultivo</button><button class="btn btn-out btn-sm" onclick="goPauta('dermatofitosis')">💊 Tiñas</button><button class="btn btn-out btn-sm" onclick="goPauta('candidiasis')">💊 Candidiasis</button><button class="btn btn-out btn-sm" onclick="goPauta('pversicolor')">💊 P. versicolor</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>CDC</b> — Trichophyton indotineae (tiña resistente a antifúngicos) · <a href="https://www.cdc.gov/ringworm/causes/index.html" target="_blank" rel="noopener">cdc.gov</a>.</li>
+<li><b>DermNet</b> — Tinea / dermatophytosis · <a href="https://dermnetnz.org/topics/fungal-skin-infections" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.inf_par=()=>`<div class="card">
 <h2>Infestaciones parasitarias</h2>
-<p class="intro">Las más relevantes: escabiosis, pediculosis y larva migrans.</p>
-<h3>Cuadros</h3>
-<ul style="line-height:1.6">
-<li><strong>Escabiosis (sarna)</strong> — prurito intenso de predominio nocturno; surcos en espacios interdigitales, muñecas y genitales. Tratar al paciente y a los convivientes (permetrina 5% tópica o ivermectina oral). La sarna costrosa (Noruega) es muy contagiosa (inmunodeprimidos).</li>
-<li><strong>Pediculosis</strong> — capitis (niños), corporis, pubis. Pediculicidas tópicos; lavado/aislamiento de ropa.</li>
-<li><strong>Larva migrans cutánea</strong> — trayecto serpiginoso pruriginoso (playas); ivermectina o albendazol.</li>
+<p class="intro">Las más relevantes: escabiosis, pediculosis y larva migrans. Cada cuadro trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, la regla de oro de la sarna:</strong> tratar <strong>a la vez</strong> al paciente y a todos los convivientes/contactos (aunque no piquen) y descontaminar fómites el mismo día. El <strong>prurito puede durar 2-4 semanas</strong> tras curar (postescabiótico): no es fallo del tratamiento.</div></div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Escabiosis (sarna)</div></div>
+<div class="chips"><span class="chip">permetrina 5% (×2)</span><span class="chip">ivermectina oral (×2)</span><span class="chip">tratar convivientes + fómites</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ip_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="ip_hc1">ESCABIOSIS (sarna)
+TOPICO (eleccion):
+- Permetrina 5% crema: aplicar de cuello hacia abajo (incluir pliegues, unas, genitales; en ninos/ancianos tambien cuero cabelludo), dejar 8-12h y lavar. REPETIR a los 7 dias.
+ORAL (extensa, brotes, mala adherencia):
+- Ivermectina 200 microg/kg v.o., 2 dosis separadas 7 dias (con comida).
+SIEMPRE:
+- Tratar el MISMO dia a convivientes y contactos sexuales.
+- Fomites: lavar ropa/sabanas a >=60 C o aislar en bolsa cerrada 72h.
+- Prurito postescabiotico hasta 2-4 sem: emoliente +/- corticoide topico (no repetir escabicida sin reinfestacion).
+SARNA COSTROSA (Noruega): ivermectina en multiples dosis + queratolitico topico; aislamiento de contacto.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Pediculosis</div></div>
+<div class="chips"><span class="chip">dimeticona / permetrina 1%</span><span class="chip">repetir 7-10 d</span><span class="chip">liendrera</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ip_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="ip_hc2">PEDICULOSIS
+CAPITIS (ninos):
+- Dimeticona 4% o permetrina 1%: aplicar y repetir a los 7-10 dias; liendrera con pelo humedo.
+- Revisar a convivientes; no compartir peines/gorros.
+PUBIS: permetrina topica; tratar contactos sexuales y cribar otras ITS.
+CORPORIS: higiene y descontaminacion de la ropa (el parasito vive en la ropa).</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Larva migrans cutánea</div></div>
+<div class="chips"><span class="chip">ivermectina</span><span class="chip">albendazol</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ip_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="ip_hc3">LARVA MIGRANS CUTANEA (trayecto serpiginoso, antecedente de playa/arena)
+- Ivermectina 200 microg/kg v.o. dosis unica (repetir si persiste), o
+- Albendazol 400 mg/dia v.o. 3-7 dias.
+Autolimitada, pero el tratamiento acorta el prurito y la duracion.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Guía 2024</strong>: confirma permetrina 5% e <strong>ivermectina oral en 2 dosis (días 1 y 8)</strong> como tratamientos de elección; los "fracasos" suelen deberse a errores de aplicación o a no tratar a los convivientes.</li>
+<li>Recordar el <strong>prurito postescabiótico</strong> para no sobretratar.</li>
 </ul>
-<div class="btns"><button class="btn btn-sm" onclick="goPauta('escabiosis')">💊 Pauta (escabiosis)</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Tratar a convivientes y desinfectar fómites.</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Uzun S, et al. Clinical practice guidelines for the diagnosis and treatment of scabies. <em>Int J Dermatol</em> 2024 · doi 10.1111/ijd.17327 · <a href="https://onlinelibrary.wiley.com/doi/10.1111/ijd.17327" target="_blank" rel="noopener">Wiley</a>.</li>
+<li><b>IUSTI</b> — European guideline for the management of scabies · <a href="https://iusti.org/wp-content/uploads/2019/12/Scabies.pdf" target="_blank" rel="noopener">iusti.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Tratar a convivientes y descontaminar fómites</strong>; confirmar dosis y ficha técnica.</div>
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Tricología =====
