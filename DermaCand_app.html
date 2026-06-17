@@ -506,7 +506,6 @@ body{font-size:13px}
      pegada y sin sesión). Así, mientras el backend no esté configurado, la app abre sin fricción. -->
 <div id="hp-auth-overlay" class="hidden" role="dialog" aria-modal="true" aria-label="Iniciar sesión">
   <div class="hp-login-card">
-    <img src="kera-avatar.png" alt="" width="56" height="56" style="display:block;margin:0 auto 10px" aria-hidden="true">
     <div class="hp-login-title"><span style="color:var(--c2);font-weight:500">DERMA</span><span style="color:var(--c1)">CAND</span></div>
     <div class="hp-login-sub">Guía de consulta rápida en Dermatología</div>
     <div id="hp-login-view">
@@ -911,7 +910,6 @@ const MENU=[
 ]},
 {h:'PROCEDIMIENTOS Y CIRUGÍA',items:[
 {id:'dermatoscopia',name:'Dermatoscopia',kw:'dermatoscopia dermoscopia patrones red pigmentaria globulos estructuras melanoma nevus diagnostico'},
-{id:'biopsia',name:'Técnicas de biopsia',kw:'biopsia punch afeitado incisional escisional cutanea tecnica eleccion'},
 {id:'cirugia',name:'Cirugía dermatológica',kw:'cirugia dermatologica extirpacion margenes cierre colgajo injerto mohs'},
 {id:'bridging',name:'Bridging perioperatorio',kw:'bridging perioperatorio anticoagulacion cirugia avk acod hbpm puente suspension apixaban rivaroxaban dabigatran edoxaban warfarina sintrom acenocumarol operar operacion intervencion quirurgica preoperatorio postoperatorio procedimiento suspender reiniciar'},
 {id:'prof_atb',name:'Profilaxis antibiótica',kw:'profilaxis antibiotica cirugia cutanea endocarditis articular infeccion herida amoxicilina'},
@@ -4247,7 +4245,7 @@ VIEWS.melanoma=()=>`<div class="card">
 
 <div class="perla"><div><strong>Primero, estadifica (AJCC 8ª)</strong> tras biopsia escisional completa: el <strong>Breslow + ulceración</strong> definen el T y el <strong>ganglio centinela</strong> (si T1b-T4 con N0 clínico) define el N. Mapea el estadio — <strong>localizado (I-II)</strong>, <strong>regional (III)</strong> o <strong>avanzado/metastásico (IV)</strong> — porque decide márgenes, centinela, adyuvancia/neoadyuvancia y tratamiento sistémico.</div></div>
 <div class="alert r" style="margin:8px 0"><strong>Atención:</strong> en melanoma desmoplásico puro o lentigo maligno extenso los márgenes de 1 cm suelen quedar cortos por extensión subclínica (planificar márgenes guiados por histología). En estadio III-IV con síntomas neurológicos, RM cerebral con gadolinio y priorizar <strong>nivolumab+ipilimumab</strong> (mayor actividad intracraneal).</div>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('dermatoscopia')">Dermatoscopia</button><button class="btn btn-out btn-sm" onclick="go('biopsia')">Biopsia</button></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('dermatoscopia')">Dermatoscopia</button></div>
 
 <div class="step-h l1"><div class="sn">1</div><div class="st">Localizado (estadio I-II)</div></div>
 <div class="chips"><span class="chip">escisión amplia</span><span class="chip">ganglio centinela</span><span class="chip">pembrolizumab/nivolumab adyuvante (IIB-IIC)</span></div>
@@ -5064,22 +5062,6 @@ VIEWS.dermatoscopia=()=>`<div class="card"><h2>Dermatoscopia — atlas de patron
 <p class="intro">Biblioteca de <strong>atlas, libros y guías de dermatoscopia</strong> para <strong>comparar patrones</strong> con la lesión del paciente. Cuelga aquí los PDF por categorías: pulsa <strong>✏️ Editar</strong> para añadir apartados y <strong>⬆️ Subir PDF</strong> (requiere permiso de edición).</p>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('melanoma')">Melanoma</button><button class="btn btn-out btn-sm" onclick="go('tricoscopia')">Tricoscopia</button></div></div>`+guidesView('dermato');
 
-VIEWS.biopsia=()=>`<div class="card">
-<h2>Técnicas de biopsia cutánea</h2>
-<p class="intro">La elección depende de la sospecha clínica, el tamaño y la localización. Remite siempre con datos clínicos y orientación diagnóstica.</p>
-<h3>Técnicas</h3>
-<ul style="line-height:1.6">
-<li><strong>Punch (sacabocados)</strong> — cilindro de piel hasta TCS; ideal para dermatosis inflamatorias y lesiones pequeñas (3-4 mm).</li>
-<li><strong>Afeitado (shave)</strong> — lesiones exofíticas/epidérmicas. <strong>Evitar</strong> si se sospecha melanoma (impide medir Breslow).</li>
-<li><strong>Incisional</strong> — muestra parcial de lesiones grandes.</li>
-<li><strong>Escisional</strong> — extirpación completa con margen; de elección ante sospecha de <strong>melanoma</strong>.</li>
-</ul>
-<h3>Consejos</h3>
-<p>Toma del borde activo (no del centro necrótico) en inflamatorias; muestra perilesional adicional para IFD en ampollosas/vasculitis.</p>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('cirugia')">Cirugía</button></div>
-<div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
-</div>`;
-
 VIEWS.cirugia=()=>`<div class="card">
 <h2>Cirugía dermatológica</h2>
 <p class="intro">Ejemplos de <strong>cierres y colgajos</strong> más usados y repositorio para <strong>colgar atlas/guías y PDF</strong> de técnica quirúrgica. Esquemas orientativos: <span style="color:var(--c1)">azul</span> = colgajo/tejido que se moviliza · <span style="color:var(--er)">rojo discontinuo</span> = defecto o lesión.</p>
@@ -5098,7 +5080,7 @@ VIEWS.cirugia=()=>`<div class="card">
 <div style="border:1px solid var(--bd);border-radius:8px;padding:8px;text-align:center"><svg viewBox="0 0 100 72" style="width:100%;height:62px"><circle cx="50" cy="38" r="16" fill="none" stroke="var(--er)" stroke-width="1.4" stroke-dasharray="3 3"/><circle cx="50" cy="38" r="10" fill="var(--c1)" opacity="0.12" stroke="var(--c1)" stroke-width="1.6"/><circle cx="50" cy="38" r="4.5" fill="var(--c1)" opacity="0.28"/></svg><div style="font-weight:600;font-size:12.5px;margin-top:4px">2.ª intención</div><div style="font-size:11px;color:var(--mut)">granulación dirigida; cóncavas (canto, concha)</div></div>
 </div>
 
-<div class="btns" style="margin-top:6px"><button class="btn btn-out btn-sm" onclick="go('biopsia')">Biopsia</button><button class="btn btn-out btn-sm" onclick="go('prof_atb')">Profilaxis ATB</button><button class="btn btn-out btn-sm" onclick="go('bridging')">Anticoagulación</button></div>
+<div class="btns" style="margin-top:6px"><button class="btn btn-out btn-sm" onclick="go('prof_atb')">Profilaxis ATB</button><button class="btn btn-out btn-sm" onclick="go('bridging')">Anticoagulación</button></div>
 <div class="alert b" style="margin-top:12px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.). Esquemas orientativos; la técnica real, en los atlas/PDF colgados debajo.</div>
 </div>`+guidesView('cirugia');
 
@@ -6241,52 +6223,169 @@ VIEWS.malf_vascular=()=>`<div class="card">
 // ===== VISTAS DE PATOLOGÍA · Misceláneas =====
 VIEWS.eritemas_fig=()=>`<div class="card">
 <h2>Eritemas figurados</h2>
-<p class="intro">Erupciones con lesiones eritematosas <strong>anulares, arciformes o policíclicas</strong> que cambian de forma. A menudo reactivos a un proceso subyacente.</p>
-<h3>Entidades</h3>
-<ul>
-<li><strong>Eritema anular centrífugo</strong> — anillos que se expanden con escama "en remolque" por dentro del borde; reactivo (infección, fármacos, neoplasia).</li>
-<li><strong>Eritema marginado</strong> — anillos evanescentes; criterio de fiebre reumática.</li>
-<li><strong>Eritema migratorio (enf. de Lyme)</strong> — lesión anular en la zona de la picadura de garrapata.</li>
-<li><strong>Eritema gyratum repens</strong> — patrón "en vetas de madera"; muy asociado a neoplasia (paraneoplásico).</li>
+<p class="intro">Lesiones <strong>anulares/arciformes/policíclicas</strong> que cambian de forma; cada patrón es una pista para buscar y tratar una causa. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, reconoce el patrón</strong> (morfología + velocidad de migración): no tratas solo la piel, sino la causa subyacente (infección, fármaco, fiebre reumática o neoplasia).</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Eritema gyratum repens</strong> (en vetas de madera, migra &gt;1 cm/día) → cribado <strong>urgente de neoplasia oculta</strong> (TC tórax-abdomen-pelvis, endoscopia, mamografía/ginecología) antes de etiquetarlo como benigno.</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Reconocer el patrón</div></div>
+<div class="chips"><span class="chip">EAC</span><span class="chip">marginado</span><span class="chip">migratorio (Lyme)</span><span class="chip">gyratum repens</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ef_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="ef_hc1">ERITEMAS FIGURADOS - reconocer el patron
+- EAC (anular centrifugo): anillos con escama EN REMOLQUE (collarete por dentro del borde), crecen lento (~mm/dia).
+- Marginado: anillos rosados evanescentes en tronco, migran en horas, NO descaman -> criterio de Jones (fiebre reumatica).
+- Migratorio (Lyme): placa anular unica que se expande dias-semanas, +/- centro claro; antecedente de picadura de garrapata.
+- Gyratum repens: bandas serpiginosas concentricas en veta de madera, descaman en el borde, migran >1 cm/dia -> paraneoplasico.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Estudiar según el patrón</div></div>
+<div class="chips"><span class="chip">KOH / cultivo</span><span class="chip">ASLO / faringe / ECG</span><span class="chip">cribado oncológico (EGR)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ef_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="ef_hc2">ERITEMAS FIGURADOS - estudiar segun el patron
+- EAC: buscar gatillo (micosis: KOH/tina; farmacos; infeccion; raro paraneoplasico); suspender farmaco sospechoso.
+- Marginado: ASLO/anti-DNasaB, frotis faringeo (estreptococo), ecocardio (carditis); criterios de Jones.
+- Migratorio: en zona endemica el diagnostico es CLINICO (no esperar serologia; serologia de 2 pasos solo si dudoso).
+- Gyratum repens: TC torax-abdomen-pelvis, endoscopia alta, mamografia/ginecologia (pulmon y esofago los mas frecuentes).</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Tratar la causa</div></div>
+<div class="chips"><span class="chip">doxiciclina/amoxicilina (Lyme)</span><span class="chip">penicilina (FR)</span><span class="chip">corticoide tóp. (EAC)</span><span class="chip">tratar la neoplasia (EGR)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('ef_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="ef_hc3">ERITEMAS FIGURADOS - tratar la causa (la piel mejora con la causa)
+- Lyme/migratorio: doxiciclina 100 mg/12h VO 10 dias (1a eleccion adulto); alternativa amoxicilina 500 mg/8h o cefuroxima axetilo 500 mg/12h x14 dias (embarazo/ninos).
+- Marginado: tratar el estreptococo + profilaxis con penicilina segun fiebre reumatica; no precisa tratamiento cutaneo.
+- EAC: tratar la causa; sintomatico con corticoide topico medio-alto (mometasona) + emoliente; recidiva hasta resolver el gatillo.
+- Gyratum repens: tratar la neoplasia -> resuelve el eritema; sin tumor, reevaluar y repetir el cribado.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li><strong>Lyme (IDSA/AAN/ACR 2020)</strong>: en el eritema migratorio basta doxiciclina 10 días (o amoxicilina/cefuroxima 14); los cursos largos no aportan beneficio.</li>
+<li>El <strong>gyratum repens</strong> es paraneoplásico en la mayoría pero no obligatorio; aun así, el cribado oncológico sigue siendo mandatorio.</li>
 </ul>
-<h3>Manejo</h3>
-<p>Buscar y tratar la causa (infección, fármaco, neoplasia). El estudio depende del patrón y el contexto; el gyratum repens obliga a descartar malignidad.</p>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/erythema-annulare-centrifugum" target="_blank" rel="noopener">DermNet — Erythema annulare centrifugum</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>IDSA/AAN/ACR</b> — Lantos PM, et al. Clinical practice guidelines for Lyme disease, 2020 · <a href="https://www.idsociety.org/practice-guideline/lyme-disease/" target="_blank" rel="noopener">idsociety.org</a>.</li>
+<li>Eubanks LE, et al. Erythema gyratum repens is not an obligate paraneoplastic disease (revisión sistemática) · <a href="https://pubmed.ncbi.nlm.nih.gov/22830929/" target="_blank" rel="noopener">PubMed</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong> antes de prescribir.</div>
 </div>`;
 
 VIEWS.purpuras=()=>`<div class="card">
 <h2>Púrpuras</h2>
-<p class="intro">Extravasación de hematíes en la piel: lesiones rojo-violáceas que <strong>no desaparecen a la digitopresión</strong> (a diferencia del eritema). Clave: ¿palpable o no?, ¿plaquetas normales?</p>
-<h3>Clasificación práctica</h3>
-<ul>
-<li><strong>No palpable + trombopenia</strong> — púrpura trombopénica (PTI, fármacos, médula).</li>
-<li><strong>No palpable, plaquetas normales</strong> — fragilidad/causa mecánica: púrpura senil, actínica, por corticoides, escorbuto; o alteración de la coagulación.</li>
-<li><strong>Palpable</strong> — <strong>vasculitis</strong> de pequeño vaso (leucocitoclástica); valorar afectación sistémica.</li>
-<li><strong>Retiforme / necrótica</strong> — oclusión microvascular (ver apartado).</li>
-</ul>
-<h3>Estudio</h3>
-<p>Hemograma con plaquetas y coagulación; según el patrón, biopsia (con IFD si hay vasculitis) y estudio etiológico. La distribución y la morfología orientan la causa.</p>
+<p class="intro">Extravasación de hematíes: lesiones que <strong>no desaparecen a la digitopresión</strong>. La morfología orienta el estudio y el tratamiento es el de la causa. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, clasifica</strong> por palpabilidad, morfología y plaquetas: no palpable + trombopenia · no palpable con plaquetas normales (fragilidad/coagulopatía) · palpable (vasculitis de pequeño vaso) · retiforme/necrótica (oclusión microvascular).</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Urgente:</strong> púrpura retiforme/necrótica, fiebre, púrpura extensa de inicio brusco o palpable con dolor abdominal/hematuria → hospital; hemograma + coagulación + frotis el mismo día (descartar CID, sepsis/meningococo, PTT y vasculitis sistémica).</div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('vasculitis')">Vasculitis</button><button class="btn btn-out btn-sm" onclick="go('oclusion_micro')">Oclusión microvascular</button></div>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/purpura" target="_blank" rel="noopener">DermNet — Purpura</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Clasificar (morfología + plaquetas)</div></div>
+<div class="chips"><span class="chip">palpar</span><span class="chip">hemograma + plaquetas</span><span class="chip">frotis</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pu_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="pu_hc1">PURPURAS - clasificar por morfologia y plaquetas
+NO palpable + plaquetas BAJAS -> trombopenia (PTI; farmacos: heparina/quinina/antiagregantes; alcohol; fallo/infiltracion medular). Pedir frotis (descartar pseudotrombopenia por EDTA y esquistocitos).
+NO palpable + plaquetas NORMALES -> fragilidad o coagulopatia:
+- fragilidad: senil (dorso de manos/antebrazos), actinica, corticoides, escorbuto (perifolicular + pelos en sacacorchos).
+- coagulopatia: anticoagulantes, hepatopatia, deficit de vitamina K.
+PALPABLE -> vasculitis de pequeno vaso.
+RETIFORME/necrotica/estrellada -> oclusion microvascular.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Estudiar según el patrón</div></div>
+<div class="chips"><span class="chip">hemograma/coagulación</span><span class="chip">función renal + orina</span><span class="chip">biopsia ± IFD</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pu_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="pu_hc2">PURPURAS - estudio
+Basico en toda purpura no explicada:
+- hemograma + plaquetas + frotis.
+- coagulacion: TP/INR, TTPa, fibrinogeno.
+- funcion renal/hepatica + sedimento de orina (afectacion sistemica).
+Biopsia segun patron:
+- PALPABLE: biopsia de lesion <48h (leucocitoclastica) + IFD en lesion <24h (IgA -> vasculitis IgA).
+- RETIFORME: biopsiar el BORDE purpurico periferico (no el centro necrotico).
+Segun sospecha: ANA, ANCA, crioglobulinas, C3/C4, serologia VHB/VHC, electroforesis, anticuerpos antifosfolipido, proteina C/S.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Palpable vs retiforme — tratar la causa</div></div>
+<div class="chips"><span class="chip">vasculitis → ver apartado</span><span class="chip">oclusión → ver apartado</span><span class="chip">fragilidad: medidas</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('pu_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="pu_hc3">PURPURAS - tratar la causa
+PALPABLE = vasculitis de pequeno vaso (idiopatica, farmacos, infeccion, IgA, crioglobulinemia, conectivopatia, ANCA): retirar el desencadenante, reposo/elevacion, valorar afectacion renal/GI; la cutanea leve suele autolimitarse (ver Vasculitis).
+RETIFORME/necrotica = oclusion microvascular: identificar y tratar la causa sistemica + soporte (ver Oclusion microvascular).
+FRAGILIDAD (senil/actinica/corticoides/escorbuto): no precisa biopsia; suspender corticoide si aplica, reponer vitamina C en escorbuto, fotoproteccion.
+REGLA: el tratamiento es el de la causa subyacente.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li>La biopsia rinde más en lesión fresca: histología en &lt;48 h e <strong>IFD en &lt;24-48 h</strong>; la IgA perivascular apoya vasculitis IgA.</li>
+<li>En la <strong>púrpura retiforme</strong>, biopsiar el <strong>borde</strong> (no el centro necrótico); el ancho del halo eritematoso separa inflamatoria de oclusiva pura y guía el panel de coagulación.</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Georgesen C, Fox LP, Harp J. Retiform purpura: a diagnostic approach. <em>J Am Acad Dermatol</em> 2020;82(4):783-796 · <a href="https://pubmed.ncbi.nlm.nih.gov/31479689/" target="_blank" rel="noopener">PubMed</a>.</li>
+<li><b>DermNet</b> — Purpura · <a href="https://dermnetnz.org/topics/purpura" target="_blank" rel="noopener">dermnetnz.org</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.).</div>
 </div>`;
 
 VIEWS.oclusion_micro=()=>`<div class="card">
 <h2>Síndromes de oclusión microvascular</h2>
-<p class="intro">Oclusión de la microcirculación cutánea (trombos, émbolos o depósitos) que produce <strong>púrpura retiforme</strong> y necrosis. No es una vasculitis (no hay inflamación de la pared) y el manejo es distinto.</p>
-<h3>Causas</h3>
-<ul>
-<li><strong>Trombóticas</strong> — síndrome antifosfolípido, CID, trombopenia inducida por heparina, púrpura fulminante.</li>
-<li><strong>Calcifilaxis</strong> — en insuficiencia renal/diálisis; placas necróticas muy dolorosas.</li>
-<li><strong>Embólicas</strong> — émbolos de colesterol, mixoma, endocarditis; livedo racemosa, "dedos azules".</li>
-<li><strong>Otras</strong> — crioglobulinemia, necrosis por cumarínicos.</li>
-</ul>
-<h3>Manejo</h3>
-<p>Biopsia (trombos sin vasculitis) y estudio sistémico urgente (coagulación, autoinmunidad, fuente embólica). Tratar la causa; la calcifilaxis requiere manejo específico (tiosulfato sódico, control mineral). Suele indicar enfermedad sistémica grave.</p>
+<p class="intro">Oclusión del lumen (trombos, émbolos o depósitos) → <strong>púrpura retiforme</strong> y necrosis, SIN inflamación de pared (no es vasculitis). Casi siempre señala enfermedad sistémica grave. Cada escalón trae la <strong>pauta lista para copiar</strong>.</p>
+
+<div class="perla"><div><strong>Primero, reconoce y clasifica por mecanismo</strong> (trombo, émbolo, depósito/calcificación) y por causa tratable. El objetivo es <strong>biopsia + estudio sistémico urgente</strong> y tratar la causa, no la piel.</div></div>
+<div class="alert r" style="margin:8px 0"><strong>Crítico:</strong> púrpura retiforme aguda con paciente séptico/inestable, fallo multiorgánico o necrosis rápida → ingreso urgente, hemocultivos + antibiótico empírico amplio si púrpura fulminans/sepsis, y descartar <strong>CID, SAF catastrófico y TIH</strong> de inmediato (no esperar a la biopsia para iniciar soporte y anticoagulación según causa).</div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="go('purpuras')">Púrpuras</button></div>
-<div class="refbox">📚 <b>Referencias:</b> <a href="https://dermnetnz.org/topics/retiform-purpura" target="_blank" rel="noopener">DermNet — Retiform purpura</a> · <a href="https://aedv.es" target="_blank" rel="noopener">AEDV</a>.</div>
-<div class="alert b" style="margin-top:10px">📝 <strong>Borrador para revisión clínica</strong> (García Silvera, D.).</div>
+
+<div class="step-h l1"><div class="sn">1</div><div class="st">Clasificar (biopsia + patrón)</div></div>
+<div class="chips"><span class="chip">biopsia (borde + centro)</span><span class="chip">IFD</span><span class="chip">evaluar gravedad</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('om_hc1').innerText)">Copiar</button></div>
+<div class="rxcard l1"><pre id="om_hc1">OCLUSION MICROVASCULAR (purpura retiforme) - clasificar
+Retiforme = estrellada/ramificada + necrosis = OCLUSION del lumen (NO vasculitis).
+- Biopsia incisional profunda: tomar BORDE purpurico + centro necrotico; IFD para descartar vasculitis/depositos.
+- Inflamatoria (eritema/dolor desproporcionado/halo ancho): pensar vasculitis o embolo septico.
+- No inflamatoria (purpura neta, halo estrecho): trombosis/embolo/deposito.
+- Distribucion: acral/livedo -> embolos de colesterol, crioglobulinas, SAF; zonas grasas/dependientes -> calcifilaxis, necrosis cumarinica.
+- Evaluar SIEMPRE estabilidad: sepsis, fallo organico.</pre></div>
+
+<div class="step-h l2"><div class="sn">2</div><div class="st">Estudiar (analítica sistémica urgente)</div></div>
+<div class="chips"><span class="chip">hemograma/coagulación/dímero-D</span><span class="chip">antifosfolípido</span><span class="chip">anti-PF4 (TIH)</span><span class="chip">Ca/P/PTH</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('om_hc2').innerText)">Copiar</button></div>
+<div class="rxcard l2"><pre id="om_hc2">OCLUSION MICROVASCULAR - estudio sistemico urgente (dirigido por la sospecha)
+- Plaquetas BAJAS + heparina previa 5-10 dias -> 4Ts + anti-PF4 (TIH).
+- Plaquetas bajas + TP/TTPa altos + fibrinogeno bajo + dimero-D alto -> CID.
+- Trombosis + abortos/livedo -> anticardiolipina, anti-B2GP1, anticoagulante lupico (SAF).
+- Crioglobulinas + C4 bajo + VHC -> crioglobulinemia.
+- ERC/dialisis + Ca-P-PTH alterados -> calcifilaxis.
+- Warfarina reciente (dia 3-5) -> necrosis cumarinica (proteina C/S).
+- Sepsis + purpura difusa -> hemocultivos, purpura fulminans.</pre></div>
+
+<div class="step-h l3"><div class="sn">3</div><div class="st">Tratar la causa (anticoagulación específica)</div></div>
+<div class="chips"><span class="chip">argatroban/fondaparinux (TIH)</span><span class="chip">triple terapia (CAPS)</span><span class="chip">tiosulfato (calcifilaxis)</span><span class="chip">ATB (fulminans)</span></div>
+<div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('om_hc3').innerText)">Copiar</button></div>
+<div class="rxcard l3"><pre id="om_hc3">OCLUSION MICROVASCULAR - tratar el mecanismo (NO la piel)
+- TIH: SUSPENDER toda heparina + anticoagulante NO heparinico (argatroban o fondaparinux); NO transfundir plaquetas; NO iniciar warfarina hasta plaquetas >150.
+- SAF catastrofico (CAPS): triple terapia -> anticoagulacion plena + corticoide a dosis altas + IVIG o recambio plasmatico.
+- CID: tratar la causa + soporte (PFC/plaquetas/fibrinogeno solo si sangrado).
+- Necrosis cumarinica: parar warfarina, vitamina K IV, heparina/HBPM puente, PFC; concentrado de proteina C si deficit grave.
+- Calcifilaxis: tiosulfato sodico IV (25 g en dialisis), optimizar Ca/P/PTH, retirar calcio/quelantes calcicos y warfarina, analgesia, cura de heridas.
+- Purpura fulminans: antibiotico empirico precoz + soporte; concentrado de proteina C si deficit.
+- Embolos de colesterol: estatina, control de TA, evitar anticoagulacion/cateterismo no esencial.</pre></div>
+
+<h3>Novedades</h3>
+<ul style="line-height:1.7;font-size:13px;margin:4px 0">
+<li>El abordaje de Georgesen (JAAD 2020) separa retiforme <strong>inflamatoria</strong> (vasculitis, émbolo séptico) de <strong>no inflamatoria</strong> (oclusión pura): el borde + IFD orientan el panel analítico.</li>
+<li><strong>TIH</strong>: anticoagulante no heparínico a dosis plena (argatroban/fondaparinux), evitando warfarina hasta recuperar plaquetas.</li>
+<li><strong>SAF catastrófico</strong>: el estándar sigue siendo la triple terapia precoz (anticoagulación + corticoide + IVIG/recambio).</li>
+</ul>
+
+<div class="refbox">
+<b>Referencias</b> (verifica la fuente):
+<ul style="margin:6px 0 0;padding-left:18px">
+<li>Georgesen C, Fox LP, Harp J. Retiform purpura: a diagnostic approach. <em>J Am Acad Dermatol</em> 2020;82(4):799-816 · <a href="https://pubmed.ncbi.nlm.nih.gov/31479689/" target="_blank" rel="noopener">PubMed</a>.</li>
+<li>Knight JS, et al. Antiphospholipid syndrome management: 2023 update · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10364614/" target="_blank" rel="noopener">PMC</a>.</li>
+</ul>
+</div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica</strong> (García Silvera, D.). <strong>Confirmar dosis y ficha técnica</strong>; manejo multidisciplinar urgente.</div>
 </div>`;
 
 VIEWS.granulomatosas=()=>`<div class="card">
@@ -6838,7 +6937,7 @@ function eriBindViewport(){
 }
 function openChat(){const p=$('chatPanel'),f=$('chatFab');if(!p)return;p.classList.add('open');p.setAttribute('aria-hidden','false');if(f)f.classList.remove('pulse');const g=$('eriGreet');if(g)g.classList.remove('show');eriBindViewport();eriSyncViewport();if(!_chatInited){_chatInited=true;chatInit();}else{const inp=$('chat_input');if(inp)inp.focus();}}
 function closeChat(){const p=$('chatPanel');if(!p)return;p.classList.remove('open');p.setAttribute('aria-hidden','true');p.style.height='';p.style.top='';const f=$('chatFab');if(f)f.classList.add('pulse');}
-function eriGreetShow(){const g=$('eriGreet'),p=$('chatPanel');if(!g||(p&&p.classList.contains('open'))||eriIsHidden()||S.view!=='home')return;if(typeof eriPlaceGreet==='function')eriPlaceGreet();g.classList.add('show');clearTimeout(window._eriGreetT);window._eriGreetT=setTimeout(function(){g.classList.remove('show');},8000);}
+function eriGreetShow(){const g=$('eriGreet'),p=$('chatPanel');if(!g||(p&&p.classList.contains('open'))||eriIsHidden())return;if(typeof eriPlaceGreet==='function')eriPlaceGreet();g.classList.add('show');clearTimeout(window._eriGreetT);window._eriGreetT=setTimeout(function(){g.classList.remove('show');},8000);}
 // === PWA INSTALL ===
 const _hpIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 function hpStandalone(){return window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;}
@@ -7855,7 +7954,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 8;
+  var DC_BUILD = 9;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
