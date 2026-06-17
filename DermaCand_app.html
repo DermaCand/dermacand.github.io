@@ -8586,7 +8586,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 14;
+  var DC_BUILD = 15;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -8759,27 +8759,107 @@ return `<div class="card">
 };
 VIEWS.solicitudes_post=()=>{ if(window.hpRenderSolicitudes) window.hpRenderSolicitudes(); };
 
-function solCard(c,withActions){
-const nom=((c.nombre||'')+' '+(c.apellido||'')).trim()||'(sin nombre)';
-let fecha='';
-try{ if(c.fechaAceptacion&&c.fechaAceptacion.seconds) fecha=new Date(c.fechaAceptacion.seconds*1000).toLocaleString('es-ES'); }catch(e){}
+const HP_PRINCIPAL_UID='IXktZrlu5KSWMSyt6MO1Kt1fRZf1'; // admin principal intocable
+function solCard(c,withActions,roleInfo){
+const nom=((c.nombre||'')+' '+(c.apellido||'')).trim();
+let fecha=''; try{ if(c.fechaAceptacion&&c.fechaAceptacion.seconds) fecha=new Date(c.fechaAceptacion.seconds*1000).toLocaleString('es-ES'); }catch(e){}
+let acceso=''; try{ if(c.ultimoAcceso&&c.ultimoAcceso.seconds) acceso=new Date(c.ultimoAcceso.seconds*1000).toLocaleString('es-ES'); }catch(e){}
 const estado=c.estado||'';
-const badge=estado==='aprobada'?'<span style="color:#1a7f37;font-weight:600">✔ aprobada</span>'
-  :estado==='rechazada'?'<span style="color:#b00020;font-weight:600">✕ rechazada</span>'
-  :'<span style="color:#b8860b;font-weight:600">⏳ pendiente</span>';
-let h='<div class="team-card"><h3 style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span>'+nom+'</span>'+badge+'</h3>';
-h+='<div style="font-size:13px;line-height:1.7">';
-h+='<div><strong>Correo:</strong> '+(c.email||'')+'</div>';
-if(fecha) h+='<div><strong>Aceptó los términos:</strong> '+fecha+(c.versionTerminos?(' (v'+c.versionTerminos+')'):'')+'</div>';
-h+='</div>';
+const manageable=estado!=='pendiente'&&estado!=='rechazada';
+const badge=estado==='aprobada'?'<span style="color:#1a7f37;font-weight:600;font-size:11.5px">✔ aprobada</span>'
+  :estado==='rechazada'?'<span style="color:#b00020;font-weight:600;font-size:11.5px">✕ rechazada</span>'
+  :estado==='pendiente'?'<span style="color:#b8860b;font-weight:600;font-size:11.5px">⏳ pendiente</span>'
+  :'<span style="color:#5a6a85;font-weight:600;font-size:11.5px">🔑 acceso directo</span>';
+const resumen=hpRolResumen(c.uid,roleInfo);
+let h='<div class="coll'+(withActions?' open':'')+'" style="margin-bottom:8px">';
+h+='<div class="coll-h" onclick="this.parentElement.classList.toggle(\'open\')">';
+h+='<span style="display:flex;flex-direction:column;gap:1px;min-width:0;overflow:hidden"><span style="font-weight:600;color:var(--c2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(c.email||nom||'(sin correo)')+'</span>'+(nom?'<span style="font-size:11px;color:var(--mut);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+nom+'</span>':'')+'</span>';
+h+='<span style="display:flex;align-items:center;gap:7px;flex-shrink:0">'+badge+'<span style="font-size:11px;color:var(--mut)">'+resumen+'</span><span class="ar">▶</span></span>';
+h+='</div><div class="coll-c">';
+if(c.origen==='manual') h+='<div style="font-size:11.5px;color:#5a6a85;margin-bottom:4px">Usuario creado a mano en consola (sin solicitud en la app).</div>';
+if(fecha) h+='<div style="font-size:12px;color:var(--mut);margin-bottom:3px"><strong>Aceptó términos:</strong> '+fecha+(c.versionTerminos?(' (v'+c.versionTerminos+')'):'')+'</div>';
+if(acceso) h+='<div style="font-size:12px;color:var(--mut);margin-bottom:3px"><strong>Último acceso:</strong> '+acceso+'</div>';
+if(withActions||manageable){ h+=hpRoleSelector(c.uid,roleInfo); }
 if(withActions){
 h+='<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">';
 h+='<button class="btn btn-sm" onclick="hpAprobarUI(\''+c.uid+'\')">Aprobar</button>';
 h+='<button class="btn btn-out btn-sm" onclick="hpRechazarUI(\''+c.uid+'\')">Rechazar</button>';
 h+='</div>';
-}
+} else if(manageable && c.uid!==HP_PRINCIPAL_UID && !((roleInfo&&roleInfo.role==='admin') && window.__hpUid!==HP_PRINCIPAL_UID)){
+h+='<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">';
+h+='<button class="btn btn-sm" onclick="hpGuardarRol(\''+c.uid+'\')">Guardar perfil</button>';
 h+='</div>';
+}
+h+='</div></div>';
 return h;
+}
+// Resumen corto del perfil para la cabecera plegada de cada usuario.
+function hpRolResumen(uid,roleInfo){
+if(uid===HP_PRINCIPAL_UID) return '👑 Principal';
+const r=roleInfo&&roleInfo.role;
+if(r==='admin') return 'Administrador';
+if(r==='editor'){ const n=(roleInfo&&roleInfo.sections&&roleInfo.sections.length)||0; return 'Editor·'+n+' secc.'; }
+return 'Usuario';
+}
+// Selector de perfil reutilizable (pendientes y aprobadas). Muestra las secciones si es Editor.
+function hpRoleSelector(uid, roleInfo){
+  if(uid===HP_PRINCIPAL_UID) return '<div style="margin-top:10px;padding:9px 10px;border:1px solid #d8b400;border-radius:8px;background:#fffbe6;font-size:12.5px;color:#7a5d00">👑 <strong>Administrador principal</strong> — perfil fijo, no modificable.</div>';
+  const soyPrincipal=(window.__hpUid===HP_PRINCIPAL_UID);
+  // El nivel "administrador" solo lo gestiona el principal: un co-admin no puede cambiar el perfil de otro admin.
+  if(roleInfo&&roleInfo.role==='admin'&&!soyPrincipal) return '<div style="margin-top:10px;padding:9px 10px;border:1px solid var(--bd,#e2e2e2);border-radius:8px;background:var(--bg,#f7f8fa);font-size:12px;color:var(--mut,#666)">Administrador: solo el <strong>administrador principal</strong> puede cambiar este perfil.</div>';
+  const cur=(roleInfo&&roleInfo.role)||'usuario';
+  const isEd=roleInfo&&roleInfo.role==='editor';
+  const allKeys=Object.keys(GUIDES_TITLES);
+  // Editor existente: sus secciones. Nuevo editor: NINGUNA por defecto (el admin elige cuáles).
+  const secs=isEd&&Array.isArray(roleInfo.sections)?roleInfo.sections:[];
+  const allOn=allKeys.length>0&&allKeys.every(function(k){return secs.indexOf(k)!==-1;});
+  const opt=(v,t)=>'<option value="'+v+'"'+(cur===v?' selected':'')+'>'+t+'</option>';
+  let s='<div style="margin-top:10px;padding:9px 10px;border:1px solid var(--bd,#e2e2e2);border-radius:8px;background:var(--bg,#f7f8fa)">';
+  s+='<label style="font-size:12.5px;font-weight:600;display:block;margin-bottom:5px">Perfil de acceso</label>';
+  s+='<select id="rol_'+uid+'" onchange="hpRolChange(\''+uid+'\')" style="width:100%;padding:7px;border:1px solid var(--bd,#ccc);border-radius:7px;font-size:13px;background:var(--card,#fff);color:var(--txt,#222)">';
+  s+=opt('usuario','Usuario — solo consulta')+opt('editor','Editor — solo subir/bajar guías PDF')+(soyPrincipal?opt('admin','Administrador — control total'):'');
+  s+='</select>';
+  s+='<div id="secs_'+uid+'" style="display:'+(cur==='editor'?'block':'none')+';margin-top:8px">';
+  s+='<div style="font-size:12px;color:var(--mut,#666);margin-bottom:4px">Secciones cuyas guías PDF podrá subir/bajar:</div>';
+  s+='<label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;font-weight:600;margin-bottom:3px"><input type="checkbox" id="secall_'+uid+'" onchange="hpSecToggleAll(\''+uid+'\')"'+(allOn?' checked':'')+'> Todas las secciones</label>';
+  s+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 10px">'+hpSecChecks(uid,secs)+'</div>';
+  s+='</div></div>';
+  return s;
+}
+function hpSecChecks(uid, checked){
+  checked=checked||[];
+  return Object.keys(GUIDES_TITLES).map(function(sid){return '<label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" value="'+sid+'" onchange="hpSecSync(\''+uid+'\')"'+(checked.indexOf(sid)!==-1?' checked':'')+'> '+GUIDES_TITLES[sid]+'</label>';}).join('');
+}
+function hpReadSecs(uid){
+  const box=document.getElementById('secs_'+uid); if(!box) return [];
+  return Array.from(box.querySelectorAll('input[type=checkbox][value]:checked')).map(function(x){return x.value;});
+}
+window.hpRolChange=function(uid){
+  const sel=document.getElementById('rol_'+uid), box=document.getElementById('secs_'+uid);
+  if(box) box.style.display=(sel&&sel.value==='editor')?'block':'none';
+};
+window.hpSecToggleAll=function(uid){
+  const all=document.getElementById('secall_'+uid), box=document.getElementById('secs_'+uid); if(!all||!box) return;
+  box.querySelectorAll('input[type=checkbox][value]').forEach(function(x){ x.checked=all.checked; });
+};
+window.hpSecSync=function(uid){
+  const all=document.getElementById('secall_'+uid), box=document.getElementById('secs_'+uid); if(!all||!box) return;
+  const boxes=Array.from(box.querySelectorAll('input[type=checkbox][value]'));
+  all.checked = boxes.length>0 && boxes.every(function(x){ return x.checked; });
+};
+window.hpGuardarRol=function(uid){
+  if(uid===HP_PRINCIPAL_UID){ if(typeof toast==='function')toast('El administrador principal es un perfil fijo, no se puede modificar'); return; }
+  const sel=document.getElementById('rol_'+uid), role=sel?sel.value:'usuario';
+  if(role==='admin' && window.__hpUid!==HP_PRINCIPAL_UID){ if(typeof toast==='function')toast('Solo el administrador principal puede asignar administradores'); return; }
+  if(uid===window.__hpUid && role!=='admin'){ if(typeof toast==='function')toast('No puedes quitarte a ti mismo el rol de administrador'); return; }
+  const secs=role==='editor'?hpReadSecs(uid):[];
+  if(role==='editor'&&!secs.length){ if(typeof toast==='function')toast('Marca al menos una sección'); return; }
+  const msg=role==='admin'?'¿Asignar perfil ADMINISTRADOR (co-admin)? Podrá gestionar secciones, contenido, editores y cuentas, pero NO a otros administradores (eso solo el principal).':role==='editor'?('¿Guardar como EDITOR de '+secs.length+' sección(es)?'):'¿Dejar como usuario, sin permisos de edición?';
+  if(window.hpConfirm) window.hpConfirm(msg,function(){_hpDoRol(uid,role,secs);}); else _hpDoRol(uid,role,secs);
+};
+async function _hpDoRol(uid,role,secs){
+  try{ if(window.hpAsignarRol) await window.hpAsignarRol(uid,role,secs); if(typeof toast==='function')toast('✔ Perfil actualizado'); if(window.hpRenderSolicitudes) window.hpRenderSolicitudes(); }
+  catch(e){ if(typeof toast==='function')toast('Error: '+(e.message||'')); }
 }
 window.hpRenderSolicitudes=async function(){
 const box=document.getElementById('sol_list'); if(!box) return;
@@ -8788,22 +8868,47 @@ box.innerHTML='Cargando…';
 let list;
 try{ list=await window.hpListCuentas(); }
 catch(e){ box.innerHTML='<div class="alert y">No se pudieron cargar las solicitudes. '+(e.message||'')+'</div>'; return; }
-const pend=list.filter(c=>c.estado==='pendiente');
-const otras=list.filter(c=>c.estado!=='pendiente').sort((a,b)=>((b.createdAt&&b.createdAt.seconds)||0)-((a.createdAt&&a.createdAt.seconds)||0));
+let roles={}; try{ if(window.hpListRoles) roles=await window.hpListRoles(); }catch(e){}
+let usuarios={}; try{ if(window.hpListUsuarios) usuarios=await window.hpListUsuarios(); }catch(e){}
+// Une cuentas (registradas) + usuarios (todo el que ha entrado, incl. creados a mano) por uid.
+const byUid={};
+list.forEach(c=>{ byUid[c.uid]=Object.assign({},c); });
+Object.keys(usuarios).forEach(uid=>{
+  if(byUid[uid]){ if(usuarios[uid].ultimoAcceso) byUid[uid].ultimoAcceso=usuarios[uid].ultimoAcceso; if(!byUid[uid].email) byUid[uid].email=usuarios[uid].email; }
+  else { byUid[uid]=Object.assign({uid:uid,origen:'manual'},usuarios[uid]); }
+});
+const all=Object.values(byUid);
+const pend=all.filter(c=>c.estado==='pendiente');
+const rech=all.filter(c=>c.estado==='rechazada');
+const activos=all.filter(c=>c.estado!=='pendiente'&&c.estado!=='rechazada').sort((a,b)=>((a.email||'')<(b.email||'')?-1:1));
 let h='<h3>Pendientes ('+pend.length+')</h3>';
 if(!pend.length) h+='<div class="team-empty">No hay solicitudes pendientes.</div>';
-pend.forEach(c=>{ h+=solCard(c,true); });
-if(otras.length){ h+='<h3 style="margin-top:18px">Historial ('+otras.length+')</h3>'; otras.forEach(c=>{ h+=solCard(c,false); }); }
+pend.forEach(c=>{ h+=solCard(c,true,roles[c.uid]); });
+h+='<h3 style="margin-top:18px">Usuarios con acceso ('+activos.length+')</h3>';
+h+='<p style="font-size:12px;color:var(--mut);margin:-2px 0 8px">Cuentas aprobadas y usuarios creados a mano. Pulsa uno para ver o cambiar su perfil.</p>';
+if(!activos.length) h+='<div class="team-empty">Aún no hay usuarios; aparecerán al iniciar sesión.</div>';
+activos.forEach(c=>{ h+=solCard(c,false,roles[c.uid]); });
+if(rech.length){ h+='<h3 style="margin-top:18px">Rechazadas ('+rech.length+')</h3>'; rech.forEach(c=>{ h+=solCard(c,false,roles[c.uid]); }); }
 box.innerHTML=h;
 };
-async function _hpDoAccion(uid,acc){
+async function _hpDoAccion(uid,acc,role,secs){
 try{
-if(acc==='aprobar') await window.hpAprobarCuenta(uid); else await window.hpRechazarCuenta(uid);
+if(acc==='aprobar'){
+await window.hpAprobarCuenta(uid);
+if((role==='editor'||role==='admin') && window.hpAsignarRol) await window.hpAsignarRol(uid,role,secs);
+} else await window.hpRechazarCuenta(uid);
 if(typeof toast==='function') toast(acc==='aprobar'?'✔ Cuenta aprobada':'Cuenta rechazada');
 if(window.hpRenderSolicitudes) window.hpRenderSolicitudes();
 }catch(e){ if(typeof toast==='function') toast('Error: '+(e.message||'')); }
 }
-window.hpAprobarUI=function(uid){ if(window.hpConfirm) window.hpConfirm('¿Aprobar esta cuenta? El usuario podrá acceder a la app.',()=>_hpDoAccion(uid,'aprobar')); else _hpDoAccion(uid,'aprobar'); };
+window.hpAprobarUI=function(uid){
+const sel=document.getElementById('rol_'+uid), role=sel?sel.value:'usuario';
+if(role==='admin' && window.__hpUid!==HP_PRINCIPAL_UID){ if(typeof toast==='function')toast('Solo el administrador principal puede asignar administradores'); return; }
+const secs=role==='editor'?hpReadSecs(uid):[];
+if(role==='editor'&&!secs.length){ if(typeof toast==='function')toast('Marca al menos una sección para el editor'); return; }
+const msg=role==='admin'?'¿Aprobar y asignar ADMINISTRADOR? Tendrá control total, incluido gestionar cuentas.':role==='editor'?('¿Aprobar como EDITOR de '+secs.length+' sección(es)?'):'¿Aprobar esta cuenta? El usuario podrá acceder a la app.';
+if(window.hpConfirm) window.hpConfirm(msg,()=>_hpDoAccion(uid,'aprobar',role,secs)); else _hpDoAccion(uid,'aprobar',role,secs);
+};
 window.hpRechazarUI=function(uid){ if(window.hpConfirm) window.hpConfirm('¿Rechazar esta cuenta?',()=>_hpDoAccion(uid,'rechazar')); else _hpDoAccion(uid,'rechazar'); };
 
 // === ERRORES REPORTADOS (solo administrador) ===
@@ -9048,6 +9153,10 @@ function revealAndEnter(user){
   const userLabel=document.getElementById('hp_user_label');
   const loginBtn=document.getElementById('hp_login_btn');
   curUid=user.uid;
+  // Registra al usuario en 'usuarios' (su propia ficha) para que el administrador lo vea y
+  // pueda asignarle perfil desde la app — también a los creados a mano en consola. Cada uno
+  // escribe SOLO su documento. No bloquea si falla.
+  if(navigator.onLine){ try { setDoc(doc(fs,'usuarios',user.uid), { email:user.email||null, nombre:user.displayName||null, ultimoAcceso:serverTimestamp() }, { merge:true }); } catch(e){} }
   try { (window.hpMarkValidated ? window.hpMarkValidated() : localStorage.setItem('hp_everLoggedIn', '1')); } catch(e) {}
   hidePending();
   if(overlay) overlay.classList.add('hidden');
@@ -9127,6 +9236,31 @@ window.hpRegister=async function(){
 window.hpListCuentas=async function(){ if(!fs) return []; const snap=await getDocs(collection(fs,'cuentas')); const out=[]; snap.forEach(d=>out.push({uid:d.id,...d.data()})); return out; };
 window.hpAprobarCuenta=async function(uid){ await updateDoc(doc(fs,'cuentas',uid),{ estado:'aprobada', revisadaPor:curUid||null, fechaRevision:serverTimestamp() }); };
 window.hpRechazarCuenta=async function(uid){ await updateDoc(doc(fs,'cuentas',uid),{ estado:'rechazada', revisadaPor:curUid||null, fechaRevision:serverTimestamp() }); };
+// Asignar/quitar perfil (rol) a una cuenta. Solo el administrador (lo refuerzan las reglas):
+//  - 'admin'  -> roles/{uid} = { role:'admin' }
+//  - 'editor' -> roles/{uid} = { role:'editor', sections:[...] }
+//  - otro     -> se elimina el documento de rol (queda como usuario de consulta)
+window.hpAsignarRol = async function(uid, role, sections){
+  if(role === 'admin'){
+    await setDoc(doc(fs, 'roles', uid), { role:'admin', asignadoPor: curUid || null, fechaAsignacion: serverTimestamp() });
+  } else if(role === 'editor'){
+    const secs = Array.isArray(sections) ? sections.filter(Boolean) : [];
+    await setDoc(doc(fs, 'roles', uid), { role:'editor', sections: secs, asignadoPor: curUid || null, fechaAsignacion: serverTimestamp() });
+  } else {
+    await deleteDoc(doc(fs, 'roles', uid));
+  }
+};
+// Lee todos los roles (solo administrador). Devuelve un mapa uid -> { role, sections }.
+window.hpListRoles = async function(){
+  const snap = await getDocs(collection(fs, 'roles'));
+  const out = {}; snap.forEach(d => { out[d.id] = d.data(); }); return out;
+};
+// Lee 'usuarios' (todo el que ha iniciado sesión, incl. los creados a mano en consola).
+// Solo el administrador. Devuelve uid -> { email, nombre, ultimoAcceso }.
+window.hpListUsuarios = async function(){
+  const snap = await getDocs(collection(fs, 'usuarios'));
+  const out = {}; snap.forEach(d => { out[d.id] = Object.assign({ uid:d.id }, d.data()); }); return out;
+};
 
 // ── Reportes de errores / incidencias ──
 window.hpSubmitReport=async function(texto,meta){

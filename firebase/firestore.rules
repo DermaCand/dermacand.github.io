@@ -69,9 +69,22 @@ service cloud.firestore {
     }
 
     match /roles/{uid} {
-      // Cada usuario puede leer su propio rol; nadie escribe roles desde la app.
-      allow read:  if request.auth != null && request.auth.uid == uid;
-      allow write: if false;
+      // Cada usuario lee su propio rol; el administrador puede listarlos todos (panel).
+      allow read:  if request.auth != null && (request.auth.uid == uid || isAdmin());
+      // El principal gestiona cualquier rol. Un co-admin (admin no principal) puede gestionar
+      // roles de NO-principales, pero nunca crear/editar otros administradores ni tocar al principal.
+      allow write: if request.auth.uid == 'IXktZrlu5KSWMSyt6MO1Kt1fRZf1'
+                   || ( isAdmin()
+                        && uid != 'IXktZrlu5KSWMSyt6MO1Kt1fRZf1'
+                        && (resource == null || resource.data.role != 'admin')
+                        && (request.resource == null || request.resource.data.role != 'admin') );
+    }
+
+    // ── Ficha de cada usuario que ha iniciado sesión (incl. creados a mano) ──
+    // Cada uno escribe SOLO su propio documento; el administrador puede leerlos todos.
+    match /usuarios/{uid} {
+      allow read:  if isAdmin();
+      allow write: if request.auth != null && request.auth.uid == uid;
     }
 
     // ── Cuentas de usuario y registro de aceptación de términos ──
