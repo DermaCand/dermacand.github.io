@@ -822,7 +822,8 @@ const MENU=[
 {id:'regla9',name:'Regla de los 9',kw:'regla nueve wallace superficie corporal quemado sct extension porcentaje afectado'},
 {id:'crcl',name:'Aclaramiento Cr',kw:'crcl cockcroft gault aclaramiento creatinina filtrado renal ajuste dosis'},
 {id:'dosispeso',name:'Dosificación por peso',kw:'dosis peso mg kg pediatrico calculo dosificacion farmaco'},
-{id:'fototipo',name:'Fototipo Fitzpatrick',kw:'fototipo fitzpatrick piel i ii iii iv v vi fotosensibilidad quemadura bronceado dosis uv med'}
+{id:'fototipo',name:'Fototipo Fitzpatrick',kw:'fototipo fitzpatrick piel i ii iii iv v vi fotosensibilidad quemadura bronceado dosis uv med'},
+{id:'tnm_tumor',name:'Estadiaje de tumores cutáneos',kw:'estadiaje estadio tnm ajcc 8 octava edicion breslow melanoma carcinoma escamoso cec basocelular cbc merkel bwh brigham nccn ganglio centinela bsgc tumor cutaneo staging margenes riesgo recurrencia mohs'}
 ]},
 {h:'DERMATOSIS INFLAMATORIAS',items:[
 {id:'psoriasis',name:'Psoriasis',kw:'psoriasis placas vulgar guttata pustulosa eritrodermica artritis psoriasica biologicos metotrexato'},
@@ -1914,6 +1915,122 @@ ${patientHeader()}Se evalúa el estado funcional del paciente mediante la escala
 [Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
 copy(txt);}
 
+// === Estadiaje de tumores cutaneos (AJCC 8.a / BWH / NCCN) ===
+const TNM_TYPES=[['melanoma','Melanoma (AJCC 8.ª)'],['cec','Carcinoma escamoso (BWH)'],['merkel','Carcinoma de Merkel (AJCC 8.ª)'],['cbc','Carcinoma basocelular (riesgo NCCN)']];
+const TNM_REF={
+melanoma:'Gershenwald JE, et al. Melanoma staging: evidence-based changes in the AJCC 8th edition. CA Cancer J Clin. 2017;67(6):472-492.',
+cec:'Karia PS, et al. BWH (Brigham and Womens Hospital) tumor classification for cutaneous SCC. J Clin Oncol. 2014;32(4):327-334. · NCCN Squamous Cell Skin Cancer.',
+merkel:'Harms KL, et al. Analysis of prognostic factors — Merkel cell carcinoma AJCC 8th edition. Ann Surg Oncol. 2016;23(11):3564-3571.',
+cbc:'NCCN Clinical Practice Guidelines: Basal Cell Skin Cancer (estratificacion de riesgo de recurrencia).'
+};
+VIEWS.tnm_tumor=()=>`<div class="card">
+<h2>Estadiaje de tumores cutáneos</h2>
+<p class="intro"><strong>Categoría T y estadio orientativos</strong> por tipo tumoral. <strong>Melanoma</strong> y <strong>Merkel</strong> siguen la <strong>AJCC 8.ª edición</strong>; el <strong>escamoso</strong> usa la estadificación de <strong>Brigham (BWH)</strong>, más discriminante en piel; el <strong>basocelular</strong> no se estadifica de rutina y se estratifica por <strong>riesgo de recurrencia (NCCN)</strong>.</p>
+<div class="fld"><label class="lbl">Tipo de tumor</label><select id="tnm_type" onchange="tnmRenderInputs();calcTNM()">${TNM_TYPES.map(t=>`<option value="${t[0]}">${t[1]}</option>`).join('')}</select></div>
+<div id="tnm_inputs"></div>
+<div id="tnm_res" class="res" style="display:none"></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="copyTNM()">Copiar</button><button class="btn btn-out btn-sm" onclick="tnmGo()">Ver enfermedad</button></div>
+<div class="ref" id="tnm_ref"></div>
+<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica.</strong> Estadificación orientativa; el estadio definitivo es anatomopatológico. Confirmar con el informe y el comité de tumores.</div>
+</div>`;
+VIEWS.tnm_tumor_post=(p)=>{if(p&&typeof p==='string'){const s=$('tnm_type');if(s)s.value=p;}tnmRenderInputs();calcTNM();};
+function tnmType(){return $('tnm_type')?$('tnm_type').value:'melanoma';}
+function tnmRenderInputs(){
+const t=tnmType();let h='';
+if(t==='melanoma'){
+h=`<div class="fld"><label class="lbl">Espesor de Breslow (mm)</label><input type="number" min="0" step="0.01" id="tnm_breslow" placeholder="mm" oninput="calcTNM()"></div>
+<label class="chk-card"><input type="checkbox" id="tnm_insitu" onchange="calcTNM()"><span>Melanoma in situ (intraepidérmico)</span></label>
+<label class="chk-card"><input type="checkbox" id="tnm_ulcer" onchange="calcTNM()"><span>Ulceración histológica</span></label>
+<div class="fld"><label class="lbl">Ganglios (N)</label><select id="tnm_n" onchange="calcTNM()"><option value="0">N0 — sin afectación regional</option><option value="1">N+ — ganglios, satélites o en tránsito</option></select></div>
+<div class="fld"><label class="lbl">Metástasis (M)</label><select id="tnm_m" onchange="calcTNM()"><option value="0">M0 — sin metástasis a distancia</option><option value="1">M1 — metástasis a distancia</option></select></div>`;
+}else if(t==='cec'){
+h=`<p style="font-size:13px;color:var(--mut);margin:4px 0 8px">Factores de riesgo BWH (marca los presentes):</p>
+<label class="chk-card"><input type="checkbox" class="tnm_bwh" onchange="calcTNM()"><span>Diámetro ≥ 2 cm</span></label>
+<label class="chk-card"><input type="checkbox" class="tnm_bwh" onchange="calcTNM()"><span>Pobremente diferenciado</span></label>
+<label class="chk-card"><input type="checkbox" class="tnm_bwh" onchange="calcTNM()"><span>Invasión perineural ≥ 0,1 mm (calibre nervioso)</span></label>
+<label class="chk-card"><input type="checkbox" class="tnm_bwh" onchange="calcTNM()"><span>Invasión más allá de la grasa subcutánea</span></label>
+<label class="chk-card"><input type="checkbox" id="tnm_bone" onchange="calcTNM()"><span>Invasión ósea (→ T3 directo)</span></label>`;
+}else if(t==='merkel'){
+h=`<div class="fld"><label class="lbl">Tamaño clínico máximo (cm)</label><input type="number" min="0" step="0.1" id="tnm_size" placeholder="cm" oninput="calcTNM()"></div>
+<label class="chk-card"><input type="checkbox" id="tnm_t4" onchange="calcTNM()"><span>Invade fascia, músculo, cartílago o hueso (T4)</span></label>
+<div class="fld"><label class="lbl">Ganglios (N)</label><select id="tnm_n" onchange="calcTNM()"><option value="0">N0</option><option value="1">N+ — afectación regional</option></select></div>
+<div class="fld"><label class="lbl">Metástasis (M)</label><select id="tnm_m" onchange="calcTNM()"><option value="0">M0</option><option value="1">M1 — a distancia</option></select></div>`;
+}else{
+h=`<p style="font-size:13px;color:var(--mut);margin:4px 0 8px">Estratificación de riesgo de recurrencia (NCCN). Marca lo presente:</p>
+<label class="chk-card"><input type="checkbox" class="tnm_bcc" onchange="calcTNM()"><span>Área/tamaño de alto riesgo (zona H facial, o &gt;10 mm en mejilla/frente/cuello, o &gt;20 mm en tronco/extremidades)</span></label>
+<label class="chk-card"><input type="checkbox" class="tnm_bcc" onchange="calcTNM()"><span>Bordes mal definidos</span></label>
+<label class="chk-card"><input type="checkbox" class="tnm_bcc" onchange="calcTNM()"><span>Recidiva o radioterapia previa en la zona</span></label>
+<label class="chk-card"><input type="checkbox" class="tnm_bcc" onchange="calcTNM()"><span>Inmunosupresión</span></label>
+<label class="chk-card"><input type="checkbox" class="tnm_bcc" onchange="calcTNM()"><span>Subtipo agresivo (morfeiforme, infiltrante, basoescamoso, micronodular)</span></label>
+<label class="chk-card"><input type="checkbox" class="tnm_bcc" onchange="calcTNM()"><span>Invasión perineural</span></label>`;
+}
+$('tnm_inputs').innerHTML=h;
+}
+function tnmShowIncomplete(msg){const el=$('tnm_res');el.style.display='block';el.className='res';el.innerHTML=`<div class="res-s">${msg}</div>`;window._tnmData=null;}
+function calcTNM(){
+const t=tnmType();let score='',cat='',cls='lo',detail='',stage='';
+if(t==='melanoma'){
+const insitu=$('tnm_insitu')&&$('tnm_insitu').checked;
+const ulc=$('tnm_ulcer')&&$('tnm_ulcer').checked;
+const b=n($('tnm_breslow')?$('tnm_breslow').value:'');
+const nn=$('tnm_n')?+$('tnm_n').value:0;
+const mm=$('tnm_m')?+$('tnm_m').value:0;
+let T='';
+if(insitu)T='Tis';
+else if(b===null){tnmShowIncomplete('Introduce el espesor de Breslow o marca «in situ».');return;}
+else if(b<=1.0)T=(b<0.8&&!ulc)?'T1a':'T1b';
+else if(b<=2.0)T=ulc?'T2b':'T2a';
+else if(b<=4.0)T=ulc?'T3b':'T3a';
+else T=ulc?'T4b':'T4a';
+if(mm===1)stage='IV';else if(nn===1)stage='III';
+else if(T==='Tis')stage='0';
+else if(T==='T1a')stage='IA';
+else if(T==='T1b'||T==='T2a')stage='IB';
+else if(T==='T2b'||T==='T3a')stage='IIA';
+else if(T==='T3b'||T==='T4a')stage='IIB';
+else stage='IIC';
+cat=T+' '+(nn===1?'N+':'N0')+' M'+mm;
+score='Estadio '+stage;
+cls=(stage==='0'||stage==='IA'||stage==='IB')?'lo':(stage==='IIA'||stage==='IIB'||stage==='IIC')?'md':'hi';
+const slnb=(T==='Tis'||T==='T1a')?'BSGC no indicada de rutina.':'Valorar biopsia selectiva de ganglio centinela (≥ T1b: Breslow ≥ 0,8 mm o ulcerado).';
+detail=(insitu?'Melanoma in situ':'Breslow '+b+' mm'+(ulc?', ulcerado':', sin ulceración'))+'. '+(T==='Tis'?'Escisión con margen de 0,5-1 cm.':slnb);
+}else if(t==='cec'){
+const rf=document.querySelectorAll('.tnm_bwh:checked').length;
+const bone=$('tnm_bone')&&$('tnm_bone').checked;
+const T=(bone||rf>=4)?'T3':(rf>=2?'T2b':(rf===1?'T2a':'T1'));
+cat='BWH '+T;score=T;
+cls=(T==='T1'||T==='T2a')?'lo':(T==='T2b'?'md':'hi');
+detail='Factores BWH presentes: '+rf+(bone?' + invasión ósea':'')+'. '+((T==='T1'||T==='T2a')?'Riesgo bajo de metástasis y recurrencia.':(T==='T2b'?'Riesgo alto: la mayoría de las metástasis ganglionares y muertes ocurren en T2b-T3. Valorar márgenes amplios/Mohs, estudio ganglionar y comité.':'Riesgo muy alto (T3): manejo multidisciplinar, imagen y valorar adyuvancia.'));
+}else if(t==='merkel'){
+const sz=n($('tnm_size')?$('tnm_size').value:'');
+const t4=$('tnm_t4')&&$('tnm_t4').checked;
+const nn=$('tnm_n')?+$('tnm_n').value:0;
+const mm=$('tnm_m')?+$('tnm_m').value:0;
+let T='';
+if(t4)T='T4';
+else if(sz===null){tnmShowIncomplete('Introduce el tamaño o marca T4.');return;}
+else if(sz<=2)T='T1';else if(sz<=5)T='T2';else T='T3';
+if(mm===1)stage='IV';else if(nn===1)stage='III';
+else if(T==='T1')stage='I';else if(T==='T4')stage='IIB';else stage='IIA';
+cat=T+' '+(nn===1?'N+':'N0')+' M'+mm;score='Estadio '+stage;
+cls=(stage==='I')?'lo':(stage==='IV'?'hi':'md');
+detail='Merkel es agresivo: BSGC recomendada incluso en tumores pequeños N0; valorar PET-TC y comité. En enfermedad avanzada, inmunoterapia anti-PD-(L)1 (avelumab).';
+}else{
+const rf=document.querySelectorAll('.tnm_bcc:checked').length;
+if(rf===0){score='Bajo riesgo';cls='lo';cat='CBC de bajo riesgo (NCCN)';detail='Escisión estándar con 4 mm de margen (o electrocoagulación-curetaje fuera de zonas de alto riesgo). El CBC no se estadifica por TNM de rutina (metástasis < 0,1 %).';}
+else{score='Alto riesgo';cls='hi';cat='CBC de alto riesgo (NCCN) — '+rf+' factor'+(rf>1?'es':'');detail='Cirugía de Mohs o escisión con control de márgenes, de elección. En enfermedad localmente avanzada/metastásica: inhibidores de la vía Hedgehog (vismodegib/sonidegib) o cemiplimab.';}
+}
+const el=$('tnm_res');el.style.display='block';el.className='res '+cls;
+el.innerHTML=`<div class="res-h"><span class="score">${score}</span><span>${cat}</span></div><div class="res-s" style="margin-top:6px">${detail}</div>`;
+const rf2=$('tnm_ref');if(rf2)rf2.textContent=TNM_REF[t];
+window._tnmData={type:t,score:score,cat:cat,detail:detail};
+}
+function tnmGo(){go(tnmType());}
+function copyTNM(){const d=window._tnmData;if(!d){toast('Completa los datos');return;}
+const names={melanoma:'Melanoma (AJCC 8a ed.)',cec:'Carcinoma escamoso cutaneo (BWH)',merkel:'Carcinoma de Merkel (AJCC 8a ed.)',cbc:'Carcinoma basocelular (NCCN)'};
+const txt='Estadiaje - '+names[d.type]+'\n─────────────────────────────────────────────\n'+d.score+' ('+d.cat+').\n'+d.detail+'\n\n[Fecha: '+new Date().toLocaleDateString('es-ES')+']';
+copy(txt);}
+
 // === INDEXEDDB (almacenamiento de PDFs sin límite 5MB) ===
 const idb={
 _db:null,
@@ -1947,7 +2064,7 @@ const GUIDES_TITLES={
 'proc':'Procedimientos y cirugía',
 'patol':'Dermatopatología y laboratorio',
 'tto':'Tratamientos',
-'dermato':'Dermatoscopia (atlas de patrones)',
+'dermato':'Atlas de dermatoscopia (PDF)',
 'cirugia':'Cirugía dermatológica (atlas y guías)'
 };
 
@@ -4291,7 +4408,7 @@ VIEWS.melanoma=()=>`<div class="card">
 
 <div class="perla"><div><strong>Primero, estadifica (AJCC 8ª)</strong> tras biopsia escisional completa: el <strong>Breslow + ulceración</strong> definen el T y el <strong>ganglio centinela</strong> (si T1b-T4 con N0 clínico) define el N. Mapea el estadio — <strong>localizado (I-II)</strong>, <strong>regional (III)</strong> o <strong>avanzado/metastásico (IV)</strong> — porque decide márgenes, centinela, adyuvancia/neoadyuvancia y tratamiento sistémico.</div></div>
 <div class="alert r" style="margin:8px 0"><strong>Atención:</strong> en melanoma desmoplásico puro o lentigo maligno extenso los márgenes de 1 cm suelen quedar cortos por extensión subclínica (planificar márgenes guiados por histología). En estadio III-IV con síntomas neurológicos, RM cerebral con gadolinio y priorizar <strong>nivolumab+ipilimumab</strong> (mayor actividad intracraneal).</div>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('dermatoscopia')">Dermatoscopia</button></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('tnm_tumor','melanoma')">Calcular estadiaje (AJCC)</button><button class="btn btn-out btn-sm" onclick="go('dermatoscopia')">Dermatoscopia</button></div>
 
 <div class="step-h l1"><div class="sn">1</div><div class="st">Localizado (estadio I-II)</div></div>
 <div class="chips"><span class="chip">escisión amplia</span><span class="chip">ganglio centinela</span><span class="chip">pembrolizumab/nivolumab adyuvante (IIB-IIC)</span></div>
@@ -4351,7 +4468,7 @@ VIEWS.cbc=()=>`<div class="card">
 
 <div class="perla"><div><strong>Primero, clasifica por riesgo (EADO).</strong> <strong>Fácil de tratar / bajo riesgo</strong>: superficial o nodular pequeño (&lt;10-20 mm), tronco-extremidades, primario, bien definido. <strong>Difícil de tratar / alto riesgo</strong>: zona H facial, &gt;20 mm, mal definido, recidivante, subtipo agresivo (morfeiforme/infiltrante/micronodular/basoescamoso), perineural o inmunodeprimido. Objetivo: máxima curación con mínima morbilidad (cirugía estándar; tópicos/destrucción solo en bajo riesgo, Mohs en alto riesgo).</div></div>
 <div class="alert r" style="margin:8px 0"><strong>Avanzado:</strong> BCC localmente avanzado (no resecable/irradiable) o metastásico, o invasión perineural sintomática → comité multidisciplinar e <strong>inhibidor de Hedgehog</strong> (vismodegib); si progresa/intolerancia/contraindicación, <strong>cemiplimab</strong>.</div>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('dermatoscopia')">Dermatoscopia</button><button class="btn btn-out btn-sm" onclick="go('cirugia')">Cirugía / Mohs</button></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('tnm_tumor','cbc')">Estratificar riesgo</button><button class="btn btn-out btn-sm" onclick="go('dermatoscopia')">Dermatoscopia</button><button class="btn btn-out btn-sm" onclick="go('cirugia')">Cirugía / Mohs</button></div>
 
 <div class="step-h l1"><div class="sn">1</div><div class="st">Bajo riesgo / superficial — tópico o destrucción</div></div>
 <div class="chips"><span class="chip">imiquimod 5%</span><span class="chip">5-FU 5%</span><span class="chip">curetaje-electrodesecación</span><span class="chip">crioterapia</span><span class="chip">TFD-MAL</span></div>
@@ -4409,7 +4526,7 @@ VIEWS.cec=()=>`<div class="card">
 
 <div class="perla"><div><strong>Primero, estratifica bajo vs alto riesgo</strong> (EADO + AJCC8/BWH). <strong>Alto riesgo</strong> (BWH T2b/T3): diámetro &gt;2 cm, espesor &gt;6 mm o invasión más allá de la grasa, mala diferenciación, invasión perineural (≥0,1 mm), oreja/labio/sien, recidiva o inmunosupresión. En bajo riesgo, curación con cirugía simple; en alto riesgo, control estricto de margen, valorar estadificación ganglionar y prevenir recurrencia.</div></div>
 <div class="alert r" style="margin:8px 0"><strong>Alto riesgo con adenopatía sospechosa:</strong> ecografía/TC-RM regional + PAAF/biopsia ganglionar y comité multidisciplinar; tras cirugía + radioterapia, valorar <strong>cemiplimab adyuvante</strong> (C-POST: −68 % de riesgo de recurrencia).</div>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('qa')">Queratosis actínica</button><button class="btn btn-out btn-sm" onclick="go('cirugia')">Cirugía</button></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('tnm_tumor','cec')">Calcular estadiaje (BWH)</button><button class="btn btn-out btn-sm" onclick="go('qa')">Queratosis actínica</button><button class="btn btn-out btn-sm" onclick="go('cirugia')">Cirugía</button></div>
 
 <div class="step-h l1"><div class="sn">1</div><div class="st">Bajo riesgo (resecable)</div></div>
 <div class="chips"><span class="chip">exéresis margen 4-5 mm</span><span class="chip">curetaje-electrocoagulación</span><span class="chip">radioterapia (no operable)</span></div>
@@ -4603,7 +4720,7 @@ Revisar el estado vacunal (triple virica).</pre></div>
 - Penicilina V: <27 kg 250 mg c/8-12h; >=27 kg 500 mg c/12h x10d.
 - Amoxicilina: 50 mg/kg/dia en 1 dosis (max 1000 mg) x10d (o 25 mg/kg c/12h).
 - Alergia no anafilactica: cefalexina 20 mg/kg/dosis c/12h (max 500 mg) x10d.
-- Alergia anafilactica: azitromicina 12 mg/kg dia 1 luego 6 mg/kg/dia x4d, o clindamicina.
+- Alergia anafilactica (solo): azitromicina 12 mg/kg/dia (max 500 mg) 1/dia x5d, o clindamicina 7 mg/kg/dosis (max 300 mg) c/8h x10d. Reservar macrolidos por la alta resistencia de EGA.
 - Iniciar en <=9 dias previene la fiebre reumatica. Reincorporar tras 12-24h de antibiotico y afebril.</pre></div>
 
 <div class="step-h l3"><div class="sn">3</div><div class="st">Emergencias — meningococemia / Kawasaki</div></div>
@@ -5104,9 +5221,7 @@ B) COLESTASIS INTRAHEPATICA:
 </div>`;
 
 // ===== VISTAS DE PATOLOGÍA · Procedimientos y cirugía =====
-VIEWS.dermatoscopia=()=>`<div class="card"><h2>Dermatoscopia — atlas de patrones</h2>
-<p class="intro">Biblioteca de <strong>atlas, libros y guías de dermatoscopia</strong> para <strong>comparar patrones</strong> con la lesión del paciente. Cuelga aquí los PDF por categorías: pulsa <strong>✏️ Editar</strong> para añadir apartados y <strong>⬆️ Subir PDF</strong> (requiere permiso de edición).</p>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('melanoma')">Melanoma</button><button class="btn btn-out btn-sm" onclick="go('tricoscopia')">Tricoscopia</button></div></div>`+guidesView('dermato');
+VIEWS.dermatoscopia=()=>guidesView('dermato','Atlas de dermatoscopia (PDF)');
 
 VIEWS.cirugia=()=>`<div class="card">
 <h2>Cirugía dermatológica</h2>
@@ -5933,11 +6048,12 @@ Cribado de NEOPLASIA segun edad/sexo (sobre todo el primer ano). Valorar miositi
 Control de fuerza, CK y funcion pulmonar. Mantener fotoproteccion.</pre></div>
 
 <div class="step-h l3"><div class="sn">3</div><div class="st">Grave / refractaria</div></div>
-<div class="chips"><span class="chip">inmunoglobulinas IV</span><span class="chip">rituximab</span></div>
+<div class="chips"><span class="chip">inmunoglobulinas IV</span><span class="chip">rituximab</span><span class="chip">inhibidores JAK (tofacitinib)</span></div>
 <div class="cplab"><span>Pauta de tratamiento:</span><button class="btn btn-g btn-sm" onclick="copy($('dm_hc3').innerText)">Copiar</button></div>
 <div class="rxcard l3"><pre id="dm_hc3">DERMATOMIOSITIS - grave o refractaria
 - Inmunoglobulinas IV (IVIG): aprobada para dermatomiositis (2021); util en piel y musculo.
-- Otras: rituximab; en EPI por anti-MDA5, tratamiento intensivo precoz.
+- Rituximab; inhibidores JAK (tofacitinib) en DM cutanea/amiopatica refractaria.
+- EPI por anti-MDA5 rapidamente progresiva: tratamiento intensivo precoz; tofacitinib mejora la supervivencia (combinaciones segun fenotipo).
 Manejo multidisciplinar (reumatologia / neumologia). Reevaluar cribado oncologico.</pre></div>
 
 ${productosCard('dermatomiositis')}
@@ -5946,6 +6062,7 @@ ${productosCard('dermatomiositis')}
 <ul style="line-height:1.7;font-size:13px;margin:4px 0">
 <li><strong>Inmunoglobulinas IV</strong> aprobadas para dermatomiositis (2021).</li>
 <li><strong>Anti-MDA5</strong>: identifica el fenotipo con enfermedad pulmonar intersticial rápidamente progresiva (tratar precoz).</li>
+<li><strong>Inhibidores JAK</strong> (tofacitinib): opción consolidada en DM cutánea/amiopática refractaria y, sobre todo, en la EPI rápidamente progresiva por anti-MDA5 (mejoría de la supervivencia en cohortes 2024-2025).</li>
 </ul>
 
 <div class="refbox">
@@ -6537,7 +6654,7 @@ VIEWS.merkel=()=>`<div class="card">
 
 <div class="perla"><div><strong>Primero, estadifica (AJCC 8ª).</strong> <strong>Localizado resecable (I-II)</strong>, <strong>regional/ganglionar (III)</strong> — con biopsia de ganglio centinela como estándar en N0 clínico — o <strong>irresecable/metastásico (IV)</strong>. Objetivo: en local-regional, control quirúrgico + márgenes ± radioterapia adyuvante; en avanzado, inmunoterapia anti-PD-(L)1 de 1ª línea. Valora siempre el estado inmune.</div></div>
 <div class="alert r" style="margin:8px 0"><strong>Alarma:</strong> nódulo rojo-violáceo indoloro de crecimiento rápido con adenopatía regional o síntomas sistémicos → imagen de estadificación urgente (TC/PET-TC), comité multidisciplinar de tumores cutáneos y circuito oncológico preferente sin demora.</div>
-<div class="btns"><button class="btn btn-out btn-sm" onclick="go('melanoma')">Melanoma</button><button class="btn btn-out btn-sm" onclick="go('cirugia')">Cirugía</button></div>
+<div class="btns"><button class="btn btn-out btn-sm" onclick="go('tnm_tumor','merkel')">Calcular estadiaje (AJCC)</button><button class="btn btn-out btn-sm" onclick="go('melanoma')">Melanoma</button><button class="btn btn-out btn-sm" onclick="go('cirugia')">Cirugía</button></div>
 
 <div class="step-h l1"><div class="sn">1</div><div class="st">Estadio I-II (localizado resecable)</div></div>
 <div class="chips"><span class="chip">escisión amplia</span><span class="chip">ganglio centinela</span><span class="chip">RT adyuvante del lecho</span></div>
@@ -8370,7 +8487,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 10;
+  var DC_BUILD = 11;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
