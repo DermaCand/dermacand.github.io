@@ -107,6 +107,26 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    match /textos/{id} {
+      allow read:  if isApproved();
+      allow write: if request.auth != null && request.auth.uid == 'IXktZrlu5KSWMSyt6MO1Kt1fRZf1';
+    }
+
+    // ── Listín telefónico: contactos personalizados añadidos desde la app ──
+    // Los lee cualquier usuario autorizado; solo el administrador los crea/edita/borra.
+    match /directorio/{id} {
+      allow read:  if isApproved();
+      allow write: if isAdmin();
+    }
+
+    // ── Créditos de colaboradores (editores) por tema ──
+    // Cualquier usuario autorizado los LEE (para el Aviso Legal y los bloques de sección);
+    // solo el administrador los escribe (al asignar/quitar perfil de editor).
+    match /colaboradores/{uid} {
+      allow read:  if isApproved();
+      allow write: if isAdmin();
+    }
+
     match /config/{doc} {
       // Token de GitHub y similares: solo lo leen admin/editores (para subir PDF).
       // Nunca se escribe desde la app; se gestiona desde la consola.

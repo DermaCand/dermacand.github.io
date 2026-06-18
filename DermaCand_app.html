@@ -2274,8 +2274,15 @@ function getAllCollaborators(){
 // DEFAULT_COLLABORATORS es la fuente autoritativa (se actualiza con la app); se conservan
 // secciones extra que pudiera traer la sincronización y no estén en el código.
 const stored=ls.g('collaborators')||{};
-return Object.assign({},stored,DEFAULT_COLLABORATORS);
+const base=Object.assign({},stored,DEFAULT_COLLABORATORS);
+// Los EDITORES asignados (sincronizados desde 'colaboradores') SUSTITUYEN a los colaboradores
+// fijos en SU tema, para que el Aviso Legal refleje quién mantiene cada sección.
+let ed=null; try{ ed=ls.g('editorCollabs'); }catch(e){}
+if(ed){ Object.keys(ed).forEach(function(sec){ if(ed[sec]&&ed[sec].length) base[sec]=ed[sec]; }); }
+return base;
 }
+// Cache local del crédito de editores por tema (la rellena la sincronización de 'colaboradores').
+window.hpStoreEditorCollabs=function(map){ try{ ls.s('editorCollabs', map||{}); }catch(e){} };
 function renderCollaboratorsBlock(id){
 const list=getCollaborators(id);
 if(!list.length)return '';
@@ -7597,9 +7604,11 @@ function eriInit(){const w=$('eriWrap');if(!w)return;if(eriIsHidden())w.hidden=t
 
 
 VIEWS.phone=()=>{
+const _adm=!!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin());
 return `<div class="card">
 <h2>Listín Telefónico</h2>
 <p class="intro">Directorio de extensiones del HUNSC y red de centros. Agrupado por servicio. Usa el buscador para filtrar por servicio, ubicación o extensión.</p>
+${_adm?'<div class="btns" style="margin-bottom:10px"><button class="btn btn-out btn-sm" onclick="hpAddContacto()">➕ Añadir contacto</button></div>':''}
 <div class="search-wrap"><input type="text" class="search" id="ph_q" placeholder="Buscar servicio, descripción, planta o extensión..." oninput="renderDir()"></div>
 <div id="ph_meta" style="font-size:12px;color:var(--mut);margin:-4px 0 10px"></div>
 <div id="ph_list"></div>
@@ -7607,12 +7616,46 @@ return `<div class="card">
 };
 VIEWS.phone_post=()=>renderDir();
 
+// ── Listín editable: directorio efectivo = HOSP_DIR de fábrica + contactos custom (cloud 'directorio') ──
+function hpDirAdd(){ try{ return ls.g('dirAdd')||{}; }catch(e){ return {}; } }
+window.hpApplyDirectorio=function(map){ try{ ls.s('dirAdd', map||{}); }catch(e){} };
+function hpEffectiveDir(){
+  const map=new Map();
+  HOSP_DIR.forEach(function(sec){ map.set(sec[0], (sec[1]||[]).slice()); });
+  const add=hpDirAdd();
+  Object.keys(add).forEach(function(id){ const x=add[id]; if(!x||(!x.nombre&&!x.ext&&!x.tel))return; const svc=(x.servicio||'Otros'); if(!map.has(svc))map.set(svc,[]); map.get(svc).push([x.nombre||'—', x.loc||'', x.tel||'', x.ext||'', id]); });
+  const norm=function(s){return (s||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').trim();};
+  const out=Array.from(map.entries());
+  out.forEach(function(sec){ sec[1].sort(function(a,b){return norm(a[0]).localeCompare(norm(b[0]),'es');}); });
+  out.sort(function(a,b){return norm(a[0]).localeCompare(norm(b[0]),'es');});
+  return out;
+}
+async function hpAddContacto(){
+  const servicio=prompt('Servicio (p. ej. Dermatología):'); if(servicio==null)return;
+  const nombre=prompt('Nombre / descripción del contacto:'); if(nombre==null)return;
+  const ext=(prompt('Extensión interna (opcional):')||'').trim();
+  const tel=(prompt('Teléfono externo (opcional):')||'').trim();
+  const loc=(prompt('Ubicación / planta (opcional):')||'').trim();
+  if(!servicio.trim()&&!nombre.trim()&&!ext&&!tel){ return; }
+  const id='ct_'+Date.now(); const data={nombre:nombre.trim(),servicio:servicio.trim()||'Otros',ext:ext,tel:tel,loc:loc};
+  const m=hpDirAdd(); m[id]=data; try{ls.s('dirAdd',m);}catch(e){}
+  renderDir();
+  if(window.hpSaveContacto){ try{ await window.hpSaveContacto(id,data); toast('✓ Contacto añadido · para todos'); }catch(e){ toast('Guardado solo en este equipo (sin permiso o sin conexión)'); } }
+  else toast('✓ Añadido');
+}
+async function hpDelContacto(id){
+  if(!confirm('¿Eliminar este contacto para todos?'))return;
+  const m=hpDirAdd(); delete m[id]; try{ls.s('dirAdd',m);}catch(e){}
+  renderDir();
+  if(window.hpDelContactoCloud){ try{ await window.hpDelContactoCloud(id); toast('✓ Eliminado'); }catch(e){ toast('Eliminado solo en este equipo'); } }
+}
 function renderDir(){
 const q=($('ph_q')?.value||'').toLowerCase().trim();
 const _strip=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'');const qn=_strip(q);
 const el=$('ph_list'); if(!el) return;
 let groups=0, rows=0, html='';
-for(const [svc,items] of HOSP_DIR){
+const _EDIR=hpEffectiveDir(); const _esAdm=!!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin());
+for(const [svc,items] of _EDIR){
   let matched=items;
   const svcMatch = !q || _strip(svc.toLowerCase()).includes(qn);
   if(q && !svcMatch){
@@ -7622,7 +7665,7 @@ for(const [svc,items] of HOSP_DIR){
   groups++; rows+=matched.length;
   const open = q ? ' open' : '';
   let inner='<div class="dir-rows">';
-  for(const [d,l,t,s] of matched){
+  for(const [d,l,t,s,cid] of matched){
     const show = s || t || '';
     let right='';
     if(t){
@@ -7631,6 +7674,7 @@ for(const [svc,items] of HOSP_DIR){
     } else if(s){
       right=`<button class="dir-ext-btn" onclick="event.stopPropagation();copy('${s}')" title="Copiar ${s}">${s}</button><span class="dir-int-badge">interna</span>`;
     }
+    if(cid && _esAdm){ right+=`<button class="dir-ext-btn" style="color:#b00020" onclick="event.stopPropagation();hpDelContacto('${cid}')" title="Eliminar contacto">×</button>`; }
     inner+=`<div class="dir-row">
       <div class="dir-main"><div class="dir-name">${d==='—'?'·':hlMark(d.replace(/\n/g,' '),q)}</div>${l?`<div class="dir-sub">${hlMark(l,q)}</div>`:''}</div>
       <div class="dir-right">${right}</div>
@@ -8586,7 +8630,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 15;
+  var DC_BUILD = 16;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -8629,6 +8673,8 @@ if(document.readyState!=='loading')init();
     <button id="aviso-cerrar-x" onclick="cerrarAvisoLegal()" style="position:absolute; top:0.8rem; right:0.8rem; background:none; border:none; font-size:1.3rem; cursor:pointer; color:var(--mut);" aria-label="Cerrar">✕</button>
 
     <h2 style="color:#0d7d8c; margin-bottom:1rem; font-size:1.1rem;">⚖️ Aviso Legal — DermaCand</h2>
+    <button id="aviso-edit-btn" onclick="hpEditarAviso()" style="display:none; margin-bottom:0.8rem; background:none; border:1px solid #bfe3e8; color:#0d7d8c; border-radius:6px; padding:0.3rem 0.7rem; font-size:0.8rem; cursor:pointer;">✏️ Editar texto legal</button>
+    <div id="aviso-cuerpo">
 
     <h3 style="color:#0d7d8c; font-size:0.9rem; border-bottom:1px solid #bfe3e8; padding-bottom:0.3rem; margin-top:1rem;">Autoría y titularidad</h3>
     <p style="font-size:0.85rem; line-height:1.6; color:var(--txt);">DermaCand es una aplicación desarrollada de forma independiente, en coautoría. El diseño, desarrollo, estructura y arquitectura de la aplicación son obra de <strong>María Teresa Busnego Barreto</strong>; los contenidos clínicos de dermatología son obra de <strong>García Silvera, D.</strong>, especialista en Dermatología. Constituye un proyecto personal de innovación clínica, no vinculado a ningún encargo institucional.</p>
@@ -8649,6 +8695,7 @@ if(document.readyState!=='loading')init();
     <h3 style="color:#0d7d8c; font-size:0.9rem; border-bottom:1px solid #bfe3e8; padding-bottom:0.3rem; margin-top:1rem;">Uso permitido</h3>
     <p style="font-size:0.85rem; line-height:1.6; color:var(--txt);">De uso libre para profesionales sanitarios. Queda expresamente prohibido el uso comercial o la redistribución del código sin autorización expresa de los autores.</p>
 
+    </div>
     <div id="aviso-aceptar-wrap" style="display:none; margin-top:1.5rem; padding-top:1rem; border-top:1px solid #bfe3e8; text-align:center;">
       <p style="font-size:0.85rem; line-height:1.6; color:var(--txt); margin-bottom:0.8rem;">Para usar DermaCand, confirme que ha leído y acepta este Aviso Legal y que utilizará la aplicación como <strong>herramienta de apoyo</strong>, sin que sustituya el juicio clínico ni los protocolos oficiales del centro.</p>
       <button onclick="aceptarLegal()" style="background:#0d7d8c; color:#fff; border:none; border-radius:8px; padding:0.6rem 1.4rem; font-size:0.9rem; font-weight:600; cursor:pointer;">He leído y acepto</button>
@@ -8688,8 +8735,74 @@ function poblarRevisoresAviso() {
   });
   ul.innerHTML = items.join('');
 }
+// ── Aviso Legal editable (SOLO el admin principal) ──
+let _AVISO_DEFAULT='';
+// Marcador no editable que ocupa el lugar de la lista de revisores (se rellena sola) mientras se edita.
+const _AVISO_REV_PH='<div class="aviso-rev-ph" contenteditable="false" style="border:1px dashed var(--bd);border-radius:6px;padding:8px;margin:8px 0;color:#0d7d8c;font-size:0.8rem;background:var(--bg)">👥 Lista de revisores — se rellena automáticamente con el equipo. No hace falta tocar nada aquí.</div>';
+function hpAvisoOverride(){ try{ return ls.g('avisoLegal'); }catch(e){ return null; } }
+window.hpApplyAviso=function(html){ try{ ls.s('avisoLegal', html||''); }catch(e){} };
+function _hpSanHtml(html){ if(!html) return ''; let s=String(html);
+  s=s.replace(/<\s*(script|style|iframe|object|embed|link|meta|form|input)\b[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi,'');
+  s=s.replace(/<\s*(script|style|iframe|object|embed|link|meta|form|input)\b[^>]*>/gi,'');
+  s=s.replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi,'');
+  s=s.replace(/(href|src)\s*=\s*("\s*javascript:[^"]*"|'\s*javascript:[^']*')/gi,'$1="#"');
+  return s;
+}
+function _avisoRenderCuerpo(){ const cu=document.getElementById('aviso-cuerpo'); if(!cu) return; if(!_AVISO_DEFAULT)_AVISO_DEFAULT=cu.innerHTML; const ov=hpAvisoOverride(); cu.innerHTML=(ov&&ov.trim())?_hpSanHtml(ov):_AVISO_DEFAULT; }
+// Editor VISUAL (sin HTML): se edita el texto como en un procesador de textos.
+function _avisoCmd(cmd,val){ try{ var cu=document.getElementById('aviso-cuerpo'); if(cu){ cu.focus(); document.execCommand(cmd,false,val||null); } }catch(e){} }
+function _avisoToolbar(){
+  return '<div id="aviso-toolbar" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg)">'
+    +'<span style="font-size:12px;color:var(--mut);width:100%;margin-bottom:2px">Escribe directamente sobre el texto. Para dar formato, selecciona y pulsa un botón:</span>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_avisoCmd(\'bold\')" title="Negrita"><strong>N</strong></button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_avisoCmd(\'italic\')" title="Cursiva"><em>C</em></button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_avisoCmd(\'formatBlock\',\'&lt;h3&gt;\')" title="Convertir en título de sección">Título</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_avisoCmd(\'formatBlock\',\'&lt;p&gt;\')" title="Texto normal">Texto</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_avisoCmd(\'insertUnorderedList\')" title="Lista con viñetas">• Lista</button>'
+    +'<span style="flex:1;min-width:8px"></span>'
+    +'<button type="button" class="btn btn-g btn-sm" onclick="hpGuardarAviso()">💾 Guardar para todos</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onclick="hpCancelarAviso()">Cancelar</button>'
+    +'</div>';
+}
+function hpEditarAviso(){
+  if(window.__hpUid!==HP_PRINCIPAL_UID){ if(typeof toast==='function')toast('Solo la administradora principal puede editar el Aviso Legal'); return; }
+  const cu=document.getElementById('aviso-cuerpo'); if(!cu) return;
+  if(!_AVISO_DEFAULT)_AVISO_DEFAULT=cu.innerHTML;
+  const ov=hpAvisoOverride(); let html=(ov&&ov.trim())?_hpSanHtml(ov):_AVISO_DEFAULT;
+  // Protege la lista de revisores (automática) sustituyéndola por un bloque no editable.
+  html=html.replace(/<ul[^>]*id=["']aviso-revisores["'][\s\S]*?<\/ul>/i,_AVISO_REV_PH);
+  cu.innerHTML=html;
+  cu.setAttribute('contenteditable','true');
+  cu.style.border='1px solid var(--bd)'; cu.style.borderRadius='8px'; cu.style.padding='10px'; cu.style.outline='none';
+  var eb=document.getElementById('aviso-edit-btn'); if(eb) eb.style.display='none';
+  var old=document.getElementById('aviso-toolbar'); if(old) old.remove();
+  cu.insertAdjacentHTML('beforebegin',_avisoToolbar());
+}
+function hpCancelarAviso(){
+  const cu=document.getElementById('aviso-cuerpo'); if(cu){ cu.setAttribute('contenteditable','false'); cu.style.border=''; cu.style.padding=''; }
+  var tb=document.getElementById('aviso-toolbar'); if(tb) tb.remove();
+  _avisoRenderCuerpo(); poblarRevisoresAviso();
+  var eb=document.getElementById('aviso-edit-btn'); if(eb) eb.style.display=(window.__hpUid===HP_PRINCIPAL_UID)?'inline-block':'none';
+}
+async function hpGuardarAviso(){
+  const cu=document.getElementById('aviso-cuerpo'); if(!cu) return;
+  cu.setAttribute('contenteditable','false');
+  var tb=document.getElementById('aviso-toolbar'); if(tb) tb.remove();
+  let html=cu.innerHTML;
+  // Devuelve el marcador de revisores a su <ul> real (lo rellena poblarRevisoresAviso).
+  html=html.replace(/<div[^>]*class=["'][^"']*aviso-rev-ph[^"']*["'][\s\S]*?<\/div>/i,'<ul id="aviso-revisores"></ul>');
+  if(html.indexOf('aviso-revisores')===-1) html+='<ul id="aviso-revisores"></ul>';
+  html=_hpSanHtml(html);
+  cu.style.border=''; cu.style.padding='';
+  try{ls.s('avisoLegal',html);}catch(e){}
+  _avisoRenderCuerpo(); poblarRevisoresAviso();
+  var eb=document.getElementById('aviso-edit-btn'); if(eb) eb.style.display=(window.__hpUid===HP_PRINCIPAL_UID)?'inline-block':'none';
+  if(window.hpSaveAviso){ try{ await window.hpSaveAviso(html); if(typeof toast==='function')toast('✓ Aviso Legal actualizado · para todos'); }catch(e){ if(typeof toast==='function')toast('Guardado solo en este equipo (sin permiso o sin conexión)'); } }
+  else if(typeof toast==='function')toast('✓ Guardado'); }
 function abrirAvisoLegal() {
+  _avisoRenderCuerpo();
   poblarRevisoresAviso();
+  var _eb=document.getElementById('aviso-edit-btn'); if(_eb) _eb.style.display=(window.__hpUid===HP_PRINCIPAL_UID)?'inline-block':'none';
   const m = document.getElementById('modal-aviso-legal');
   m.style.display = 'flex';
   document.body.style.overflow = 'hidden';
@@ -8802,7 +8915,7 @@ if(r==='editor'){ const n=(roleInfo&&roleInfo.sections&&roleInfo.sections.length
 return 'Usuario';
 }
 // Selector de perfil reutilizable (pendientes y aprobadas). Muestra las secciones si es Editor.
-function hpRoleSelector(uid, roleInfo){
+function hpRoleSelector(uid, roleInfo, credName){
   if(uid===HP_PRINCIPAL_UID) return '<div style="margin-top:10px;padding:9px 10px;border:1px solid #d8b400;border-radius:8px;background:#fffbe6;font-size:12.5px;color:#7a5d00">👑 <strong>Administrador principal</strong> — perfil fijo, no modificable.</div>';
   const soyPrincipal=(window.__hpUid===HP_PRINCIPAL_UID);
   // El nivel "administrador" solo lo gestiona el principal: un co-admin no puede cambiar el perfil de otro admin.
@@ -8823,9 +8936,11 @@ function hpRoleSelector(uid, roleInfo){
   s+='<div style="font-size:12px;color:var(--mut,#666);margin-bottom:4px">Secciones cuyas guías PDF podrá subir/bajar:</div>';
   s+='<label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;font-weight:600;margin-bottom:3px"><input type="checkbox" id="secall_'+uid+'" onchange="hpSecToggleAll(\''+uid+'\')"'+(allOn?' checked':'')+'> Todas las secciones</label>';
   s+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 10px">'+hpSecChecks(uid,secs)+'</div>';
+  s+='<div style="margin-top:8px"><label style="font-size:12px;color:var(--mut,#666);display:block;margin-bottom:3px">Nombre para créditos (figurará como colaborador en el Aviso Legal)</label><input id="cred_'+uid+'" type="text" value="'+(credName?String(credName).replace(/"/g,'&quot;'):'')+'" placeholder="Ej: Dra. Nombre Apellido" style="width:100%;padding:6px 8px;border:1px solid var(--bd,#ccc);border-radius:6px;font-size:12.5px;background:var(--card,#fff);color:var(--txt,#222)"></div>';
   s+='</div></div>';
   return s;
 }
+function hpReadCred(uid){ const el=document.getElementById('cred_'+uid); return el?el.value.trim():''; }
 function hpSecChecks(uid, checked){
   checked=checked||[];
   return Object.keys(GUIDES_TITLES).map(function(sid){return '<label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" value="'+sid+'" onchange="hpSecSync(\''+uid+'\')"'+(checked.indexOf(sid)!==-1?' checked':'')+'> '+GUIDES_TITLES[sid]+'</label>';}).join('');
@@ -8854,11 +8969,12 @@ window.hpGuardarRol=function(uid){
   if(uid===window.__hpUid && role!=='admin'){ if(typeof toast==='function')toast('No puedes quitarte a ti mismo el rol de administrador'); return; }
   const secs=role==='editor'?hpReadSecs(uid):[];
   if(role==='editor'&&!secs.length){ if(typeof toast==='function')toast('Marca al menos una sección'); return; }
+  const nombre=role==='editor'?hpReadCred(uid):'';
   const msg=role==='admin'?'¿Asignar perfil ADMINISTRADOR (co-admin)? Podrá gestionar secciones, contenido, editores y cuentas, pero NO a otros administradores (eso solo el principal).':role==='editor'?('¿Guardar como EDITOR de '+secs.length+' sección(es)?'):'¿Dejar como usuario, sin permisos de edición?';
-  if(window.hpConfirm) window.hpConfirm(msg,function(){_hpDoRol(uid,role,secs);}); else _hpDoRol(uid,role,secs);
+  if(window.hpConfirm) window.hpConfirm(msg,function(){_hpDoRol(uid,role,secs,nombre);}); else _hpDoRol(uid,role,secs,nombre);
 };
-async function _hpDoRol(uid,role,secs){
-  try{ if(window.hpAsignarRol) await window.hpAsignarRol(uid,role,secs); if(typeof toast==='function')toast('✔ Perfil actualizado'); if(window.hpRenderSolicitudes) window.hpRenderSolicitudes(); }
+async function _hpDoRol(uid,role,secs,nombre){
+  try{ if(window.hpAsignarRol) await window.hpAsignarRol(uid,role,secs,nombre); if(window.hpSyncColaboradores) window.hpSyncColaboradores(); if(typeof toast==='function')toast('✔ Perfil actualizado'); if(window.hpRenderSolicitudes) window.hpRenderSolicitudes(); }
   catch(e){ if(typeof toast==='function')toast('Error: '+(e.message||'')); }
 }
 window.hpRenderSolicitudes=async function(){
@@ -8891,11 +9007,12 @@ activos.forEach(c=>{ h+=solCard(c,false,roles[c.uid]); });
 if(rech.length){ h+='<h3 style="margin-top:18px">Rechazadas ('+rech.length+')</h3>'; rech.forEach(c=>{ h+=solCard(c,false,roles[c.uid]); }); }
 box.innerHTML=h;
 };
-async function _hpDoAccion(uid,acc,role,secs){
+async function _hpDoAccion(uid,acc,role,secs,nombre){
 try{
 if(acc==='aprobar'){
 await window.hpAprobarCuenta(uid);
-if((role==='editor'||role==='admin') && window.hpAsignarRol) await window.hpAsignarRol(uid,role,secs);
+if((role==='editor'||role==='admin') && window.hpAsignarRol) await window.hpAsignarRol(uid,role,secs,nombre);
+if(window.hpSyncColaboradores) window.hpSyncColaboradores();
 } else await window.hpRechazarCuenta(uid);
 if(typeof toast==='function') toast(acc==='aprobar'?'✔ Cuenta aprobada':'Cuenta rechazada');
 if(window.hpRenderSolicitudes) window.hpRenderSolicitudes();
@@ -8906,8 +9023,9 @@ const sel=document.getElementById('rol_'+uid), role=sel?sel.value:'usuario';
 if(role==='admin' && window.__hpUid!==HP_PRINCIPAL_UID){ if(typeof toast==='function')toast('Solo el administrador principal puede asignar administradores'); return; }
 const secs=role==='editor'?hpReadSecs(uid):[];
 if(role==='editor'&&!secs.length){ if(typeof toast==='function')toast('Marca al menos una sección para el editor'); return; }
+const nombre=role==='editor'?hpReadCred(uid):'';
 const msg=role==='admin'?'¿Aprobar y asignar ADMINISTRADOR? Tendrá control total, incluido gestionar cuentas.':role==='editor'?('¿Aprobar como EDITOR de '+secs.length+' sección(es)?'):'¿Aprobar esta cuenta? El usuario podrá acceder a la app.';
-if(window.hpConfirm) window.hpConfirm(msg,()=>_hpDoAccion(uid,'aprobar',role,secs)); else _hpDoAccion(uid,'aprobar',role,secs);
+if(window.hpConfirm) window.hpConfirm(msg,()=>_hpDoAccion(uid,'aprobar',role,secs,nombre)); else _hpDoAccion(uid,'aprobar',role,secs,nombre);
 };
 window.hpRechazarUI=function(uid){ if(window.hpConfirm) window.hpConfirm('¿Rechazar esta cuenta?',()=>_hpDoAccion(uid,'rechazar')); else _hpDoAccion(uid,'rechazar'); };
 
@@ -9139,6 +9257,13 @@ window.hpRecordTermsAcceptance = async function(){
   if (!uid || !navigator.onLine) return;
   try { await updateDoc(doc(fs, 'cuentas', uid), { aceptaTerminos: true, versionTerminos: TERMS_VERSION, fechaAceptacion: serverTimestamp() }); } catch(e){}
 };
+// ── Aviso Legal (texto): lo escribe SOLO la admin principal; lo leen todos.
+window.hpSaveAviso = async function(html){ await setDoc(doc(fs, 'textos', 'avisolegal'), { html: html||'', actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }); };
+window.hpSyncAviso = async function(){ try{ const s = await getDoc(doc(fs, 'textos', 'avisolegal')); if(s.exists() && window.hpApplyAviso) window.hpApplyAviso((s.data()||{}).html||''); return true; }catch(e){ return false; } };
+// ── Listín editable (directorio): cloud ──
+window.hpSaveContacto = async function(id, data){ await setDoc(doc(fs, 'directorio', id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, data)); };
+window.hpDelContactoCloud = async function(id){ await deleteDoc(doc(fs, 'directorio', id)); };
+window.hpSyncDirectorio = async function(){ try{ const snap = await getDocs(collection(fs, 'directorio')); const map = {}; snap.forEach(d => { map[d.id] = d.data(); }); if(window.hpApplyDirectorio) window.hpApplyDirectorio(map); return true; }catch(e){ return false; } };
 
 function hidePending(){ const pe=document.getElementById('hp-pending-overlay'); if(pe) pe.style.display='none'; }
 function showPending(name){
@@ -9167,7 +9292,10 @@ function revealAndEnter(user){
   window.__hpUid=user.uid;
   HemoCloud.loadRole(user.uid).then(()=>{ if(window.hpOnRoleLoaded) window.hpOnRoleLoaded(); });
   if(window.syncCloudGuides) setTimeout(()=>window.syncCloudGuides(true),800);
+  if(window.hpSyncColaboradores) setTimeout(()=>window.hpSyncColaboradores(),900);
   setTimeout(()=>{ if(window.mostrarAceptacionLegal) window.mostrarAceptacionLegal(); }, 600);
+  if(window.hpSyncAviso) setTimeout(()=>window.hpSyncAviso(),1150);
+  if(window.hpSyncDirectorio) setTimeout(()=>window.hpSyncDirectorio(),1100);
 }
 async function enterAppGated(user){
   let blocked=false, name='';
@@ -9240,14 +9368,20 @@ window.hpRechazarCuenta=async function(uid){ await updateDoc(doc(fs,'cuentas',ui
 //  - 'admin'  -> roles/{uid} = { role:'admin' }
 //  - 'editor' -> roles/{uid} = { role:'editor', sections:[...] }
 //  - otro     -> se elimina el documento de rol (queda como usuario de consulta)
-window.hpAsignarRol = async function(uid, role, sections){
+window.hpAsignarRol = async function(uid, role, sections, nombre){
   if(role === 'admin'){
     await setDoc(doc(fs, 'roles', uid), { role:'admin', asignadoPor: curUid || null, fechaAsignacion: serverTimestamp() });
+    try { await deleteDoc(doc(fs, 'colaboradores', uid)); } catch(e){}
   } else if(role === 'editor'){
     const secs = Array.isArray(sections) ? sections.filter(Boolean) : [];
     await setDoc(doc(fs, 'roles', uid), { role:'editor', sections: secs, asignadoPor: curUid || null, fechaAsignacion: serverTimestamp() });
+    // Crédito PÚBLICO de colaborador por tema (lo refleja el Aviso Legal de todos).
+    const nom = (nombre||'').toString().trim();
+    if(nom) await setDoc(doc(fs, 'colaboradores', uid), { nombre: nom, sections: secs, actualizadoPor: curUid || null, fechaActualizacion: serverTimestamp() });
+    else { try { await deleteDoc(doc(fs, 'colaboradores', uid)); } catch(e){} }
   } else {
     await deleteDoc(doc(fs, 'roles', uid));
+    try { await deleteDoc(doc(fs, 'colaboradores', uid)); } catch(e){}
   }
 };
 // Lee todos los roles (solo administrador). Devuelve un mapa uid -> { role, sections }.
@@ -9260,6 +9394,22 @@ window.hpListRoles = async function(){
 window.hpListUsuarios = async function(){
   const snap = await getDocs(collection(fs, 'usuarios'));
   const out = {}; snap.forEach(d => { out[d.id] = Object.assign({ uid:d.id }, d.data()); }); return out;
+};
+// Sincroniza los colaboradores acreditados (editores) y los cachea localmente para el Aviso
+// Legal y los bloques de seccion. La lee cualquier usuario autorizado (reglas: isApproved).
+window.hpSyncColaboradores = async function(){
+  try{
+    const snap = await getDocs(collection(fs, 'colaboradores'));
+    const map = {};
+    snap.forEach(d => { const x = d.data()||{}; const nom = (x.nombre||'').toString().trim(); if(!nom) return; (Array.isArray(x.sections)?x.sections:[]).forEach(s => { (map[s]=map[s]||[]).push({ n: nom }); }); });
+    if(window.hpStoreEditorCollabs) window.hpStoreEditorCollabs(map);
+    return map;
+  }catch(e){ return null; }
+};
+// Para el panel del administrador: nombre de credito guardado, por uid.
+window.hpListColaboradores = async function(){
+  const snap = await getDocs(collection(fs, 'colaboradores'));
+  const out = {}; snap.forEach(d => { out[d.id] = d.data(); }); return out;
 };
 
 // ── Reportes de errores / incidencias ──
