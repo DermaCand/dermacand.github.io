@@ -170,6 +170,17 @@ service cloud.firestore {
       allow delete: if canEdit(resource.data.seccion);
     }
 
+    // ── Páginas editadas (override del contenido de vistas existentes) ──
+    // Lo lee cualquier usuario autorizado. Lo edita quien puede editar la sección a la que pertenece
+    // la página (campo 'seccion'); si la página no tiene sección (vistas generales), solo un admin.
+    match /paginas/{id} {
+      allow read:   if isApproved();
+      allow create: if isAdmin() || (request.resource.data.seccion is string && canEdit(request.resource.data.seccion));
+      allow update: if isAdmin() || (resource.data.seccion is string && canEdit(resource.data.seccion)
+                                     && request.resource.data.seccion is string && canEdit(request.resource.data.seccion));
+      allow delete: if isAdmin() || (resource.data.seccion is string && canEdit(resource.data.seccion));
+    }
+
     match /config/{doc} {
       // Token de GitHub y similares: solo lo leen admin/editores (para subir PDF).
       // Nunca se escribe desde la app; se gestiona desde la consola.

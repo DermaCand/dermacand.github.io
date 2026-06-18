@@ -271,6 +271,9 @@ body.view-home .app-footer{padding-bottom:18px}
 .coll-c{padding:0 14px;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s}
 .coll.open .coll-c{padding:12px 14px;max-height:9999px}
 .coll.open .coll-h .ar{transform:rotate(90deg)}
+#page-edit-area .coll-c{max-height:none!important;overflow:visible!important;padding:8px 14px!important}
+#page-edit-area .coll-h{cursor:default}
+#page-edit-area table.tbl,#page-edit-area .coll{margin:8px 0}
 .coll-h .ar{transition:transform .2s;font-size:10px;color:var(--mut)}
 .qtc-row{display:grid;grid-template-columns:1fr 90px 60px;gap:10px;align-items:center;margin:6px 0}
 .qtc-row input[type=range]{width:100%}
@@ -1124,8 +1127,11 @@ function go(id, params) {
     renderMenu($('search').value);
     
     const v = VIEWS[id];
-    $('content').innerHTML = v ? v(params) : homeView();
-    if (VIEWS[id + '_post']) VIEWS[id + '_post'](params);
+    let _base = v ? v(params) : homeView();
+    let _skipPost = false;
+    try{ const _pw = hpPageWrap(id, _base); _base = _pw.html; _skipPost = _pw.skipPost; }catch(e){}
+    $('content').innerHTML = _base;
+    if (!_skipPost && VIEWS[id + '_post']) VIEWS[id + '_post'](params);
     if (typeof wrapTbls === 'function') wrapTbls($('content'));
     if (typeof makeStepsCollapsible === 'function') makeStepsCollapsible($('content'));
     document.body.classList.toggle('view-home', !!document.querySelector('#content .home-screen'));
@@ -1135,6 +1141,78 @@ function go(id, params) {
 
 // === VIEWS ===
 const VIEWS={};
+
+// ── Edición de CUALQUIER página de contenido (info, algoritmos, fichas) por usuarios autorizados ──
+// Una "página editada" sustituye al contenido del código con HTML saneado (sin scripts ni handlers).
+// Se gestiona por sección (editor de esa sección o admin) y se sincroniza. Reversible (restaurar
+// original). Se excluyen las vistas funcionales (calculadoras y asistentes, paneles de admin, guías)
+// y CUALQUIER vista interactiva (con _post) para no romper sus cálculos: solo el contenido puro es editable.
+const HP_NOPAGE=new Set(['home','sync','phone','viewer','acerca','solicitudes','reportes','gsecciones','calc','calcedit','algo','algoedit','labconv','recetas','pageedit']);
+function hpPageEditable(id){ return !!id && !HP_NOPAGE.has(id) && id.indexOf('g_')!==0 && !VIEWS[id+'_post']; }
+let _hpPageSec=null;
+function _hpPageSecMap(){ if(_hpPageSec) return _hpPageSec; const m={}; try{ MENU.forEach(function(sec){ const gi=sec.items.find(function(it){return it.id&&it.id.indexOf('g_')===0;}); const sid=gi?gi.id.slice(2):null; sec.items.forEach(function(it){ if(it.id) m[it.id]=sid; }); }); }catch(e){} _hpPageSec=m; return m; }
+function hpPageSection(id){ return _hpPageSecMap()[id]||null; }
+function hpCanEditPage(id){ if(!hpPageEditable(id)) return false; const sec=hpPageSection(id); if(sec) return !!(window.HemoCloud&&window.HemoCloud.canEdit&&window.HemoCloud.canEdit(sec)); return !!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin()); }
+function hpPages(){ try{ return ls.g('pageOv')||{}; }catch(e){ return {}; } }
+window.hpApplyPages=function(map){ try{ ls.s('pageOv', map||{}); }catch(e){} };
+function hpPageWrap(id, base){
+  const ov=hpPages()[id]; const canEd=hpCanEditPage(id);
+  if(ov && ov.html && ov.estado==='publicado'){
+    let h='<div class="card">';
+    h+='<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px"><span style="font-size:11px;color:var(--mut)">✏️ Contenido editado por el equipo</span>';
+    if(canEd){ h+='<span style="flex:1"></span><button class="btn btn-out btn-sm" onclick="hpEditPage(\''+id+'\')">Editar</button><button class="btn btn-out btn-sm" onclick="hpRestaurarPage(\''+id+'\')">↺ Restaurar original</button>'; }
+    h+='</div><div class="hp-page-body">'+_hpSanHtml(ov.html)+'</div></div>';
+    return {html:h, skipPost:true};
+  }
+  let h=base;
+  if(canEd){ h+='<div class="btns" style="margin:10px 0 4px"><button class="btn btn-out btn-sm" onclick="hpEditPage(\''+id+'\')">✏️ Editar esta página</button></div>'; }
+  return {html:h, skipPost:false};
+}
+let _pageDraft=null;
+function hpEditPage(id){
+  if(!hpCanEditPage(id)){ toast('No tienes permiso para editar esta página'); return; }
+  const ov=hpPages()[id]; let html;
+  if(ov && ov.html) html=ov.html; else { const v=VIEWS[id]; try{ html=v?v():''; }catch(e){ html=''; } }
+  _pageDraft={ id:id, seccion:hpPageSection(id), html:html }; go('pageedit');
+}
+function _pageCmd(cmd,val){ try{ var a=document.getElementById('page-edit-area'); if(a){ a.focus(); document.execCommand(cmd,false,val||null); } }catch(e){} }
+function _pageInsert(html){ try{ var a=document.getElementById('page-edit-area'); if(!a)return; a.focus(); if(!document.execCommand('insertHTML',false,html)){ a.insertAdjacentHTML('beforeend',html); } }catch(e){} }
+function _pageDesplegable(){ _pageInsert('<div class="coll"><div class="coll-h" onclick="this.parentElement.classList.toggle(\'open\')"><span>Nuevo desplegable</span><span class="ar">▶</span></div><div class="coll-c"><p>Escribe aquí el contenido…</p></div></div><p><br></p>'); }
+function _pageTabla(){ _pageInsert('<table class="tbl"><tbody><tr><td>Celda</td><td>Celda</td></tr><tr><td>Celda</td><td>Celda</td></tr></tbody></table><p><br></p>'); }
+function _pageCurTable(){ try{ var s=window.getSelection&&window.getSelection(); var n=s&&s.anchorNode; var a=document.getElementById('page-edit-area'); while(n&&n!==a){ if(n.nodeType===1&&n.tagName==='TABLE')return n; n=n.parentNode; } }catch(e){} return null; }
+function _pageAddRow(){ var t=_pageCurTable(); if(!t){ toast('Pon el cursor dentro de una tabla'); return; } var rows=t.rows; if(!rows.length)return; var cols=rows[rows.length-1].cells.length; var tb=t.tBodies[0]||t; var tr=document.createElement('tr'); for(var i=0;i<cols;i++){ var td=document.createElement('td'); td.textContent='Celda'; tr.appendChild(td); } tb.appendChild(tr); }
+function _pageAddCol(){ var t=_pageCurTable(); if(!t){ toast('Pon el cursor dentro de una tabla'); return; } for(var i=0;i<t.rows.length;i++){ var cc=t.rows[i].insertCell(-1); cc.textContent='Celda'; } }
+function _pageToolbar(){
+  return '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg)">'
+    +'<span style="font-size:12px;color:var(--mut);width:100%">Edita el contenido como en un procesador de textos:</span>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageCmd(\'bold\')" title="Negrita"><strong>N</strong></button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageCmd(\'italic\')" title="Cursiva"><em>C</em></button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageCmd(\'formatBlock\',\'&lt;h3&gt;\')" title="Título">Título</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageCmd(\'formatBlock\',\'&lt;p&gt;\')" title="Texto normal">Texto</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageCmd(\'insertUnorderedList\')" title="Lista">• Lista</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageDesplegable()" title="Insertar desplegable">➕ Desplegable</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageTabla()" title="Insertar tabla">➕ Tabla</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageAddRow()" title="Añadir fila a la tabla del cursor">➕ Fila</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageAddCol()" title="Añadir columna a la tabla del cursor">➕ Columna</button>'
+    +'</div>';
+}
+VIEWS.pageedit=()=>{
+  const d=_pageDraft; if(!d) return '<div class="card"><h2>Editar página</h2><div class="alert y">Nada que editar.</div></div>';
+  if(!hpCanEditPage(d.id)) return '<div class="card"><h2>Editar página</h2><div class="alert y">No tienes permiso para editar esta página.</div></div>';
+  let h='<div class="card"><h2>✏️ Editar página</h2>';
+  h+='<p class="intro">Edita el contenido y guárdalo: sustituye al original <strong>para todos</strong> y siempre puedes <strong>restaurar el original</strong>.</p>';
+  h+=_pageToolbar();
+  h+='<div id="page-edit-area" contenteditable="true" style="border:1px solid var(--bd);border-radius:8px;padding:10px;min-height:300px;outline:none">'+_hpSanHtml(d.html||'')+'</div>';
+  h+='<hr style="margin:12px 0"><div class="btns"><button class="btn btn-out" onclick="pageCancelar()">✖ Cancelar</button><button class="btn btn-out" onclick="hpRestaurarPage(\''+d.id+'\')">↺ Restaurar original</button><button class="btn btn-g" onclick="pageGuardar()">💾 Guardar para todos</button></div>';
+  h+='</div>'; return h;
+};
+function pageCancelar(){ const id=_pageDraft&&_pageDraft.id; _pageDraft=null; if(id) go(id); else go('home'); }
+async function pageGuardar(){ const d=_pageDraft; if(!d) return; const a=document.getElementById('page-edit-area'); if(!a) return; const html=_hpSanHtml(a.innerHTML); const data={html:html, seccion:d.seccion||null, estado:'publicado'}; const m=hpPages(); m[d.id]=data; try{ls.s('pageOv',m);}catch(e){} if(window.hpSavePage){ try{ await window.hpSavePage(d.id, data); toast('✓ Página actualizada · para todos'); }catch(e){ toast('Guardado solo en este equipo (sin permiso o sin conexión)'); } } else toast('✓ Guardado'); _pageDraft=null; go(d.id); }
+async function hpRestaurarPage(id){ if(!confirm('¿Restaurar el contenido original de esta página? Se perderá la edición para todos.'))return; const m=hpPages(); delete m[id]; try{ls.s('pageOv',m);}catch(e){} if(window.hpDeletePage){ try{ await window.hpDeletePage(id); toast('✓ Original restaurado'); }catch(e){ toast('Restaurado solo en este equipo'); } } _pageDraft=null; go(id); }
+// Los desplegables insertados en páginas editadas pierden su onclick al sanearse (_hpSanHtml quita
+// los handlers): se togglean con un manejador delegado, limitado a .hp-page-body para NO doble-togglear
+// los desplegables del propio código (que conservan su onclick inline).
+document.addEventListener('click',function(e){ try{ var h=e.target&&e.target.closest&&e.target.closest('.hp-page-body .coll-h'); if(h&&h.parentElement&&h.parentElement.classList.contains('coll')) h.parentElement.classList.toggle('open'); }catch(_e){} });
 
 const LOGO_SVG=`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="DermaCand"><defs><radialGradient id="melBody" cx="42%" cy="40%" r="66%"><stop offset="0%" stop-color="#2bb9cb"/><stop offset="60%" stop-color="#12a0b2"/><stop offset="100%" stop-color="#0a7585"/></radialGradient><radialGradient id="melSun" cx="50%" cy="44%" r="62%"><stop offset="0%" stop-color="#ffe48f"/><stop offset="55%" stop-color="#fcc134"/><stop offset="100%" stop-color="#f59e0b"/></radialGradient></defs><g stroke="#0c8a9b" stroke-width="5.4" stroke-linecap="round" fill="none"><line x1="42" y1="56" x2="7" y2="69"/><line x1="42" y1="56" x2="7" y2="43"/><line x1="42" y1="56" x2="29" y2="91"/><line x1="42" y1="56" x2="55" y2="91"/></g><g stroke="#f3a81c" stroke-width="3.2" stroke-linecap="round"><line x1="87.5" y1="27" x2="93.5" y2="27"/><line x1="83.25" y1="16.75" x2="87.5" y2="12.5"/><line x1="73" y1="12.5" x2="73" y2="6.5"/><line x1="62.75" y1="16.75" x2="58.5" y2="12.5"/><line x1="58.5" y1="27" x2="52.5" y2="27"/><line x1="62.75" y1="37.25" x2="58.5" y2="41.5"/><line x1="73" y1="41.5" x2="73" y2="47.5"/><line x1="83.25" y1="37.25" x2="87.5" y2="41.5"/></g><circle cx="73" cy="27" r="12" fill="url(#melSun)"/><circle cx="42" cy="56" r="25" fill="url(#melBody)"/><ellipse cx="34" cy="46" rx="9" ry="6" fill="#ffffff" opacity=".14"/><g><ellipse cx="30.5" cy="60" rx="3.1" ry="1.9" fill="#5fd0dc" opacity=".45"/><ellipse cx="53.5" cy="60" rx="3.1" ry="1.9" fill="#5fd0dc" opacity=".45"/><circle cx="36" cy="53" r="3.15" fill="#06303a"/><circle cx="48" cy="53" r="3.15" fill="#06303a"/><circle cx="34.8" cy="51.8" r="1.05" fill="#fff"/><circle cx="46.8" cy="51.8" r="1.05" fill="#fff"/><path d="M36 60.5 Q42 65.5 48 60.5" stroke="#06303a" stroke-width="1.9" fill="none" stroke-linecap="round"/></g></svg>`;
 const ICON_PHONE=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/></svg>`;
@@ -9176,7 +9254,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 23;
+  var DC_BUILD = 24;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -9927,6 +10005,17 @@ window.hpSyncCalcs = async function(){
     return true;
   }catch(e){ return false; }
 };
+// ── Páginas editadas (override del contenido de vistas). Las edita quien edita esa sección (o admin). ──
+window.hpSavePage = async function(id, data){ await setDoc(doc(fs, 'paginas', id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, data||{})); };
+window.hpDeletePage = async function(id){ await deleteDoc(doc(fs, 'paginas', id)); };
+window.hpSyncPages = async function(){
+  try{
+    const snap = await getDocs(collection(fs, 'paginas'));
+    const map = {}; snap.forEach(d => { map[d.id] = d.data()||{}; });
+    if(window.hpApplyPages) window.hpApplyPages(map);
+    return true;
+  }catch(e){ return false; }
+};
 
 function hidePending(){ const pe=document.getElementById('hp-pending-overlay'); if(pe) pe.style.display='none'; }
 function showPending(name){
@@ -9964,6 +10053,7 @@ function revealAndEnter(user){
   if(window.hpSyncItems) setTimeout(()=>window.hpSyncItems(),1250);
   if(window.hpSyncCalcs) setTimeout(()=>window.hpSyncCalcs(),1300);
   if(window.hpSyncAlgos) setTimeout(()=>window.hpSyncAlgos(),1050);
+  if(window.hpSyncPages) setTimeout(()=>window.hpSyncPages(),1350);
 }
 async function enterAppGated(user){
   let blocked=false, name='';
