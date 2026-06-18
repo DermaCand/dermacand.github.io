@@ -929,7 +929,8 @@ const MENU=[
 {id:'acerca',name:'Acerca de',kw:'acerca informacion aviso legal privacidad autores equipo colaboradores revisores creditos objetivo ajustes configuracion'},
 {id:'sync',name:'Sincronización',kw:'sincronizacion actualizar online offline backup exportar importar guias actualizaciones ajustes configuracion'},
 {id:'reportes',name:'Errores reportados',kw:'errores reportes reportar fallos bugs incidencias problemas sugerencias buzon administrador admin',admin:true},
-{id:'solicitudes',name:'Solicitudes de acceso',kw:'solicitudes cuentas usuarios aprobar aprobacion registro altas administrador admin pendientes terminos',admin:true}
+{id:'solicitudes',name:'Solicitudes de acceso',kw:'solicitudes cuentas usuarios aprobar aprobacion registro altas administrador admin pendientes terminos',admin:true},
+{id:'gsecciones',name:'Gestionar secciones',kw:'gestionar secciones guias crear renombrar ocultar ordenar eliminar menu administrador estructura',admin:true}
 ]}
 ];
 
@@ -937,9 +938,95 @@ function getAll(){return MENU.flatMap(s=>s.items)}
 function _hpAdminUI(){ return !!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin()); }
 function _hpItemAllowed(it){ if(!it) return false; if(it.admin && !_hpAdminUI()) return false; return true; }
 
+// ── Capa de SECCIONES del menú: titulo/visibilidad por colaboración, efectiva para TODOS (ls 'secOverrides') ──
+window.hpApplySecciones=function(map){ try{ ls.s('secOverrides', map||{}); }catch(e){} try{ Object.keys(map||{}).forEach(function(id){ if(!(id in GUIDES_TITLES) && typeof VIEWS!=='undefined' && !VIEWS['g_'+id]) VIEWS['g_'+id]=function(){return guidesView(id);}; }); }catch(e){} };
+function hpSecMap(){ try{ return ls.g('secOverrides')||{}; }catch(e){ return {}; } }
+function hpSecTitle(id){ const o=hpSecMap()[id]; return (o&&o.titulo)||GUIDES_TITLES[id]||id; }
+function hpSecHidden(id){ const o=hpSecMap()[id]; return !!(o&&o.oculta); }
+
+// ── Capa de ELEMENTOS del menú: visibilidad y nombre por colaboración, efectiva para TODOS (ls 'itemOverrides') ──
+window.hpApplyItems=function(map){ try{ ls.s('itemOverrides', map||{}); }catch(e){} try{ if(typeof renderMenu==='function' && document.getElementById('menu')) renderMenu(($('search')&&$('search').value)||''); }catch(e){} };
+function hpItemMap(){ try{ return ls.g('itemOverrides')||{}; }catch(e){ return {}; } }
+function hpItemHidden(id){ const o=hpItemMap()[id]; return !!(o&&o.oculta); }
+function hpItemName(id,def){ const o=hpItemMap()[id]; return (o&&o.nombre)||def; }
+function hpItemOculto(id){ if(!id) return false; if((''+id).indexOf('g_')===0) return hpSecHidden((''+id).slice(2)); return hpItemHidden(id); }
+function hpToggleItem(id){ const nuevo=!hpItemHidden(id); const m=hpItemMap(); m[id]=Object.assign({},m[id],{oculta:nuevo}); try{ls.s('itemOverrides',m);}catch(e){} return nuevo; }
+async function hpOcultarItem(id){
+  const nuevo=hpToggleItem(id);
+  if(typeof renderMenu==='function')renderMenu(($('search')&&$('search').value)||''); go('gsecciones');
+  if(window.hpSaveItem){ try{ await window.hpSaveItem(id,{oculta:nuevo}); toast(nuevo?'✓ Oculta del menú · para todos':'✓ Visible · para todos'); }catch(e){ toast('Guardado solo en este equipo'); } }
+  else toast(nuevo?'✓ Oculta':'✓ Visible');
+}
+async function hpRenombrarItem(id){
+  const def=(getAll().find(function(x){return x.id===id;})||{}).name||'';
+  const actual=hpItemName(id,def);
+  const nuevo=prompt('Nombre visible de la herramienta (deja vacío para restablecer):', actual);
+  if(nuevo==null) return; const t=nuevo.trim();
+  const m=hpItemMap();
+  if(!t || t===def){ if(m[id]){ delete m[id].nombre; if(!Object.keys(m[id]).length) delete m[id]; } }
+  else { m[id]=Object.assign({},m[id],{nombre:t}); }
+  try{ls.s('itemOverrides',m);}catch(e){}
+  if(typeof renderMenu==='function')renderMenu(($('search')&&$('search').value)||''); go('gsecciones');
+  if(window.hpSaveItem){ try{ await window.hpSaveItem(id,{nombre:(!t||t===def)?'':t}); toast('✓ Renombrada · para todos'); }catch(e){ toast('Guardado solo en este equipo'); } }
+  else toast('✓ Guardada');
+}
+
+async function hpRenombrarSeccion(id){
+  const nuevo=prompt('Nombre de la sección (se aplica a TODOS):', hpSecTitle(id));
+  if(nuevo==null) return; const t=nuevo.trim(); if(!t) return;
+  const m=hpSecMap(); m[id]=Object.assign({},m[id],{titulo:t}); try{ls.s('secOverrides',m);}catch(e){}
+  if(typeof renderMenu==='function')renderMenu(($('search')&&$('search').value)||''); go((typeof S!=='undefined'&&S.view==='gsecciones')?'gsecciones':'g_'+id);
+  if(window.hpSaveSeccion){ try{ await window.hpSaveSeccion(id,{titulo:t}); toast('✓ Sección renombrada · para todos'); }catch(e){ toast('Guardado solo en este equipo (sin permiso o sin conexión)'); } }
+  else toast('✓ Renombrada');
+}
+async function hpOcultarSeccion(id){
+  const nuevo=!hpSecHidden(id);
+  const m=hpSecMap(); m[id]=Object.assign({},m[id],{oculta:nuevo}); try{ls.s('secOverrides',m);}catch(e){}
+  if(typeof renderMenu==='function')renderMenu(($('search')&&$('search').value)||''); go((typeof S!=='undefined'&&S.view==='gsecciones')?'gsecciones':'g_'+id);
+  if(window.hpSaveSeccion){ try{ await window.hpSaveSeccion(id,{oculta:nuevo}); toast(nuevo?'✓ Sección oculta del menú · para todos':'✓ Sección visible · para todos'); }catch(e){ toast('Guardado solo en este equipo'); } }
+  else toast(nuevo?'✓ Oculta':'✓ Visible');
+}
+// Lista de TODAS las secciones (de fábrica + nuevas). Las nuevas = ids que no están en GUIDES_TITLES.
+function hpAllSections(){
+  const ov=hpSecMap(); const out=[];
+  Object.keys(GUIDES_TITLES).forEach(function(id){ const o=ov[id]||{}; out.push({id:id,titulo:o.titulo||GUIDES_TITLES[id],oculta:!!o.oculta,nueva:false}); });
+  Object.keys(ov).forEach(function(id){ if(!(id in GUIDES_TITLES)){ const o=ov[id]||{}; if(o.titulo||o.nueva) out.push({id:id,titulo:o.titulo||id,oculta:!!o.oculta,nueva:true,orden:(o.orden!=null?o.orden:9999)}); } });
+  return out;
+}
+function hpNewSectionsOrdered(){ return hpAllSections().filter(function(s){return s.nueva;}).sort(function(a,b){return (a.orden||0)-(b.orden||0);}); }
+async function hpCrearSeccion(){
+  const nombre=prompt('Nombre de la nueva sección de guías (se crea para TODOS):'); if(nombre==null) return; const t=nombre.trim(); if(!t) return;
+  const id='x_'+Date.now();
+  const orden=hpNewSectionsOrdered().reduce(function(m,s){return Math.max(m,s.orden||0);},0)+1;
+  const m=hpSecMap(); m[id]={titulo:t,nueva:true,orden:orden}; try{ls.s('secOverrides',m);}catch(e){}
+  if(window.hpApplySecciones) window.hpApplySecciones(m);
+  if(typeof renderMenu==='function')renderMenu('');
+  if(window.hpSaveSeccion){ try{ await window.hpSaveSeccion(id,{titulo:t,nueva:true,orden:orden}); toast('✓ Sección creada · para todos'); }catch(e){ toast('Creada solo en este equipo (sin permiso o sin conexión)'); } }
+  else toast('✓ Creada');
+  go('gsecciones');
+}
+async function hpEliminarSeccion(id){
+  if(!confirm('¿Eliminar esta sección y sus apartados? (Solo secciones creadas por ti.)')) return;
+  const m=hpSecMap(); delete m[id]; try{ls.s('secOverrides',m);}catch(e){}
+  try{ localStorage.removeItem('hc_subtypes_'+id); }catch(e){}
+  if(typeof renderMenu==='function')renderMenu('');
+  if(window.hpBorrarSeccion){ try{ await window.hpBorrarSeccion(id); toast('✓ Sección eliminada · para todos'); }catch(e){ toast('Eliminada solo en este equipo'); } }
+  else toast('✓ Eliminada');
+  go('gsecciones');
+}
+async function hpMoverSeccion(id,dir){
+  const list=hpNewSectionsOrdered(); const i=list.findIndex(function(s){return s.id===id;}); if(i<0) return;
+  const j=i+dir; if(j<0||j>=list.length) return;
+  const a=list[i], b=list[j];
+  const m=hpSecMap(); m[a.id]=Object.assign({},m[a.id],{orden:b.orden}); m[b.id]=Object.assign({},m[b.id],{orden:a.orden}); try{ls.s('secOverrides',m);}catch(e){}
+  if(typeof renderMenu==='function')renderMenu('');
+  if(window.hpSaveSeccion){ try{ await window.hpSaveSeccion(a.id,{orden:b.orden}); await window.hpSaveSeccion(b.id,{orden:a.orden}); }catch(e){} }
+  go('gsecciones');
+}
+
 function renderMenu(filter=''){
 const f=filter.toLowerCase().trim();
-const favs=S.favs.filter(id=>{const it=getAll().find(x=>x.id===id);return it&&_hpItemAllowed(it);}).slice(0,4);
+const favs=S.favs.filter(id=>{const it=getAll().find(x=>x.id===id);return it&&_hpItemAllowed(it)&&!hpItemOculto(id);}).slice(0,4);
 let h='';
 if(favs.length){
 h+='<div class="menu-section"><div style="font-size:11px;text-transform:uppercase;color:var(--mut);font-weight:600;padding:8px 6px 4px;letter-spacing:.5px">Acceso Rápido</div>';
@@ -948,11 +1035,17 @@ h+='</div>';
 }
 MENU.forEach((sec,si)=>{
 const isAdminUI=!!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin());
-const realItems=sec.items.filter(it=>!it.sub && !(it.admin&&!isAdminUI) && (!f||it.name.toLowerCase().includes(f)||it.kw.includes(f)));
+const isGuideHidden=it=>!!(it.id&&it.id.indexOf('g_')===0&&hpSecHidden(it.id.slice(2)));
+// Si la sección de guías de este grupo está OCULTA, se oculta el grupo entero del menú.
+const _grpG=sec.items.find(it=>it.id&&it.id.indexOf('g_')===0);
+if(_grpG && hpSecHidden(_grpG.id.slice(2))) return;
+const realItems=sec.items.filter(it=>!it.sub && !(it.admin&&!isAdminUI) && !isGuideHidden(it) && !hpItemHidden(it.id) && (!f||it.name.toLowerCase().includes(f)||it.kw.includes(f)));
 if(!realItems.length)return;
-const visible=f?realItems:sec.items;
+const visible=f?realItems:sec.items.filter(it=>!isGuideHidden(it) && !hpItemHidden(it.id));
 const open=f||sec._o||sec.o;
-h+=`<div class="menu-section"><div class="menu-cat ${open?'open':''}" onclick="toggleSec(${si})"><span>${sec.h}</span><span class="ar">▶</span></div><div class="menu-items"${open?' style="max-height:1500px"':''}>`;
+// Cabecera: si la sección de guías de este grupo se renombró, usar el nombre nuevo.
+let _hdr=sec.h; const _gi=sec.items.find(it=>it.id&&it.id.indexOf('g_')===0); if(_gi){const _sid=_gi.id.slice(2);const _t=hpSecTitle(_sid); if(_t&&_t!==GUIDES_TITLES[_sid])_hdr=_t.toUpperCase();}
+h+=`<div class="menu-section"><div class="menu-cat ${open?'open':''}" onclick="toggleSec(${si})"><span>${_hdr}</span><span class="ar">▶</span></div><div class="menu-items"${open?' style="max-height:1500px"':''}>`;
 let inSub=false;
 visible.forEach(it=>{
 if(it.admin&&!isAdminUI)return;
@@ -960,10 +1053,17 @@ if(it.sub){inSub=true;h+=`<div class="menu-sub">${it.name}</div>`;return}
 const isFav=S.favs.includes(it.id);
 const isNew=it.new && isRecentlyNew(it.new);
 const repBadge=(it.id==='reportes'&&window._hpRepNew)?`<span class="tag-new" style="background:var(--er)" title="reportes sin resolver">${window._hpRepNew}</span>`:'';
-h+=`<div class="menu-item ${inSub?'in-sub ':''}${S.view===it.id?'active':''}" onclick="go('${it.id}')"><span class="nm-wrap"><span>${it.name}</span>${isNew?'<span class="tag-new">nuevo</span>':''}${repBadge}</span><span class="fav ${isFav?'on':''}" onclick="event.stopPropagation();toggleFav('${it.id}')">${isFav?'★':'☆'}</span></div>`;
+h+=`<div class="menu-item ${inSub?'in-sub ':''}${S.view===it.id?'active':''}" onclick="go('${it.id}')"><span class="nm-wrap"><span>${_hpEsc(hpItemName(it.id,it.name))}</span>${isNew?'<span class="tag-new">nuevo</span>':''}${repBadge}</span><span class="fav ${isFav?'on':''}" onclick="event.stopPropagation();toggleFav('${it.id}')">${isFav?'★':'☆'}</span></div>`;
 });
 h+='</div></div>';
 });
+// Secciones de guías NUEVAS (creadas por colaboración): categorías propias al final del menú.
+try{ if(typeof hpNewSectionsOrdered==='function'){ hpNewSectionsOrdered().forEach(function(s){
+  if(s.oculta) return;
+  if(f && !(('guias clinicas '+(s.titulo||'')).toLowerCase().includes(f))) return;
+  const vid='g_'+s.id; const act=(S.view===vid); const op=(f||act);
+  h+='<div class="menu-section"><div class="menu-cat'+(op?' open':'')+'" onclick="this.classList.toggle(\'open\')"><span>'+(s.titulo||'').toUpperCase()+'</span><span class="ar">▶</span></div><div class="menu-items"><div class="menu-item '+(act?'active':'')+'" onclick="go(\''+vid+'\')"><span class="nm-wrap"><span>Guías clínicas</span></span></div></div></div>';
+}); } }catch(e){}
 $('menu').innerHTML=h;
 }
 
@@ -8630,7 +8730,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 16;
+  var DC_BUILD = 17;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -8857,6 +8957,58 @@ window.hpConfirm=function(msg,onYes){
   no.onclick=close;
   ov.onclick=e=>{if(e.target===ov)close();};
   ov.classList.add('show');
+};
+
+// === GESTIONAR SECCIONES (solo administrador) ===
+VIEWS.gsecciones=()=>{
+  if(!(_hpAdminUI&&_hpAdminUI()) && !(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin())) return '<div class="card"><h2>Gestionar secciones</h2><div class="alert y">Este apartado solo está disponible para administradores.</div></div>';
+  let h='<div class="card"><h2>🗂️ Secciones y su contenido</h2>';
+  h+='<p class="intro">Todo el menú en un solo sitio: <strong>renombrar, ocultar, crear, reordenar o eliminar</strong> secciones y, dentro de cada una, <strong>mostrar/ocultar o renombrar</strong> sus herramientas y el apartado de guías. Todo es <strong>efectivo para todos</strong>. Despliega una sección para ver su contenido.</p>';
+  h+='<button class="btn" style="margin-bottom:14px" onclick="hpCrearSeccion()">➕ Crear sección nueva</button>';
+  // Temas del menú (categorías de fábrica), excepto Ajustes
+  try{ MENU.forEach(function(sec){
+    if((sec.h||'')==='AJUSTES') return;
+    const sid=(typeof _hpSecGuiaId==='function')?_hpSecGuiaId(sec):null;
+    const nombre = sid?hpSecTitle(sid):(sec.h||'');
+    const oc = sid?hpSecHidden(sid):false;
+    h+='<details style="margin-bottom:8px;border:1px solid var(--bd);border-radius:8px;padding:6px 10px">';
+    h+='<summary style="cursor:pointer;font-weight:600;padding:4px 0">'+_hpEsc(nombre)+(oc?' <span style="color:var(--mut);font-size:11px">(sección oculta)</span>':'')+'</summary>';
+    h+='<div style="margin-top:8px">';
+    if(sid){
+      h+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">';
+      h+='<button class="btn btn-out btn-sm" onclick="hpRenombrarSeccion(\''+sid+'\')">✏️ Renombrar sección</button>';
+      h+='<button class="btn btn-out btn-sm" onclick="hpOcultarSeccion(\''+sid+'\')">'+(oc?'👁️ Mostrar sección':'🚫 Ocultar sección')+'</button>';
+      h+='</div>';
+    } else {
+      h+='<div style="font-size:11px;color:var(--mut);margin-bottom:6px">Sección general del menú (sin apartado de guías). Su nombre forma parte de la app; aquí gestionas sus herramientas.</div>';
+    }
+    const cont=(typeof _hpContenidoTema==='function')?_hpContenidoTema(sec):'';
+    h+=cont||'<div style="font-size:12px;color:var(--mut)">Sin herramientas en esta sección.</div>';
+    h+='</div></details>';
+  }); }catch(e){}
+  // Secciones nuevas creadas por la administración
+  try{
+    const nuevas=(typeof hpNewSectionsOrdered==='function')?hpNewSectionsOrdered():[];
+    h+='<h3 style="margin-top:16px">Secciones nuevas creadas por ti ('+nuevas.length+')</h3>';
+    if(!nuevas.length) h+='<div class="team-empty">Ninguna todavía. Crea una con el botón de arriba.</div>';
+    nuevas.forEach(function(s,i){
+      const oc=hpSecHidden(s.id);
+      h+='<details style="margin-bottom:8px;border:1px solid var(--bd);border-radius:8px;padding:6px 10px">';
+      h+='<summary style="cursor:pointer;font-weight:600;padding:4px 0">'+_hpEsc(hpSecTitle(s.id))+(oc?' <span style="color:var(--mut);font-size:11px">(oculta)</span>':'')+'</summary>';
+      h+='<div style="margin-top:8px"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">';
+      h+='<button class="btn btn-out btn-sm" onclick="hpRenombrarSeccion(\''+s.id+'\')">✏️ Renombrar</button>';
+      h+='<button class="btn btn-out btn-sm" onclick="hpOcultarSeccion(\''+s.id+'\')">'+(oc?'👁️ Mostrar':'🚫 Ocultar')+'</button>';
+      h+='<button class="btn btn-out btn-sm" onclick="hpMoverSeccion(\''+s.id+'\',-1)"'+(i===0?' disabled':'')+'>↑</button>';
+      h+='<button class="btn btn-out btn-sm" onclick="hpMoverSeccion(\''+s.id+'\',1)"'+(i===nuevas.length-1?' disabled':'')+'>↓</button>';
+      h+='<button class="btn btn-out btn-sm" onclick="go(\'g_'+s.id+'\')">Abrir</button>';
+      h+='<button class="btn btn-out btn-sm" style="color:#c41e3a" onclick="(typeof hpEliminarSeccion===\'function\'?hpEliminarSeccion:hpBorrarSeccionNueva)(\''+s.id+'\')">Eliminar</button>';
+      h+='</div>';
+      h+='<div style="font-size:12px;color:var(--mut)">Para añadir herramientas o guías a esta sección, ábrela y usa «➕ Crear herramienta» o sube guías.</div>';
+      h+='</div></details>';
+    });
+  }catch(e){}
+  h+='</div>';
+  return h;
 };
 
 // === SOLICITUDES DE ACCESO (solo administrador) ===
@@ -9265,6 +9417,28 @@ window.hpSaveContacto = async function(id, data){ await setDoc(doc(fs, 'director
 window.hpDelContactoCloud = async function(id){ await deleteDoc(doc(fs, 'directorio', id)); };
 window.hpSyncDirectorio = async function(){ try{ const snap = await getDocs(collection(fs, 'directorio')); const map = {}; snap.forEach(d => { map[d.id] = d.data(); }); if(window.hpApplyDirectorio) window.hpApplyDirectorio(map); return true; }catch(e){ return false; } };
 
+// ── Secciones del menú (titulo/visibilidad/nuevas): solo colaboradores escriben; lo leen todos.
+window.hpSaveSeccion = async function(id, data){ await setDoc(doc(fs, 'secciones', id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, data||{}), { merge:true }); };
+window.hpBorrarSeccion = async function(id){ await deleteDoc(doc(fs, 'secciones', id)); };
+window.hpSyncSecciones = async function(){
+  try{
+    const snap = await getDocs(collection(fs, 'secciones'));
+    const map = {}; snap.forEach(d => { map[d.id] = d.data()||{}; });
+    if(window.hpApplySecciones) window.hpApplySecciones(map);
+    return true;
+  }catch(e){ return false; }
+};
+// ── Elementos del menú (visibilidad/nombre): solo colaboradores escriben; lo leen todos.
+window.hpSaveItem = async function(id, data){ await setDoc(doc(fs, 'itemOverrides', id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, data||{}), { merge:true }); };
+window.hpSyncItems = async function(){
+  try{
+    const snap = await getDocs(collection(fs, 'itemOverrides'));
+    const map = {}; snap.forEach(d => { map[d.id] = d.data()||{}; });
+    if(window.hpApplyItems) window.hpApplyItems(map);
+    return true;
+  }catch(e){ return false; }
+};
+
 function hidePending(){ const pe=document.getElementById('hp-pending-overlay'); if(pe) pe.style.display='none'; }
 function showPending(name){
   const ov=document.getElementById('hp-auth-overlay'); if(ov) ov.classList.add('hidden');
@@ -9296,6 +9470,8 @@ function revealAndEnter(user){
   setTimeout(()=>{ if(window.mostrarAceptacionLegal) window.mostrarAceptacionLegal(); }, 600);
   if(window.hpSyncAviso) setTimeout(()=>window.hpSyncAviso(),1150);
   if(window.hpSyncDirectorio) setTimeout(()=>window.hpSyncDirectorio(),1100);
+  if(window.hpSyncSecciones) setTimeout(()=>window.hpSyncSecciones(),1200);
+  if(window.hpSyncItems) setTimeout(()=>window.hpSyncItems(),1250);
 }
 async function enterAppGated(user){
   let blocked=false, name='';

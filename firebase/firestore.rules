@@ -127,6 +127,20 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // ── Secciones del menú: renombrado, visibilidad, orden y secciones nuevas ──
+    // Editable SOLO por administradores; efectiva para todos. Las lee cualquier usuario autorizado.
+    match /secciones/{id} {
+      allow read:  if isApproved();
+      allow write: if isAdmin();
+    }
+
+    // ── Elementos del menú (herramientas): visibilidad y nombre, por tema ──
+    // Editable SOLO por administradores; efectiva para todos.
+    match /menuitems/{id} {
+      allow read:  if isApproved();
+      allow write: if isAdmin();
+    }
+
     match /config/{doc} {
       // Token de GitHub y similares: solo lo leen admin/editores (para subir PDF).
       // Nunca se escribe desde la app; se gestiona desde la consola.
