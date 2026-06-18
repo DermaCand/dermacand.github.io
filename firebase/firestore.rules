@@ -141,11 +141,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // ── Orden de las categorías del menú (doc 'orden') ──
-    // Editable SOLO por administradores; efectivo para todos.
+    // ── Orden de las categorías del menú (doc 'orden') y diccionario del asistente de recetas ──
+    // 'orden' (categorías) es solo-admin; 'recetas' (diccionario del asistente de recetas) lo pueden
+    // editar también los editores del área 'asistentes'. Lo lee cualquier usuario autorizado.
     match /menuconfig/{id} {
       allow read:  if isApproved();
-      allow write: if isAdmin();
+      allow write: if isAdmin() || (id == 'recetas' && canEdit('asistentes'));
     }
 
     // -- Algoritmos interactivos (arboles de decision) por seccion --

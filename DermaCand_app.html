@@ -8575,6 +8575,8 @@ const DICT=[
 {a:'Ac VHC',u:'',c:'serologia',k:'sero',pats:['anticuerpos vhc','ac vhc','anti-vhc','anti vhc','serologia vhc','hcv ac','ac hcv','hepatitis c[^\\n\\r]{0,14}\\bac\\b','\\bhcv\\b']},
 {a:'CMV IgG',u:'',c:'serologia',k:'sero',pats:['cmv[^\\n\\r]{0,18}\\bigg\\b','citomegalovirus[^\\n\\r]{0,18}\\bigg\\b','\\bigg\\b[^\\n\\r]{0,18}cmv','\\bigg\\b[^\\n\\r]{0,18}citomegalovirus']},
 {a:'CMV IgM',u:'',c:'serologia',k:'sero',pats:['cmv[^\\n\\r]{0,18}\\bigm\\b','citomegalovirus[^\\n\\r]{0,18}\\bigm\\b','\\bigm\\b[^\\n\\r]{0,18}cmv','\\bigm\\b[^\\n\\r]{0,18}citomegalovirus']},
+{a:'VHS IgG',u:'',c:'serologia',k:'sero',pats:['herpes simple[^\\n\\r]{0,22}\\bigg\\b','\\bvhs\\b[^\\n\\r]{0,14}\\bigg\\b']},
+{a:'VHS IgM',u:'',c:'serologia',k:'sero',pats:['herpes simple[^\\n\\r]{0,22}\\bigm\\b','\\bvhs\\b[^\\n\\r]{0,14}\\bigm\\b']},
 {a:'VVZ IgG',u:'',c:'serologia',k:'sero',pats:['(?:vvz|vzv|hzv)[^\\n\\r]{0,18}\\bigg\\b','varicela[ -]?zoster[^\\n\\r]{0,18}\\bigg\\b','\\bigg\\b[^\\n\\r]{0,18}(?:vvz|vzv|hzv)','\\bigg\\b[^\\n\\r]{0,18}varicela']},
 {a:'VVZ IgM',u:'',c:'serologia',k:'sero',pats:['(?:vvz|vzv|hzv)[^\\n\\r]{0,18}\\bigm\\b','varicela[ -]?zoster[^\\n\\r]{0,18}\\bigm\\b','\\bigm\\b[^\\n\\r]{0,18}(?:vvz|vzv|hzv)','\\bigm\\b[^\\n\\r]{0,18}varicela']},
 {a:'VIH (Ag/Ac)',u:'',c:'serologia',k:'sero',pats:['vih\\s+ac\\.?\\s*\\([^)\\n\\r]{0,30}\\)','ag/ac vih','serologia vih','anticuerpos[^\\n\\r]{0,12}vih','vih[^\\n\\r]{0,12}(?:ac|ag)','virus de la inmunodeficiencia','\\bvih\\b','\\bhiv\\b']},
@@ -8658,9 +8660,27 @@ function rxPreClean(raw){
     return (nm+(d.pos?' '+d.pos:'')).trim();
   }).join('\n');
 }
+// ¿Puede editar los ASISTENTES (redacción y recetas)? Admin o editor del área 'asistentes'.
+function hpCanEditAsist(){ return !!(window.HemoCloud && ((window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin()) || (window.HemoCloud.canEdit&&window.HemoCloud.canEdit('asistentes')))); }
+// ── Asistente de recetas: DICCIONARIO editable (correcciones de nombre y abreviaturas) ──
+// Se aplica al texto ANTES de transcribir. Lo editan admin o editores del área "Asistentes";
+// lo leen todos. Se guarda en menuconfig/recetas. El reconocimiento del texto sigue en código.
+function rxOverride(){ try{ return ls.g('rxOverride')||{}; }catch(e){ return {}; } }
+window.hpApplyRx=function(o){ try{ ls.s('rxOverride', o||{}); }catch(e){} };
+function _rxEsc(s){ return (''+s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+function rxApplyDict(raw){
+  const ov=rxOverride(); let t=''+raw;
+  (ov.abbr||[]).concat(ov.rename||[]).forEach(function(p){
+    if(p&&(p.from!=null)&&(''+p.from).trim()&&(p.to!=null)){
+      try{ t=t.replace(new RegExp('\\b'+_rxEsc((''+p.from).trim())+'\\b','gi'), (''+p.to)); }catch(e){}
+    }
+  });
+  return t;
+}
 function RXtranscribe(raw){
   if(!raw||!raw.trim()) return '';
   { const _pre=rxPreClean(raw); if(_pre) raw=_pre; }
+  try{ raw=rxApplyDict(raw); }catch(e){}
   // separar medicamentos por salto de línea o ; (la coma es ambigua: puede separar med o ir dentro)
   let chunks=raw.replace(/\r/g,'').split(/\n|;/);
   // si no hay saltos ni ;, intentar separar por coma SOLO cuando vaya seguida de algo que parece nuevo fármaco (palabra en mayúsculas larga)
@@ -8837,6 +8857,7 @@ function setLCmode(m){LC_MODE=m;
   }
   const o=$('lc_out');if(o)o.value='';
   if(ph)ph.value='';
+  try{ var _er=$('lc_edit_rx'); if(_er)_er.style.display=(m==='rx')?'':'none'; }catch(e){}
 }
 
 const LC_HELP_LAB=`<ul style="padding-left:18px;line-height:1.7;font-size:12.5px">
@@ -8873,6 +8894,7 @@ return `<div class="card">
 <textarea id="lc_out" style="min-height:150px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px"></textarea></div>
 <div id="lc_guard" style="margin:8px 0"></div>
 <div class="btns"><button class="btn btn-g" onclick="copyLabConv()">📋 Copiar resultado</button></div>
+${hpCanEditAsist()?'<div class="btns" style="margin-top:6px"><button id="lc_edit_rx" class="btn btn-out btn-sm" style="display:none" onclick="rxEditOpen()">✏️ Editar diccionario de recetas</button></div>':''}
 
 <div class="coll" style="margin-top:14px">
 <div class="coll-h" onclick="this.parentElement.classList.toggle('open')"><span>ℹ️ Qué hace y reglas aplicadas</span><span class="ar">▶</span></div>
@@ -8881,6 +8903,31 @@ return `<div class="card">
 </div>`;
 };
 VIEWS.labconv_post=()=>setLCmode('lab');
+
+// ── Editor del DICCIONARIO de recetas (correcciones de nombre + abreviaturas) ──
+let _rxDraft=null;
+function rxEditOpen(){ if(!hpCanEditAsist()){ toast('Sin permiso para editar'); return; } const ov=rxOverride(); _rxDraft={ rename:JSON.parse(JSON.stringify(ov.rename||[])), abbr:JSON.parse(JSON.stringify(ov.abbr||[])) }; go('rxedit'); }
+VIEWS.rxedit=()=>{
+  if(!hpCanEditAsist()) return '<div class="card"><h2>Editar recetas</h2><div class="alert y">No tienes permiso para editar este asistente.</div></div>';
+  const d=_rxDraft; if(!d) return '<div class="card"><h2>Editar recetas</h2><div class="alert y">Nada que editar.</div></div>';
+  const row=(list,p,i)=>'<div style="display:flex;gap:4px;align-items:center;margin-bottom:4px"><input style="flex:1;min-width:90px" value="'+_hpEsc(p.from||'')+'" onchange="rxField(\''+list+'\','+i+',\'from\',this.value)" placeholder="'+(list==='abbr'?'abreviatura':'lo que aparece')+'"><span>→</span><input style="flex:1;min-width:90px" value="'+_hpEsc(p.to||'')+'" onchange="rxField(\''+list+'\','+i+',\'to\',this.value)" placeholder="'+(list==='abbr'?'texto completo':'cómo debe quedar')+'"><button class="btn btn-out btn-sm" style="color:#c41e3a" onclick="rxDel(\''+list+'\','+i+')">×</button></div>';
+  let h='<div class="card"><h2>💊 Editar el diccionario de recetas</h2>';
+  h+='<p class="intro">Corrige cómo el asistente transcribe los medicamentos. <strong>Efectivo para todos.</strong> El reconocimiento del texto pegado sigue siendo automático; aquí solo añades correcciones.</p>';
+  h+='<h3>Correcciones de nombre</h3><p style="font-size:12px;color:var(--mut)">Sustituye un término por otro (p. ej. «Losartan»→«Losartán», «AAS»→«Ácido acetilsalicílico»). No distingue mayúsculas; se aplica a palabras completas.</p>';
+  (d.rename||[]).forEach(function(p,i){ h+=row('rename',p,i); });
+  h+='<button class="btn btn-out btn-sm" onclick="rxAdd(\'rename\')">➕ Añadir corrección</button>';
+  h+='<h3 style="margin-top:14px">Abreviaturas</h3><p style="font-size:12px;color:var(--mut)">Expande abreviaturas de forma, vía o frecuencia (p. ej. «cp»→«comprimido», «sc»→«subcutánea», «ev»→«intravenosa»).</p>';
+  (d.abbr||[]).forEach(function(p,i){ h+=row('abbr',p,i); });
+  h+='<button class="btn btn-out btn-sm" onclick="rxAdd(\'abbr\')">➕ Añadir abreviatura</button>';
+  h+='<hr style="margin:12px 0"><div class="btns"><button class="btn btn-out" onclick="rxEditCancelar()">✖ Cancelar</button><button class="btn btn-out" onclick="rxEditReset()">Restablecer</button><button class="btn btn-g" onclick="rxEditGuardar()">💾 Guardar para todos</button></div>';
+  h+='</div>'; return h;
+};
+function rxField(list,i,f,v){ if(!_rxDraft||!_rxDraft[list]||!_rxDraft[list][i])return; _rxDraft[list][i][f]=v; }
+function rxAdd(list){ if(!_rxDraft)return; if(!_rxDraft[list])_rxDraft[list]=[]; _rxDraft[list].push({from:'',to:''}); go('rxedit'); }
+function rxDel(list,i){ if(!_rxDraft||!_rxDraft[list])return; _rxDraft[list].splice(i,1); go('rxedit'); }
+function rxEditCancelar(){ _rxDraft=null; go('labconv'); }
+async function rxEditGuardar(){ const d=_rxDraft; if(!d)return; const clean=function(a){return (a||[]).filter(function(p){return p&&(''+p.from).trim()&&(''+p.to).trim();}).map(function(p){return {from:(''+p.from).trim(),to:(''+p.to).trim()};});}; const o={ rename:clean(d.rename), abbr:clean(d.abbr) }; try{ls.s('rxOverride',o);}catch(e){} if(window.hpSaveRx){ try{ await window.hpSaveRx(o); toast('✓ Diccionario de recetas actualizado · para todos'); }catch(e){ toast('Guardado solo en este equipo (sin permiso o sin conexión)'); } } else toast('✓ Guardado'); _rxDraft=null; go('labconv'); }
+async function rxEditReset(){ if(!confirm('¿Restablecer el diccionario de recetas? Se perderán los cambios para todos.'))return; try{ localStorage.removeItem('hc_rxOverride'); }catch(e){} if(window.hpSaveRx){ try{ await window.hpSaveRx({}); }catch(e){} } _rxDraft={rename:[],abbr:[]}; toast('✓ Restablecido'); go('rxedit'); }
 
 // ── Blindaje del asistente de redacción: verificación de integridad numérica ──
 // Garantiza que el asistente SOLO reordena/reformatea: ningún número del resultado puede
@@ -9262,7 +9309,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 25;
+  var DC_BUILD = 26;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -9664,6 +9711,7 @@ function hpRoleSelector(uid, roleInfo, credName){
   s+='<div style="font-size:12px;color:var(--mut,#666);margin-bottom:4px">Secciones cuyas guías PDF podrá subir/bajar:</div>';
   s+='<label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;font-weight:600;margin-bottom:3px"><input type="checkbox" id="secall_'+uid+'" onchange="hpSecToggleAll(\''+uid+'\')"'+(allOn?' checked':'')+'> Todas las secciones</label>';
   s+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 10px">'+hpSecChecks(uid,secs)+'</div>';
+  s+='<label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd,#e2e2e2)"><input type="checkbox" id="asist_'+uid+'"'+(secs.indexOf('asistentes')!==-1?' checked':'')+'> ✏️ <strong>Editar asistentes</strong> (asistente de redacción y de recetas)</label>';
   s+='<div style="margin-top:8px"><label style="font-size:12px;color:var(--mut,#666);display:block;margin-bottom:3px">Nombre para créditos (figurará como colaborador en el Aviso Legal)</label><input id="cred_'+uid+'" type="text" value="'+(credName?String(credName).replace(/"/g,'&quot;'):'')+'" placeholder="Ej: Dra. Nombre Apellido" style="width:100%;padding:6px 8px;border:1px solid var(--bd,#ccc);border-radius:6px;font-size:12.5px;background:var(--card,#fff);color:var(--txt,#222)"></div>';
   s+='</div></div>';
   return s;
@@ -9675,7 +9723,9 @@ function hpSecChecks(uid, checked){
 }
 function hpReadSecs(uid){
   const box=document.getElementById('secs_'+uid); if(!box) return [];
-  return Array.from(box.querySelectorAll('input[type=checkbox][value]:checked')).map(function(x){return x.value;});
+  const out=Array.from(box.querySelectorAll('input[type=checkbox][value]:checked')).map(function(x){return x.value;});
+  const a=document.getElementById('asist_'+uid); if(a&&a.checked) out.push('asistentes');
+  return out;
 }
 window.hpRolChange=function(uid){
   const sel=document.getElementById('rol_'+uid), box=document.getElementById('secs_'+uid);
@@ -10055,6 +10105,9 @@ window.hpSyncCalcs = async function(){
     return true;
   }catch(e){ return false; }
 };
+// ── Diccionario del asistente de recetas. Lo editan admin/editores del área "Asistentes"; lo leen todos. ──
+window.hpSaveRx = async function(o){ await setDoc(doc(fs, 'menuconfig', 'recetas'), { data: o||{}, actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }); };
+window.hpSyncRx = async function(){ try{ const s = await getDoc(doc(fs, 'menuconfig', 'recetas')); if(s.exists()){ const d=s.data()||{}; if(window.hpApplyRx) window.hpApplyRx(d.data||{}); } return true; }catch(e){ return false; } };
 // ── Páginas editadas (override del contenido de vistas). Las edita quien edita esa sección (o admin). ──
 window.hpSavePage = async function(id, data){ await setDoc(doc(fs, 'paginas', id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, data||{})); };
 window.hpDeletePage = async function(id){ await deleteDoc(doc(fs, 'paginas', id)); };
@@ -10103,6 +10156,7 @@ function revealAndEnter(user){
   if(window.hpSyncItems) setTimeout(()=>window.hpSyncItems(),1250);
   if(window.hpSyncCalcs) setTimeout(()=>window.hpSyncCalcs(),1300);
   if(window.hpSyncAlgos) setTimeout(()=>window.hpSyncAlgos(),1050);
+  if(window.hpSyncRx) setTimeout(()=>window.hpSyncRx(),1330);
   if(window.hpSyncPages) setTimeout(()=>window.hpSyncPages(),1350);
 }
 async function enterAppGated(user){
