@@ -173,11 +173,18 @@ service cloud.firestore {
     // ── Páginas editadas (override del contenido de vistas existentes) ──
     // Lo lee cualquier usuario autorizado. Lo edita quien puede editar la sección a la que pertenece
     // la página (campo 'seccion'); si la página no tiene sección (vistas generales), solo un admin.
+    // 'html' debe ser texto y de tamaño acotado (≤200 KB): evita almacenar cargas enormes o basura.
+    // El cliente además sanea el HTML (DOMParser) e impone en el render que la sección del override
+    // coincida con la real de la página y que la vista sea de contenido (no funcional).
     match /paginas/{id} {
       allow read:   if isApproved();
-      allow create: if isAdmin() || (request.resource.data.seccion is string && canEdit(request.resource.data.seccion));
-      allow update: if isAdmin() || (resource.data.seccion is string && canEdit(resource.data.seccion)
-                                     && request.resource.data.seccion is string && canEdit(request.resource.data.seccion));
+      allow create: if (isAdmin() || (request.resource.data.seccion is string && canEdit(request.resource.data.seccion)))
+                    && request.resource.data.html is string
+                    && request.resource.data.html.size() <= 200000;
+      allow update: if (isAdmin() || (resource.data.seccion is string && canEdit(resource.data.seccion)
+                                      && request.resource.data.seccion is string && canEdit(request.resource.data.seccion)))
+                    && request.resource.data.html is string
+                    && request.resource.data.html.size() <= 200000;
       allow delete: if isAdmin() || (resource.data.seccion is string && canEdit(resource.data.seccion));
     }
 
