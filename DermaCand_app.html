@@ -1156,8 +1156,16 @@ function hpCanEditPage(id){ if(!hpPageEditable(id)) return false; const sec=hpPa
 function hpPages(){ try{ return ls.g('pageOv')||{}; }catch(e){ return {}; } }
 window.hpApplyPages=function(map){ try{ ls.s('pageOv', map||{}); }catch(e){} };
 function hpPageWrap(id, base){
+  // Defensa en el RENDER: nunca aplicar override ni mostrar el editor en vistas NO editables
+  // (funcionales/admin/guías o cualquier vista interactiva con _post). HP_NOPAGE y la exclusión por
+  // _post se imponían solo al editar en el cliente; aquí evitan que un doc inyectado en Firestore
+  // (p. ej. id='calc' o 'solicitudes') suplante una calculadora o panel saltándose su _post.
+  if(!hpPageEditable(id)) return {html:base, skipPost:false};
   const ov=hpPages()[id]; const canEd=hpCanEditPage(id);
-  if(ov && ov.html && ov.estado==='publicado'){
+  // El override solo se aplica si la sección que registró coincide con la sección REAL de la página:
+  // impide que un editor de otra sección sobrescriba esta página vía un doc con seccion ajena.
+  const secOk = !ov || !ov.seccion || ov.seccion===hpPageSection(id);
+  if(ov && ov.html && ov.estado==='publicado' && secOk){
     let h='<div class="card">';
     h+='<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px"><span style="font-size:11px;color:var(--mut)">✏️ Contenido editado por el equipo</span>';
     if(canEd){ h+='<span style="flex:1"></span><button class="btn btn-out btn-sm" onclick="hpEditPage(\''+id+'\')">Editar</button><button class="btn btn-out btn-sm" onclick="hpRestaurarPage(\''+id+'\')">↺ Restaurar original</button>'; }
@@ -9254,7 +9262,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 24;
+  var DC_BUILD = 25;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -9365,12 +9373,54 @@ let _AVISO_DEFAULT='';
 const _AVISO_REV_PH='<div class="aviso-rev-ph" contenteditable="false" style="border:1px dashed var(--bd);border-radius:6px;padding:8px;margin:8px 0;color:#0d7d8c;font-size:0.8rem;background:var(--bg)">👥 Lista de revisores — se rellena automáticamente con el equipo. No hace falta tocar nada aquí.</div>';
 function hpAvisoOverride(){ try{ return ls.g('avisoLegal'); }catch(e){ return null; } }
 window.hpApplyAviso=function(html){ try{ ls.s('avisoLegal', html||''); }catch(e){} };
-function _hpSanHtml(html){ if(!html) return ''; let s=String(html);
-  s=s.replace(/<\s*(script|style|iframe|object|embed|link|meta|form|input)\b[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi,'');
-  s=s.replace(/<\s*(script|style|iframe|object|embed|link|meta|form|input)\b[^>]*>/gi,'');
-  s=s.replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi,'');
-  s=s.replace(/(href|src)\s*=\s*("\s*javascript:[^"]*"|'\s*javascript:[^']*')/gi,'$1="#"');
-  return s;
+// Saneador de HTML para contenido editable (Aviso Legal, editor de páginas). Basado en DOMParser
+// (lista BLANCA de etiquetas/atributos), no en regex: un saneador por regex es evadible
+// (p. ej. <img/src=x/onerror=...>, <a href=javascript:...> sin comillas, entidades). Aquí se quita
+// CUALQUIER manejador on*, cualquier etiqueta fuera de la lista (conservando su texto), y href/src
+// con protocolos peligrosos (javascript:/data:/vbscript:). Degrada a un saneado por regex si falla.
+const _HP_SAN_TAGS=new Set(['DIV','SPAN','P','BR','HR','H1','H2','H3','H4','H5','H6','UL','OL','LI','TABLE','THEAD','TBODY','TFOOT','TR','TD','TH','CAPTION','COLGROUP','COL','STRONG','B','EM','I','U','S','SMALL','SUB','SUP','BLOCKQUOTE','CODE','PRE','A','IMG','DETAILS','SUMMARY','MARK','ABBR']);
+const _HP_SAN_ATTR=new Set(['class','style','colspan','rowspan','href','src','alt','title']);
+function _hpSanHtml(html){
+  if(!html) return '';
+  try{
+    const doc=new DOMParser().parseFromString(String(html),'text/html');
+    const root=doc.body; if(!root) throw new Error('no body');
+    const walk=function(node){
+      Array.prototype.slice.call(node.childNodes).forEach(function(n){
+        if(n.nodeType===8){ if(n.parentNode) n.parentNode.removeChild(n); return; } // comentarios
+        if(n.nodeType!==1){ return; } // texto u otros: se conservan
+        if(!_HP_SAN_TAGS.has(n.tagName)){
+          // etiqueta no permitida: se elimina pero se conserva su contenido seguro
+          const frag=doc.createDocumentFragment();
+          while(n.firstChild) frag.appendChild(n.firstChild);
+          const parent=n.parentNode; parent.replaceChild(frag, n);
+          walk(parent); // reprocesar (los hijos movidos pueden necesitar limpieza)
+          return;
+        }
+        Array.prototype.slice.call(n.attributes).forEach(function(a){
+          const an=a.name.toLowerCase();
+          if(an.indexOf('on')===0 || !_HP_SAN_ATTR.has(an)){ n.removeAttribute(a.name); return; }
+          if(an==='href'||an==='src'){
+            const v=(a.value||'').replace(/[\x00-\x20]+/g,'').toLowerCase();
+            if(/^(?:javascript|data|vbscript):/.test(v)) n.removeAttribute(a.name);
+          } else if(an==='style'){
+            if(/expression\s*\(|javascript:|vbscript:|url\s*\(/i.test(a.value||'')) n.removeAttribute('style');
+          }
+        });
+        walk(n);
+      });
+    };
+    walk(root);
+    return root.innerHTML;
+  }catch(e){
+    // Degradación segura: saneado por regex reforzado (lista negra ampliada + protocolos).
+    let s=String(html);
+    s=s.replace(/<\s*(script|style|iframe|object|embed|link|meta|form|input|svg|math|video|audio)\b[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi,'');
+    s=s.replace(/<\s*(script|style|iframe|object|embed|link|meta|form|input|svg|math|video|audio|img)\b[^>]*>/gi,'');
+    s=s.replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi,'');
+    s=s.replace(/(href|src)\s*=\s*("\s*(?:javascript|data|vbscript):[^"]*"|'\s*(?:javascript|data|vbscript):[^']*'|(?:javascript|data|vbscript):[^\s>]+)/gi,'$1="#"');
+    return s;
+  }
 }
 function _avisoRenderCuerpo(){ const cu=document.getElementById('aviso-cuerpo'); if(!cu) return; if(!_AVISO_DEFAULT)_AVISO_DEFAULT=cu.innerHTML; const ov=hpAvisoOverride(); cu.innerHTML=(ov&&ov.trim())?_hpSanHtml(ov):_AVISO_DEFAULT; }
 // Editor VISUAL (sin HTML): se edita el texto como en un procesador de textos.
