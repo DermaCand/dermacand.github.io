@@ -9140,7 +9140,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 20;
+  var DC_BUILD = 21;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -9775,11 +9775,18 @@ window.HemoCloud = {
     const path = `guias/subidas/${section}/${Date.now()}_${safe}`;
     const b64 = await fileToBase64(file);
     await ghPutFile(this.token, path, b64, `App: subir guía "${name}" (${section})`);
-    const r = await addDoc(collection(fs,'guias'), {
-      section, subtype: subtypeId, name: name || safe, path,
-      updatedAt: serverTimestamp(), uploadedBy: curUid || null
-    });
-    return { id: r.id, path };
+    // El archivo YA está en GitHub. El índice en Firestore (para que lo vean los demás) se intenta
+    // aparte: si falla (p. ej. conexión móvil intermitente), NO se pierde el archivo; se devuelve
+    // indexError para avisar y poder reintentar.
+    let id=null, indexError=null;
+    try{
+      const r = await addDoc(collection(fs,'guias'), {
+        section, subtype: subtypeId, name: name || safe, path,
+        updatedAt: serverTimestamp(), uploadedBy: curUid || null
+      });
+      id = r.id;
+    }catch(e){ indexError = e; }
+    return { id, path, indexError };
   },
   async deleteGuide(docId, path){
     if(path){
@@ -10282,11 +10289,22 @@ window.hcUpload=function(section,subtypeId){
     try{
       toast('Subiendo «'+name+'»…');
       var res=await HemoCloud.uploadGuide(section,subtypeId,file,name);
+      // El PDF ya está en GitHub. Guarda copia local (offline) aunque el índice haya fallado.
       var key=section+'_'+subtypeId+'|cloud:'+res.path;
-      try{ await idb.set(key,{name:name,size:file.size,blob:file,path:res.path,cloud:true,cloudId:res.id}); }catch(e){}
-      toast('✓ Guía subida');
+      try{ await idb.set(key,{name:name,size:file.size,blob:file,path:res.path,cloud:true,cloudId:res.id||null}); }catch(e){}
       var el=$('pdfs_'+section+'_'+subtypeId); if(el){ el.dataset.loaded=''; loadPDFs(section+'_'+subtypeId); }
-    }catch(e){ toast('Error al subir: '+(e.message||'')); }
+      if(res.indexError){
+        // Subió a GitHub pero no se pudo registrar el índice compartido (p. ej. red móvil intermitente).
+        toast('⚠️ Subido, pero sin registrar para los demás');
+        alert('El PDF se subió correctamente y ya lo ves tú, pero NO se pudo registrar en el índice compartido (los demás no lo verán hasta que se reintente).\n\nReintenta la subida cuando tengas mejor conexión.\n\nDetalle: '+(((res.indexError&&res.indexError.message)||res.indexError)||'desconocido'));
+      } else {
+        toast('✓ Guía subida');
+      }
+    }catch(e){
+      var m=(e&&e.message)||(''+e)||'error desconocido';
+      toast('Error al subir el PDF');
+      alert('No se pudo subir el PDF.\n\nDetalle exacto del error:\n'+m);
+    }
   };
   inp.click();
 };
