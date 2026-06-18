@@ -141,6 +141,13 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // ── Orden de las categorías del menú (doc 'orden') ──
+    // Editable SOLO por administradores; efectivo para todos.
+    match /menuconfig/{id} {
+      allow read:  if isApproved();
+      allow write: if isAdmin();
+    }
+
     // -- Algoritmos interactivos (arboles de decision) por seccion --
     // Lectura: cualquier usuario autorizado. Escritura: admin o editor de ESA seccion.
     // Al actualizar debe poder editar tanto la seccion actual como la nueva (impide mover
