@@ -8452,6 +8452,7 @@ const DICT=[
 {a:'Na',u:'mEq/l',c:'bioquimica',k:'num',pats:['sodio','\\bna\\b']},
 {a:'K',u:'mEq/l',c:'bioquimica',k:'num',pats:['potasio','\\bk\\b']},
 {a:'Cloro',u:'mEq/l',c:'bioquimica',k:'num',pats:['cloruro','cloro','\\bcl\\b']},
+{a:'Ca corregido',u:'mg/dl',c:'bioquimica',k:'num',pats:['calcio\\s*\\(corregido[^)\\n\\r]*\\)','calcio corregido']},
 {a:'Ca',u:'mg/dl',c:'bioquimica',k:'num',pats:['calcio total','calcio']},
 {a:'P',u:'mg/dl',c:'bioquimica',k:'num',pats:['fosfato inorganico','fosforo inorganico','fosforo','fosfato']},
 {a:'Mg',u:'mg/dl',c:'bioquimica',k:'num',pats:['magnesio']},
@@ -8482,16 +8483,18 @@ const DICT=[
 {a:'EPO',u:'mUI/ml',c:'bioquimica',k:'num',pats:['eritropoyetina','\\bepo\\b']},
 {a:'Troponina',u:'ng/l',c:'bioquimica',k:'num',pats:['troponina']},
 {a:'proBNP',u:'pg/ml',c:'bioquimica',k:'num',pats:['nt-probnp','probnp']},
-{a:'HBsAg',u:'',c:'serologia',k:'sero',pats:['hbsag','antigeno de superficie','ag hbs']},
+{a:'HBsAg',u:'',c:'serologia',k:'sero',pats:['hbsag','antigeno de superficie','ag hbs','hepatitis b[^\\n\\r]{0,18}ag\\s?s\\b']},
 {a:'Anti-HBs',u:'',c:'serologia',k:'sero',pats:['anti-hbs','ac anti-hbs','hbsac','hbs ac']},
 {a:'Anti-HBc',u:'',c:'serologia',k:'sero',pats:['anti-hbc','ac anti-hbc','hbcac','hbc ac']},
-{a:'Ac VHC',u:'',c:'serologia',k:'sero',pats:['anticuerpos vhc','ac vhc','anti-vhc','anti vhc','serologia vhc','hcv ac','ac hcv','\\bhcv\\b']},
+{a:'Ac VHC',u:'',c:'serologia',k:'sero',pats:['anticuerpos vhc','ac vhc','anti-vhc','anti vhc','serologia vhc','hcv ac','ac hcv','hepatitis c[^\\n\\r]{0,14}\\bac\\b','\\bhcv\\b']},
 {a:'CMV IgG',u:'',c:'serologia',k:'sero',pats:['cmv[^\\n\\r]{0,18}\\bigg\\b','citomegalovirus[^\\n\\r]{0,18}\\bigg\\b','\\bigg\\b[^\\n\\r]{0,18}cmv','\\bigg\\b[^\\n\\r]{0,18}citomegalovirus']},
 {a:'CMV IgM',u:'',c:'serologia',k:'sero',pats:['cmv[^\\n\\r]{0,18}\\bigm\\b','citomegalovirus[^\\n\\r]{0,18}\\bigm\\b','\\bigm\\b[^\\n\\r]{0,18}cmv','\\bigm\\b[^\\n\\r]{0,18}citomegalovirus']},
 {a:'VVZ IgG',u:'',c:'serologia',k:'sero',pats:['(?:vvz|vzv|hzv)[^\\n\\r]{0,18}\\bigg\\b','varicela[ -]?zoster[^\\n\\r]{0,18}\\bigg\\b','\\bigg\\b[^\\n\\r]{0,18}(?:vvz|vzv|hzv)','\\bigg\\b[^\\n\\r]{0,18}varicela']},
 {a:'VVZ IgM',u:'',c:'serologia',k:'sero',pats:['(?:vvz|vzv|hzv)[^\\n\\r]{0,18}\\bigm\\b','varicela[ -]?zoster[^\\n\\r]{0,18}\\bigm\\b','\\bigm\\b[^\\n\\r]{0,18}(?:vvz|vzv|hzv)','\\bigm\\b[^\\n\\r]{0,18}varicela']},
-{a:'VIH (Ag/Ac)',u:'',c:'serologia',k:'sero',pats:['ag/ac vih','serologia vih','anticuerpos[^\\n\\r]{0,12}vih','vih[^\\n\\r]{0,12}(?:ac|ag)','virus de la inmunodeficiencia','\\bvih\\b','\\bhiv\\b']},
+{a:'VIH (Ag/Ac)',u:'',c:'serologia',k:'sero',pats:['vih\\s+ac\\.?\\s*\\([^)\\n\\r]{0,30}\\)','ag/ac vih','serologia vih','anticuerpos[^\\n\\r]{0,12}vih','vih[^\\n\\r]{0,12}(?:ac|ag)','virus de la inmunodeficiencia','\\bvih\\b','\\bhiv\\b']},
 {a:'EBV anti-EBNA IgG',u:'',c:'serologia',k:'sero',pats:['ebv anti-?ebna igg','anti-?ebna igg','\\bebna igg\\b','anti-?ebna']},
+{a:'VEB IgG',u:'',c:'serologia',k:'sero',pats:['epstein[^\\n\\r]{0,28}\\bigg\\b','(?:veb|ebv)[^\\n\\r]{0,18}\\bigg\\b']},
+{a:'VEB IgM',u:'',c:'serologia',k:'sero',pats:['epstein[^\\n\\r]{0,28}\\bigm\\b','(?:veb|ebv)[^\\n\\r]{0,18}\\bigm\\b']},
 {a:'VEB',u:'',c:'serologia',k:'sero',pats:['virus de epstein-barr','epstein-barr','\\bveb\\b','\\bebv\\b']},
 {a:'Toxoplasma',u:'',c:'serologia',k:'sero',pats:['toxoplasma']},
 {a:'Sífilis',u:'',c:'serologia',k:'sero',pats:['sifilis ac igg\\s*\\(elisa\\)','sifilis ac igg','sifilis ac','sifilis','\\blues\\b','treponema[^\\n\\r]{0,18}pallidum','treponema','\\brpr\\b','\\btpha\\b','\\bvdrl\\b']},
@@ -8513,6 +8516,7 @@ function readUnit(after){let a=normSup(after).replace(/^[\s↑↓▲▼*=:]+/,''
 function readVal(orig,idx){const base=orig.slice(idx,idx+90);const skip=skipDT(base);const sub=base.slice(skip);const m=sub.match(/^[\s:=\-#]*(?:\([^)]{0,14}\)\s*)?([<>≤≥]?\s*(?:\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?))/);if(!m)return null;let raw=m[1].replace(/\s+/g,'');const after=sub.slice(m[0].length);if(/^\s*[\/\-]\s*\d{1,4}/.test(after))return null;const afterC=after.replace(/^[\s↑↓▲▼*]+/,'');const isPct=/^\s*%/.test(afterC);return {raw,after:afterC,isPct,f:sp2f(raw),countUnit:detUnit(afterC),end:idx+skip+m[0].length};}
 function readValAbs(orig,idx){const v=readVal(orig,idx);if(!v)return null;if(!v.isPct)return v;const sub=orig.slice(v.end,v.end+44);const nl=sub.search(/[\n\r]/);const seg=nl>=0?sub.slice(0,nl):sub;const m=seg.match(/([<>≤≥]?\s*(?:\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?))\s*[↑↓▲▼*]*\s*((?:[x×·*]?10[\^eE\*]?[0-9]\/?(?:u?l|µl|l))|(?:mil(?:es)?\.?\/?(?:µl|ul))|(?:\/?(?:µl|ul|mm3|mm³)))/i);if(m){const raw=m[1].replace(/\s+/g,'');return {raw,after:' '+m[2],isPct:false,f:sp2f(raw),countUnit:detUnit(m[2]),end:v.end};}return v;}
 function readTxt(orig,idx,maxLen){let sub=orig.slice(idx);let nl=sub.search(/[\n\r]/);if(nl>=0)sub=sub.slice(0,nl);sub=sub.slice(0,(maxLen||300));sub=sub.replace(/^[\s:=.\-–—…*·]+/,'');sub=sub.replace(/\((?:valor(?:es)?\s+normal|v\.?n\.?|ref(?:erencia)?|rango|negativo\s*<|\s*<\s*\d)[^)]*\)/gi,'');sub=sub.replace(/\(\s*\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\s*\)/g,'');sub=sub.replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}(?:\s+\d{1,2}:\d{2}(?::\d{2})?)?\b/g,' ');sub=sub.replace(/\b\d{1,2}:\d{2}:\d{2}\b/g,' ');sub=sub.replace(/\s+/g,' ');return sub.trim().replace(/[;,\s]+$/,'').trim();}
+function seroResult(orig,idx){let s=orig.slice(idx);const nl=s.search(/[\n\r]/);if(nl>=0)s=s.slice(0,nl);s=s.replace(/\([^)]*\)/g,' ');const m=s.match(/\b(?:no\s+reactivo|reactivo|positivo|negativo|indetectable|detectable|indeterminado|dudoso|equivoco|d[eé]bil|ausente|presente|no\s+inmune|inmune)\b/i)||s.match(/t[íi]tulo\s*1\s*[\/:]\s*\d+/i)||s.match(/\b1\s*[\/:]\s*\d{1,4}\b/);return m?m[0].toLowerCase().replace(/\s+/g,' ').trim():'';}
 function lineNums(orig,idx){let sub=orig.slice(idx,idx+120);let nl=sub.search(/[\n\r]/);if(nl>=0)sub=sub.slice(0,nl);const out=[];const re=/([<>≤≥]?\s*(?:\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?))/g;let m;while((m=re.exec(sub))!==null){const raw=m[1].replace(/\s+/g,'');const after=sub.slice(m.index+m[0].length);if(/^\s*[\/\-]\s*\d{1,4}/.test(after))continue;out.push({raw,isPct:/^\s*%/.test(after),countUnit:detUnit(after),f:sp2f(raw)});}return out;}
 function lineEndIdx(orig,ne){const rest=orig.slice(ne);const p=rest.search(/[\n\r]/);return p>=0?ne+p:Math.min(orig.length,ne+120);}
 function gasReadLine(orig,idx){let sub=orig.slice(idx);const nl=sub.search(/[\n\r]/);if(nl>=0)sub=sub.slice(0,nl);sub=sub.replace(/\([^)]*\)/g,' ').replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g,' ').replace(/\b\d{1,2}:\d{2}(?::\d{2})?\b/g,' ');const m=sub.match(/[<>≤≥]?\s*(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?)/);if(!m)return null;return {raw:m[1],f:sp2f(m[1])};}
@@ -8531,14 +8535,46 @@ if(gIdx>=0){const region=work.slice(gIdx);const gitems=[];for(const g of GASO){c
 const nextHdr=(start,src)=>{let e=work.length,m;const g=new RegExp(src,'g');while((m=g.exec(work))!==null){if(m.index>start&&m.index<e)e=m.index;}return e;};
 const cmH=work.match(/inmunohematologia|test de coombs directo|antiglobulina directa/);if(cmH){const cs=cmH.index,ce=nextHdr(cs,'autoinmunidad|sistematico de orina|gasometria[\\t ]+(?:arterial|venosa|capilar|mixta)');const out=parseCoombs(orig,work,cs,ce);if(out)found.__coombs=out;work=work.slice(0,cs)+work.slice(cs,ce).replace(/[^\n\r]/g,' ')+work.slice(ce);}
 const oH=work.match(/sistematico de orina/);if(oH){const os=oH.index,oeFull=nextHdr(os,'inmunohematologia|test de coombs directo|autoinmunidad|gasometria[\\t ]+(?:arterial|venosa|capilar|mixta)');const sedRel=work.slice(os,oeFull).search(/sedimento de orina/);const oeParam=sedRel>=0?os+sedRel:oeFull;const out=parseOrina(orig,work,os,oeParam);if(out&&out.length)found.__orina=out;work=work.slice(0,os)+work.slice(os,oeFull).replace(/[^\n\r]/g,' ')+work.slice(oeFull);}
-for(const e of DICT){const re=new RegExp('(?:'+e.pats.join('|')+')','g');let match;const cand=[];while((match=re.exec(work))!==null){const ns=match.index,ne=match.index+match[0].length;if(work.slice(ns,ne).trim()==='')continue;if(e.k==='text'||e.k==='sero'||e.k==='cm'||e.k==='grupo'){cand.push({ns,ne});break;}if(e.rp){const v=readValAbs(orig,ne);if(v)cand.push({ns,ne,v});continue;}const v=readVal(orig,ne);if(!v)continue;cand.push({ns,ne,v});}if(!cand.length)continue;let pick=null;if(e.k==='text'||e.k==='sero'||e.k==='cm'||e.k==='grupo')pick=cand[0];else if(e.rp){pick=cand.find(c=>!c.v.isPct&&c.v.countUnit)||cand.find(c=>!c.v.isPct)||cand[0];}else pick=cand[0];if(!pick)continue;let disp=null,cs=pick.ns,ce=pick.ne;if(e.k==='text'){const t=readTxt(orig,pick.ne,400);if(!t)continue;disp=(e.nolabel?'':e.a+': ')+t;ce=lineEndIdx(orig,pick.ne);}else if(e.k==='sero'){const t=readTxt(orig,pick.ne,90);if(!t)continue;disp=e.a+': '+t;ce=pick.ne+t.length;}else if(e.k==='cm'){const segEnd=lineEndIdx(orig,pick.ne);const seg=orig.slice(pick.ne,segEnd);const segF=foldText(seg);const isoM=segF.match(/\big\s*([gamde])\b/);const iso=isoM?('Ig'+isoM[1].toUpperCase()):'';const lcM=segF.match(/(kappa|lambda|κ|λ)/);const lc=lcM?((lcM[1]==='κ')?'kappa':((lcM[1]==='λ')?'lambda':lcM[1])):'';const typ=(iso&&lc)?iso+'-'+lc:(iso||lc||'');const numM=seg.match(/(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?)\s*(mg\/dl|gr\/dl|g\/dl|g\/l|mg\/l)?/i);let val='',unit='';if(numM){val=fmtNum(sp2f(numM[1]));unit=numM[2]?numM[2].toLowerCase().replace('gr/dl','g/dl'):'g/dl';}disp='CM'+(typ?' '+typ:'')+(val?' '+val+(unit?' '+unit:''):'');ce=segEnd;}else if(e.k==='grupo'){const segEnd=lineEndIdx(orig,pick.ne);const seg=orig.slice(pick.ne,segEnd);let segC=foldText(seg).replace(/\babo\b/g,' ').replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g,' ').replace(/\b\d{1,2}:\d{2}(?::\d{2})?\b/g,' ').replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();const gM=segC.match(/\b(ab|a|b|0|o)\b/);const grupo=gM?(gM[1]==='0'?'O':gM[1].toUpperCase()):'';let rh='';const rhM=foldText(orig).match(/\b(?:factor\s+)?rh\b(?:\s*\(d\))?[^\n\r]{0,40}?(positiv|negativ)/);if(rhM)rh=rhM[1]+'o';let gv=grupo;if(rh)gv=(grupo?grupo+' ':'')+'Rh (D) '+rh;if(!gv)continue;disp=gv;ce=segEnd;}else{const v=pick.v;let unit=e.u;let valStr=v.raw;if(e.k==='count'){unit='x10E9/L';if(v.countUnit==='/µL'||(!v.countUnit&&v.f>=1000))valStr=fmtNum(v.f/1000);}else if(e.k==='retic'){if(v.isPct)unit='%';else{unit='x10E9/L';if(v.countUnit==='/µL'||(!v.countUnit&&v.f>=1000))valStr=fmtNum(v.f/1000);}}else if(e.k==='pct')unit='%';else if(e.keepUnit){const su=readUnit(v.after);if(su)unit=su;}const space=unit.startsWith('/')?'':' ';disp=(e.a+' '+valStr+(unit?space+unit:'')).replace(/\s+$/,'');ce=v.end;}(found[e.c]=found[e.c]||[]).push(disp);const len=Math.max(0,ce-cs);work=work.slice(0,cs)+' '.repeat(len)+work.slice(ce);}let dateGuess='';const dms=orig.match(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g);if(dms&&dms.length){const counts={};let best='',bestN=0;dms.forEach(d=>{const pp=d.split(/[\/\-.]/);const key=pp[0].padStart(2,'0')+'-'+pp[1].padStart(2,'0')+'-'+pp[2].slice(-2);counts[key]=(counts[key]||0)+1;if(counts[key]>bestN){bestN=counts[key];best=key;}});dateGuess=best;}return {found,dateGuess};}
+for(const e of DICT){const re=new RegExp('(?:'+e.pats.join('|')+')','g');let match;const cand=[];while((match=re.exec(work))!==null){const ns=match.index,ne=match.index+match[0].length;if(work.slice(ns,ne).trim()==='')continue;if(e.k==='text'||e.k==='cm'||e.k==='grupo'){cand.push({ns,ne});break;}if(e.k==='sero'){cand.push({ns,ne});continue;}if(e.rp){const v=readValAbs(orig,ne);if(v)cand.push({ns,ne,v});continue;}const v=readVal(orig,ne);if(!v)continue;cand.push({ns,ne,v});}if(!cand.length)continue;let pick=null;if(e.k==='text'||e.k==='cm'||e.k==='grupo')pick=cand[0];else if(e.k==='sero')pick=cand.find(c=>seroResult(orig,c.ne))||null;else if(e.rp){pick=cand.find(c=>!c.v.isPct&&c.v.countUnit)||cand.find(c=>!c.v.isPct)||cand[0];}else pick=cand[0];if(!pick)continue;let disp=null,cs=pick.ns,ce=pick.ne;if(e.k==='text'){const t=readTxt(orig,pick.ne,400);if(!t)continue;disp=(e.nolabel?'':e.a+': ')+t;ce=lineEndIdx(orig,pick.ne);}else if(e.k==='sero'){const t=seroResult(orig,pick.ne);if(!t)continue;disp=e.a+': '+t;ce=lineEndIdx(orig,pick.ne);}else if(e.k==='cm'){const segEnd=lineEndIdx(orig,pick.ne);const seg=orig.slice(pick.ne,segEnd);const segF=foldText(seg);const isoM=segF.match(/\big\s*([gamde])\b/);const iso=isoM?('Ig'+isoM[1].toUpperCase()):'';const lcM=segF.match(/(kappa|lambda|κ|λ)/);const lc=lcM?((lcM[1]==='κ')?'kappa':((lcM[1]==='λ')?'lambda':lcM[1])):'';const typ=(iso&&lc)?iso+'-'+lc:(iso||lc||'');const numM=seg.match(/(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?)\s*(mg\/dl|gr\/dl|g\/dl|g\/l|mg\/l)?/i);let val='',unit='';if(numM){val=fmtNum(sp2f(numM[1]));unit=numM[2]?numM[2].toLowerCase().replace('gr/dl','g/dl'):'g/dl';}disp='CM'+(typ?' '+typ:'')+(val?' '+val+(unit?' '+unit:''):'');ce=segEnd;}else if(e.k==='grupo'){const segEnd=lineEndIdx(orig,pick.ne);const seg=orig.slice(pick.ne,segEnd);let segC=foldText(seg).replace(/\babo\b/g,' ').replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g,' ').replace(/\b\d{1,2}:\d{2}(?::\d{2})?\b/g,' ').replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();const gM=segC.match(/\b(ab|a|b|0|o)\b/);const grupo=gM?(gM[1]==='0'?'O':gM[1].toUpperCase()):'';let rh='';const rhM=foldText(orig).match(/\b(?:factor\s+)?rh\b(?:\s*\(d\))?[^\n\r]{0,40}?(positiv|negativ)/);if(rhM)rh=rhM[1]+'o';let gv=grupo;if(rh)gv=(grupo?grupo+' ':'')+'Rh (D) '+rh;if(!gv)continue;disp=gv;ce=segEnd;}else if(e.k==='retic'){const abs=cand.find(c=>c.v&&!c.v.isPct),pc=cand.find(c=>c.v&&c.v.isPct);const _tz=s=>(''+s).replace(/(,\d*?)0+$/,'$1').replace(/,$/,'');let absStr='';if(abs){let vs=abs.v.raw;if(abs.v.countUnit==='/µL'||(!abs.v.countUnit&&abs.v.f>=1000))vs=fmtNum(abs.v.f/1000);absStr=_tz(vs)+' x10E9/L';}const pctStr=pc?_tz(pc.v.raw)+'%':'';if(!absStr&&!pctStr)continue;disp='Reticulocitos '+(absStr&&pctStr?(absStr+' ('+pctStr+')'):(absStr||pctStr));const _an=abs||pc;cs=_an.ns;ce=lineEndIdx(orig,_an.ne);}else{const v=pick.v;let unit=e.u;let valStr=v.raw;if(e.k==='count'){unit='x10E9/L';if(v.countUnit==='/µL'||(!v.countUnit&&v.f>=1000))valStr=fmtNum(v.f/1000);}else if(e.k==='retic'){if(v.isPct)unit='%';else{unit='x10E9/L';if(v.countUnit==='/µL'||(!v.countUnit&&v.f>=1000))valStr=fmtNum(v.f/1000);}}else if(e.k==='pct')unit='%';else if(e.keepUnit){const su=readUnit(v.after);if(su)unit=su;}const space=unit.startsWith('/')?'':' ';disp=(e.a+' '+valStr+(unit?space+unit:'')).replace(/\s+$/,'');ce=v.end;}(found[e.c]=found[e.c]||[]).push(disp);const len=Math.max(0,ce-cs);work=work.slice(0,cs)+' '.repeat(len)+work.slice(ce);}let dateGuess='';const dms=orig.match(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g);if(dms&&dms.length){const counts={};let best='',bestN=0;dms.forEach(d=>{const pp=d.split(/[\/\-.]/);const key=pp[0].padStart(2,'0')+'-'+pp[1].padStart(2,'0')+'-'+pp[2].slice(-2);counts[key]=(counts[key]||0)+1;if(counts[key]>bestN){bestN=counts[key];best=key;}});dateGuess=best;}return {found,dateGuess};}
 function build(found,dateStr){const lines=[];const dtag=dateStr?(' ('+dateStr+')'):'';for(const cat of CAT_ORDER){if(!found[cat]||!found[cat].length)continue;let items=found[cat].slice();if(cat==='hemograma'){const diff=[],rest=[];items.forEach(it=>{(/^[NLM]\s/.test(it)?diff:rest).push(it);});if(diff.length){const parts=[];diff.forEach(it=>{const m=it.match(/^(\S+\s+\S+)\s+.*\S$/);parts.push(m?m[1]:it);});const group='('+parts.join(' - ')+')';const li=rest.findIndex(it=>/^Leucocitos\b/.test(it));if(li>=0)rest[li]=rest[li]+' '+group;else rest.push(group);items=rest;}}lines.push((cat==='gasometria'?(found.__gasoLabel||'Gasometría'):CAT_LABEL[cat])+dtag+': '+items.join(', '));if(cat==='hemograma'&&found.__coombs)lines.push('Coombs directo'+dtag+': '+found.__coombs);}if(found.__coombs&&!(found.hemograma&&found.hemograma.length))lines.unshift('Coombs directo'+dtag+': '+found.__coombs);if(found.__orina&&found.__orina.length)lines.push('Sistemático de orina'+dtag+': '+found.__orina.join(', '));return lines.join('\n');}
 window.LCtranscribe=transcribe;window.LCbuild=build;
 })();
 
 // ===== ASISTENTE DE REDACCIÓN · motor de recetas =====
+// Pre-limpieza de volcados de receta electrónica (Receta XXI / Diraya): quita el ruido
+// administrativo (|Financiado|, RAM|, Deshacer, Detalle, prescriptor, fechas, "N/M días"…) y
+// deja una línea por fármaco "NOMBRE DOSIS pauta". La pauta suele venir DESPLAZADA una posición
+// respecto al fármaco en estos pegados, así que se reasigna. Si no es un volcado, devuelve null.
+function rxPreClean(raw){
+  if(!/\|\s*financiado\s*\||realizada desde|cargar\s+i\b|ram\s*\|\s*obs|\bpai\s+hsc\b/i.test(raw)) return null;
+  const lines=raw.replace(/\r/g,'').split('\n');
+  const drugs=[]; let cur=null;
+  const NOISE=/^(deshacer|detalle|visado|cr|se|rt|rd|r|a|pai|hsc|financiado|ram)$/i;
+  for(let ln of lines){
+    ln=ln.trim();
+    if(!ln) continue;
+    if(/^\(/.test(ln)){ const m=ln.match(/^\(([^)]*)\)/); if(m&&cur&&!cur.pos) cur.pos=m[1].replace(/\s+/g,' ').trim(); continue; }
+    if(ln.indexOf('|')>=0) continue;
+    if(NOISE.test(ln)) continue;
+    if(/realizada desde|asociada a un episodio|^\d{1,2}[-\/.]\d{1,2}[-\/.]\d{2,4}$|\d+\s*\/\s*\d+\s*d[ií]as|\bm[eé]dico\b|enfermer|hospital|cardiolog|general\b/i.test(ln)) continue;
+    const hasLower=/[a-záéíóúñü]/.test(ln);
+    if(!hasLower && /\d/.test(ln) && ln.replace(/[^a-zñ]/gi,'').length>=4){
+      if(cur) drugs.push(cur);
+      cur={name:ln,pos:''}; continue;
+    }
+  }
+  if(cur) drugs.push(cur);
+  if(drugs.length<2) return null;
+  for(let i=drugs.length-1;i>0;i--) drugs[i].pos=drugs[i-1].pos;
+  drugs[0].pos='';
+  return drugs.map(d=>{
+    let nm=d.name.replace(/\s*\d+\s*(?:u|unidades?)\s*\/\s*ml\b/gi,' ').replace(/,?\s*\d+\s*(c[aá]psulas?|comprimidos?|grageas?|sobres?|tiras?|plumas?(?:\s+precargadas?)?|agujas?|unidades?|viales?|ampollas?|envases?|bolsas?|parches?|[oó]vulos?|supositorios?|solucion\s+inyect\w*)\b.*$/i,'').replace(/\s*,\s*$/,'').replace(/\s+\/\s+/g,' - ').replace(/\s+/g,' ').trim();
+    return (nm+(d.pos?' '+d.pos:'')).trim();
+  }).join('\n');
+}
 function RXtranscribe(raw){
   if(!raw||!raw.trim()) return '';
+  { const _pre=rxPreClean(raw); if(_pre) raw=_pre; }
   // separar medicamentos por salto de línea o ; (la coma es ambigua: puede separar med o ir dentro)
   let chunks=raw.replace(/\r/g,'').split(/\n|;/);
   // si no hay saltos ni ;, intentar separar por coma SOLO cuando vaya seguida de algo que parece nuevo fármaco (palabra en mayúsculas larga)
@@ -8565,7 +8601,7 @@ function RXtranscribe(raw){
     [/v[ií]a\s+oral(?:es)?|\boral(?:es)?\b|\bv\.?\s*o\.?\b/i,'vía oral']
   ];
   // formas farmacéuticas (regex base) + normalización singular/plural con tildes
-  const FORM=/(\d+(?:[.,]\d+)?)?\s*\b(comprimidos?|comp\b|c[aá]psulas?|caps\b|tabletas?|grageas?|inyecci[oó]n(?:es)?|jeringuillas?|jeringas?|amp(?:ollas?)?|vial(?:es)?|sobres?|parches?|gotas?|pulsaci[oó]n(?:es)?|inhalaci[oó]n(?:es)?|aplicaci[oó]n(?:es)?|supositorios?|[oó]vulos?|nebulizaci[oó]n(?:es)?|ml\b|unidad(?:es)?|frascos?|envases?|cajas?)\b/gi;
+  const FORM=/(\d+(?:[.,]\d+)?)?\s*\b(comprimidos?|comp\b|c[aá]psulas?|caps\b|tabletas?|grageas?|inyecci[oó]n(?:es)?|jeringuillas?|jeringas?|amp(?:ollas?)?|vial(?:es)?|sobres?|parches?|gotas?|pulsaci[oó]n(?:es)?|inhalaci[oó]n(?:es)?|aplicaci[oó]n(?:es)?|supositorios?|[oó]vulos?|nebulizaci[oó]n(?:es)?|tiras?|agujas?|ui\b|ml\b|unidad(?:es)?|frascos?|envases?|cajas?)\b/gi;
   const FORM_NOUN=[
     [/^comp/,'comprimido','comprimidos'],
     [/^c[aá]ps|^caps/,'cápsula','cápsulas'],
@@ -8585,7 +8621,7 @@ function RXtranscribe(raw){
     [/^[oó]vulo/,'óvulo','óvulos'],
     [/^nebuliz/,'nebulización','nebulizaciones'],
     [/^ml/,'ml','ml'],
-    [/^unidad/,'unidad','unidades'],
+    [/^unidad/,'unidad','unidades'],[/^tira/,'tira','tiras'],[/^aguja/,'aguja','agujas'],[/^ui$|^u\.?i\.?$/,'UI','UI'],
     [/^frasco/,'frasco','frascos'],
     [/^envase/,'envase','envases'],
     [/^caja/,'caja','cajas']
@@ -8607,9 +8643,9 @@ function RXtranscribe(raw){
     head=(head||'').replace(/\([^)]*\)/g,' ');
     let comps=head.split(/\s+-\s+/).map(s=>s.trim()).filter(Boolean);
     comps=comps.map(comp=>{
-      const dmm=comp.match(/(\d+(?:[.,]\d+)?)\s*(mg\/ml|mcg\/ml|µg\/ml|mg|mcg|µg|g|ml|ui|u\.?\s*i\.?|%)\b/i);
+      const dmm=comp.match(/(\d+(?:[.,]\d+)?)\s*(mg\/ml|mcg\/ml|µg\/ml|u(?:nidades)?\/ml|mg|mcg|µg|g|ml|ui|u\.?\s*i\.?|%)\b/i);
       let cname=comp,cdose='';
-      if(dmm){let u=dmm[2].toLowerCase().replace(/\s+/g,'');if(/^u\.?i\.?$/.test(u))u='UI';cdose=dmm[1]+' '+u;cname=comp.slice(0,dmm.index);}
+      if(dmm){let u=dmm[2].toLowerCase().replace(/\s+/g,'');if(/^u\.?i\.?$/.test(u))u='UI';else if(/^u(?:nidades)?\/ml$/.test(u))u='U/ml';cdose=dmm[1].replace(/(,\d*?)0+$/,'$1').replace(/,$/,'')+' '+u;cname=comp.slice(0,dmm.index);}
       cname=cname.replace(FORM,' ').replace(/[.,;:()]+/g,' ').replace(/\s+/g,' ').trim();
       let toks=cname.toLowerCase().split(/\s+/).filter(Boolean);
       const ai=toks.findIndex(t=>/^[áa]cido$/.test(t));if(ai>0){toks.splice(ai,1);toks.unshift('acido');}
@@ -8664,7 +8700,7 @@ function RXtranscribe(raw){
     if(mealM){let w=mealM[1].toLowerCase().replace(/s$/,'');const art=(w==='comida'||w==='cena'||w==='merienda')?'la':'el';meal='con '+art+' '+w;c=c.replace(mealM[0],' ');}
 
     // 2) FRECUENCIA
-    c=c.replace(/\bc\/\s*(\d+)\s*h\b/gi,'cada $1 h').replace(/(?:^|\s)\/\s*(\d+)\s*h\b/gi,' cada $1 h');
+    c=c.replace(/\bc\/\s*(\d+)\s*h\b/gi,'cada $1 h').replace(/(?:^|\s)\/\s*(\d+)\s*h\b/gi,' cada $1 h').replace(/(?:^|\s)\/\s*(\d+)\s*d[ií]as?\b/gi,function(m,n){return n==='1'?' diario':' cada '+n+' días';});
     let freq='';
     const pm=c.match(/\bcada\s+(\d+)\s*([a-záéíóúñ]+)/i); // periódica: cada N <unidad> (tolera erratas tipo "hotas")
     if(pm){
@@ -8688,7 +8724,7 @@ function RXtranscribe(raw){
     // 3) FORMA (pauta) y CABECERA (nombre+dosis, conservando compuestos "A - B")
     const formsAll=[...c.matchAll(FORM)];
     let head=c, form='';
-    if(formsAll.length){ head=c.slice(0,formsAll[0].index); const last=formsAll[formsAll.length-1]; form=normForm(last[1],last[2]); }
+    if(formsAll.length){ const fi=formsAll.find(f=>f.index>0)||formsAll[0]; head=c.slice(0,fi.index); const last=formsAll[formsAll.length-1]; form=normForm(last[1],last[2]); }
     const nameDose=fmtHead(head);
     if(!nameDose) continue;
 
@@ -9140,7 +9176,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 22;
+  var DC_BUILD = 23;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
