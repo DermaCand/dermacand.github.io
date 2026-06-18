@@ -2469,11 +2469,405 @@ h+=`<div class="coll"><div class="coll-h" onclick="this.parentElement.classList.
 });
 }
 }
+h+=renderCalcsBlock(id);
+h+=renderAlgosBlock(id);
 h+='</div>';
 return h;
 }
 
+// CONSTRUCTOR DE ALGORITMOS INTERACTIVOS
+// Un algoritmo = arbol de decision: nodos 'pregunta' (texto + opciones que llevan a otro nodo)
+// y 'resultado' (recomendacion). Se guarda en Firestore ('algoritmos'), se gestiona por
+// canEdit(seccion) y se publica a todos. Todo el contenido se ESCAPA al mostrarlo (sin HTML).
+function hpAlgos(){ try{ return ls.g('algos')||{}; }catch(e){ return {}; } }
+window.hpApplyAlgos=function(map){ try{ ls.s('algos', map||{}); }catch(e){} };
+function algosForSection(sec){ const m=hpAlgos(); return Object.keys(m).map(function(k){return m[k];}).filter(function(a){return a&&a.seccion===sec;}); }
+function renderAlgosBlock(sec){
+  const canEd=!!(window.HemoCloud&&window.HemoCloud.canEdit&&window.HemoCloud.canEdit(sec));
+  const list=algosForSection(sec); const pub=list.filter(function(a){return a.estado==='publicado';});
+  if(!canEd && !pub.length) return '';
+  let h='<div class="coll" style="margin-top:14px"><div class="coll-h" onclick="this.parentElement.classList.toggle(\'open\')"><span>Algoritmos interactivos</span><span class="ar">&#9654;</span></div><div class="coll-c">';
+  (canEd?list:pub).forEach(function(a){
+    const draft=a.estado!=='publicado';
+    h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 0;border-bottom:1px solid var(--bd)"><span style="flex:1;min-width:120px">'+_hpEsc(a.titulo||'(sin titulo)')+(draft?' <span style="color:#b8860b;font-size:11px">(borrador)</span>':'')+'</span>';
+    h+='<button class="btn btn-out btn-sm" onclick="algoOpen(\''+a.id+'\')">Abrir</button>';
+    if(canEd){ h+='<button class="btn btn-out btn-sm" onclick="algoEditOpen(\''+a.id+'\')">Editar</button>'; h+='<button class="btn btn-out btn-sm" style="color:#c41e3a" onclick="algoEliminar(\''+a.id+'\')">&times;</button>'; }
+    h+='</div>';
+  });
+  if(canEd) h+='<button class="btn btn-out btn-sm" style="margin-top:10px" onclick="algoNuevo(\''+sec+'\')">+ Crear algoritmo</button>';
+  h+='</div></div>';
+  return h;
+}
+// Motor (reproductor)
+let _algoState=null;
+VIEWS.algo=()=>{
+  const st=_algoState; if(!st||!st.algo) return '<div class="card"><h2>Algoritmo</h2><div class="alert y">No se pudo cargar.</div></div>';
+  const a=st.algo; const node=a.nodos&&a.nodos[st.current];
+  let h='<div class="card"><h2>'+_hpEsc(a.titulo||'Algoritmo')+'</h2>';
+  if(st.preview) h+='<div class="alert b" style="margin-bottom:10px">Vista previa. <a onclick="go(\'algoedit\')" style="cursor:pointer;text-decoration:underline">Volver a editar</a></div>';
+  if(a.intro && st.current===a.inicio) h+='<p class="intro">'+_hpEsc(a.intro)+'</p>';
+  h+='<div class="btns" style="margin-bottom:6px">';
+  if(st.history&&st.history.length) h+='<button class="btn btn-out btn-sm" onclick="algoBack()">Atras</button>';
+  h+='<button class="btn btn-out btn-sm" onclick="algoReset()">Reiniciar</button></div>';
+  if(!node){ h+='<div class="alert r">Paso no encontrado.</div></div>'; return h; }
+  if(node.tipo==='resultado'){
+    h+='<div class="alert g" style="margin-top:8px"><strong>'+_hpEsc(node.texto||'Resultado')+'</strong>'+(node.cuerpo?'<div style="margin-top:6px;white-space:pre-wrap">'+_hpEsc(node.cuerpo)+'</div>':'')+'</div>';
+  } else {
+    h+='<div style="margin:12px 0;font-size:15px;font-weight:600;white-space:pre-wrap">'+_hpEsc(node.texto||'')+'</div>';
+    h+='<div style="display:flex;flex-direction:column;gap:8px">';
+    (node.opciones||[]).forEach(function(o,i){ h+='<button class="btn btn-out" style="text-align:left" onclick="algoChoose('+i+')">'+_hpEsc(o.etiqueta||('Opcion '+(i+1)))+'</button>'; });
+    if(!(node.opciones||[]).length) h+='<div class="alert y">Este paso aun no tiene opciones.</div>';
+    h+='</div>';
+  }
+  h+='</div>'; return h;
+};
+function algoChoose(i){ const st=_algoState; if(!st)return; const node=st.algo.nodos[st.current]; const o=(node.opciones||[])[i]; if(!o||!o.destino){toast('Esta opcion no lleva a ningun paso');return;} st.history.push(st.current); st.current=o.destino; go('algo'); }
+function algoBack(){ const st=_algoState; if(st&&st.history.length){ st.current=st.history.pop(); go('algo'); } }
+function algoReset(){ const st=_algoState; if(st){ st.current=st.algo.inicio; st.history=[]; go('algo'); } }
+function algoOpen(id){ const a=hpAlgos()[id]; if(!a){toast('Algoritmo no encontrado');return;} _algoState={algo:JSON.parse(JSON.stringify(a)),current:a.inicio,history:[]}; go('algo'); }
+// Editor por formulario
+let _algoDraft=null;
+function algoNuevo(sec){ _algoDraft={id:'alg_'+Date.now(),seccion:sec,titulo:'',intro:'',estado:'borrador',inicio:'',nodos:{}}; go('algoedit'); }
+function algoEditOpen(id){ const a=hpAlgos()[id]; if(!a){toast('No encontrado');return;} _algoDraft=JSON.parse(JSON.stringify(a)); if(!_algoDraft.nodos)_algoDraft.nodos={}; go('algoedit'); }
+function _algoNodeLabel(n){ if(!n)return '(paso)'; const t=(n.texto||'').replace(/\s+/g,' ').trim(); return (t?t.slice(0,32):(n.tipo==='resultado'?'(resultado)':'(pregunta)')); }
+VIEWS.algoedit=()=>{
+  const d=_algoDraft; if(!d) return '<div class="card"><h2>Editar algoritmo</h2><div class="alert y">Nada que editar.</div></div>';
+  if(!(window.HemoCloud&&window.HemoCloud.canEdit&&window.HemoCloud.canEdit(d.seccion))) return '<div class="card"><h2>Editar algoritmo</h2><div class="alert y">No tienes permiso para editar en esta seccion.</div></div>';
+  const nodeIds=Object.keys(d.nodos);
+  let h='<div class="card"><h2>Editar algoritmo</h2>';
+  h+='<p class="intro">Construye el arbol: anade preguntas con opciones que llevan a otros pasos, y resultados con la recomendacion. Prueba con <strong>Vista previa</strong> y, cuando este listo, <strong>Publica</strong>.</p>';
+  h+='<div class="fld"><label class="lbl">Titulo</label><input value="'+_hpEsc(d.titulo||'')+'" onchange="algoSetField(\'titulo\',this.value)" placeholder="Ej: Manejo de una lesion sospechosa"></div>';
+  h+='<div class="fld"><label class="lbl">Introduccion (opcional)</label><textarea onchange="algoSetField(\'intro\',this.value)" placeholder="Contexto breve...">'+_hpEsc(d.intro||'')+'</textarea></div>';
+  h+='<div class="fld"><label class="lbl">Seccion (puedes moverlo)</label><select onchange="algoMover(this.value)">'+hpAllSections().filter(function(s){return window.HemoCloud&&window.HemoCloud.canEdit&&window.HemoCloud.canEdit(s.id);}).map(function(s){return '<option value="'+s.id+'"'+(d.seccion===s.id?' selected':'')+'>'+_hpEsc(s.titulo)+'</option>';}).join('')+'</select></div>';
+  if(nodeIds.length){ h+='<div class="fld"><label class="lbl">Paso inicial</label><select onchange="algoSetField(\'inicio\',this.value)"><option value="">- elige -</option>'+nodeIds.map(function(nid){return '<option value="'+nid+'"'+(d.inicio===nid?' selected':'')+'>'+_hpEsc(_algoNodeLabel(d.nodos[nid]))+'</option>';}).join('')+'</select></div>'; }
+  else { h+='<div class="alert b" style="margin-bottom:8px">Empieza anadiendo una <strong>Pregunta</strong> o un <strong>Resultado</strong> con los botones de abajo. El primero sera el paso inicial (luego puedes cambiarlo).</div>'; }
+  h+='<h3>Pasos ('+nodeIds.length+')</h3>';
+  if(!nodeIds.length) h+='<div class="alert b">Sin pasos. Anade una pregunta o un resultado abajo.</div>';
+  nodeIds.forEach(function(nid){ h+=_algoEditNode(d,nid,nodeIds); });
+  h+='<div class="btns" style="margin-top:8px"><button class="btn btn-out btn-sm" onclick="algoAddNode(\'pregunta\')">+ Pregunta</button><button class="btn btn-out btn-sm" onclick="algoAddNode(\'resultado\')">+ Resultado</button></div>';
+  h+='<hr style="margin:14px 0"><div class="btns"><button class="btn btn-out" onclick="algoCancelar()">Cancelar</button><button class="btn" onclick="algoVistaPrevia()">Vista previa</button><button class="btn btn-out" onclick="algoComprobar()">Comprobar</button><button class="btn btn-out" onclick="algoGuardar()">Guardar borrador</button><button class="btn btn-g" onclick="algoPublicar()">Publicar</button></div>';
+  h+='</div>'; return h;
+};
+function _algoEditNode(d,nid,nodeIds){
+  const n=d.nodos[nid];
+  let h='<div class="coll open" style="margin-bottom:8px"><div class="coll-h" style="cursor:default"><span>'+(n.tipo==='resultado'?'Resultado':'Pregunta')+'</span><button class="btn btn-out btn-sm" onclick="algoDelNode(\''+nid+'\')" title="Eliminar paso">&times;</button></div><div class="coll-c">';
+  h+='<textarea onchange="algoNodeText(\''+nid+'\',this.value)" placeholder="'+(n.tipo==='resultado'?'Titulo del resultado':'Texto de la pregunta')+'">'+_hpEsc(n.texto||'')+'</textarea>';
+  if(n.tipo==='resultado'){
+    h+='<textarea onchange="algoNodeBody(\''+nid+'\',this.value)" placeholder="Recomendacion / detalle">'+_hpEsc(n.cuerpo||'')+'</textarea>';
+  } else {
+    h+='<div style="font-size:12px;color:var(--mut);margin:6px 0 2px">Opciones:</div>';
+    (n.opciones||[]).forEach(function(o,i){
+      h+='<div style="display:flex;gap:4px;margin-top:4px;align-items:center"><input style="flex:1" value="'+_hpEsc(o.etiqueta||'')+'" onchange="algoOptLabel(\''+nid+'\','+i+',this.value)" placeholder="Etiqueta (ej: Si)">';
+      h+='<select onchange="algoOptDest(\''+nid+'\','+i+',this.value)" style="max-width:45%"><option value="">a paso...</option>'+nodeIds.filter(function(x){return x!==nid;}).map(function(x){return '<option value="'+x+'"'+(o.destino===x?' selected':'')+'>'+_hpEsc(_algoNodeLabel(d.nodos[x]))+'</option>';}).join('')+'<option value="__new">+ nuevo resultado</option></select>';
+      h+='<button class="btn btn-out btn-sm" onclick="algoDelOpt(\''+nid+'\','+i+')">&times;</button></div>';
+    });
+    h+='<button class="btn btn-out btn-sm" style="margin-top:6px" onclick="algoAddOpt(\''+nid+'\')">+ Opcion</button>';
+  }
+  h+='</div></div>'; return h;
+}
+function algoSetField(f,v){ if(_algoDraft) _algoDraft[f]=v; }
+function algoMover(v){ if(_algoDraft){ _algoDraft.seccion=v; go('algoedit'); } }
+function algoAddNode(tipo){ const id='n_'+Date.now(); _algoDraft.nodos[id]={id:id,tipo:tipo,texto:'',opciones:[],cuerpo:''}; if(!_algoDraft.inicio)_algoDraft.inicio=id; go('algoedit'); }
+function algoDelNode(nid){ delete _algoDraft.nodos[nid]; if(_algoDraft.inicio===nid)_algoDraft.inicio=''; Object.keys(_algoDraft.nodos).forEach(function(k){const n=_algoDraft.nodos[k];(n.opciones||[]).forEach(function(o){if(o.destino===nid)o.destino='';});}); go('algoedit'); }
+function algoNodeText(nid,v){ if(_algoDraft.nodos[nid])_algoDraft.nodos[nid].texto=v; }
+function algoNodeBody(nid,v){ if(_algoDraft.nodos[nid])_algoDraft.nodos[nid].cuerpo=v; }
+function algoAddOpt(nid){ const n=_algoDraft.nodos[nid]; if(!n.opciones)n.opciones=[]; n.opciones.push({etiqueta:'',destino:''}); go('algoedit'); }
+function algoDelOpt(nid,i){ const n=_algoDraft.nodos[nid]; if(n.opciones)n.opciones.splice(i,1); go('algoedit'); }
+function algoOptLabel(nid,i,v){ const n=_algoDraft.nodos[nid]; if(n.opciones&&n.opciones[i])n.opciones[i].etiqueta=v; }
+function algoOptDest(nid,i,v){ const n=_algoDraft.nodos[nid]; if(!n.opciones||!n.opciones[i])return; if(v==='__new'){ const rid='n_'+Date.now(); _algoDraft.nodos[rid]={id:rid,tipo:'resultado',texto:'Nuevo resultado',opciones:[],cuerpo:''}; n.opciones[i].destino=rid; go('algoedit'); } else { n.opciones[i].destino=v; } }
+function algoCancelar(){ const s=_algoDraft&&_algoDraft.seccion; _algoDraft=null; if(s) go('g_'+s); else go('home'); }
+function algoVistaPrevia(){ if(!_algoDraft.inicio){toast('Elige el paso inicial');return;} _algoState={algo:JSON.parse(JSON.stringify(_algoDraft)),current:_algoDraft.inicio,history:[],preview:true}; go('algo'); }
+function _algoValidar(d){
+  const errs=[], warns=[]; const ids=Object.keys((d&&d.nodos)||{});
+  if(!d.titulo||!d.titulo.trim()) errs.push('Falta el titulo.');
+  if(!ids.length) errs.push('No hay ningun paso.');
+  if(!d.inicio||!d.nodos[d.inicio]) errs.push('Falta elegir un paso inicial valido.');
+  ids.forEach(function(nid){ const n=d.nodos[nid]; const lbl=_algoNodeLabel(n);
+    if(n.tipo==='pregunta'){ const ops=n.opciones||[];
+      if(!ops.length) errs.push('La pregunta "'+lbl+'" no tiene opciones (sin salida).');
+      ops.forEach(function(o){ if(!o.etiqueta||!o.etiqueta.trim()) warns.push('Una opcion de "'+lbl+'" no tiene etiqueta.'); if(!o.destino) errs.push('Una opcion de "'+lbl+'" no lleva a ningun paso.'); else if(!d.nodos[o.destino]) errs.push('Una opcion de "'+lbl+'" apunta a un paso inexistente.'); });
+    } else { if(!n.texto||!n.texto.trim()) warns.push('Un resultado no tiene texto.'); }
+  });
+  if(d.inicio&&d.nodos[d.inicio]){ const seen={}; const stack=[d.inicio]; while(stack.length){ const x=stack.pop(); if(seen[x])continue; seen[x]=1; const n=d.nodos[x]; if(n&&n.tipo==='pregunta')(n.opciones||[]).forEach(function(o){if(o.destino&&!seen[o.destino])stack.push(o.destino);}); }
+    ids.forEach(function(nid){ if(!seen[nid]) warns.push('El paso "'+_algoNodeLabel(d.nodos[nid])+'" no es alcanzable desde el inicio.'); }); }
+  return {errs:errs, warns:warns};
+}
+function algoComprobar(){ const v=_algoValidar(_algoDraft); if(!v.errs.length&&!v.warns.length){toast('Todo correcto, listo para publicar');return;} alert((v.errs.length?'Errores (impiden publicar):\n- '+v.errs.join('\n- ')+(v.warns.length?'\n\n':''):'')+(v.warns.length?'Avisos:\n- '+v.warns.join('\n- '):'')); }
+async function algoGuardar(){ const d=_algoDraft; if(!d.titulo||!d.titulo.trim()){toast('Ponle un titulo');return;} const m=hpAlgos(); m[d.id]=JSON.parse(JSON.stringify(d)); try{ls.s('algos',m);}catch(e){} if(window.hpSaveAlgo){ try{ await window.hpSaveAlgo(d); toast('Borrador guardado'); }catch(e){ toast('Guardado solo en este equipo (sin permiso o sin conexion)'); } } else toast('Guardado'); }
+async function algoPublicar(){ const d=_algoDraft; const _v=_algoValidar(d); if(_v.errs.length){ alert('No se puede publicar todavia:\n\n- '+_v.errs.join('\n- ')); return; } if(_v.warns.length && !confirm('Avisos (puedes publicar igualmente):\n\n- '+_v.warns.join('\n- ')+'\n\nPublicar de todos modos?')) return; d.estado='publicado'; const m=hpAlgos(); m[d.id]=JSON.parse(JSON.stringify(d)); try{ls.s('algos',m);}catch(e){} if(window.hpSaveAlgo){ try{ await window.hpSaveAlgo(d); toast('Publicado - visible para todos'); }catch(e){ toast('Publicado solo en este equipo'); } } go('g_'+d.seccion); }
+async function algoEliminar(id){ const a=hpAlgos()[id]; if(!a)return; if(!confirm('Eliminar el algoritmo "'+(a.titulo||'')+'" para todos?'))return; const sec=a.seccion; const m=hpAlgos(); delete m[id]; try{ls.s('algos',m);}catch(e){} if(window.hpDeleteAlgo){ try{ await window.hpDeleteAlgo(id); toast('Eliminado'); }catch(e){ toast('Eliminado solo en este equipo'); } } go('g_'+sec); }
+
 function toggleEditGuide(id){_editGuide=_editGuide===id?null:id;go('g_'+id)}
+
+// ════════════════ CONSTRUCTOR DE CALCULADORAS (puntuaciones / fórmulas) ════════════════
+// Dos tipos:
+//  · 'score'   = campos (opciones con puntos / casillas sí-no) cuya SUMA cae en una categoría.
+//  · 'formula' = campos numéricos/opciones/casilla con NOMBRE de variable y una fórmula matemática.
+// Se guardan en Firestore ('calculadoras'), se gestionan por canEdit(seccion), se mueven de sección
+// y se publican a todos. Todo el texto se ESCAPA (sin HTML). Las fórmulas se evalúan con un parser
+// PROPIO y seguro (_calcEval): solo números y una lista blanca de funciones, SIN eval/Function ni
+// acceso a variables del navegador → sin riesgo de inyección.
+// DEFAULT_CALCS: calculadoras de EJEMPLO integradas. Se fusionan con las de Firestore (una guardada
+// con el mismo id sustituye a su ejemplo). Aquí solo dejamos un ejemplo dermatológico simple; las
+// calculadoras fijas (Cockcroft-Gault, BSA, IMC) ya existen aparte en la app y no se duplican.
+const DEFAULT_CALCS={
+  'cal_ej_pasi':{ id:'cal_ej_pasi', seccion:'inflam', tipo:'score', estado:'publicado',
+    titulo:'Gravedad de placa (ejemplo)',
+    intro:'Ejemplo creado con el constructor de puntuaciones. Suma los puntos de cada apartado para orientar la gravedad de una lesión. Sustitúyelo o personalízalo según tu protocolo.',
+    fuente:'Ejemplo orientativo (no validado)',
+    campos:[
+      {id:'p_erit', tipo:'select', etiqueta:'Eritema', opciones:[{etiqueta:'Ausente',puntos:0},{etiqueta:'Leve',puntos:1},{etiqueta:'Moderado',puntos:2},{etiqueta:'Intenso',puntos:3}]},
+      {id:'p_infi', tipo:'select', etiqueta:'Infiltración / grosor', opciones:[{etiqueta:'Ausente',puntos:0},{etiqueta:'Leve',puntos:1},{etiqueta:'Moderada',puntos:2},{etiqueta:'Intensa',puntos:3}]},
+      {id:'p_desc', tipo:'select', etiqueta:'Descamación', opciones:[{etiqueta:'Ausente',puntos:0},{etiqueta:'Leve',puntos:1},{etiqueta:'Moderada',puntos:2},{etiqueta:'Intensa',puntos:3}]}
+    ],
+    resultados:[
+      {min:0,max:2,etiqueta:'Leve',detalle:''},
+      {min:3,max:5,etiqueta:'Moderada',detalle:''},
+      {min:6,max:9,etiqueta:'Intensa',detalle:''}
+    ]}
+};
+function _calcsStored(){ try{ return ls.g('calcs')||{}; }catch(e){ return {}; } }
+function hpCalcs(){ return Object.assign({}, DEFAULT_CALCS, _calcsStored()); }
+window.hpApplyCalcs=function(map){ try{ ls.s('calcs', map||{}); }catch(e){} };
+function calcsForSection(sec){ const m=hpCalcs(); return Object.keys(m).map(function(k){return m[k];}).filter(function(c){return c&&c.seccion===sec;}); }
+function renderCalcsBlock(sec){
+  const canEd=!!(window.HemoCloud&&window.HemoCloud.canEdit&&window.HemoCloud.canEdit(sec));
+  const list=calcsForSection(sec); const pub=list.filter(function(c){return c.estado==='publicado';});
+  if(!canEd) return '';
+  let h='<div class="coll" style="margin-top:14px"><div class="coll-h" onclick="this.parentElement.classList.toggle(\'open\')"><span>🧮 Calculadoras propias</span><span class="ar">▶</span></div><div class="coll-c">';
+  (canEd?list:pub).forEach(function(c){
+    const draft=c.estado!=='publicado';
+    h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 0;border-bottom:1px solid var(--bd)"><span style="flex:1;min-width:120px">'+_hpEsc(c.titulo||'(sin título)')+(c.tipo==='formula'?' <span style="color:var(--mut);font-size:11px">ƒ</span>':'')+(draft?' <span style="color:#b8860b;font-size:11px">(borrador)</span>':'')+'</span>';
+    h+='<button class="btn btn-out btn-sm" onclick="calcOpen(\''+c.id+'\')">Abrir</button>';
+    if(canEd){ h+='<button class="btn btn-out btn-sm" onclick="calcEditOpen(\''+c.id+'\')">Editar</button>'; h+='<button class="btn btn-out btn-sm" style="color:#c41e3a" onclick="calcEliminar(\''+c.id+'\')">×</button>'; }
+    h+='</div>';
+  });
+  if(canEd) h+='<div class="btns" style="margin-top:10px"><button class="btn btn-out btn-sm" onclick="calcNuevo(\''+sec+'\',\'score\')">➕ De puntuación</button><button class="btn btn-out btn-sm" onclick="calcNuevo(\''+sec+'\',\'formula\')">➕ Con fórmula</button></div>';
+  h+='</div></div>';
+  return h;
+}
+// ── Evaluador matemático SEGURO (sin eval/Function): solo números + funciones whitelist ──
+function _calcEval(expr, vars){
+  const FN={ min:Math.min, max:Math.max, round:Math.round, redondear:Math.round, floor:Math.floor, ceil:Math.ceil, abs:Math.abs, sqrt:Math.sqrt, raiz:Math.sqrt, ln:Math.log, log:function(x){return Math.log(x)/Math.LN10;}, exp:Math.exp, pow:Math.pow, potencia:Math.pow, si:function(c,a,b){return c?a:b;}, y:function(a,b){return (a&&b)?1:0;}, o:function(a,b){return (a||b)?1:0;}, no:function(a){return a?0:1;} };
+  const s=String(expr==null?'':expr); let i=0; const toks=[];
+  const issp=ch=>ch===' '||ch==='\t'||ch==='\n'||ch==='\r';
+  const isdig=ch=>ch>='0'&&ch<='9';
+  const isal=ch=>(ch>='a'&&ch<='z')||(ch>='A'&&ch<='Z')||ch==='_';
+  while(i<s.length){ const ch=s[i];
+    if(issp(ch)){i++;continue;}
+    if(isdig(ch)||(ch==='.'&&isdig(s[i+1]))){ let j=i+1; while(j<s.length&&(isdig(s[j])||s[j]==='.'))j++; toks.push({t:'num',v:parseFloat(s.slice(i,j))}); i=j; continue; }
+    if(isal(ch)){ let j=i+1; while(j<s.length&&(isal(s[j])||isdig(s[j])))j++; toks.push({t:'id',v:s.slice(i,j)}); i=j; continue; }
+    const two=s.slice(i,i+2);
+    if(two==='<='||two==='>='||two==='=='||two==='!='||two==='&&'||two==='||'){ toks.push({t:'op',v:two}); i+=2; continue; }
+    if('+-*/%^(),<>!'.indexOf(ch)>=0){ toks.push({t:'op',v:ch}); i++; continue; }
+    throw new Error('Carácter no válido: '+ch);
+  }
+  let p=0; const peek=()=>toks[p];
+  const eat=(v)=>{ const tk=toks[p]; if(!tk||(v&&tk.v!==v)) throw new Error('Falta "'+(v||'token')+'"'); p++; return tk; };
+  function pExpr(){ return pOr(); }
+  function pOr(){ let a=pAnd(); while(peek()&&peek().v==='||'){ p++; const b=pAnd(); a=(a||b)?1:0; } return a; }
+  function pAnd(){ let a=pCmp(); while(peek()&&peek().v==='&&'){ p++; const b=pCmp(); a=(a&&b)?1:0; } return a; }
+  function pCmp(){ let a=pAdd(); const tk=peek(); if(tk&&(tk.v==='<'||tk.v==='<='||tk.v==='>'||tk.v==='>='||tk.v==='=='||tk.v==='!=')){ p++; const b=pAdd(); switch(tk.v){case '<':return a<b?1:0;case '<=':return a<=b?1:0;case '>':return a>b?1:0;case '>=':return a>=b?1:0;case '==':return a===b?1:0;case '!=':return a!==b?1:0;} } return a; }
+  function pAdd(){ let a=pMul(); while(peek()&&(peek().v==='+'||peek().v==='-')){ const op=eat().v; const b=pMul(); a=(op==='+')?a+b:a-b; } return a; }
+  function pMul(){ let a=pUnary(); while(peek()&&(peek().v==='*'||peek().v==='/'||peek().v==='%')){ const op=eat().v; const b=pUnary(); a=(op==='*')?a*b:(op==='/')?a/b:a%b; } return a; }
+  function pUnary(){ const tk=peek(); if(tk&&tk.v==='-'){ p++; return -pUnary(); } if(tk&&tk.v==='!'){ p++; return pUnary()?0:1; } return pPow(); }
+  function pPow(){ let a=pPrimary(); if(peek()&&peek().v==='^'){ p++; const b=pUnary(); return Math.pow(a,b); } return a; }
+  function pPrimary(){ const tk=peek(); if(!tk) throw new Error('Fórmula incompleta');
+    if(tk.t==='num'){ p++; return tk.v; }
+    if(tk.t==='id'){ p++;
+      if(peek()&&peek().v==='('){ p++; const args=[]; if(peek()&&peek().v!==')'){ args.push(pExpr()); while(peek()&&peek().v===','){ p++; args.push(pExpr()); } } eat(')');
+        const fn=FN[tk.v.toLowerCase()]; if(!fn) throw new Error('Función desconocida: '+tk.v); return fn.apply(null,args); }
+      if(Object.prototype.hasOwnProperty.call(vars||{}, tk.v)){ const val=(vars||{})[tk.v]; if(typeof val!=='number'||isNaN(val)) throw new Error('Falta el valor de "'+tk.v+'"'); return val; }
+      throw new Error('Variable desconocida: '+tk.v);
+    }
+    if(tk.v==='('){ p++; const e=pExpr(); eat(')'); return e; }
+    throw new Error('Token inesperado: "'+tk.v+'"');
+  }
+  const result=pExpr();
+  if(p<toks.length) throw new Error('Sobra "'+toks[p].v+'" en la fórmula');
+  if(typeof result!=='number'||!isFinite(result)) throw new Error('El resultado no es un número válido');
+  return result;
+}
+function _calcVars(c,vals){ const v={}; (c.campos||[]).forEach(function(campo){ const key=(campo.clave||'').trim(); if(!key) return; const raw=vals[campo.id];
+  if(campo.tipo==='number'){ const n=parseFloat(raw); v[key]=isNaN(n)?NaN:n; }
+  else if(campo.tipo==='check'){ v[key]=(raw===true)?1:0; }
+  else { if(raw===undefined||raw===''||raw===null){ v[key]=NaN; } else { const o=(campo.opciones||[])[+raw]; v[key]= o?((isNaN(+o.valor))?0:(+o.valor)):NaN; } }
+}); return v; }
+// ── Motor (reproductor) ──
+let _calcState=null;
+function _calcCompute(c,vals){
+  if(c.tipo==='formula'){
+    const vars=_calcVars(c,vals); let faltan=0;
+    (c.campos||[]).forEach(function(campo){ const k=(campo.clave||'').trim(); if(k && (typeof vars[k]!=='number'||isNaN(vars[k]))) faltan++; });
+    if(faltan) return {modo:'formula', faltan:faltan, valor:null, error:null, res:null};
+    try{ const val=_calcEval(c.formula||'', vars); let res=null; (c.resultados||[]).forEach(function(r){ if(!res && val>=(+r.min)&&val<=(+r.max)) res=r; }); return {modo:'formula', faltan:0, valor:val, res:res, error:null}; }
+    catch(e){ return {modo:'formula', faltan:0, valor:null, res:null, error:e.message}; }
+  }
+  let total=0, faltan=0;
+  (c.campos||[]).forEach(function(campo){ const v=vals[campo.id];
+    if(campo.tipo==='check'){ if(v===true) total+=(+campo.puntos||0); }
+    else { if(v===undefined||v===''||v===null){ faltan++; } else { const o=(campo.opciones||[])[+v]; if(o) total+=(+o.puntos||0); else faltan++; } }
+  });
+  let res=null; (c.resultados||[]).forEach(function(r){ if(!res && total>=(+r.min) && total<=(+r.max)) res=r; });
+  return {modo:'score', total:total, faltan:faltan, res:res};
+}
+function _calcResultHtml(c,vals){
+  const r=_calcCompute(c,vals);
+  if(r.modo==='formula'){
+    if(r.faltan) return '<div style="font-size:13px;color:var(--mut)">Completa los campos para ver el resultado. (Faltan '+r.faltan+'.)</div>';
+    if(r.error) return '<div class="alert r">No se pudo calcular: '+_hpEsc(r.error)+'</div>';
+    const dec=(c.decimales!=null&&c.decimales!=='')?Math.max(0,Math.min(6,+c.decimales)):2;
+    const shown=isFinite(+r.valor)?(+r.valor).toFixed(dec):'—';
+    let h='<div style="font-size:22px;font-weight:700">'+shown+(c.unidadResultado?' <span style="font-size:14px;font-weight:600;color:var(--mut)">'+_hpEsc(c.unidadResultado)+'</span>':'')+'</div>';
+    if(r.res){ h+='<div class="alert g" style="margin-top:8px"><strong>'+_hpEsc(r.res.etiqueta||'')+'</strong>'+(r.res.detalle?'<div style="margin-top:4px;white-space:pre-wrap">'+_hpEsc(r.res.detalle)+'</div>':'')+'</div>'; }
+    return h;
+  }
+  let h='<div style="font-size:22px;font-weight:700">Puntuación: '+r.total+'</div>';
+  if(r.res){ h+='<div class="alert g" style="margin-top:8px"><strong>'+_hpEsc(r.res.etiqueta||'')+'</strong>'+(r.res.detalle?'<div style="margin-top:4px;white-space:pre-wrap">'+_hpEsc(r.res.detalle)+'</div>':'')+'</div>'; }
+  else { h+='<div class="alert y" style="margin-top:8px">Sin categoría para esta puntuación.</div>'; }
+  if(r.faltan){ h+='<div style="font-size:12px;color:var(--mut);margin-top:6px">Faltan '+r.faltan+' campo(s) por responder.</div>'; }
+  return h;
+}
+function _calcPaintResult(){ const st=_calcState; if(!st) return; const el=document.getElementById('calc-result'); if(el) el.innerHTML=_calcResultHtml(st.calc, st.vals); }
+function calcSet(cid,val){ if(!_calcState)return; _calcState.vals[cid]=val; _calcPaintResult(); }
+VIEWS.calc=()=>{
+  const st=_calcState; if(!st||!st.calc) return '<div class="card"><h2>Calculadora</h2><div class="alert y">No se pudo cargar.</div></div>';
+  const c=st.calc;
+  let h='<div class="card"><h2>'+_hpEsc(c.titulo||'Calculadora')+'</h2>';
+  if(st.preview) h+='<div class="alert b" style="margin-bottom:10px">Vista previa. <a onclick="go(\'calcedit\')" style="cursor:pointer;text-decoration:underline">← Volver a editar</a></div>';
+  if(c.intro) h+='<p class="intro">'+_hpEsc(c.intro)+'</p>';
+  (c.campos||[]).forEach(function(campo){
+    const v=st.vals[campo.id];
+    if(campo.tipo==='number'){
+      h+='<div class="fld"><label class="lbl">'+_hpEsc(campo.etiqueta||'')+(campo.unidad?' <span style="color:var(--mut);font-weight:400">('+_hpEsc(campo.unidad)+')</span>':'')+'</label><input type="number" inputmode="decimal" value="'+(v!=null&&v!==''?_hpEsc(''+v):'')+'" onchange="calcSet(\''+campo.id+'\',this.value)"></div>';
+    } else if(campo.tipo==='check'){
+      h+='<div class="fld" style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="cf_'+campo.id+'"'+(v===true?' checked':'')+' onchange="calcSet(\''+campo.id+'\',this.checked)"><label for="cf_'+campo.id+'" style="margin:0">'+_hpEsc(campo.etiqueta||'')+'</label></div>';
+    } else {
+      h+='<div class="fld"><label class="lbl">'+_hpEsc(campo.etiqueta||'')+'</label><select onchange="calcSet(\''+campo.id+'\',this.value)"><option value="">— elige —</option>'+(campo.opciones||[]).map(function(o,i){return '<option value="'+i+'"'+((''+v)===(''+i)?' selected':'')+'>'+_hpEsc(o.etiqueta||('Opción '+(i+1)))+'</option>';}).join('')+'</select></div>';
+    }
+  });
+  if(!(c.campos||[]).length) h+='<div class="alert y">Esta calculadora aún no tiene campos.</div>';
+  if(c.fuente) h+='<p style="font-size:11px;color:var(--mut);margin-top:10px">Fuente: '+_hpEsc(c.fuente)+'</p>';
+  h+='<div id="calc-result" style="margin-top:14px">'+_calcResultHtml(c, st.vals)+'</div>';
+  h+='</div>'; return h;
+};
+function calcOpen(id){ const c=hpCalcs()[id]; if(!c){toast('Calculadora no encontrada');return;} _calcState={calc:JSON.parse(JSON.stringify(c)),vals:{}}; go('calc'); }
+// ── Editor por formulario ──
+let _calcDraft=null;
+function calcNuevo(sec,tipo){ tipo=(tipo==='formula')?'formula':'score'; _calcDraft={id:'cal_'+Date.now(),seccion:sec,titulo:'',intro:'',fuente:'',estado:'borrador',tipo:tipo,campos:[],resultados:[]}; if(tipo==='formula'){ _calcDraft.formula=''; _calcDraft.unidadResultado=''; _calcDraft.decimales=2; } go('calcedit'); }
+function calcEditOpen(id){ const c=hpCalcs()[id]; if(!c){toast('No encontrada');return;} _calcDraft=JSON.parse(JSON.stringify(c)); if(!_calcDraft.tipo)_calcDraft.tipo='score'; if(!_calcDraft.campos)_calcDraft.campos=[]; if(!_calcDraft.resultados)_calcDraft.resultados=[]; go('calcedit'); }
+function _calcSecOptions(sel){ return hpAllSections().filter(function(s){return window.HemoCloud&&window.HemoCloud.canEdit&&window.HemoCloud.canEdit(s.id);}).map(function(s){return '<option value="'+s.id+'"'+(sel===s.id?' selected':'')+'>'+_hpEsc(s.titulo)+'</option>';}).join(''); }
+VIEWS.calcedit=()=>{
+  const d=_calcDraft; if(!d) return '<div class="card"><h2>Editar calculadora</h2><div class="alert y">Nada que editar.</div></div>';
+  if(!(window.HemoCloud&&window.HemoCloud.canEdit&&window.HemoCloud.canEdit(d.seccion))) return '<div class="card"><h2>Editar calculadora</h2><div class="alert y">No tienes permiso para editar en esta sección.</div></div>';
+  const esF=d.tipo==='formula';
+  let h='<div class="card"><h2>🧮 Editar calculadora ('+(esF?'fórmula':'puntuación')+')</h2>';
+  h+='<p class="intro">'+(esF?'Añade campos con su <strong>nombre de variable</strong> y escribe la <strong>fórmula</strong>. La app calcula el valor.':'Añade campos (opciones con puntos o casillas sí/no). La app suma los puntos y muestra la categoría.')+' Prueba con <strong>Vista previa</strong> y, cuando esté lista, <strong>Publica</strong>.</p>';
+  h+='<div class="fld"><label class="lbl">Título</label><input value="'+_hpEsc(d.titulo||'')+'" onchange="calcSetMeta(\'titulo\',this.value)" placeholder="'+(esF?'Ej: Índice de gravedad':'Ej: Escala de gravedad')+'"></div>';
+  h+='<div class="fld"><label class="lbl">Introducción (opcional)</label><textarea onchange="calcSetMeta(\'intro\',this.value)" placeholder="Para qué sirve, población...">'+_hpEsc(d.intro||'')+'</textarea></div>';
+  h+='<div class="fld"><label class="lbl">Fuente / referencia (opcional)</label><input value="'+_hpEsc(d.fuente||'')+'" onchange="calcSetMeta(\'fuente\',this.value)" placeholder="Ej: autor, revista, año"></div>';
+  h+='<div class="fld"><label class="lbl">Sección (puedes moverla)</label><select onchange="calcSetMeta(\'seccion\',this.value)">'+_calcSecOptions(d.seccion)+'</select></div>';
+  h+='<h3>Campos ('+(d.campos||[]).length+')</h3>';
+  if(!(d.campos||[]).length) h+='<div class="alert b">Sin campos. Añade uno abajo.</div>';
+  (d.campos||[]).forEach(function(campo,ci){ h+=_calcEditCampo(campo,ci,d.tipo); });
+  if(esF){ h+='<div class="btns" style="margin-top:8px"><button class="btn btn-out btn-sm" onclick="calcAddCampo(\'number\')">➕ Número</button><button class="btn btn-out btn-sm" onclick="calcAddCampo(\'select\')">➕ Opciones</button><button class="btn btn-out btn-sm" onclick="calcAddCampo(\'check\')">➕ Casilla sí/no</button></div>'; }
+  else { h+='<div class="btns" style="margin-top:8px"><button class="btn btn-out btn-sm" onclick="calcAddCampo(\'select\')">➕ Campo de opciones</button><button class="btn btn-out btn-sm" onclick="calcAddCampo(\'check\')">➕ Casilla sí/no</button></div>'; }
+  if(esF){
+    const claves=(d.campos||[]).map(function(c){return (c.clave||'').trim();}).filter(Boolean);
+    h+='<div class="fld" style="margin-top:14px"><label class="lbl">Fórmula</label><textarea onchange="calcSetMeta(\'formula\',this.value)" placeholder="ej: (a*b)/100">'+_hpEsc(d.formula||'')+'</textarea></div>';
+    h+='<div style="font-size:11.5px;color:var(--mut);margin:-4px 0 10px 0;line-height:1.5">Variables: <strong>'+(claves.length?_hpEsc(claves.join(', ')):'(añade campos arriba y ponles una variable)')+'</strong>.<br>Operaciones: + − * / ^ ( ). Funciones: min, max, redondear, raiz, abs, ln, log, exp, <strong>si(condición, valorSí, valorNo)</strong>. Comparaciones: &gt; &lt; &gt;= &lt;= == !=. Ejemplo de ajuste: <code>valor*si(sexo==1,0.85,1)</code></div>';
+    h+='<div style="display:flex;gap:10px;flex-wrap:wrap"><div class="fld" style="flex:1;min-width:140px"><label class="lbl">Unidad del resultado</label><input value="'+_hpEsc(d.unidadResultado||'')+'" onchange="calcSetMeta(\'unidadResultado\',this.value)" placeholder="%"></div><div class="fld" style="width:110px"><label class="lbl">Decimales</label><input type="number" min="0" max="6" value="'+(d.decimales!=null?(+d.decimales):2)+'" onchange="calcSetMeta(\'decimales\',this.value)"></div></div>';
+    h+='<h3 style="margin-top:8px">Interpretación del valor (opcional, '+(d.resultados||[]).length+')</h3>';
+    h+='<p style="font-size:12px;color:var(--mut)">Si quieres, asigna categorías por rango del valor calculado. Ej.: de 0 a 30 = «Leve».</p>';
+  } else {
+    h+='<h3 style="margin-top:14px">Resultados por puntuación ('+(d.resultados||[]).length+')</h3>';
+    h+='<p style="font-size:12px;color:var(--mut)">Define rangos de puntos y su categoría. Ej.: de 0 a 1 = «Riesgo bajo».</p>';
+  }
+  (d.resultados||[]).forEach(function(r,ri){ h+=_calcEditResultado(r,ri); });
+  h+='<button class="btn btn-out btn-sm" style="margin-top:6px" onclick="calcAddResultado()">➕ '+(esF?'Categoría de interpretación':'Categoría de resultado')+'</button>';
+  h+='<hr style="margin:14px 0"><div class="btns"><button class="btn btn-out" onclick="calcCancelar()">✖ Cancelar</button><button class="btn" onclick="calcVistaPrevia()">👁️ Vista previa</button><button class="btn btn-out" onclick="calcComprobar()">🔍 Comprobar</button><button class="btn btn-out" onclick="calcGuardar()">💾 Guardar borrador</button><button class="btn btn-g" onclick="calcPublicar()">✅ Publicar</button></div>';
+  h+='</div>'; return h;
+};
+function _calcEditCampo(campo,ci,calcTipo){
+  if(calcTipo==='formula'){
+    const tn=campo.tipo==='number'?'🔢 Número':(campo.tipo==='select'?'🔘 Opciones':'☑️ Casilla sí/no');
+    let h='<div class="coll open" style="margin-bottom:8px"><div class="coll-h" style="cursor:default"><span>'+tn+'</span><button class="btn btn-out btn-sm" onclick="calcDelCampo('+ci+')" title="Eliminar campo">×</button></div><div class="coll-c">';
+    h+='<input value="'+_hpEsc(campo.etiqueta||'')+'" onchange="calcCampoLabel('+ci+',this.value)" placeholder="Etiqueta (ej: Superficie afectada)">';
+    h+='<div style="display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap"><span style="font-size:12px;color:var(--mut)">Variable:</span><input style="width:110px" value="'+_hpEsc(campo.clave||'')+'" onchange="calcCampoClave('+ci+',this.value)" placeholder="ej: sup">';
+    if(campo.tipo==='number'){ h+='<span style="font-size:12px;color:var(--mut)">Unidad:</span><input style="width:80px" value="'+_hpEsc(campo.unidad||'')+'" onchange="calcCampoUnidad('+ci+',this.value)" placeholder="%">'; }
+    h+='</div>';
+    if(campo.tipo==='select'){
+      h+='<div style="font-size:12px;color:var(--mut);margin:6px 0 2px">Opciones (cada una con su valor numérico):</div>';
+      (campo.opciones||[]).forEach(function(o,oi){ h+='<div style="display:flex;gap:4px;margin-top:4px;align-items:center"><input style="flex:1" value="'+_hpEsc(o.etiqueta||'')+'" onchange="calcOptLabel('+ci+','+oi+',this.value)" placeholder="Etiqueta"><input type="number" style="width:70px" value="'+(o.valor!=null?(+o.valor):'')+'" onchange="calcOptValor('+ci+','+oi+',this.value)" placeholder="valor"><button class="btn btn-out btn-sm" onclick="calcDelOpt('+ci+','+oi+')">×</button></div>'; });
+      h+='<button class="btn btn-out btn-sm" style="margin-top:6px" onclick="calcAddOpt('+ci+')">➕ Opción</button>';
+    } else if(campo.tipo==='check'){ h+='<div style="font-size:11px;color:var(--mut);margin-top:4px">Vale 1 si se marca y 0 si no.</div>'; }
+    h+='</div></div>'; return h;
+  }
+  let h='<div class="coll open" style="margin-bottom:8px"><div class="coll-h" style="cursor:default"><span>'+(campo.tipo==='check'?'☑️ Casilla sí/no':'🔘 Campo de opciones')+'</span><button class="btn btn-out btn-sm" onclick="calcDelCampo('+ci+')" title="Eliminar campo">×</button></div><div class="coll-c">';
+  h+='<input value="'+_hpEsc(campo.etiqueta||'')+'" onchange="calcCampoLabel('+ci+',this.value)" placeholder="'+(campo.tipo==='check'?'Texto de la casilla (ej: Prurito intenso)':'Nombre del campo (ej: Eritema)')+'">';
+  if(campo.tipo==='check'){
+    h+='<div style="display:flex;align-items:center;gap:6px;margin-top:6px"><span style="font-size:13px">Puntos si se marca:</span><input type="number" style="width:80px" value="'+(campo.puntos!=null?(+campo.puntos):'')+'" onchange="calcCampoPuntos('+ci+',this.value)"></div>';
+  } else {
+    h+='<div style="font-size:12px;color:var(--mut);margin:6px 0 2px">Opciones (cada una con sus puntos):</div>';
+    (campo.opciones||[]).forEach(function(o,oi){ h+='<div style="display:flex;gap:4px;margin-top:4px;align-items:center"><input style="flex:1" value="'+_hpEsc(o.etiqueta||'')+'" onchange="calcOptLabel('+ci+','+oi+',this.value)" placeholder="Etiqueta"><input type="number" style="width:70px" value="'+(o.puntos!=null?(+o.puntos):'')+'" onchange="calcOptPuntos('+ci+','+oi+',this.value)" placeholder="pts"><button class="btn btn-out btn-sm" onclick="calcDelOpt('+ci+','+oi+')">×</button></div>'; });
+    h+='<button class="btn btn-out btn-sm" style="margin-top:6px" onclick="calcAddOpt('+ci+')">➕ Opción</button>';
+  }
+  h+='</div></div>'; return h;
+}
+function _calcEditResultado(r,ri){
+  return '<div style="display:flex;gap:4px;margin-top:6px;align-items:center;flex-wrap:wrap"><span style="font-size:12px">de</span><input type="number" style="width:60px" value="'+(r.min!=null?(+r.min):'')+'" onchange="calcResField('+ri+',\'min\',this.value)"><span style="font-size:12px">a</span><input type="number" style="width:60px" value="'+(r.max!=null?(+r.max):'')+'" onchange="calcResField('+ri+',\'max\',this.value)"><input style="flex:1;min-width:120px" value="'+_hpEsc(r.etiqueta||'')+'" onchange="calcResField('+ri+',\'etiqueta\',this.value)" placeholder="Categoría (ej: Riesgo bajo)"><button class="btn btn-out btn-sm" onclick="calcDelResultado('+ri+')">×</button><textarea style="width:100%;margin-top:4px" onchange="calcResField('+ri+',\'detalle\',this.value)" placeholder="Detalle / recomendación (opcional)">'+_hpEsc(r.detalle||'')+'</textarea></div>';
+}
+function calcSetMeta(f,v){ if(!_calcDraft)return; if(f==='decimales')_calcDraft[f]=(+v||0); else _calcDraft[f]=v; if(f==='seccion') go('calcedit'); }
+function calcAddCampo(kind){ if(!_calcDraft.campos)_calcDraft.campos=[]; const id='c_'+Date.now()+'_'+Math.floor(Math.random()*1000); const campo={id:id,etiqueta:'',tipo:kind};
+  if(_calcDraft.tipo==='formula'){ campo.clave='v'+(_calcDraft.campos.length+1); if(kind==='select')campo.opciones=[{etiqueta:'',valor:0}]; if(kind==='number')campo.unidad=''; }
+  else { if(kind==='check')campo.puntos=1; else campo.opciones=[{etiqueta:'',puntos:0}]; }
+  _calcDraft.campos.push(campo); go('calcedit'); }
+function calcDelCampo(ci){ _calcDraft.campos.splice(ci,1); go('calcedit'); }
+function calcCampoLabel(ci,v){ if(_calcDraft.campos[ci])_calcDraft.campos[ci].etiqueta=v; }
+function calcCampoClave(ci,v){ if(!_calcDraft.campos[ci])return; let k=(''+v).trim().replace(/[^A-Za-z0-9_]/g,'_'); if(/^[0-9]/.test(k))k='_'+k; _calcDraft.campos[ci].clave=k; go('calcedit'); }
+function calcCampoUnidad(ci,v){ if(_calcDraft.campos[ci])_calcDraft.campos[ci].unidad=v; }
+function calcCampoPuntos(ci,v){ if(_calcDraft.campos[ci])_calcDraft.campos[ci].puntos=(+v||0); }
+function calcAddOpt(ci){ const c=_calcDraft.campos[ci]; if(!c)return; if(!c.opciones)c.opciones=[]; c.opciones.push(_calcDraft.tipo==='formula'?{etiqueta:'',valor:0}:{etiqueta:'',puntos:0}); go('calcedit'); }
+function calcDelOpt(ci,oi){ const c=_calcDraft.campos[ci]; if(c&&c.opciones)c.opciones.splice(oi,1); go('calcedit'); }
+function calcOptLabel(ci,oi,v){ const c=_calcDraft.campos[ci]; if(c&&c.opciones&&c.opciones[oi])c.opciones[oi].etiqueta=v; }
+function calcOptPuntos(ci,oi,v){ const c=_calcDraft.campos[ci]; if(c&&c.opciones&&c.opciones[oi])c.opciones[oi].puntos=(+v||0); }
+function calcOptValor(ci,oi,v){ const c=_calcDraft.campos[ci]; if(c&&c.opciones&&c.opciones[oi])c.opciones[oi].valor=(+v||0); }
+function calcAddResultado(){ if(!_calcDraft.resultados)_calcDraft.resultados=[]; _calcDraft.resultados.push({min:0,max:0,etiqueta:'',detalle:''}); go('calcedit'); }
+function calcDelResultado(ri){ _calcDraft.resultados.splice(ri,1); go('calcedit'); }
+function calcResField(ri,f,v){ const r=_calcDraft.resultados[ri]; if(!r)return; if(f==='min'||f==='max')r[f]=(+v||0); else r[f]=v; }
+function calcCancelar(){ const s=_calcDraft&&_calcDraft.seccion; _calcDraft=null; if(s) go('g_'+s); else go('home'); }
+function calcVistaPrevia(){ _calcState={calc:JSON.parse(JSON.stringify(_calcDraft)),vals:{},preview:true}; go('calc'); }
+function _calcValidar(d){
+  const errs=[], warns=[];
+  if(!d.titulo||!d.titulo.trim()) errs.push('Falta el título.');
+  if(!(d.campos||[]).length) errs.push('No hay ningún campo.');
+  if(d.tipo==='formula'){
+    if(!(d.formula||'').trim()) errs.push('Falta la fórmula.');
+    const claves={};
+    (d.campos||[]).forEach(function(c,i){ const lbl=(c.etiqueta&&c.etiqueta.trim())?c.etiqueta.trim():('campo '+(i+1)); const k=(c.clave||'').trim();
+      if(!k) errs.push('El '+lbl+' no tiene variable (clave).');
+      else { if(!/^[A-Za-z_][A-Za-z0-9_]*$/.test(k)) errs.push('La clave "'+k+'" no es válida.'); if(claves[k]) errs.push('La clave "'+k+'" está repetida.'); claves[k]=1; }
+      if(!c.etiqueta||!c.etiqueta.trim()) warns.push('El '+lbl+' no tiene etiqueta.');
+      if(c.tipo==='select'){ if(!(c.opciones||[]).length) errs.push('El campo "'+lbl+'" no tiene opciones.'); (c.opciones||[]).forEach(function(o){ if(o.valor==null||o.valor===''||isNaN(+o.valor)) warns.push('Una opción de "'+lbl+'" no tiene valor numérico.'); }); }
+    });
+    if((d.formula||'').trim()){ const tv={}; let n=2; Object.keys(claves).forEach(function(k){tv[k]=n++;}); try{ _calcEval(d.formula, tv); }catch(e){ if(/desconocida|no válido|Falta \"|Sobra|incompleta|inesperado/.test(e.message)) errs.push('La fórmula falla: '+e.message); else warns.push('Revisa la fórmula con datos reales: '+e.message); } }
+    (d.resultados||[]).forEach(function(r){ if(!r.etiqueta||!r.etiqueta.trim()) warns.push('Una categoría de interpretación no tiene nombre.'); if((+r.min)>(+r.max)) warns.push('Una categoría tiene el «de» mayor que el «a».'); });
+    return {errs:errs,warns:warns};
+  }
+  (d.campos||[]).forEach(function(c,i){ const lbl=(c.etiqueta&&c.etiqueta.trim())?c.etiqueta.trim():('campo '+(i+1));
+    if(!c.etiqueta||!c.etiqueta.trim()) warns.push('El '+lbl+' no tiene etiqueta.');
+    if(c.tipo!=='check'){ if(!(c.opciones||[]).length) errs.push('El campo "'+lbl+'" no tiene opciones.'); (c.opciones||[]).forEach(function(o){ if(o.etiqueta==null||!(''+o.etiqueta).trim()) warns.push('Una opción de "'+lbl+'" no tiene etiqueta.'); }); }
+  });
+  if(!(d.resultados||[]).length) errs.push('No hay categorías de resultado.');
+  (d.resultados||[]).forEach(function(r){ if(!r.etiqueta||!r.etiqueta.trim()) warns.push('Una categoría de resultado no tiene nombre.'); if((+r.min)>(+r.max)) warns.push('Una categoría tiene el «de» mayor que el «a».'); });
+  let pmin=0,pmax=0; (d.campos||[]).forEach(function(c){ if(c.tipo==='check'){ const p=+c.puntos||0; if(p>0)pmax+=p; else pmin+=p; } else { const ps=(c.opciones||[]).map(function(o){return +o.puntos||0;}); if(ps.length){ pmax+=Math.max.apply(null,ps); pmin+=Math.min.apply(null,ps); } } });
+  if((d.resultados||[]).length && (pmax-pmin)>=0 && (pmax-pmin)<=2000){ let covOk=true; for(let s=pmin;s<=pmax;s++){ if(!(d.resultados||[]).some(function(r){return s>=(+r.min)&&s<=(+r.max);})){ covOk=false; break; } } if(!covOk) warns.push('Hay puntuaciones posibles (de '+pmin+' a '+pmax+') sin categoría asignada.'); }
+  return {errs:errs,warns:warns};
+}
+function calcComprobar(){ const v=_calcValidar(_calcDraft); if(!v.errs.length&&!v.warns.length){toast('✓ Todo correcto, lista para publicar');return;} alert((v.errs.length?'❌ Errores (impiden publicar):\n• '+v.errs.join('\n• ')+(v.warns.length?'\n\n':''):'')+(v.warns.length?'⚠️ Avisos:\n• '+v.warns.join('\n• '):'')); }
+async function calcGuardar(){ const d=_calcDraft; if(!d.titulo||!d.titulo.trim()){toast('Ponle un título');return;} const m=_calcsStored(); m[d.id]=JSON.parse(JSON.stringify(d)); try{ls.s('calcs',m);}catch(e){} if(window.hpSaveCalc){ try{ await window.hpSaveCalc(d); toast('💾 Borrador guardado'); }catch(e){ toast('Guardado solo en este equipo (sin permiso o sin conexión)'); } } else toast('💾 Guardado'); }
+async function calcPublicar(){ const d=_calcDraft; const _v=_calcValidar(d); if(_v.errs.length){ alert('No se puede publicar todavía:\n\n• '+_v.errs.join('\n• ')); return; } if(_v.warns.length && !confirm('Avisos (puedes publicar igualmente):\n\n• '+_v.warns.join('\n• ')+'\n\n¿Publicar de todos modos?')) return; d.estado='publicado'; const m=_calcsStored(); m[d.id]=JSON.parse(JSON.stringify(d)); try{ls.s('calcs',m);}catch(e){} if(window.hpSaveCalc){ try{ await window.hpSaveCalc(d); toast('✅ Publicada · visible para todos'); }catch(e){ toast('Publicada solo en este equipo'); } } go('g_'+d.seccion); }
+async function calcEliminar(id){ const c=hpCalcs()[id]; if(!c)return; const _st=_calcsStored(); if(DEFAULT_CALCS[id] && !_st[id]){ toast('Es una calculadora de ejemplo integrada en la app; edítala para personalizarla.'); return; } if(!confirm('¿Eliminar la calculadora "'+(c.titulo||'')+'" para todos?'))return; const sec=c.seccion; const m=_calcsStored(); delete m[id]; try{ls.s('calcs',m);}catch(e){} if(window.hpDeleteCalc){ try{ await window.hpDeleteCalc(id); toast('✓ Eliminada'); }catch(e){ toast('Eliminada solo en este equipo'); } } go('g_'+sec); }
 
 function addSubtype(id){
 const name=prompt('Nombre del nuevo apartado:');
@@ -8730,7 +9124,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 17;
+  var DC_BUILD = 18;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -9439,6 +9833,29 @@ window.hpSyncItems = async function(){
   }catch(e){ return false; }
 };
 
+// Algoritmos interactivos (por seccion). Lo escribe quien edita esa seccion; lo leen todos.
+window.hpSaveAlgo = async function(algo){ await setDoc(doc(fs, 'algoritmos', algo.id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, algo)); };
+window.hpDeleteAlgo = async function(id){ await deleteDoc(doc(fs, 'algoritmos', id)); };
+window.hpSyncAlgos = async function(){
+  try{
+    const snap = await getDocs(collection(fs, 'algoritmos'));
+    const map = {}; snap.forEach(d => { map[d.id] = Object.assign({ id:d.id }, d.data()); });
+    if(window.hpApplyAlgos) window.hpApplyAlgos(map);
+    return true;
+  }catch(e){ return false; }
+};
+// ── Calculadoras propias (por sección). Las edita quien edita esa sección; las leen todos.
+window.hpSaveCalc = async function(calc){ await setDoc(doc(fs, 'calculadoras', calc.id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, calc)); };
+window.hpDeleteCalc = async function(id){ await deleteDoc(doc(fs, 'calculadoras', id)); };
+window.hpSyncCalcs = async function(){
+  try{
+    const snap = await getDocs(collection(fs, 'calculadoras'));
+    const map = {}; snap.forEach(d => { map[d.id] = Object.assign({ id:d.id }, d.data()); });
+    if(window.hpApplyCalcs) window.hpApplyCalcs(map);
+    return true;
+  }catch(e){ return false; }
+};
+
 function hidePending(){ const pe=document.getElementById('hp-pending-overlay'); if(pe) pe.style.display='none'; }
 function showPending(name){
   const ov=document.getElementById('hp-auth-overlay'); if(ov) ov.classList.add('hidden');
@@ -9472,6 +9889,8 @@ function revealAndEnter(user){
   if(window.hpSyncDirectorio) setTimeout(()=>window.hpSyncDirectorio(),1100);
   if(window.hpSyncSecciones) setTimeout(()=>window.hpSyncSecciones(),1200);
   if(window.hpSyncItems) setTimeout(()=>window.hpSyncItems(),1250);
+  if(window.hpSyncCalcs) setTimeout(()=>window.hpSyncCalcs(),1300);
+  if(window.hpSyncAlgos) setTimeout(()=>window.hpSyncAlgos(),1050);
 }
 async function enterAppGated(user){
   let blocked=false, name='';

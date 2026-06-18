@@ -141,6 +141,28 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // -- Algoritmos interactivos (arboles de decision) por seccion --
+    // Lectura: cualquier usuario autorizado. Escritura: admin o editor de ESA seccion.
+    // Al actualizar debe poder editar tanto la seccion actual como la nueva (impide mover
+    // un algoritmo a una seccion sobre la que no se tiene permiso).
+    match /algoritmos/{id} {
+      allow read:   if isApproved();
+      allow create: if canEdit(request.resource.data.seccion);
+      allow update: if canEdit(resource.data.seccion)
+                    && canEdit(request.resource.data.seccion);
+      allow delete: if canEdit(resource.data.seccion);
+    }
+
+    // ── Calculadoras propias (puntuaciones/fórmulas), por sección ──
+    // Las lee cualquier usuario autorizado; las crea/edita/mueve/borra quien puede editar ESA
+    // sección (admin de cualquiera, o editor de la sección). Mover exige permiso en origen y destino.
+    match /calculadoras/{id} {
+      allow read:   if isApproved();
+      allow create: if canEdit(request.resource.data.seccion);
+      allow update: if canEdit(resource.data.seccion) && canEdit(request.resource.data.seccion);
+      allow delete: if canEdit(resource.data.seccion);
+    }
+
     match /config/{doc} {
       // Token de GitHub y similares: solo lo leen admin/editores (para subir PDF).
       // Nunca se escribe desde la app; se gestiona desde la consola.
