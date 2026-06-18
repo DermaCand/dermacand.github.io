@@ -9140,7 +9140,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 19;
+  var DC_BUILD = 20;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -9655,7 +9655,11 @@ window.hpReporteResolverUI=function(id){ _hpRepAccion(id,'resolver'); };
 window.hpReporteBorrarUI=function(id){ if(window.hpConfirm) window.hpConfirm('¿Borrar este reporte?',()=>_hpRepAccion(id,'borrar')); else _hpRepAccion(id,'borrar'); };
 
 // Tras cargar el rol del usuario (admin/editor): refresca el menú (muestra apartados admin) y el badge.
-window.hpOnRoleLoaded=function(){renderMenu(($('search')&&$('search').value)||'');const v=S.view;if(v&&(v==='sync'||v==='solicitudes'||v==='reportes'))go(v);if(window.hpUpdateRepBadge)window.hpUpdateRepBadge();};
+window.hpOnRoleLoaded=function(){renderMenu(($('search')&&$('search').value)||'');const v=S.view;if(v&&v!=='home'&&v!=='viewer'&&typeof VIEWS!=='undefined'&&VIEWS[v]){try{go(v);}catch(e){}}if(window.hpUpdateRepBadge)window.hpUpdateRepBadge();};
+// Red de seguridad (móvil): si el rol no se cargó por conexión intermitente, reintentar al
+// volver ONLINE o al REANUDAR la app, para recuperar permisos sin reiniciar.
+function hpReloadRoleIfNeeded(){ try{ const u=window.__hpUid; if(u && window.HemoCloud && !window.HemoCloud.role){ window.HemoCloud.loadRole(u).then(function(){ if(window.hpOnRoleLoaded) window.hpOnRoleLoaded(); }); } }catch(e){} }
+try{ window.addEventListener('online', hpReloadRoleIfNeeded); document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') hpReloadRoleIfNeeded(); }); }catch(e){}
 // Cuenta los reportes sin resolver y muestra el número junto a «Errores reportados» (solo admin).
 window.hpUpdateRepBadge=async function(){
   try{
@@ -9745,9 +9749,13 @@ window.HemoCloud = {
     return r.role === 'editor' && Array.isArray(r.sections) && r.sections.indexOf(section) !== -1;
   },
   async loadRole(uid){
-    if(!fs){ this.role=null; return; }
-    try{ const s = await getDoc(doc(fs,'roles',uid)); this.role = s.exists() ? s.data() : null; }
-    catch(e){ this.role = null; console.warn('[dc] role', e.message); }
+    if(!fs){ this.role=null; return null; }
+    // Reintenta: en móvil la 1ª lectura puede fallar por conexión y dejar al admin/editor SIN rol.
+    for(let i=0;i<3;i++){
+      try{ const s = await getDoc(doc(fs,'roles',uid)); this.role = s.exists() ? s.data() : null; return this.role; }
+      catch(e){ console.warn('[dc] role intento '+(i+1), e.message); if(i<2) await new Promise(r=>setTimeout(r, 800*(i+1))); }
+    }
+    this.role = null; return null;
   },
   async loadToken(){
     if(!fs) return null;
