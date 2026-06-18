@@ -1146,7 +1146,7 @@ function homeView() {
     const tile=(it,ic)=>{const fav=(S.favs||[]).includes(it.id);return `<div class="home-tile" role="button" tabindex="0" onclick="go('${it.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('${it.id}')}">${ic?'<span class="ht-ic">'+ic+'</span>':''}<span class="ht-nm">${it.name}</span><button class="ht-fav ${fav?'on':''}" onclick="event.stopPropagation();homeFav('${it.id}')" aria-label="${fav?'Quitar de favoritos':'Añadir a favoritos'}" title="${fav?'Quitar de favoritos':'Añadir a favoritos'}">${fav?'★':'☆'}</button></div>`;};
     let secs='';
     if(favs.length) secs+=`<div class="home-sec"><div class="home-sec-h">★ Favoritos</div><div class="home-tiles">${favs.map(it=>tile(it,'')).join('')}</div></div>`;
-    if(rec.length) secs+=`<div class="home-sec"><div class="home-sec-h">Recientes</div><div class="home-tiles">${rec.map(it=>tile(it,'🕑')).join('')}</div></div>`;
+    if(rec.length) secs+=`<div class="home-sec"><div class="home-sec-h">Recientes</div><div class="home-tiles">${rec.map(it=>tile(it,'')).join('')}</div></div>`;
     if(!favs.length && !rec.length){
         const sug=['recetas','pasi','dermatoscopia','melanoma','acne','crcl'].map(byId).filter(Boolean);
         if(sug.length) secs+=`<div class="home-sec"><div class="home-sec-h">Para empezar</div><div class="home-tiles">${sug.map(it=>tile(it,'›')).join('')}</div></div>`;
@@ -9140,7 +9140,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 21;
+  var DC_BUILD = 22;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
