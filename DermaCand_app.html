@@ -1161,6 +1161,66 @@ function hpPageSection(id){ return _hpPageSecMap()[id]||null; }
 function hpCanEditPage(id){ if(!hpPageEditable(id)) return false; const sec=hpPageSection(id); if(sec) return !!(window.HemoCloud&&window.HemoCloud.canEdit&&window.HemoCloud.canEdit(sec)); return !!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin()); }
 // Listín telefónico: editable por administradores y por cualquier editor (de cualquier sección).
 function hpCanEditDir(){ return !!(window.HemoCloud && window.HemoCloud.isEditor && window.HemoCloud.isEditor()); }
+// ── Interpretación EDITABLE de los scores integrados (PASI, EASI, DLQI, …) ──
+// El texto que se MUESTRA bajo el resultado (la interpretación/recomendación) puede
+// personalizarlo cualquier editor o administrador, para unificar la forma de informar del
+// servicio. Por defecto = el texto de fábrica de cada score; el valor y la categoría
+// calculados NO cambian. Se sincroniza para todos (Firestore 'scoretextos').
+function hpCanEditScore(){ return !!(window.HemoCloud && window.HemoCloud.isEditor && window.HemoCloud.isEditor()); }
+function hpScoreOv(){ try{ return ls.g('scoreInterp')||{}; }catch(e){ return {}; } }
+var DEFAULT_SCORE_INTERP={};
+// Se llama tras pintar el resultado de un score: si no hay override guarda el texto de fábrica
+// (.res-s) como predeterminado; si lo hay, lo aplica; y añade el lápiz de edición a los editores.
+function hpScoreInterpApply(box, id){
+  try{
+    if(!box) return;
+    var rs=box.querySelector('.res-s'); if(!rs) return;
+    var ov=hpScoreOv();
+    if(ov[id]==null){ DEFAULT_SCORE_INTERP[id]=rs.innerHTML; }
+    else { rs.innerHTML=(typeof _hpSanHtml==='function')?_hpSanHtml(ov[id]):ov[id]; }
+    var old=box.querySelector('.score-interp-edit'); if(old) old.remove();
+    if(hpCanEditScore()){
+      var b=document.createElement('button');
+      b.className='btn btn-out btn-sm score-interp-edit';
+      b.style.cssText='margin-top:6px;font-size:11px';
+      b.textContent=(ov[id]!=null)?'✏️ Editar interpretación (personalizada)':'✏️ Editar interpretación';
+      b.onclick=function(ev){ if(ev) ev.stopPropagation(); hpEditScoreInterp(id); };
+      rs.parentNode.insertBefore(b, rs.nextSibling);
+    }
+  }catch(e){}
+}
+async function hpEditScoreInterp(id){
+  var ov=hpScoreOv();
+  var def=(DEFAULT_SCORE_INTERP[id]||'');
+  var cur=(ov[id]!=null)?ov[id]:def;
+  var nuevo=prompt('Interpretación que se muestra bajo el resultado de este score (admite HTML básico). El valor y la categoría calculados no cambian.\n\nDéjalo vacío para restaurar el texto de fábrica.', cur);
+  if(nuevo==null) return;
+  var m=hpScoreOv();
+  if((nuevo||'').trim()==='' || nuevo===def){ delete m[id]; } else { m[id]=nuevo; }
+  try{ ls.s('scoreInterp', m); }catch(e){}
+  if(window.hpSaveScoreInterp){
+    try{
+      if(m[id]!=null) await window.hpSaveScoreInterp(id, m[id]); else await window.hpDelScoreInterp(id);
+      if(typeof toast==='function') toast('✓ Interpretación actualizada · para todos');
+    }catch(e){ if(typeof toast==='function') toast('Guardado solo en este equipo (sin permiso o sin conexión)'); }
+  } else if(typeof toast==='function') toast('✓ Guardado');
+  var box=document.getElementById(id+'_res');
+  if(box){ var rs=box.querySelector('.res-s'); if(rs) rs.innerHTML=(m[id]!=null?((typeof _hpSanHtml==='function')?_hpSanHtml(m[id]):m[id]):def); hpScoreInterpApply(box, id); }
+}
+// Envuelve cada calcXXX para aplicar la interpretación editable tras renderizar (sin tocar las 18
+// funciones). Se ejecuta cuando el documento está listo, con todas las funciones ya definidas.
+(function(){
+  var SI_MAP={calcBPDAI:'bp',calcBSA:'bs',calcCG:'cg',calcDLQI:'dlqi',calcDP:'dp',calcEASI:'easi',calcECOG:'ec',calcFTU:'ftu',calcHurley:'hur',calcIGA:'iga',calcMSWAT:'msw',calcPASI:'pasi',calcR9:'r9',calcSALT:'salt',calcSCORAD:'sc',calcSCORTEN:'sct',calcTNM:'tnm',calcUAS7:'uas'};
+  function siWrap(){
+    Object.keys(SI_MAP).forEach(function(fn){
+      var orig=window[fn]; if(typeof orig!=='function' || orig.__siWrapped) return;
+      var id=SI_MAP[fn];
+      var w=function(){ var r=orig.apply(this,arguments); try{ hpScoreInterpApply(document.getElementById(id+'_res'), id); }catch(e){} return r; };
+      w.__siWrapped=true; window[fn]=w;
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', siWrap); else siWrap();
+})();
 function hpPages(){ try{ return ls.g('pageOv')||{}; }catch(e){ return {}; } }
 window.hpApplyPages=function(map){ try{ ls.s('pageOv', map||{}); }catch(e){} };
 function hpPageWrap(id, base){
@@ -9479,7 +9539,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 31;
+  var DC_BUILD = 32;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -10390,6 +10450,11 @@ window.hpSyncCatOrden = async function(){ try{ const s = await getDoc(doc(fs, 'm
 window.hpSaveContacto = async function(id, data){ await setDoc(doc(fs, 'directorio', id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, data)); };
 window.hpDelContactoCloud = async function(id){ await deleteDoc(doc(fs, 'directorio', id)); };
 window.hpSyncDirectorio = async function(){ try{ const snap = await getDocs(collection(fs, 'directorio')); const map = {}; snap.forEach(d => { map[d.id] = d.data(); }); if(window.hpApplyDirectorio) window.hpApplyDirectorio(map); return true; }catch(e){ return false; } };
+// ── Interpretación personalizada de los scores integrados (colección 'scoretextos') ──
+// La edita cualquier editor/administrador para unificar la forma de informar; la leen todos.
+window.hpSaveScoreInterp = async function(id, html){ if(!fs) throw new Error('sin conexión'); await setDoc(doc(fs, 'scoretextos', id), { html: (html||'').toString(), actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }); };
+window.hpDelScoreInterp = async function(id){ if(!fs) throw new Error('sin conexión'); await deleteDoc(doc(fs, 'scoretextos', id)); };
+window.hpSyncScoreInterp = async function(){ if(!fs) return; try{ const snap = await getDocs(collection(fs, 'scoretextos')); const m={}; snap.forEach(d => { const x=d.data()||{}; if(x.html!=null) m[d.id]=x.html; }); try{ ls.s('scoreInterp', m); }catch(e){} }catch(e){} };
 
 // ── Secciones del menú (titulo/visibilidad/nuevas): solo colaboradores escriben; lo leen todos.
 window.hpSaveSeccion = async function(id, data){ await setDoc(doc(fs, 'secciones', id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, data||{}), { merge:true }); };
@@ -10481,6 +10546,7 @@ function revealAndEnter(user){
   setTimeout(()=>{ if(window.mostrarAceptacionLegal) window.mostrarAceptacionLegal(); }, 600);
   if(window.hpSyncAviso) setTimeout(()=>window.hpSyncAviso(),1150);
   if(window.hpSyncDirectorio) setTimeout(()=>window.hpSyncDirectorio(),1100);
+  if(window.hpSyncScoreInterp) setTimeout(()=>window.hpSyncScoreInterp(),1200);
   if(window.hpSyncSecciones) setTimeout(()=>window.hpSyncSecciones(),1200);
   if(window.hpSyncCatOrden) setTimeout(()=>window.hpSyncCatOrden(),1010);
   if(window.hpSyncItems) setTimeout(()=>window.hpSyncItems(),1250);

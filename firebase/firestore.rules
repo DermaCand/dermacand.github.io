@@ -133,6 +133,17 @@ service cloud.firestore {
       allow write: if isEditor();
     }
 
+    // ── Interpretación personalizada de los scores integrados (PASI, EASI, …) ──
+    // El texto que se muestra bajo el resultado, unificado para el servicio. Lo lee cualquier
+    // usuario autorizado; lo edita cualquier editor o administrador. 'html' acotado (≤20 KB).
+    match /scoretextos/{id} {
+      allow read:   if isApproved();
+      allow create, update: if isEditor()
+                    && request.resource.data.html is string
+                    && request.resource.data.html.size() <= 20000;
+      allow delete: if isEditor();
+    }
+
     // ── Créditos de colaboradores (editores) por tema ──
     // Cualquier usuario autorizado los LEE (para el Aviso Legal y los bloques de sección);
     // solo el administrador los escribe (al asignar/quitar perfil de editor).
