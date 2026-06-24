@@ -144,6 +144,14 @@ service cloud.firestore {
       allow delete: if isEditor();
     }
 
+    // ── Plantillas de informe (formato del texto que se copia de cada calculadora) ──
+    // Un doc por calculadora (id de la vista). Lo leen los usuarios autorizados; lo editan
+    // administradores y editores (texto que se refleja en los informes del servicio).
+    match /plantillas/{id} {
+      allow read:  if isApproved();
+      allow write: if isEditor();
+    }
+
     // ── Créditos de colaboradores (editores) por tema ──
     // Cualquier usuario autorizado los LEE (para el Aviso Legal y los bloques de sección);
     // solo el administrador los escribe (al asignar/quitar perfil de editor).

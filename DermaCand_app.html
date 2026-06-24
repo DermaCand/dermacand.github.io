@@ -774,7 +774,86 @@ const ls={g:k=>{try{return JSON.parse(localStorage.getItem('hc_'+k))}catch(e){re
 const $=id=>document.getElementById(id);
 const n=v=>{const x=parseFloat(v);return isNaN(x)?null:x};
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-function copy(t){if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>toast('✓ Copiado al portapapeles')).catch(fb);else fb();function fb(){const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('✓ Copiado')}catch(e){toast('Error al copiar')}document.body.removeChild(ta)}}
+// ── Copiar resultado, con PLANTILLA DE INFORME por calculadora ──
+// Cada calculadora (identificada por su vista) puede tener una plantilla guardada (sincronizada,
+// para todos) que da formato al texto copiado: {resultado} = el texto calculado; además, si la
+// función de copiado aporta variables con nombre, se pueden usar {nombre}. Sin plantilla, se copia
+// el texto tal cual (sin cambios). Editores/admin pueden editarla en el cuadro que aparece al copiar.
+var _SI_TPL_VIEWS={pasi:1,easi:1,scorad:1,dlqi:1,iga:1,scorten:1,hurley:1,salt:1,uas7:1,mswat:1,bpdai:1,ftu:1,dosispeso:1,bsa:1,crcl:1,ecog:1,regla9:1,tnm:1,calc:1};
+function hpReportTpls(){ try{ return ls.g('reportTpls')||{}; }catch(e){ return {}; } }
+window.hpApplyPlantillas=function(map){ try{ ls.s('reportTpls', map||{}); }catch(e){} };
+function _hpFillTpl(tpl, resultText, vars){
+  if(tpl==null || tpl==='') return resultText;
+  var out=String(tpl).split('{resultado}').join(resultText).split('{r}').join(resultText);
+  if(vars) Object.keys(vars).forEach(function(k){ out=out.split('{'+k+'}').join(vars[k]); });
+  return out;
+}
+function _hpDoCopy(t){
+  if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){toast('✓ Copiado al portapapeles')}).catch(fb); else fb();
+  function fb(){ var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');toast('✓ Copiado')}catch(e){toast('Error al copiar')} document.body.removeChild(ta); }
+}
+// copy(arg, id, vars):
+//  · Forma clásica copy(texto): el texto ya montado. La plantilla por defecto es ese mismo texto;
+//    el editor permite además añadir formato alrededor con {resultado}.
+//  · Forma con valores copy(plantilla, id, {clave:valor}): 'arg' es el TEXTO ACTUAL con huecos
+//    (p. ej. 'R-IPI: {puntos} puntos ({categoria})'); el editor muestra ese texto con sus huecos
+//    para que admin/editor ajuste la redacción manteniendo los valores que cambian.
+function copy(arg, id, vars){
+  id = id || (typeof S!=='undefined' && S.view) || '';
+  var hasVars = !!(vars && typeof vars==='object' && Object.keys(vars).length);
+  var defTpl = hasVars ? String(arg) : '{resultado}';
+  var resultText = hasVars ? _hpFillTpl(String(arg), '', vars) : String(arg); // el texto ACTUAL
+  var saved = hpReportTpls()[id];
+  var tpl = (saved!=null) ? saved : defTpl;
+  _hpDoCopy(_hpFillTpl(tpl, resultText, vars));
+  // Editores/admin: ofrecer ajustar la plantilla de informe de ESTA calculadora (para todos).
+  try{
+    if(id && _SI_TPL_VIEWS[id] && window.HemoCloud && window.HemoCloud.isEditor && window.HemoCloud.isEditor()
+       && !(localStorage.getItem('hpTplHide')==='1')){
+      hpReportTplModal(id, resultText, vars, defTpl);
+    }
+  }catch(e){}
+}
+function _hpCalcName(id){ try{ var it=getAll&&getAll().find(function(x){return x.id===id;}); if(it&&it.name) return (typeof hpItemName==='function')?hpItemName(id,it.name):it.name; }catch(e){} return id||''; }
+function hpReportTplModal(id, resultText, vars, defTpl){
+  if(document.getElementById('hp-tpl-modal')) return;
+  var saved=hpReportTpls()[id]; var tpl=(saved==null?(defTpl||'{resultado}'):saved);
+  var phHelp='<code>{resultado}</code> = el resultado calculado';
+  try{ if(vars){ var ks=Object.keys(vars); if(ks.length) phHelp+=' · '+ks.map(function(k){return '<code>{'+k+'}</code>';}).join(' · '); } }catch(e){}
+  var ov=document.createElement('div'); ov.id='hp-tpl-modal';
+  ov.setAttribute('style','position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10001;display:flex;align-items:center;justify-content:center;padding:1rem');
+  ov.innerHTML='<div style="background:var(--card,#fff);color:var(--txt,#222);border-radius:12px;padding:1.1rem;max-width:560px;width:100%;max-height:88vh;overflow:auto;position:relative">'
+    +'<button onclick="hpCloseTpl()" style="position:absolute;top:.6rem;right:.7rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#888" aria-label="Cerrar">✕</button>'
+    +'<h2 style="color:#c41e3a;margin:0 0 .3rem;font-size:1.05rem">✏️ Texto para informes — '+_hpEsc(_hpCalcName(id))+'</h2>'
+    +'<p style="font-size:.8rem;color:var(--mut,#666);margin:.2rem 0 .6rem">Ya está copiado al portapapeles. Aquí defines el <strong>formato del texto que se copia</strong> de esta calculadora, <strong>para todo el equipo</strong>. Coloca los huecos donde quieras: '+phHelp+'.</p>'
+    +'<textarea id="hp_tpl_area" rows="4" oninput="hpTplPreview()" style="width:100%;box-sizing:border-box;border:1px solid var(--bd,#ccc);border-radius:8px;padding:.6rem;font-size:.9rem;font-family:inherit;background:var(--bg,#fff);color:var(--txt,#222)"></textarea>'
+    +'<div style="font-size:.75rem;color:var(--mut,#666);margin:.55rem 0 .2rem">Vista previa (lo que se copiará):</div>'
+    +'<div id="hp_tpl_prev" class="alert b" style="white-space:pre-wrap;font-size:.85rem;margin:0"></div>'
+    +'<label style="display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--mut,#666);margin:.7rem 0 .3rem"><input type="checkbox" id="hp_tpl_hide" onchange="try{localStorage.setItem(\'hpTplHide\',this.checked?\'1\':\'\')}catch(e){}"> No volver a mostrar esto al copiar</label>'
+    +'<div class="btns" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:.3rem"><button class="btn btn-out btn-sm" onclick="hpTplCopy()">📋 Copiar con este formato</button><button class="btn btn-g btn-sm" onclick="hpTplSave()">💾 Guardar para todos</button><button class="btn btn-out btn-sm" onclick="hpTplRestore()">↺ Sin formato</button></div>'
+    +'</div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click',function(e){ if(e.target===ov) hpCloseTpl(); });
+  window._hpTplCtx={id:id, resultText:resultText, vars:vars};
+  var a=document.getElementById('hp_tpl_area'); if(a){ a.value=tpl; } hpTplPreview();
+}
+function hpTplPreview(){ var c=window._hpTplCtx; if(!c)return; var a=document.getElementById('hp_tpl_area'), p=document.getElementById('hp_tpl_prev'); if(!a||!p)return; p.textContent=_hpFillTpl(a.value, c.resultText, c.vars); }
+function hpTplCopy(){ var c=window._hpTplCtx; if(!c)return; var a=document.getElementById('hp_tpl_area'); if(a)_hpDoCopy(_hpFillTpl(a.value, c.resultText, c.vars)); }
+function hpCloseTpl(){ var m=document.getElementById('hp-tpl-modal'); if(m&&m.remove)m.remove(); }
+async function hpTplSave(){
+  var c=window._hpTplCtx; if(!c)return; var a=document.getElementById('hp_tpl_area'); if(!a)return; var tpl=a.value;
+  var m=hpReportTpls(); m[c.id]=tpl; try{ls.s('reportTpls',m);}catch(e){}
+  _hpDoCopy(_hpFillTpl(tpl, c.resultText, c.vars)); hpCloseTpl();
+  if(window.hpSavePlantilla){ try{ await window.hpSavePlantilla(c.id, tpl); toast('✓ Plantilla guardada · para todos'); }catch(e){ toast('Guardado solo en este equipo (sin permiso o sin conexión)'); } }
+  else toast('✓ Plantilla guardada');
+}
+async function hpTplRestore(){
+  var c=window._hpTplCtx; if(!c)return;
+  var m=hpReportTpls(); delete m[c.id]; try{ls.s('reportTpls',m);}catch(e){}
+  hpCloseTpl();
+  if(window.hpDeletePlantilla){ try{ await window.hpDeletePlantilla(c.id); toast('✓ Formato quitado · para todos'); }catch(e){ toast('Quitado solo en este equipo'); } }
+  else toast('✓ Formato quitado');
+}
 function upPt(k,v){S.p[k]=v;ls.s('patient',S.p)}
 function toggleTheme(){S.theme=S.theme==='light'?'dark':'light';document.documentElement.dataset.t=S.theme;ls.s('theme',S.theme)}
 function mostrarInicio(){go('home')}
@@ -9623,7 +9702,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 33;
+  var DC_BUILD = 34;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -9901,6 +9980,8 @@ VIEWS.gsecciones=()=>{
   let h='<div class="card"><h2>🗂️ Secciones y su contenido</h2>';
   h+='<p class="intro">Todo el menú en un solo sitio: <strong>renombrar, ocultar, crear, reordenar o eliminar</strong> secciones y, dentro de cada una, <strong>mostrar/ocultar o renombrar</strong> sus herramientas y el apartado de guías. Todo es <strong>efectivo para todos</strong>. Despliega una sección para ver su contenido.</p>';
   h+='<button class="btn" style="margin-bottom:14px" onclick="hpCrearSeccion()">➕ Crear sección nueva</button>';
+  // Reactiva el editor de «texto para informes» (aparece al pulsar «Copiar» en una calculadora).
+  h+='<div style="margin-bottom:14px"><button class="btn btn-out btn-sm" onclick="try{localStorage.removeItem(\'hpTplHide\');toast(\'✓ Activado: al copiar un resultado podrás editar su texto de informe\')}catch(e){}">✏️ Editar textos de informe (calculadoras)</button><div style="font-size:11px;color:var(--mut);margin-top:4px">Tras pulsarlo, ve a una calculadora, calcula y pulsa «Copiar»: aparecerá el editor del formato del texto, que se guarda para todo el equipo.</div></div>';
   // Temas del menú (categorías de fábrica), excepto Ajustes
   try{ _hpMenuCats().filter(function(e){return (e.sec.h||'')!=='AJUSTES';}).forEach(function(e,_ci,_arr){
     const sec=e.sec;
@@ -10561,6 +10642,18 @@ window.hpSyncItems = async function(){
     return true;
   }catch(e){ return false; }
 };
+// ── Plantillas de informe (formato del texto que se copia de cada calculadora). Doc por id de
+// calculadora; las edita admin/editor y las lee todo el equipo. ──
+window.hpSavePlantilla = async function(id, tpl){ await setDoc(doc(fs, 'plantillas', id), { tpl: tpl, actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, { merge:true }); };
+window.hpDeletePlantilla = async function(id){ await deleteDoc(doc(fs, 'plantillas', id)); };
+window.hpSyncPlantillas = async function(){
+  try{
+    const snap = await getDocs(collection(fs, 'plantillas'));
+    const map = {}; snap.forEach(d => { const v=d.data()||{}; if(typeof v.tpl==='string') map[d.id]=v.tpl; });
+    if(window.hpApplyPlantillas) window.hpApplyPlantillas(map);
+    return true;
+  }catch(e){ return false; }
+};
 
 // Algoritmos interactivos (por seccion). Lo escribe quien edita esa seccion; lo leen todos.
 window.hpSaveAlgo = async function(algo){ await setDoc(doc(fs, 'algoritmos', algo.id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, algo)); };
@@ -10634,6 +10727,7 @@ function revealAndEnter(user){
   if(window.hpSyncSecciones) setTimeout(()=>window.hpSyncSecciones(),1200);
   if(window.hpSyncCatOrden) setTimeout(()=>window.hpSyncCatOrden(),1010);
   if(window.hpSyncItems) setTimeout(()=>window.hpSyncItems(),1250);
+  if(window.hpSyncPlantillas) setTimeout(()=>window.hpSyncPlantillas(),1260);
   if(window.hpSyncCalcs) setTimeout(()=>window.hpSyncCalcs(),1300);
   if(window.hpSyncAlgos) setTimeout(()=>window.hpSyncAlgos(),1050);
   if(window.hpSyncRx) setTimeout(()=>window.hpSyncRx(),1330);
