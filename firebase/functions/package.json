@@ -2,7 +2,7 @@
   "name": "dermacand-functions",
   "description": "Cloud Functions de DermaCand: avisos por correo de nuevas solicitudes de cuenta y de reportes de error",
   "private": true,
-  "engines": { "node": "20" },
+  "engines": { "node": "22" },
   "main": "index.js",
   "dependencies": {
     "firebase-admin": "^12.6.0",
