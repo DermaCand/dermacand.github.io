@@ -1019,7 +1019,28 @@ const MENU=[
 ]}
 ];
 
-function getAll(){return MENU.flatMap(s=>s.items)}
+// ── SUBSECCIONES del menú (Nivel 1: agrupación de fábrica; cimiento del editor en nube del Nivel 2) ──
+// DEFAULT_SUBS: id de herramienta → nombre de subsección de fábrica. SUB_ORDER: orden en que se
+// muestran las subsecciones. MENU0: copia inmutable del MENU original; hpRebuildMenu() reconstruye
+// MENU insertando cabeceras sintéticas {sub:true} según la subsección efectiva de cada ítem.
+const DEFAULT_SUBS={
+pasi:'Inflamatorias e inmunomediadas',easi:'Inflamatorias e inmunomediadas',scorad:'Inflamatorias e inmunomediadas',iga:'Inflamatorias e inmunomediadas',uas7:'Inflamatorias e inmunomediadas',bpdai:'Inflamatorias e inmunomediadas',
+salt:'Anejos (pelo y glándulas)',hurley:'Anejos (pelo y glándulas)',
+mswat:'Oncología y urgencias',scorten:'Oncología y urgencias',
+dlqi:'Calidad de vida',
+ftu:'Para tratar (dosis y ajuste)',dosispeso:'Para tratar (dosis y ajuste)',crcl:'Para tratar (dosis y ajuste)',
+bsa:'Para evaluar (medida y fototipo)',regla9:'Para evaluar (medida y fototipo)',fototipo:'Para evaluar (medida y fototipo)',
+psoriasis:'Eccema y papuloescamosas',datopica:'Eccema y papuloescamosas',dcontacto:'Eccema y papuloescamosas',liquen:'Eccema y papuloescamosas',pit_liquenoide:'Eccema y papuloescamosas',parapsoriasis:'Eccema y papuloescamosas',
+lupus:'Conectivopatías y esclerosantes',dermatomiositis:'Conectivopatías y esclerosantes',esclerosis_sist:'Conectivopatías y esclerosantes',morfea:'Conectivopatías y esclerosantes',liquen_escleroso:'Conectivopatías y esclerosantes',
+urticaria:'Urticaria y neutrofílicas',derm_neutro:'Urticaria y neutrofílicas',
+qa:'Queratinocíticos y precursores',cbc:'Queratinocíticos y precursores',cec:'Queratinocíticos y precursores',
+melanoma:'Melanoma y otros tumores',merkel:'Melanoma y otros tumores',lcut:'Melanoma y otros tumores',
+tnm_tumor:'Estadiaje (todos los tumores)'
+};
+const SUB_ORDER=['Inflamatorias e inmunomediadas','Anejos (pelo y glándulas)','Oncología y urgencias','Calidad de vida','Para tratar (dosis y ajuste)','Para evaluar (medida y fototipo)','Eccema y papuloescamosas','Conectivopatías y esclerosantes','Urticaria y neutrofílicas','Queratinocíticos y precursores','Melanoma y otros tumores','Estadiaje (todos los tumores)'];
+const MENU0=MENU.map(function(s){return {h:s.h,o:s.o,items:s.items.slice()};});
+
+function getAll(){return MENU.flatMap(s=>s.items).filter(it=>!it.sub)}
 function _hpAdminUI(){ return !!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin()); }
 function _hpItemAllowed(it){ if(!it) return false; if(it.admin && !_hpAdminUI()) return false; return true; }
 
@@ -1030,8 +1051,26 @@ function hpSecTitle(id){ const o=hpSecMap()[id]; return (o&&o.titulo)||GUIDES_TI
 function hpSecHidden(id){ const o=hpSecMap()[id]; return !!(o&&o.oculta); }
 
 // ── Capa de ELEMENTOS del menú: visibilidad y nombre por colaboración, efectiva para TODOS (ls 'itemOverrides') ──
-window.hpApplyItems=function(map){ try{ ls.s('itemOverrides', map||{}); }catch(e){} try{ if(typeof renderMenu==='function' && document.getElementById('menu')) renderMenu(($('search')&&$('search').value)||''); }catch(e){} };
+window.hpApplyItems=function(map){ try{ ls.s('itemOverrides', map||{}); }catch(e){} try{ if(typeof hpRebuildMenu==='function') hpRebuildMenu(); }catch(e){} try{ if(typeof renderMenu==='function' && document.getElementById('menu')) renderMenu(($('search')&&$('search').value)||''); }catch(e){} };
 function hpItemMap(){ try{ return ls.g('itemOverrides')||{}; }catch(e){ return {}; } }
+function _hpItemSub(id){ const ov=hpItemMap()[id]; if(ov&&typeof ov.sub==='string') return ov.sub; return DEFAULT_SUBS[id]||''; }
+function hpRebuildMenu(){
+  MENU0.forEach(function(s0,i){
+    var loose=[], groups=[], gmap={};
+    s0.items.forEach(function(it){
+      var sub=_hpItemSub(it.id);
+      if(sub){ if(!gmap[sub]){ gmap[sub]={name:sub,items:[]}; groups.push(gmap[sub]); } gmap[sub].items.push(it); }
+      else loose.push(it);
+    });
+    if(!groups.length){ MENU[i].items=s0.items.slice(); return; }
+    groups.sort(function(a,b){ var ia=SUB_ORDER.indexOf(a.name), ib=SUB_ORDER.indexOf(b.name); return (ia<0?999:ia)-(ib<0?999:ib); });
+    var out=[];
+    groups.forEach(function(g){ out.push({sub:true,name:g.name}); g.items.forEach(function(x){ out.push(x); }); });
+    loose.forEach(function(x){ out.push(x); });
+    MENU[i].items=out;
+  });
+}
+try{ hpRebuildMenu(); }catch(e){ if(window.console) console.warn('hpRebuildMenu', e); }
 function hpItemHidden(id){ const o=hpItemMap()[id]; return !!(o&&o.oculta); }
 function hpItemName(id,def){ const o=hpItemMap()[id]; return (o&&o.nombre)||def; }
 function hpItemOculto(id){ if(!id) return false; if((''+id).indexOf('g_')===0) return hpSecHidden((''+id).slice(2)); return hpItemHidden(id); }
@@ -9689,7 +9728,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 35;
+  var DC_BUILD = 36;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
