@@ -274,6 +274,9 @@ body.view-home .app-footer{padding-bottom:18px}
 #page-edit-area .coll-c{max-height:none!important;overflow:visible!important;padding:8px 14px!important}
 #page-edit-area .coll-h{cursor:default}
 #page-edit-area table.tbl,#page-edit-area .coll{margin:8px 0}
+#page-edit-area .pg-cur,#aviso-cuerpo .pg-cur{outline:2px dashed var(--c2);outline-offset:1px;border-radius:5px}
+.pg-drag{opacity:.4}
+#pg-grip:active{cursor:grabbing}
 .coll-h .ar{transition:transform .2s;font-size:10px;color:var(--mut)}
 .qtc-row{display:grid;grid-template-columns:1fr 90px 60px;gap:10px;align-items:center;margin:6px 0}
 .qtc-row input[type=range]{width:100%}
@@ -637,7 +640,7 @@ body{font-size:13px}
   Herramienta de apoyo clínico<br>
   No sustituye protocolos oficiales
   <br>
-  <button onclick="abrirAvisoLegal()" style="background:none; border:none; color:var(--c1); cursor:pointer; font-size:0.75rem; text-decoration:underline; padding:0.2rem 0;">⚖️ Aviso Legal</button>
+  <button onclick="abrirAvisoLegal()" style="background:none; border:none; color:var(--c1); cursor:pointer; font-size:0.75rem; text-decoration:underline; padding:0.2rem 0;">Aviso Legal</button>
   <span style="color:var(--bd)"> · </span>
   <button onclick="hpOpenReport()" style="background:none; border:none; color:var(--c1); cursor:pointer; font-size:0.75rem; text-decoration:underline; padding:0.2rem 0;">Reportar un error</button>
   <br><span id="app-build-stamp" style="color:var(--mut); opacity:.7; font-size:0.7rem"></span>
@@ -1048,7 +1051,7 @@ const visible=f?realItems:sec.items.filter(it=>!isGuideHidden(it) && !hpItemHidd
 const open=f||sec._o||sec.o;
 // Cabecera: si la sección de guías de este grupo se renombró, usar el nombre nuevo.
 let _hdr=sec.h; const _gi=sec.items.find(it=>it.id&&it.id.indexOf('g_')===0); if(_gi){const _sid=_gi.id.slice(2);const _t=hpSecTitle(_sid); if(_t&&_t!==GUIDES_TITLES[_sid])_hdr=_t.toUpperCase();}
-h+=`<div class="menu-section"><div class="menu-cat ${open?'open':''}" onclick="toggleSec(${si})"><span>${_hdr}</span><span class="ar">▶</span></div><div class="menu-items"${open?' style="max-height:1500px"':''}>`;
+h+=`<div class="menu-section"><div class="menu-cat ${open?'open':''}" onclick="toggleSec(${si})"><span>${_hdr}${(!open&&(sec.h==='AJUSTES')&&(((window._hpRepNew||0)+(window._hpSolNew||0))>0))?`<span class="tag-new" style="background:#c41e3a" title="solicitudes y reportes pendientes">${(window._hpRepNew||0)+(window._hpSolNew||0)}</span>`:''}</span><span class="ar">▶</span></div><div class="menu-items"${open?' style="max-height:1500px"':''}>`;
 let inSub=false;
 visible.forEach(it=>{
 if(it.admin&&!isAdminUI)return;
@@ -1056,7 +1059,8 @@ if(it.sub){inSub=true;h+=`<div class="menu-sub">${it.name}</div>`;return}
 const isFav=S.favs.includes(it.id);
 const isNew=it.new && isRecentlyNew(it.new);
 const repBadge=(it.id==='reportes'&&window._hpRepNew)?`<span class="tag-new" style="background:var(--er)" title="reportes sin resolver">${window._hpRepNew}</span>`:'';
-h+=`<div class="menu-item ${inSub?'in-sub ':''}${S.view===it.id?'active':''}" onclick="go('${it.id}')"><span class="nm-wrap"><span>${_hpEsc(hpItemName(it.id,it.name))}</span>${isNew?'<span class="tag-new">nuevo</span>':''}${repBadge}</span><span class="fav ${isFav?'on':''}" onclick="event.stopPropagation();toggleFav('${it.id}')">${isFav?'★':'☆'}</span></div>`;
+const solBadge=(it.id==='solicitudes'&&window._hpSolNew)?`<span class="tag-new" style="background:var(--er)" title="solicitudes pendientes">${window._hpSolNew}</span>`:'';
+h+=`<div class="menu-item ${inSub?'in-sub ':''}${S.view===it.id?'active':''}" onclick="go('${it.id}')"><span class="nm-wrap"><span>${_hpEsc(hpItemName(it.id,it.name))}</span>${isNew?'<span class="tag-new">nuevo</span>':''}${repBadge}${solBadge}</span><span class="fav ${isFav?'on':''}" onclick="event.stopPropagation();toggleFav('${it.id}')">${isFav?'★':'☆'}</span></div>`;
 });
 h+='</div></div>';
 });
@@ -1114,6 +1118,8 @@ function makeStepsCollapsible(root){
   }catch(e){}
 }
 function go(id, params) {
+    // Si llegó una versión nueva mientras editabas, se aplica al salir del editor (sin perder cambios).
+    try{ if(window._hpPendingReload && !/edit$/.test(id)){ window.location.reload(); return; } }catch(e){}
     if (id === 'chat') { closeSb(); openChat(); return; }
     S.view = id;
     if(id!=='home'&&id!=='viewer'&&getAll().some(x=>x.id===id)){
@@ -1190,6 +1196,23 @@ function _pageTabla(){ _pageInsert('<table class="tbl"><tbody><tr><td>Celda</td>
 function _pageCurTable(){ try{ var s=window.getSelection&&window.getSelection(); var n=s&&s.anchorNode; var a=document.getElementById('page-edit-area'); while(n&&n!==a){ if(n.nodeType===1&&n.tagName==='TABLE')return n; n=n.parentNode; } }catch(e){} return null; }
 function _pageAddRow(){ var t=_pageCurTable(); if(!t){ toast('Pon el cursor dentro de una tabla'); return; } var rows=t.rows; if(!rows.length)return; var cols=rows[rows.length-1].cells.length; var tb=t.tBodies[0]||t; var tr=document.createElement('tr'); for(var i=0;i<cols;i++){ var td=document.createElement('td'); td.textContent='Celda'; tr.appendChild(td); } tb.appendChild(tr); }
 function _pageAddCol(){ var t=_pageCurTable(); if(!t){ toast('Pon el cursor dentro de una tabla'); return; } for(var i=0;i<t.rows.length;i++){ var cc=t.rows[i].insertCell(-1); cc.textContent='Celda'; } }
+function _pageArea(aid){ return document.getElementById(aid||'page-edit-area'); }
+function _pageCurBlock(aid){ try{ var a=_pageArea(aid); if(!a)return null; var s=window.getSelection&&window.getSelection(); if(!s||!s.anchorNode)return null; var n=s.anchorNode; if(!a.contains(n))return null; return _pgUnit(n,a); }catch(e){ return null; } }
+function _pageMark(aid){ try{ var a=_pageArea(aid); if(!a)return; var cur=_pageCurBlock(aid); Array.prototype.forEach.call(a.querySelectorAll('.pg-cur'),function(x){ if(x!==cur)x.classList.remove('pg-cur'); }); if(cur&&cur.classList)cur.classList.add('pg-cur'); }catch(e){} }
+function _pageMoveBlock(dir,aid){ var b=_pageCurBlock(aid); if(!b){ toast('Pon el cursor en el bloque que quieras mover'); return; } if(dir<0){ if(b.previousElementSibling) b.parentNode.insertBefore(b,b.previousElementSibling); } else { if(b.nextElementSibling) b.parentNode.insertBefore(b.nextElementSibling,b); } _pageMark(aid); }
+function _pageDelBlock(aid){ var b=_pageCurBlock(aid); if(!b){ toast('Pon el cursor en el bloque que quieras borrar'); return; } if(b.getAttribute&&b.getAttribute('contenteditable')==='false'){ toast('Ese bloque es automático; no se puede borrar'); return; } if(!confirm('¿Borrar este bloque entero (cuadro, tabla, lista…)?')) return; b.remove(); _pageMark(aid); }
+function _pageAddAlert(cls,aid){ var a=_pageArea(aid); if(!a)return; var L={y:'Aviso',b:'Información',g:'Nota',r:'Importante'}; var html='<div class="alert '+cls+'"><strong>'+(L[cls]||'Aviso')+'.</strong> Escribe aquí el contenido…</div>'; var u=_pageCurBlock(aid); var b=null; if(u){ var p=u.parentNode; if(p===a||(p.classList&&(p.classList.contains('alert')||p.classList.contains('coll-c')))) b=u; else b=_pgTop(u,a); } if(b){ b.insertAdjacentHTML('afterend',html); } else { a.insertAdjacentHTML('beforeend',html); } _pageMark(aid); }
+var _pgDrag=null,_pgDragArea=null,_pgDragParent=null,_pgHover=null,_pgHoverArea=null,_pgHideT=null;
+function _pgGripEl(){ var g=document.getElementById('pg-grip'); if(!g){ g=document.createElement('div'); g.id='pg-grip'; g.textContent='⠿'; g.title='Arrastra para mover este bloque'; g.style.cssText='position:fixed;display:none;z-index:99999;cursor:grab;user-select:none;width:22px;height:24px;line-height:22px;text-align:center;border:1px solid var(--bd);border-radius:5px;background:var(--card);color:var(--c2);font-size:14px;box-shadow:0 1px 4px rgba(0,0,0,.25)'; document.body.appendChild(g); g.addEventListener('mousedown',_pgGripDown); g.addEventListener('mouseenter',function(){ if(_pgHideT){clearTimeout(_pgHideT);_pgHideT=null;} }); g.addEventListener('mouseleave',_pgGripHide); } return g; }
+function _pgIsContainer(el,area){ if(el===area)return true; if(!el||el.nodeType!==1)return false; var t=el.tagName; if(t==='UL'||t==='OL'||t==='TBODY'||t==='THEAD'||t==='TABLE')return true; if(el.classList&&(el.classList.contains('alert')||el.classList.contains('coll-c')))return true; return false; }
+function _pgUnit(node,area){ var n=node; if(!n||!area||!area.contains(n)||n===area)return null; while(n&&n!==area){ if(n.nodeType===1&&_pgIsContainer(n.parentNode,area))return n; n=n.parentNode; } return null; }
+function _pgTop(el,area){ var n=el; while(n&&n.parentNode!==area){ n=n.parentNode; } return (n&&n.parentNode===area&&n.nodeType===1)?n:null; }
+function _pgCanDrop(drag,cont,area){ if(!drag||!cont)return false; var dt=drag.tagName; if(dt==='LI')return cont.tagName==='UL'||cont.tagName==='OL'; if(dt==='TR')return cont.tagName==='TBODY'||cont.tagName==='THEAD'||cont.tagName==='TABLE'; if(cont===area)return true; return !!(cont.classList&&(cont.classList.contains('alert')||cont.classList.contains('coll-c'))); }
+function _pgGripFollow(e,area){ if(_pgDrag)return; if(_pgHideT){clearTimeout(_pgHideT);_pgHideT=null;} var b=_pgUnit(e.target,area); var g=_pgGripEl(); if(!b||(b.getAttribute&&b.getAttribute('contenteditable')==='false')){ _pgGripHide(); return; } _pgHover=b; _pgHoverArea=area; var r=b.getBoundingClientRect(); g.style.display='block'; g.style.top=(r.top+3)+'px'; g.style.left=Math.max(2,r.left-22)+'px'; }
+function _pgGripHide(){ if(_pgDrag)return; if(_pgHideT)clearTimeout(_pgHideT); _pgHideT=setTimeout(function(){ if(_pgDrag)return; var g=document.getElementById('pg-grip'); if(g)g.style.display='none'; },300); }
+function _pgGripDown(e){ e.preventDefault(); if(!_pgHover||!_pgHoverArea)return; _pgDrag=_pgHover; _pgDragArea=_pgHoverArea; _pgDragParent=_pgDrag.parentNode; _pgDrag.classList.add('pg-drag'); var g=document.getElementById('pg-grip'); if(g)g.style.display='none'; document.addEventListener('mousemove',_pgDragMove,true); document.addEventListener('mouseup',_pgDragUp,true); }
+function _pgDragMove(e){ if(!_pgDrag||!_pgDragArea)return; e.preventDefault(); var el=document.elementFromPoint(e.clientX,e.clientY); var over=_pgUnit(el,_pgDragArea); if(!over||over===_pgDrag||_pgDrag.contains(over))return; var cont=over.parentNode; if(!_pgCanDrop(_pgDrag,cont,_pgDragArea))return; var r=over.getBoundingClientRect(); if(e.clientY>r.top+r.height/2){ if(over.nextSibling!==_pgDrag)cont.insertBefore(_pgDrag,over.nextSibling); } else { if(_pgDrag!==over.previousSibling)cont.insertBefore(_pgDrag,over); } }
+function _pgDragUp(){ document.removeEventListener('mousemove',_pgDragMove,true); document.removeEventListener('mouseup',_pgDragUp,true); var area=_pgDragArea; if(_pgDrag)_pgDrag.classList.remove('pg-drag'); _pgDrag=null; _pgDragArea=null; _pgDragParent=null; _pgGripHide(); if(area&&typeof _pageMark==='function')_pageMark(area.id); }
 function _pageToolbar(){
   return '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg)">'
     +'<span style="font-size:12px;color:var(--mut);width:100%">Edita el contenido como en un procesador de textos:</span>'
@@ -1202,6 +1225,15 @@ function _pageToolbar(){
     +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageTabla()" title="Insertar tabla">➕ Tabla</button>'
     +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageAddRow()" title="Añadir fila a la tabla del cursor">➕ Fila</button>'
     +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageAddCol()" title="Añadir columna a la tabla del cursor">➕ Columna</button>'
+    +'<span style="width:100%;height:1px;background:var(--bd);margin:3px 0"></span>'
+    +'<span style="font-size:12px;color:var(--mut);width:100%">Bloques — pasa el cursor por un bloque y <strong>arrástralo con el asa ⠿</strong> (o usa ⬆⬇); también puedes borrarlo o añadir un cuadro de color:</span>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageMoveBlock(-1)" title="Subir el bloque">⬆ Subir</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageMoveBlock(1)" title="Bajar el bloque">⬇ Bajar</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageDelBlock()" title="Borrar el bloque entero" style="color:#c41e3a">🗑 Borrar bloque</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageAddAlert(\'y\')" title="Añadir cuadro amarillo">➕ Cuadro 🟡</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageAddAlert(\'b\')" title="Añadir cuadro azul">🔵</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageAddAlert(\'g\')" title="Añadir cuadro verde">🟢</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageAddAlert(\'r\')" title="Añadir cuadro rojo">🔴</button>'
     +'</div>';
 }
 VIEWS.pageedit=()=>{
@@ -1210,12 +1242,12 @@ VIEWS.pageedit=()=>{
   let h='<div class="card"><h2>✏️ Editar página</h2>';
   h+='<p class="intro">Edita el contenido y guárdalo: sustituye al original <strong>para todos</strong> y siempre puedes <strong>restaurar el original</strong>.</p>';
   h+=_pageToolbar();
-  h+='<div id="page-edit-area" contenteditable="true" style="border:1px solid var(--bd);border-radius:8px;padding:10px;min-height:300px;outline:none">'+_hpSanHtml(d.html||'')+'</div>';
+  h+='<div id="page-edit-area" contenteditable="true" onclick="_pageMark()" onkeyup="_pageMark()" onmousemove="_pgGripFollow(event,this)" onmouseleave="_pgGripHide()" style="border:1px solid var(--bd);border-radius:8px;padding:10px;min-height:300px;outline:none">'+_hpSanHtml(d.html||'')+'</div>';
   h+='<hr style="margin:12px 0"><div class="btns"><button class="btn btn-out" onclick="pageCancelar()">✖ Cancelar</button><button class="btn btn-out" onclick="hpRestaurarPage(\''+d.id+'\')">↺ Restaurar original</button><button class="btn btn-g" onclick="pageGuardar()">💾 Guardar para todos</button></div>';
   h+='</div>'; return h;
 };
 function pageCancelar(){ const id=_pageDraft&&_pageDraft.id; _pageDraft=null; if(id) go(id); else go('home'); }
-async function pageGuardar(){ const d=_pageDraft; if(!d) return; const a=document.getElementById('page-edit-area'); if(!a) return; const html=_hpSanHtml(a.innerHTML); const data={html:html, seccion:d.seccion||null, estado:'publicado'}; const m=hpPages(); m[d.id]=data; try{ls.s('pageOv',m);}catch(e){} if(window.hpSavePage){ try{ await window.hpSavePage(d.id, data); toast('✓ Página actualizada · para todos'); }catch(e){ toast('Guardado solo en este equipo (sin permiso o sin conexión)'); } } else toast('✓ Guardado'); _pageDraft=null; go(d.id); }
+async function pageGuardar(){ const d=_pageDraft; if(!d) return; const a=document.getElementById('page-edit-area'); if(!a) return; try{Array.prototype.forEach.call(a.querySelectorAll('.pg-cur'),function(e){e.classList.remove('pg-cur');});}catch(e){} const html=_hpSanHtml(a.innerHTML); const data={html:html, seccion:d.seccion||null, estado:'publicado'}; const m=hpPages(); m[d.id]=data; try{ls.s('pageOv',m);}catch(e){} if(window.hpSavePage){ try{ await window.hpSavePage(d.id, data); toast('✓ Página actualizada · para todos'); }catch(e){ toast('Guardado solo en este equipo (sin permiso o sin conexión)'); } } else toast('✓ Guardado'); _pageDraft=null; go(d.id); }
 async function hpRestaurarPage(id){ if(!confirm('¿Restaurar el contenido original de esta página? Se perderá la edición para todos.'))return; const m=hpPages(); delete m[id]; try{ls.s('pageOv',m);}catch(e){} if(window.hpDeletePage){ try{ await window.hpDeletePage(id); toast('✓ Original restaurado'); }catch(e){ toast('Restaurado solo en este equipo'); } } _pageDraft=null; go(id); }
 // Los desplegables insertados en páginas editadas pierden su onclick al sanearse (_hpSanHtml quita
 // los handlers): se togglean con un manejador delegado, limitado a .hp-page-body para NO doble-togglear
@@ -1225,6 +1257,17 @@ document.addEventListener('click',function(e){ try{ var h=e.target&&e.target.clo
 const LOGO_SVG=`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="DermaCand"><defs><radialGradient id="melBody" cx="42%" cy="40%" r="66%"><stop offset="0%" stop-color="#2bb9cb"/><stop offset="60%" stop-color="#12a0b2"/><stop offset="100%" stop-color="#0a7585"/></radialGradient><radialGradient id="melSun" cx="50%" cy="44%" r="62%"><stop offset="0%" stop-color="#ffe48f"/><stop offset="55%" stop-color="#fcc134"/><stop offset="100%" stop-color="#f59e0b"/></radialGradient></defs><g stroke="#0c8a9b" stroke-width="5.4" stroke-linecap="round" fill="none"><line x1="42" y1="56" x2="7" y2="69"/><line x1="42" y1="56" x2="7" y2="43"/><line x1="42" y1="56" x2="29" y2="91"/><line x1="42" y1="56" x2="55" y2="91"/></g><g stroke="#f3a81c" stroke-width="3.2" stroke-linecap="round"><line x1="87.5" y1="27" x2="93.5" y2="27"/><line x1="83.25" y1="16.75" x2="87.5" y2="12.5"/><line x1="73" y1="12.5" x2="73" y2="6.5"/><line x1="62.75" y1="16.75" x2="58.5" y2="12.5"/><line x1="58.5" y1="27" x2="52.5" y2="27"/><line x1="62.75" y1="37.25" x2="58.5" y2="41.5"/><line x1="73" y1="41.5" x2="73" y2="47.5"/><line x1="83.25" y1="37.25" x2="87.5" y2="41.5"/></g><circle cx="73" cy="27" r="12" fill="url(#melSun)"/><circle cx="42" cy="56" r="25" fill="url(#melBody)"/><ellipse cx="34" cy="46" rx="9" ry="6" fill="#ffffff" opacity=".14"/><g><ellipse cx="30.5" cy="60" rx="3.1" ry="1.9" fill="#5fd0dc" opacity=".45"/><ellipse cx="53.5" cy="60" rx="3.1" ry="1.9" fill="#5fd0dc" opacity=".45"/><circle cx="36" cy="53" r="3.15" fill="#06303a"/><circle cx="48" cy="53" r="3.15" fill="#06303a"/><circle cx="34.8" cy="51.8" r="1.05" fill="#fff"/><circle cx="46.8" cy="51.8" r="1.05" fill="#fff"/><path d="M36 60.5 Q42 65.5 48 60.5" stroke="#06303a" stroke-width="1.9" fill="none" stroke-linecap="round"/></g></svg>`;
 const ICON_PHONE=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/></svg>`;
 
+var _hpNovedades=[];
+function _hpContentKeys(){ var items=[];
+  try{ Object.keys(GUIDES_TITLES||{}).forEach(function(sec){ (getSubtypes(sec)||[]).forEach(function(st){ (st.pdfs||[]).forEach(function(p){ if(p&&p.url&&p.name) items.push({key:'g:'+p.url,kind:'guia',tipo:'Guía',titulo:p.name,sec:sec}); }); }); }); }catch(e){}
+  try{ var A=hpAlgos(); Object.keys(A).forEach(function(id){ var a=A[id]; if(a&&a.estado==='publicado') items.push({key:'a:'+id,kind:'algo',tipo:'Algoritmo',titulo:a.titulo||'Algoritmo',sec:a.seccion,id:id}); }); }catch(e){}
+  try{ var C=_calcsStored(); Object.keys(C).forEach(function(id){ var cc=C[id]; if(cc&&cc.estado==='publicado') items.push({key:'c:'+id,kind:'calc',tipo:'Calculadora',titulo:cc.titulo||'Calculadora',sec:cc.seccion,id:id}); }); }catch(e){}
+  return items; }
+function _hpSeenSet(){ try{ var r=ls.g('hpSeen'); if(r==null)return null; var o={}; (r||[]).forEach(function(k){o[k]=1;}); return o; }catch(e){ return {}; } }
+function hpNovedadesScan(){ try{ var cur=_hpContentKeys(); var seen=_hpSeenSet(); if(seen==null){ try{ ls.s('hpSeen',cur.map(function(it){return it.key;})); }catch(e){} _hpNovedades=[]; return; } _hpNovedades=cur.filter(function(it){ return !seen[it.key]; }); if(_hpNovedades.length && typeof S!=='undefined' && S.view==='home' && typeof go==='function'){ try{ go('home'); }catch(e){} } }catch(e){ _hpNovedades=[]; } }
+function hpNovedadesVistas(){ try{ ls.s('hpSeen',_hpContentKeys().map(function(it){return it.key;})); }catch(e){} _hpNovedades=[]; if(typeof S!=='undefined' && S.view==='home' && typeof go==='function') go('home'); }
+function hpAbrirNovedad(i){ var it=_hpNovedades&&_hpNovedades[i]; if(!it||typeof go!=='function')return; if(it.kind==='algo'&&typeof algoOpen==='function'){ algoOpen(it.id); } else if(it.kind==='calc'&&typeof calcOpen==='function'){ calcOpen(it.id); } else if(it.kind==='page'&&it.id){ go(it.id); } else if(it.sec){ go('g_'+it.sec); } }
+function _hpNovedadesBanner(){ if(!_hpNovedades||!_hpNovedades.length) return ''; var n=_hpNovedades.length; var lis=_hpNovedades.slice(0,8).map(function(it,i){ return '<button class="btn btn-out btn-sm" style="text-align:left;justify-content:flex-start" onclick="hpAbrirNovedad('+i+')">'+_hpEsc(it.tipo)+': <strong>'+_hpEsc(it.titulo)+'</strong></button>'; }).join(''); var extra=n>8?('<div style="font-size:12px;color:var(--mut);margin-top:4px">… y '+(n-8)+' más</div>'):''; return '<div class="alert b" style="margin:0 0 14px;text-align:left"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px"><strong>🆕 Novedades ('+n+')</strong><span style="flex:1"></span><button class="btn btn-out btn-sm" onclick="hpNovedadesVistas()">Marcar como vistas</button></div><div style="display:flex;flex-direction:column;gap:5px;align-items:stretch">'+lis+'</div>'+extra+'</div>'; }
 function homeView() {
     const byId=id=>getAll().find(x=>x.id===id);
     const favs=(S.favs||[]).map(byId).filter(Boolean).filter(_hpItemAllowed);
@@ -1251,6 +1294,7 @@ function homeView() {
         <span class="hs-tx">Buscar guía, score o cálculo…</span>
         <kbd>Ctrl K</kbd>
       </button>
+      ${_hpNovedadesBanner()}
       ${secs}
     </div>`;
 }
@@ -2652,7 +2696,7 @@ VIEWS.algoedit=()=>{
 };
 function _algoEditNode(d,nid,nodeIds){
   const n=d.nodos[nid];
-  let h='<div class="coll open" style="margin-bottom:8px"><div class="coll-h" style="cursor:default"><span>'+(n.tipo==='resultado'?'Resultado':'Pregunta')+'</span><button class="btn btn-out btn-sm" onclick="algoDelNode(\''+nid+'\')" title="Eliminar paso">&times;</button></div><div class="coll-c">';
+  let h='<div class="coll open" style="margin-bottom:8px"><div class="coll-h" style="cursor:default"><span>'+(n.tipo==='resultado'?'Resultado':'Pregunta')+'</span><button class="btn btn-out btn-sm" onclick="algoMoverNodo(\''+nid+'\',-1)"'+(nodeIds.indexOf(nid)===0?' disabled':'')+' title="Subir">↑</button><button class="btn btn-out btn-sm" onclick="algoMoverNodo(\''+nid+'\',1)"'+(nodeIds.indexOf(nid)===nodeIds.length-1?' disabled':'')+' title="Bajar">↓</button><button class="btn btn-out btn-sm" onclick="algoDelNode(\''+nid+'\')" title="Eliminar paso">&times;</button></div><div class="coll-c">';
   h+='<textarea onchange="algoNodeText(\''+nid+'\',this.value)" placeholder="'+(n.tipo==='resultado'?'Titulo del resultado':'Texto de la pregunta')+'">'+_hpEsc(n.texto||'')+'</textarea>';
   if(n.tipo==='resultado'){
     h+='<textarea onchange="algoNodeBody(\''+nid+'\',this.value)" placeholder="Recomendacion / detalle">'+_hpEsc(n.cuerpo||'')+'</textarea>';
@@ -2661,7 +2705,7 @@ function _algoEditNode(d,nid,nodeIds){
     (n.opciones||[]).forEach(function(o,i){
       h+='<div style="display:flex;gap:4px;margin-top:4px;align-items:center"><input style="flex:1" value="'+_hpEsc(o.etiqueta||'')+'" onchange="algoOptLabel(\''+nid+'\','+i+',this.value)" placeholder="Etiqueta (ej: Si)">';
       h+='<select onchange="algoOptDest(\''+nid+'\','+i+',this.value)" style="max-width:45%"><option value="">a paso...</option>'+nodeIds.filter(function(x){return x!==nid;}).map(function(x){return '<option value="'+x+'"'+(o.destino===x?' selected':'')+'>'+_hpEsc(_algoNodeLabel(d.nodos[x]))+'</option>';}).join('')+'<option value="__new">+ nuevo resultado</option></select>';
-      h+='<button class="btn btn-out btn-sm" onclick="algoDelOpt(\''+nid+'\','+i+')">&times;</button></div>';
+      h+='<button class="btn btn-out btn-sm" onclick="algoMoverOpt(\''+nid+'\','+i+',-1)"'+(i===0?' disabled':'')+'>↑</button><button class="btn btn-out btn-sm" onclick="algoMoverOpt(\''+nid+'\','+i+',1)"'+(i===(n.opciones.length-1)?' disabled':'')+'>↓</button><button class="btn btn-out btn-sm" onclick="algoDelOpt(\''+nid+'\','+i+')">&times;</button></div>';
     });
     h+='<button class="btn btn-out btn-sm" style="margin-top:6px" onclick="algoAddOpt(\''+nid+'\')">+ Opcion</button>';
   }
@@ -2670,6 +2714,8 @@ function _algoEditNode(d,nid,nodeIds){
 function algoSetField(f,v){ if(_algoDraft) _algoDraft[f]=v; }
 function algoMover(v){ if(_algoDraft){ _algoDraft.seccion=v; go('algoedit'); } }
 function algoAddNode(tipo){ const id='n_'+Date.now(); _algoDraft.nodos[id]={id:id,tipo:tipo,texto:'',opciones:[],cuerpo:''}; if(!_algoDraft.inicio)_algoDraft.inicio=id; go('algoedit'); }
+function algoMoverNodo(nid,dir){ const keys=Object.keys(_algoDraft.nodos); const i=keys.indexOf(nid); const j=i+dir; if(i<0||j<0||j>=keys.length)return; keys.splice(j,0,keys.splice(i,1)[0]); const o={}; keys.forEach(function(k){o[k]=_algoDraft.nodos[k];}); _algoDraft.nodos=o; go('algoedit'); }
+function algoMoverOpt(nid,i,dir){ const n=_algoDraft.nodos[nid]; if(!n||!n.opciones)return; const j=i+dir; if(j<0||j>=n.opciones.length)return; const t=n.opciones[i]; n.opciones[i]=n.opciones[j]; n.opciones[j]=t; go('algoedit'); }
 function algoDelNode(nid){ delete _algoDraft.nodos[nid]; if(_algoDraft.inicio===nid)_algoDraft.inicio=''; Object.keys(_algoDraft.nodos).forEach(function(k){const n=_algoDraft.nodos[k];(n.opciones||[]).forEach(function(o){if(o.destino===nid)o.destino='';});}); go('algoedit'); }
 function algoNodeText(nid,v){ if(_algoDraft.nodos[nid])_algoDraft.nodos[nid].texto=v; }
 function algoNodeBody(nid,v){ if(_algoDraft.nodos[nid])_algoDraft.nodos[nid].cuerpo=v; }
@@ -2871,7 +2917,7 @@ VIEWS.calcedit=()=>{
   h+='<div class="fld"><label class="lbl">Sección (puedes moverla)</label><select onchange="calcSetMeta(\'seccion\',this.value)">'+_calcSecOptions(d.seccion)+'</select></div>';
   h+='<h3>Campos ('+(d.campos||[]).length+')</h3>';
   if(!(d.campos||[]).length) h+='<div class="alert b">Sin campos. Añade uno abajo.</div>';
-  (d.campos||[]).forEach(function(campo,ci){ h+=_calcEditCampo(campo,ci,d.tipo); });
+  (d.campos||[]).forEach(function(campo,ci){ h+=_calcEditCampo(campo,ci,d.tipo,(d.campos||[]).length); });
   if(esF){ h+='<div class="btns" style="margin-top:8px"><button class="btn btn-out btn-sm" onclick="calcAddCampo(\'number\')">➕ Número</button><button class="btn btn-out btn-sm" onclick="calcAddCampo(\'select\')">➕ Opciones</button><button class="btn btn-out btn-sm" onclick="calcAddCampo(\'check\')">➕ Casilla sí/no</button></div>'; }
   else { h+='<div class="btns" style="margin-top:8px"><button class="btn btn-out btn-sm" onclick="calcAddCampo(\'select\')">➕ Campo de opciones</button><button class="btn btn-out btn-sm" onclick="calcAddCampo(\'check\')">➕ Casilla sí/no</button></div>'; }
   if(esF){
@@ -2885,45 +2931,48 @@ VIEWS.calcedit=()=>{
     h+='<h3 style="margin-top:14px">Resultados por puntuación ('+(d.resultados||[]).length+')</h3>';
     h+='<p style="font-size:12px;color:var(--mut)">Define rangos de puntos y su categoría. Ej.: de 0 a 1 = «Riesgo bajo».</p>';
   }
-  (d.resultados||[]).forEach(function(r,ri){ h+=_calcEditResultado(r,ri); });
+  (d.resultados||[]).forEach(function(r,ri){ h+=_calcEditResultado(r,ri,(d.resultados||[]).length); });
   h+='<button class="btn btn-out btn-sm" style="margin-top:6px" onclick="calcAddResultado()">➕ '+(esF?'Categoría de interpretación':'Categoría de resultado')+'</button>';
   h+='<hr style="margin:14px 0"><div class="btns"><button class="btn btn-out" onclick="calcCancelar()">✖ Cancelar</button><button class="btn" onclick="calcVistaPrevia()">👁️ Vista previa</button><button class="btn btn-out" onclick="calcComprobar()">🔍 Comprobar</button><button class="btn btn-out" onclick="calcGuardar()">💾 Guardar borrador</button><button class="btn btn-g" onclick="calcPublicar()">✅ Publicar</button></div>';
   h+='</div>'; return h;
 };
-function _calcEditCampo(campo,ci,calcTipo){
+function _calcEditCampo(campo,ci,calcTipo,total){
   if(calcTipo==='formula'){
     const tn=campo.tipo==='number'?'🔢 Número':(campo.tipo==='select'?'🔘 Opciones':'☑️ Casilla sí/no');
-    let h='<div class="coll open" style="margin-bottom:8px"><div class="coll-h" style="cursor:default"><span>'+tn+'</span><button class="btn btn-out btn-sm" onclick="calcDelCampo('+ci+')" title="Eliminar campo">×</button></div><div class="coll-c">';
+    let h='<div class="coll open" style="margin-bottom:8px"><div class="coll-h" style="cursor:default"><span>'+tn+'</span><button class="btn btn-out btn-sm" onclick="calcMoverCampo('+ci+',-1)"'+(ci===0?' disabled':'')+' title="Subir">↑</button><button class="btn btn-out btn-sm" onclick="calcMoverCampo('+ci+',1)"'+(ci===total-1?' disabled':'')+' title="Bajar">↓</button><button class="btn btn-out btn-sm" onclick="calcDelCampo('+ci+')" title="Eliminar campo">×</button></div><div class="coll-c">';
     h+='<input value="'+_hpEsc(campo.etiqueta||'')+'" onchange="calcCampoLabel('+ci+',this.value)" placeholder="Etiqueta (ej: Superficie afectada)">';
     h+='<div style="display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap"><span style="font-size:12px;color:var(--mut)">Variable:</span><input style="width:110px" value="'+_hpEsc(campo.clave||'')+'" onchange="calcCampoClave('+ci+',this.value)" placeholder="ej: sup">';
     if(campo.tipo==='number'){ h+='<span style="font-size:12px;color:var(--mut)">Unidad:</span><input style="width:80px" value="'+_hpEsc(campo.unidad||'')+'" onchange="calcCampoUnidad('+ci+',this.value)" placeholder="%">'; }
     h+='</div>';
     if(campo.tipo==='select'){
       h+='<div style="font-size:12px;color:var(--mut);margin:6px 0 2px">Opciones (cada una con su valor numérico):</div>';
-      (campo.opciones||[]).forEach(function(o,oi){ h+='<div style="display:flex;gap:4px;margin-top:4px;align-items:center"><input style="flex:1" value="'+_hpEsc(o.etiqueta||'')+'" onchange="calcOptLabel('+ci+','+oi+',this.value)" placeholder="Etiqueta"><input type="number" style="width:70px" value="'+(o.valor!=null?(+o.valor):'')+'" onchange="calcOptValor('+ci+','+oi+',this.value)" placeholder="valor"><button class="btn btn-out btn-sm" onclick="calcDelOpt('+ci+','+oi+')">×</button></div>'; });
+      (campo.opciones||[]).forEach(function(o,oi){ h+='<div style="display:flex;gap:4px;margin-top:4px;align-items:center"><input style="flex:1" value="'+_hpEsc(o.etiqueta||'')+'" onchange="calcOptLabel('+ci+','+oi+',this.value)" placeholder="Etiqueta"><input type="number" style="width:70px" value="'+(o.valor!=null?(+o.valor):'')+'" onchange="calcOptValor('+ci+','+oi+',this.value)" placeholder="valor"><button class="btn btn-out btn-sm" onclick="calcMoverOpt('+ci+','+oi+',-1)"'+(oi===0?' disabled':'')+'>↑</button><button class="btn btn-out btn-sm" onclick="calcMoverOpt('+ci+','+oi+',1)"'+(oi===campo.opciones.length-1?' disabled':'')+'>↓</button><button class="btn btn-out btn-sm" onclick="calcDelOpt('+ci+','+oi+')">×</button></div>'; });
       h+='<button class="btn btn-out btn-sm" style="margin-top:6px" onclick="calcAddOpt('+ci+')">➕ Opción</button>';
     } else if(campo.tipo==='check'){ h+='<div style="font-size:11px;color:var(--mut);margin-top:4px">Vale 1 si se marca y 0 si no.</div>'; }
     h+='</div></div>'; return h;
   }
-  let h='<div class="coll open" style="margin-bottom:8px"><div class="coll-h" style="cursor:default"><span>'+(campo.tipo==='check'?'☑️ Casilla sí/no':'🔘 Campo de opciones')+'</span><button class="btn btn-out btn-sm" onclick="calcDelCampo('+ci+')" title="Eliminar campo">×</button></div><div class="coll-c">';
+  let h='<div class="coll open" style="margin-bottom:8px"><div class="coll-h" style="cursor:default"><span>'+(campo.tipo==='check'?'☑️ Casilla sí/no':'🔘 Campo de opciones')+'</span><button class="btn btn-out btn-sm" onclick="calcMoverCampo('+ci+',-1)"'+(ci===0?' disabled':'')+' title="Subir">↑</button><button class="btn btn-out btn-sm" onclick="calcMoverCampo('+ci+',1)"'+(ci===total-1?' disabled':'')+' title="Bajar">↓</button><button class="btn btn-out btn-sm" onclick="calcDelCampo('+ci+')" title="Eliminar campo">×</button></div><div class="coll-c">';
   h+='<input value="'+_hpEsc(campo.etiqueta||'')+'" onchange="calcCampoLabel('+ci+',this.value)" placeholder="'+(campo.tipo==='check'?'Texto de la casilla (ej: Prurito intenso)':'Nombre del campo (ej: Eritema)')+'">';
   if(campo.tipo==='check'){
     h+='<div style="display:flex;align-items:center;gap:6px;margin-top:6px"><span style="font-size:13px">Puntos si se marca:</span><input type="number" style="width:80px" value="'+(campo.puntos!=null?(+campo.puntos):'')+'" onchange="calcCampoPuntos('+ci+',this.value)"></div>';
   } else {
     h+='<div style="font-size:12px;color:var(--mut);margin:6px 0 2px">Opciones (cada una con sus puntos):</div>';
-    (campo.opciones||[]).forEach(function(o,oi){ h+='<div style="display:flex;gap:4px;margin-top:4px;align-items:center"><input style="flex:1" value="'+_hpEsc(o.etiqueta||'')+'" onchange="calcOptLabel('+ci+','+oi+',this.value)" placeholder="Etiqueta"><input type="number" style="width:70px" value="'+(o.puntos!=null?(+o.puntos):'')+'" onchange="calcOptPuntos('+ci+','+oi+',this.value)" placeholder="pts"><button class="btn btn-out btn-sm" onclick="calcDelOpt('+ci+','+oi+')">×</button></div>'; });
+    (campo.opciones||[]).forEach(function(o,oi){ h+='<div style="display:flex;gap:4px;margin-top:4px;align-items:center"><input style="flex:1" value="'+_hpEsc(o.etiqueta||'')+'" onchange="calcOptLabel('+ci+','+oi+',this.value)" placeholder="Etiqueta"><input type="number" style="width:70px" value="'+(o.puntos!=null?(+o.puntos):'')+'" onchange="calcOptPuntos('+ci+','+oi+',this.value)" placeholder="pts"><button class="btn btn-out btn-sm" onclick="calcMoverOpt('+ci+','+oi+',-1)"'+(oi===0?' disabled':'')+'>↑</button><button class="btn btn-out btn-sm" onclick="calcMoverOpt('+ci+','+oi+',1)"'+(oi===campo.opciones.length-1?' disabled':'')+'>↓</button><button class="btn btn-out btn-sm" onclick="calcDelOpt('+ci+','+oi+')">×</button></div>'; });
     h+='<button class="btn btn-out btn-sm" style="margin-top:6px" onclick="calcAddOpt('+ci+')">➕ Opción</button>';
   }
   h+='</div></div>'; return h;
 }
-function _calcEditResultado(r,ri){
-  return '<div style="display:flex;gap:4px;margin-top:6px;align-items:center;flex-wrap:wrap"><span style="font-size:12px">de</span><input type="number" style="width:60px" value="'+(r.min!=null?(+r.min):'')+'" onchange="calcResField('+ri+',\'min\',this.value)"><span style="font-size:12px">a</span><input type="number" style="width:60px" value="'+(r.max!=null?(+r.max):'')+'" onchange="calcResField('+ri+',\'max\',this.value)"><input style="flex:1;min-width:120px" value="'+_hpEsc(r.etiqueta||'')+'" onchange="calcResField('+ri+',\'etiqueta\',this.value)" placeholder="Categoría (ej: Riesgo bajo)"><button class="btn btn-out btn-sm" onclick="calcDelResultado('+ri+')">×</button><textarea style="width:100%;margin-top:4px" onchange="calcResField('+ri+',\'detalle\',this.value)" placeholder="Detalle / recomendación (opcional)">'+_hpEsc(r.detalle||'')+'</textarea></div>';
+function _calcEditResultado(r,ri,total){
+  return '<div style="display:flex;gap:4px;margin-top:6px;align-items:center;flex-wrap:wrap"><span style="font-size:12px">de</span><input type="number" style="width:60px" value="'+(r.min!=null?(+r.min):'')+'" onchange="calcResField('+ri+',\'min\',this.value)"><span style="font-size:12px">a</span><input type="number" style="width:60px" value="'+(r.max!=null?(+r.max):'')+'" onchange="calcResField('+ri+',\'max\',this.value)"><input style="flex:1;min-width:120px" value="'+_hpEsc(r.etiqueta||'')+'" onchange="calcResField('+ri+',\'etiqueta\',this.value)" placeholder="Categoría (ej: Riesgo bajo)"><button class="btn btn-out btn-sm" onclick="calcMoverResultado('+ri+',-1)"'+(ri===0?' disabled':'')+'>↑</button><button class="btn btn-out btn-sm" onclick="calcMoverResultado('+ri+',1)"'+(ri===total-1?' disabled':'')+'>↓</button><button class="btn btn-out btn-sm" onclick="calcDelResultado('+ri+')">×</button><textarea style="width:100%;margin-top:4px" onchange="calcResField('+ri+',\'detalle\',this.value)" placeholder="Detalle / recomendación (opcional)">'+_hpEsc(r.detalle||'')+'</textarea></div>';
 }
 function calcSetMeta(f,v){ if(!_calcDraft)return; if(f==='decimales')_calcDraft[f]=(+v||0); else _calcDraft[f]=v; if(f==='seccion') go('calcedit'); }
 function calcAddCampo(kind){ if(!_calcDraft.campos)_calcDraft.campos=[]; const id='c_'+Date.now()+'_'+Math.floor(Math.random()*1000); const campo={id:id,etiqueta:'',tipo:kind};
   if(_calcDraft.tipo==='formula'){ campo.clave='v'+(_calcDraft.campos.length+1); if(kind==='select')campo.opciones=[{etiqueta:'',valor:0}]; if(kind==='number')campo.unidad=''; }
   else { if(kind==='check')campo.puntos=1; else campo.opciones=[{etiqueta:'',puntos:0}]; }
   _calcDraft.campos.push(campo); go('calcedit'); }
+function calcMoverCampo(ci,dir){ const a=_calcDraft.campos; const j=ci+dir; if(!a||j<0||j>=a.length)return; const t=a[ci]; a[ci]=a[j]; a[j]=t; go('calcedit'); }
+function calcMoverOpt(ci,oi,dir){ const a=_calcDraft.campos[ci]&&_calcDraft.campos[ci].opciones; const j=oi+dir; if(!a||j<0||j>=a.length)return; const t=a[oi]; a[oi]=a[j]; a[j]=t; go('calcedit'); }
+function calcMoverResultado(ri,dir){ const a=_calcDraft.resultados; const j=ri+dir; if(!a||j<0||j>=a.length)return; const t=a[ri]; a[ri]=a[j]; a[j]=t; go('calcedit'); }
 function calcDelCampo(ci){ _calcDraft.campos.splice(ci,1); go('calcedit'); }
 function calcCampoLabel(ci,v){ if(_calcDraft.campos[ci])_calcDraft.campos[ci].etiqueta=v; }
 function calcCampoClave(ci,v){ if(!_calcDraft.campos[ci])return; let k=(''+v).trim().replace(/[^A-Za-z0-9_]/g,'_'); if(/^[0-9]/.test(k))k='_'+k; _calcDraft.campos[ci].clave=k; go('calcedit'); }
@@ -9282,7 +9331,7 @@ if(document.readyState!=='loading')init();
       });
     });
     // Comprobar si hay actualización cada 30 min y al volver a la pestaña
-    setInterval(function(){ reg.update().catch(function(){}); }, 30*60*1000);
+    setInterval(function(){ reg.update().catch(function(){}); }, 60*1000);
     document.addEventListener('visibilitychange', function(){
       if(document.visibilityState === 'visible') reg.update().catch(function(){});
     });
@@ -9293,7 +9342,10 @@ if(document.readyState!=='loading')init();
   // mucho una recarga por sesión de página.
   var _hpReloaded = false;
   navigator.serviceWorker.addEventListener('controllerchange', function(){
-    if(_hpReloaded) return; _hpReloaded = true;
+    if(_hpReloaded) return;
+    // No interrumpir una edición en curso: aplazar la recarga hasta salir del editor.
+    try{ if(typeof S!=='undefined' && /edit$/.test(S.view||'')){ window._hpPendingReload=true; var _ou=document.getElementById('hp-updating'); if(_ou&&_ou.remove)_ou.remove(); return; } }catch(e){}
+    _hpReloaded = true;
     try{ sessionStorage.setItem('hp_justUpdated','1'); }catch(e){}
     window.location.reload();
   });
@@ -9309,7 +9361,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 28;
+  var DC_BUILD = 29;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -9339,12 +9391,12 @@ if(document.readyState!=='loading')init();
     }catch(e){}
   }
   var _hpVGlast = 0;
-  function hpVGthrottled(){ if(Date.now() - _hpVGlast < 60000) return; _hpVGlast = Date.now(); hpVersionGuard(); }
+  function hpVGthrottled(){ if(Date.now() - _hpVGlast < 30000) return; _hpVGlast = Date.now(); hpVersionGuard(); }
   // INMEDIATO al abrir (sin esperas), al volver a la pestaña y cada 10 min con la app abierta.
   if(document.readyState === 'complete') hpVGthrottled();
   else window.addEventListener('load', hpVGthrottled);
   document.addEventListener('visibilitychange', function(){ if(document.visibilityState === 'visible') hpVGthrottled(); });
-  setInterval(hpVGthrottled, 10*60*1000);
+  setInterval(hpVGthrottled, 60*1000);
 })();
 </script>
 <div id="modal-aviso-legal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; padding:1rem;" role="dialog" aria-modal="true">
@@ -9392,25 +9444,49 @@ function poblarRevisoresAviso() {
   var all;
   try { all = getAllCollaborators(); } catch (e) { return; }
   if (!all) return;
-  var map = new Map();
+  // Clave normalizada para deduplicar (sin tildes, sin "Dr./Dra.", minúsculas) y así no repetir a la misma persona.
+  var _norm = function (s) { return (s || '').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/^(dr|dra)\.?\s+/, '').replace(/\s+/g, ' ').trim(); };
+  var map = new Map(); // claveNorm -> { display, explicit:Set, areas:Set }
   Object.keys(all).forEach(function (id) {
     (all[id] || []).forEach(function (c) {
       var name = (c.n || c.name || '').trim();
       if (!name) return;
       if (/busnego|garcía silvera|garcia silvera/i.test(name)) return; // los autores ya están acreditados arriba
-      var role = (c.r || c.role || '').trim();
-      // Si no hay rol explícito, usamos el área (título de sección) como contexto.
-      if (!role && typeof GUIDES_TITLES !== 'undefined' && GUIDES_TITLES[id]) role = GUIDES_TITLES[id];
-      if (!map.has(name)) map.set(name, new Set());
-      if (role) map.get(name).add(role);
+      var key = _norm(name); if (!key) return;
+      var role = (c.r || c.role || '').trim(); // rol explícito (p. ej. Farmacéutico/a, Dermatopatólogo/a)
+      var area = (!role && typeof GUIDES_TITLES !== 'undefined' && GUIDES_TITLES[id]) ? GUIDES_TITLES[id] : '';
+      var e = map.get(key);
+      if (!e) { e = { display: name, explicit: new Set(), areas: new Set() }; map.set(key, e); }
+      if (name.split(/\s+/).length > e.display.split(/\s+/).length) e.display = name; // conserva el nombre más completo
+      if (role) e.explicit.add(role); else if (area) e.areas.add(area);
     });
   });
   if (!map.size) return; // sin datos: dejamos el listado estático por defecto
+  // Fusiona la misma persona escrita con/ sin apellido: si una clave (≥3 palabras) es prefijo de otra más larga.
+  var entries = Array.from(map.entries());
+  entries.sort(function (a, b) { return a[0].length - b[0].length; });
+  for (var i = 0; i < entries.length; i++) {
+    if (entries[i][0] === null) continue;
+    var ki = entries[i][0]; if (ki.split(' ').length < 3) continue;
+    for (var j = i + 1; j < entries.length; j++) {
+      if (entries[j][0] === null || entries[j][0] === ki) continue;
+      if ((entries[j][0] + ' ').indexOf(ki + ' ') === 0) {
+        var ei = entries[i][1], ej = entries[j][1];
+        ei.explicit.forEach(function (r) { ej.explicit.add(r); });
+        ei.areas.forEach(function (r) { ej.areas.add(r); });
+        if (ei.display.split(/\s+/).length > ej.display.split(/\s+/).length) ej.display = ei.display;
+        entries[i][0] = null; break;
+      }
+    }
+  }
   var items = [];
-  map.forEach(function (roles, name) {
-    var r = Array.from(roles).join(' · ');
-    items.push(r ? '<li><strong>' + name + '</strong> — ' + r + '</li>'
-                 : '<li><strong>' + name + '</strong></li>');
+  entries.forEach(function (en) {
+    if (en[0] === null) return;
+    var e = en[1];
+    var roles = e.explicit.size ? Array.from(e.explicit) : Array.from(e.areas); // el rol explícito manda sobre el área
+    var r = roles.join(' · ');
+    items.push(r ? '<li><strong>' + e.display + '</strong> — ' + r + '</li>'
+                 : '<li><strong>' + e.display + '</strong></li>');
   });
   ul.innerHTML = items.join('');
 }
@@ -9480,6 +9556,13 @@ function _avisoToolbar(){
     +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_avisoCmd(\'formatBlock\',\'&lt;h3&gt;\')" title="Convertir en título de sección">Título</button>'
     +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_avisoCmd(\'formatBlock\',\'&lt;p&gt;\')" title="Texto normal">Texto</button>'
     +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_avisoCmd(\'insertUnorderedList\')" title="Lista con viñetas">• Lista</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageMoveBlock(-1,\'aviso-cuerpo\')" title="Subir el bloque">⬆</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageMoveBlock(1,\'aviso-cuerpo\')" title="Bajar el bloque">⬇</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageDelBlock(\'aviso-cuerpo\')" title="Borrar el bloque entero" style="color:#c41e3a">🗑</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageAddAlert(\'y\',\'aviso-cuerpo\')" title="Añadir cuadro amarillo">➕🟡</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageAddAlert(\'b\',\'aviso-cuerpo\')" title="Añadir cuadro azul">🔵</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageAddAlert(\'g\',\'aviso-cuerpo\')" title="Añadir cuadro verde">🟢</button>'
+    +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="_pageAddAlert(\'r\',\'aviso-cuerpo\')" title="Añadir cuadro rojo">🔴</button>'
     +'<span style="flex:1;min-width:8px"></span>'
     +'<button type="button" class="btn btn-g btn-sm" onclick="hpGuardarAviso()">💾 Guardar para todos</button>'
     +'<button type="button" class="btn btn-out btn-sm" onclick="hpCancelarAviso()">Cancelar</button>'
@@ -9494,21 +9577,23 @@ function hpEditarAviso(){
   html=html.replace(/<ul[^>]*id=["']aviso-revisores["'][\s\S]*?<\/ul>/i,_AVISO_REV_PH);
   cu.innerHTML=html;
   cu.setAttribute('contenteditable','true');
+  cu.onclick=function(){_pageMark('aviso-cuerpo');}; cu.onkeyup=function(){_pageMark('aviso-cuerpo');}; cu.onmousemove=function(e){_pgGripFollow(e,cu);}; cu.onmouseleave=_pgGripHide;
   cu.style.border='1px solid var(--bd)'; cu.style.borderRadius='8px'; cu.style.padding='10px'; cu.style.outline='none';
   var eb=document.getElementById('aviso-edit-btn'); if(eb) eb.style.display='none';
   var old=document.getElementById('aviso-toolbar'); if(old) old.remove();
   cu.insertAdjacentHTML('beforebegin',_avisoToolbar());
 }
 function hpCancelarAviso(){
-  const cu=document.getElementById('aviso-cuerpo'); if(cu){ cu.setAttribute('contenteditable','false'); cu.style.border=''; cu.style.padding=''; }
+  const cu=document.getElementById('aviso-cuerpo'); if(cu){ cu.setAttribute('contenteditable','false'); cu.onclick=null; cu.onkeyup=null; cu.onmousemove=null; cu.onmouseleave=null; cu.style.border=''; cu.style.padding=''; }
   var tb=document.getElementById('aviso-toolbar'); if(tb) tb.remove();
   _avisoRenderCuerpo(); poblarRevisoresAviso();
   var eb=document.getElementById('aviso-edit-btn'); if(eb) eb.style.display=(window.__hpUid===HP_PRINCIPAL_UID)?'inline-block':'none';
 }
 async function hpGuardarAviso(){
   const cu=document.getElementById('aviso-cuerpo'); if(!cu) return;
-  cu.setAttribute('contenteditable','false');
+  cu.setAttribute('contenteditable','false'); cu.onclick=null; cu.onkeyup=null; cu.onmousemove=null; cu.onmouseleave=null;
   var tb=document.getElementById('aviso-toolbar'); if(tb) tb.remove();
+  try{Array.prototype.forEach.call(cu.querySelectorAll('.pg-cur'),function(e){e.classList.remove('pg-cur');});}catch(e){}
   let html=cu.innerHTML;
   // Devuelve el marcador de revisores a su <ul> real (lo rellena poblarRevisoresAviso).
   html=html.replace(/<div[^>]*class=["'][^"']*aviso-rev-ph[^"']*["'][\s\S]*?<\/div>/i,'<ul id="aviso-revisores"></ul>');
@@ -9635,6 +9720,9 @@ VIEWS.gsecciones=()=>{
 };
 
 // === SOLICITUDES DE ACCESO (solo administrador) ===
+// Botón conmutador de push (3 estados): Activar / Recibir también aquí / Desactivar (toda la cuenta).
+function _hpPushBtnHtml(){ var on = !!(window.hpPushActivo && window.hpPushActivo()); var aqui = !!(window.hpPushEsteDispositivo && window.hpPushEsteDispositivo()); var off='<button class="btn btn-out btn-sm" style="color:var(--er);border-color:var(--er)" onclick="if(window.hpDesactivarPush)hpDesactivarPush()">🔕 Desactivar (toda la cuenta)</button>'; if(!on) return '<button class="btn btn-out btn-sm" onclick="if(window.hpActivarPush)hpActivarPush()">🔔 Activar notificaciones</button>'; if(aqui) return off; return '<button class="btn btn-out btn-sm" onclick="if(window.hpRegistrarEsteDispositivo)hpRegistrarEsteDispositivo()">🔔 Recibir también en este equipo</button> '+off; }
+window.hpRefreshPushBtn=function(){ try{ var w=document.getElementById('hp-push-btn-wrap'); if(w) w.innerHTML=_hpPushBtnHtml(); }catch(e){} };
 VIEWS.solicitudes=()=>{
 if(!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin())){
 return `<div class="card"><h2>Solicitudes de acceso</h2><div class="alert y">Este apartado solo está disponible para el administrador.</div></div>`;
@@ -9642,13 +9730,14 @@ return `<div class="card"><h2>Solicitudes de acceso</h2><div class="alert y">Est
 return `<div class="card">
 <h2>Solicitudes de acceso</h2>
 <p class="intro">Cuentas registradas desde la app. Al <strong>aprobar</strong> una cuenta, el usuario podrá acceder con su correo y contraseña. Aquí queda el <strong>registro de aceptación</strong> de los términos.</p>
+<div class="alert b" style="margin-bottom:10px;font-size:13px">🔔 <strong>Notificaciones push</strong> de solicitudes y reportes. <span id="hp-push-btn-wrap">${_hpPushBtnHtml()}</span><div style="font-size:11px;color:var(--mut);margin-top:4px">Actívalo en cada equipo donde quieras recibirlas. En iPhone, añade antes la app a la pantalla de inicio.</div></div>
 <div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button class="btn btn-out btn-sm" onclick="hpRenderSolicitudes()">↻ Actualizar</button></div>
 <div id="sol_list">Cargando…</div></div>`;
 };
 VIEWS.solicitudes_post=()=>{ if(window.hpRenderSolicitudes) window.hpRenderSolicitudes(); };
 
 const HP_PRINCIPAL_UID='IXktZrlu5KSWMSyt6MO1Kt1fRZf1'; // admin principal intocable
-function solCard(c,withActions,roleInfo){
+function solCard(c,withActions,roleInfo,colabInfo){
 const nom=((c.nombre||'')+' '+(c.apellido||'')).trim();
 let fecha=''; try{ if(c.fechaAceptacion&&c.fechaAceptacion.seconds) fecha=new Date(c.fechaAceptacion.seconds*1000).toLocaleString('es-ES'); }catch(e){}
 let acceso=''; try{ if(c.ultimoAcceso&&c.ultimoAcceso.seconds) acceso=new Date(c.ultimoAcceso.seconds*1000).toLocaleString('es-ES'); }catch(e){}
@@ -9667,7 +9756,7 @@ h+='</div><div class="coll-c">';
 if(c.origen==='manual') h+='<div style="font-size:11.5px;color:#5a6a85;margin-bottom:4px">Usuario creado a mano en consola (sin solicitud en la app).</div>';
 if(fecha) h+='<div style="font-size:12px;color:var(--mut);margin-bottom:3px"><strong>Aceptó términos:</strong> '+fecha+(c.versionTerminos?(' (v'+c.versionTerminos+')'):'')+'</div>';
 if(acceso) h+='<div style="font-size:12px;color:var(--mut);margin-bottom:3px"><strong>Último acceso:</strong> '+acceso+'</div>';
-if(withActions||manageable){ h+=hpRoleSelector(c.uid,roleInfo); }
+if(withActions||manageable){ const _cred=(colabInfo&&colabInfo.nombre)||((c.nombre||'')+' '+(c.apellido||'')).trim()||((c.email||'').split('@')[0]); const _crole=(colabInfo&&(colabInfo.rol||colabInfo.r))||''; h+=hpRoleSelector(c.uid,roleInfo,_cred,_crole); }
 if(withActions){
 h+='<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">';
 h+='<button class="btn btn-sm" onclick="hpAprobarUI(\''+c.uid+'\')">Aprobar</button>';
@@ -9690,7 +9779,7 @@ if(r==='editor'){ const n=(roleInfo&&roleInfo.sections&&roleInfo.sections.length
 return 'Usuario';
 }
 // Selector de perfil reutilizable (pendientes y aprobadas). Muestra las secciones si es Editor.
-function hpRoleSelector(uid, roleInfo, credName){
+function hpRoleSelector(uid, roleInfo, credName, credRole){
   if(uid===HP_PRINCIPAL_UID) return '<div style="margin-top:10px;padding:9px 10px;border:1px solid #d8b400;border-radius:8px;background:#fffbe6;font-size:12.5px;color:#7a5d00">👑 <strong>Administrador principal</strong> — perfil fijo, no modificable.</div>';
   const soyPrincipal=(window.__hpUid===HP_PRINCIPAL_UID);
   // El nivel "administrador" solo lo gestiona el principal: un co-admin no puede cambiar el perfil de otro admin.
@@ -9717,6 +9806,7 @@ function hpRoleSelector(uid, roleInfo, credName){
   return s;
 }
 function hpReadCred(uid){ const el=document.getElementById('cred_'+uid); return el?el.value.trim():''; }
+function hpReadRole(uid){ const el=document.getElementById('credrol_'+uid); return el?el.value.trim():''; }
 function hpSecChecks(uid, checked){
   checked=checked||[];
   return Object.keys(GUIDES_TITLES).map(function(sid){return '<label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" value="'+sid+'" onchange="hpSecSync(\''+uid+'\')"'+(checked.indexOf(sid)!==-1?' checked':'')+'> '+GUIDES_TITLES[sid]+'</label>';}).join('');
@@ -9748,11 +9838,12 @@ window.hpGuardarRol=function(uid){
   const secs=role==='editor'?hpReadSecs(uid):[];
   if(role==='editor'&&!secs.length){ if(typeof toast==='function')toast('Marca al menos una sección'); return; }
   const nombre=role==='editor'?hpReadCred(uid):'';
-  const msg=role==='admin'?'¿Asignar perfil ADMINISTRADOR (co-admin)? Podrá gestionar secciones, contenido, editores y cuentas, pero NO a otros administradores (eso solo el principal).':role==='editor'?('¿Guardar como EDITOR de '+secs.length+' sección(es)?'):'¿Dejar como usuario, sin permisos de edición?';
-  if(window.hpConfirm) window.hpConfirm(msg,function(){_hpDoRol(uid,role,secs,nombre);}); else _hpDoRol(uid,role,secs,nombre);
+  const spec=role==='editor'?'Dermatólogo/a':'';
+  const msg=role==='admin'?'¿Asignar perfil ADMINISTRADOR (co-admin)? Podrá gestionar secciones, contenido, editores y cuentas, pero NO a otros administradores (eso solo el principal).':role==='editor'?('¿Guardar como EDITOR de '+secs.length+' sección(es)'+(spec?(', acreditado como '+spec):'')+'?'):'¿Dejar como usuario, sin permisos de edición?';
+  if(window.hpConfirm) window.hpConfirm(msg,function(){_hpDoRol(uid,role,secs,nombre,spec);}); else _hpDoRol(uid,role,secs,nombre,spec);
 };
-async function _hpDoRol(uid,role,secs,nombre){
-  try{ if(window.hpAsignarRol) await window.hpAsignarRol(uid,role,secs,nombre); if(window.hpSyncColaboradores) window.hpSyncColaboradores(); if(typeof toast==='function')toast('✔ Perfil actualizado'); if(window.hpRenderSolicitudes) window.hpRenderSolicitudes(); }
+async function _hpDoRol(uid,role,secs,nombre,spec){
+  try{ if(window.hpAsignarRol) await window.hpAsignarRol(uid,role,secs,nombre,spec); if(window.hpSyncColaboradores) window.hpSyncColaboradores(); if(typeof toast==='function')toast('✔ Perfil actualizado'); if(window.hpRenderSolicitudes) window.hpRenderSolicitudes(); }
   catch(e){ if(typeof toast==='function')toast('Error: '+(e.message||'')); }
 }
 window.hpRenderSolicitudes=async function(){
@@ -9764,6 +9855,7 @@ try{ list=await window.hpListCuentas(); }
 catch(e){ box.innerHTML='<div class="alert y">No se pudieron cargar las solicitudes. '+(e.message||'')+'</div>'; return; }
 let roles={}; try{ if(window.hpListRoles) roles=await window.hpListRoles(); }catch(e){}
 let usuarios={}; try{ if(window.hpListUsuarios) usuarios=await window.hpListUsuarios(); }catch(e){}
+let colabs={}; try{ if(window.hpListColaboradores) colabs=await window.hpListColaboradores(); }catch(e){}
 // Une cuentas (registradas) + usuarios (todo el que ha entrado, incl. creados a mano) por uid.
 const byUid={};
 list.forEach(c=>{ byUid[c.uid]=Object.assign({},c); });
@@ -9772,17 +9864,17 @@ Object.keys(usuarios).forEach(uid=>{
   else { byUid[uid]=Object.assign({uid:uid,origen:'manual'},usuarios[uid]); }
 });
 const all=Object.values(byUid);
-const pend=all.filter(c=>c.estado==='pendiente');
+const pend=all.filter(c=>c.estado==='pendiente'); window._hpSolNew=pend.length; if(typeof renderMenu==='function')renderMenu(($('search')&&$('search').value)||'');
 const rech=all.filter(c=>c.estado==='rechazada');
 const activos=all.filter(c=>c.estado!=='pendiente'&&c.estado!=='rechazada').sort((a,b)=>((a.email||'')<(b.email||'')?-1:1));
 let h='<h3>Pendientes ('+pend.length+')</h3>';
 if(!pend.length) h+='<div class="team-empty">No hay solicitudes pendientes.</div>';
-pend.forEach(c=>{ h+=solCard(c,true,roles[c.uid]); });
+pend.forEach(c=>{ h+=solCard(c,true,roles[c.uid],colabs[c.uid]); });
 h+='<h3 style="margin-top:18px">Usuarios con acceso ('+activos.length+')</h3>';
 h+='<p style="font-size:12px;color:var(--mut);margin:-2px 0 8px">Cuentas aprobadas y usuarios creados a mano. Pulsa uno para ver o cambiar su perfil.</p>';
 if(!activos.length) h+='<div class="team-empty">Aún no hay usuarios; aparecerán al iniciar sesión.</div>';
-activos.forEach(c=>{ h+=solCard(c,false,roles[c.uid]); });
-if(rech.length){ h+='<h3 style="margin-top:18px">Rechazadas ('+rech.length+')</h3>'; rech.forEach(c=>{ h+=solCard(c,false,roles[c.uid]); }); }
+activos.forEach(c=>{ h+=solCard(c,false,roles[c.uid],colabs[c.uid]); });
+if(rech.length){ h+='<h3 style="margin-top:18px">Rechazadas ('+rech.length+')</h3>'; rech.forEach(c=>{ h+=solCard(c,false,roles[c.uid],colabs[c.uid]); }); }
 box.innerHTML=h;
 };
 async function _hpDoAccion(uid,acc,role,secs,nombre){
@@ -9869,7 +9961,7 @@ window.hpReporteResolverUI=function(id){ _hpRepAccion(id,'resolver'); };
 window.hpReporteBorrarUI=function(id){ if(window.hpConfirm) window.hpConfirm('¿Borrar este reporte?',()=>_hpRepAccion(id,'borrar')); else _hpRepAccion(id,'borrar'); };
 
 // Tras cargar el rol del usuario (admin/editor): refresca el menú (muestra apartados admin) y el badge.
-window.hpOnRoleLoaded=function(){renderMenu(($('search')&&$('search').value)||'');const v=S.view;if(v&&v!=='home'&&v!=='viewer'&&typeof VIEWS!=='undefined'&&VIEWS[v]){try{go(v);}catch(e){}}if(window.hpUpdateRepBadge)window.hpUpdateRepBadge();};
+window.hpOnRoleLoaded=function(){renderMenu(($('search')&&$('search').value)||'');const v=S.view;if(v&&v!=='home'&&v!=='viewer'&&typeof VIEWS!=='undefined'&&VIEWS[v]){try{go(v);}catch(e){}}if(window.hpUpdateRepBadge)window.hpUpdateRepBadge();if(window.hpUpdateSolBadge)window.hpUpdateSolBadge();if(window.hpLoadPushState)window.hpLoadPushState();};
 // Red de seguridad (móvil): si el rol no se cargó por conexión intermitente, reintentar al
 // volver ONLINE o al REANUDAR la app, para recuperar permisos sin reiniciar.
 function hpReloadRoleIfNeeded(){ try{ const u=window.__hpUid; if(u && window.HemoCloud && !window.HemoCloud.role){ window.HemoCloud.loadRole(u).then(function(){ if(window.hpOnRoleLoaded) window.hpOnRoleLoaded(); }); } }catch(e){} }
@@ -9884,14 +9976,25 @@ window.hpUpdateRepBadge=async function(){
     if(typeof renderMenu==='function')renderMenu(($('search')&&$('search').value)||'');
   }catch(e){}
 };
+// Cuenta las solicitudes de acceso PENDIENTES y muestra el número junto a «Solicitudes de acceso».
+window.hpUpdateSolBadge=async function(){
+  try{
+    if(!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin())){window._hpSolNew=0;return;}
+    if(!navigator.onLine||!window.hpListCuentas)return;
+    const list=await window.hpListCuentas();
+    window._hpSolNew=list.filter(c=>c&&c.estado==='pendiente').length;
+    if(typeof renderMenu==='function')renderMenu(($('search')&&$('search').value)||'');
+  }catch(e){}
+};
 </script>
 
 <!-- ══ Backend Firebase (Auth + Firestore + RTDB) ══ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+import { getAuth, setPersistence, indexedDBLocalPersistence, browserLocalPersistence, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
-import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+import { getMessaging, getToken, isSupported, deleteToken } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-messaging.js";
 
 // ⚠️ PLACEHOLDER — sustituye estos valores por los de TU proyecto Firebase de DermaCand.
 // Consola Firebase → Configuración del proyecto → Tus apps → Web. Ver firebase/GUIA_FIREBASE.md.
@@ -9904,7 +10007,8 @@ const firebaseConfig = {
   projectId: "dermacand2026",
   storageBucket: "dermacand2026.firebasestorage.app",
   messagingSenderId: "142933205897",
-  appId: "1:142933205897:web:1d69738e610768b397f758"
+  appId: "1:142933205897:web:1d69738e610768b397f758",
+  vapidKey: "PEGA_TU_CLAVE_VAPID_PUBLICA"
 };
 // ¿Config real ya pegada? Si sigue en placeholder, no activamos el portal de login (la app
 // abre directamente en modo consulta) para no bloquear el uso antes de montar Firebase.
@@ -9914,9 +10018,109 @@ let auth=null, db=null, fs=null;
 try{
   const fbApp = initializeApp(firebaseConfig);
   auth = getAuth(fbApp);
+  // Guardar la sesión de la forma MÁS persistente posible (IndexedDB; si no, localStorage),
+  // para que no pida iniciar sesión cada vez. En contexto inseguro (red que rompe el HTTPS)
+  // el navegador puede forzar memoria; entonces esto no basta y hay que arreglarlo en el navegador/IT.
+  try { setPersistence(auth, indexedDBLocalPersistence).catch(function(){ try{ setPersistence(auth, browserLocalPersistence); }catch(e){} }); } catch(e){}
   db = getDatabase(fbApp);   // Realtime DB (sync favoritos/recientes)
-  fs = getFirestore(fbApp);  // Firestore (índice de guías/roles/cuentas/reportes)
+  // Firestore con CACHÉ PERSISTENTE (IndexedDB): permite usar la app SIN conexión en redes
+  // restringidas — las lecturas (aprobación de cuenta, rol, contenido) se sirven de la caché
+  // local. Si el navegador no la admite (p. ej. incógnito), cae a Firestore normal.
+  try { fs = initializeFirestore(fbApp, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) }); }
+  catch(e){ fs = getFirestore(fbApp); }  // Firestore (índice de guías/roles/cuentas/reportes)
 }catch(e){ console.warn('[dc] Firebase init', e&&e.message); }
+
+// ── Notificaciones push (FCM) para ADMINISTRADORES (Kera/DermaCand) ──
+// NO-BRICKING: solo se activa si hay clave VAPID pública real. Con el placeholder
+// 'PEGA_...' DC_PUSH_READY es false y NUNCA se llama a getMessaging/getToken.
+// Generar la clave en: Consola Firebase (proyecto dermacand2026) → Configuración del
+// proyecto → Cloud Messaging → Certificados push web → Generar par de claves, y pegarla
+// en firebaseConfig.vapidKey (arriba).
+const DC_VAPID_KEY = (firebaseConfig && firebaseConfig.vapidKey) || "";
+const DC_PUSH_READY = !!DC_VAPID_KEY && DC_VAPID_KEY.indexOf('PEGA_') !== 0;
+let _dcMessaging = null;
+window._hpPushEnabled = false; // estado de la CUENTA (cargado de Firestore)
+function _dcTT(m){ try{ if(typeof toast==='function') toast(m); }catch(e){} }
+// Token FCM de ESTE dispositivo (requiere permiso del navegador, una vez por equipo).
+async function _dcPushToken(){
+  try{
+    if(!DC_PUSH_READY || !fs || !('Notification' in window)) return null;
+    if(Notification.permission !== 'granted') return null;
+    if(!(await isSupported())) return null;
+    if(!_dcMessaging) _dcMessaging = getMessaging();
+    let reg = null;
+    try{ reg = (await navigator.serviceWorker.getRegistration('/firebase-messaging-sw.js')) || (await navigator.serviceWorker.register('/firebase-messaging-sw.js')); }catch(e){}
+    const opts = reg ? { vapidKey: DC_VAPID_KEY, serviceWorkerRegistration: reg } : { vapidKey: DC_VAPID_KEY };
+    return await getToken(_dcMessaging, opts);
+  }catch(e){ return null; }
+}
+// Registra el token de este dispositivo en la cuenta (mapa de tokens). enable=true enciende la cuenta.
+async function _dcPushRegistrar(enable){
+  const uid = (auth && auth.currentUser && auth.currentUser.uid) || null;
+  if(!uid || !fs) return false;
+  const token = await _dcPushToken();
+  if(!token) return false;
+  const data = { tokens: { [token]: Date.now() }, email: (auth.currentUser && auth.currentUser.email) || null, actualizado: serverTimestamp() };
+  if(enable) data.enabled = true;
+  await setDoc(doc(fs,'pushTokens',uid), data, { merge:true });
+  return true;
+}
+window.hpPushEsteDispositivo = function(){ try{ return DC_PUSH_READY && ('Notification' in window) && Notification.permission==='granted'; }catch(e){ return false; } };
+window.hpPushActivo = function(){ return !!window._hpPushEnabled; };
+// Activar para la CUENTA (y registrar este dispositivo).
+window.hpActivarPush = async function(){
+  try{
+    if(!DC_PUSH_READY){ _dcTT('Notificaciones push no configuradas (falta la clave VAPID)'); return false; }
+    if(!('Notification' in window) || !(await isSupported())){ _dcTT('Este dispositivo no admite notificaciones push'); return false; }
+    let perm = Notification.permission;
+    if(perm === 'default') perm = await Notification.requestPermission();
+    if(perm !== 'granted'){ _dcTT('Permiso de notificaciones denegado'); return false; }
+    if(!(await _dcPushRegistrar(true))){ _dcTT('No se pudo activar (token)'); return false; }
+    window._hpPushEnabled = true;
+    _dcTT('🔔 Notificaciones activadas para tu cuenta');
+    if(window.hpRefreshPushBtn) window.hpRefreshPushBtn();
+    return true;
+  }catch(e){ _dcTT('No se pudieron activar las notificaciones'); return false; }
+};
+// Sumar también ESTE dispositivo (la cuenta ya está activada).
+window.hpRegistrarEsteDispositivo = async function(){
+  try{
+    if(!DC_PUSH_READY){ _dcTT('Notificaciones push no configuradas'); return false; }
+    if(!('Notification' in window) || !(await isSupported())){ _dcTT('Este dispositivo no admite notificaciones push'); return false; }
+    let perm = Notification.permission;
+    if(perm === 'default') perm = await Notification.requestPermission();
+    if(perm !== 'granted'){ _dcTT('Permiso de notificaciones denegado'); return false; }
+    if(!(await _dcPushRegistrar(false))){ _dcTT('No se pudo registrar este dispositivo'); return false; }
+    _dcTT('🔔 Este dispositivo recibirá notificaciones');
+    if(window.hpRefreshPushBtn) window.hpRefreshPushBtn();
+    return true;
+  }catch(e){ _dcTT('No se pudo registrar'); return false; }
+};
+// Desactivar para TODA la cuenta (todos los dispositivos dejan de recibir).
+window.hpDesactivarPush = async function(){
+  try{
+    const uid = (auth && auth.currentUser && auth.currentUser.uid) || null;
+    if(uid && fs){ try{ await setDoc(doc(fs,'pushTokens',uid), { enabled:false, tokens:{} }, { merge:true }); }catch(e){} }
+    try{ if(_dcMessaging) await deleteToken(_dcMessaging); }catch(e){}
+    window._hpPushEnabled = false;
+    _dcTT('🔕 Notificaciones desactivadas para tu cuenta');
+    if(window.hpRefreshPushBtn) window.hpRefreshPushBtn();
+    return true;
+  }catch(e){ _dcTT('No se pudieron desactivar las notificaciones'); return false; }
+};
+// Carga el estado de la cuenta y, si está activada, auto-registra este dispositivo (si tiene permiso).
+window.hpLoadPushState = async function(){
+  try{
+    if(!DC_PUSH_READY) return;
+    const uid = (auth && auth.currentUser && auth.currentUser.uid) || null;
+    if(!uid || !fs){ window._hpPushEnabled = false; return; }
+    const s = await getDoc(doc(fs,'pushTokens',uid));
+    const data = s.exists() ? (s.data()||{}) : {};
+    window._hpPushEnabled = (data.enabled === true);
+    if(window._hpPushEnabled && window.hpPushEsteDispositivo()){ try{ await _dcPushRegistrar(false); }catch(e){} }
+    if(window.hpRefreshPushBtn) window.hpRefreshPushBtn();
+  }catch(e){}
+};
 
 // ── Almacenamiento de PDF en GitHub (como HemoPocket: muchas intranets de hospital bloquean
 //    Firebase Storage pero SÍ permiten github.io). El índice y los permisos viven en Firestore.
@@ -10158,13 +10362,19 @@ function revealAndEnter(user){
   if(window.hpSyncAlgos) setTimeout(()=>window.hpSyncAlgos(),1050);
   if(window.hpSyncRx) setTimeout(()=>window.hpSyncRx(),1330);
   if(window.hpSyncPages) setTimeout(()=>window.hpSyncPages(),1350);
+  setTimeout(()=>{ try{ hpNovedadesScan(); }catch(e){} },1700);
 }
 async function enterAppGated(user){
   let blocked=false, name='';
   try{
-    const s=await getDoc(doc(fs,'cuentas',user.uid));
-    if(s.exists()){ const d=s.data(); name=d.nombre||''; if(d.estado!=='aprobada') blocked=true; }
-  }catch(e){ /* offline o ficha heredada: no bloquear */ }
+    // Carrera con TIEMPO LIMITE: si la red tarda o no hay conexion (red restringida),
+    // no bloqueamos el arranque. Con cache persistente, la lectura es local e instantanea.
+    const s=await Promise.race([
+      getDoc(doc(fs,'cuentas',user.uid)),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), navigator.onLine ? 6000 : 1200))
+    ]);
+    if(s&&s.exists()){ const d=s.data(); name=d.nombre||''; if(d.estado!=='aprobada') blocked=true; }
+  }catch(e){ /* offline/lento/ficha heredada: no bloquear */ }
   if(blocked){ curUid=null; showPending(name); return; }
   revealAndEnter(user);
 }
@@ -10230,7 +10440,7 @@ window.hpRechazarCuenta=async function(uid){ await updateDoc(doc(fs,'cuentas',ui
 //  - 'admin'  -> roles/{uid} = { role:'admin' }
 //  - 'editor' -> roles/{uid} = { role:'editor', sections:[...] }
 //  - otro     -> se elimina el documento de rol (queda como usuario de consulta)
-window.hpAsignarRol = async function(uid, role, sections, nombre){
+window.hpAsignarRol = async function(uid, role, sections, nombre, spec){
   if(role === 'admin'){
     await setDoc(doc(fs, 'roles', uid), { role:'admin', asignadoPor: curUid || null, fechaAsignacion: serverTimestamp() });
     try { await deleteDoc(doc(fs, 'colaboradores', uid)); } catch(e){}
@@ -10239,7 +10449,9 @@ window.hpAsignarRol = async function(uid, role, sections, nombre){
     await setDoc(doc(fs, 'roles', uid), { role:'editor', sections: secs, asignadoPor: curUid || null, fechaAsignacion: serverTimestamp() });
     // Crédito PÚBLICO de colaborador por tema (lo refleja el Aviso Legal de todos).
     const nom = (nombre||'').toString().trim();
-    if(nom) await setDoc(doc(fs, 'colaboradores', uid), { nombre: nom, sections: secs, actualizadoPor: curUid || null, fechaActualizacion: serverTimestamp() });
+    // Rol/especialidad para los créditos (p. ej. "Farmacéutico/a"). Vacío = dermatólogo/a (se acredita por su área).
+    const rol = (spec||'').toString().trim();
+    if(nom) await setDoc(doc(fs, 'colaboradores', uid), { nombre: nom, rol: rol, sections: secs, actualizadoPor: curUid || null, fechaActualizacion: serverTimestamp() });
     else { try { await deleteDoc(doc(fs, 'colaboradores', uid)); } catch(e){} }
   } else {
     await deleteDoc(doc(fs, 'roles', uid));
@@ -10263,7 +10475,7 @@ window.hpSyncColaboradores = async function(){
   try{
     const snap = await getDocs(collection(fs, 'colaboradores'));
     const map = {};
-    snap.forEach(d => { const x = d.data()||{}; const nom = (x.nombre||'').toString().trim(); if(!nom) return; (Array.isArray(x.sections)?x.sections:[]).forEach(s => { (map[s]=map[s]||[]).push({ n: nom }); }); });
+    snap.forEach(d => { const x = d.data()||{}; const nom = (x.nombre||'').toString().trim(); if(!nom) return; const rol = (x.rol||'').toString().trim(); (Array.isArray(x.sections)?x.sections:[]).forEach(s => { const c = { n: nom }; if(rol) c.r = rol; (map[s]=map[s]||[]).push(c); }); });
     if(window.hpStoreEditorCollabs) window.hpStoreEditorCollabs(map);
     return map;
   }catch(e){ return null; }
@@ -10427,6 +10639,18 @@ window.hpTogglePw=function(){ const inp=document.getElementById('hp_pw'); inp.ty
   function revealNow(){ if(everLogged()) hideOverlay(); }
   if(document.readyState!=='loading') revealNow();
   else document.addEventListener('DOMContentLoaded', revealNow);
+  // Respaldo de arranque (b4775ee): si Firebase NO ha resuelto todavía (la red lo bloquea o
+  // no hay conexión) y el equipo YA estaba validado, ENTRAMOS directos en modo consulta
+  // ocultando el overlay, sin esperar a que el portal de login aparezca. Si Firebase ya
+  // resolvió (window.__hpFirebaseReady) o el equipo nunca se validó aquí, no hacemos nada.
+  function showOption(){
+    if(window.__hpFirebaseReady) return;   // Firebase ya decidió: que mande él
+    if(!everLogged()) return;              // nunca validado aquí: se mantiene el login
+    hideOverlay();
+  }
+  setTimeout(showOption, navigator.onLine ? 1500 : 700);
+  // Segundo intento por si Firebase tarda más en confirmar que está bloqueado.
+  setTimeout(showOption, 4000);
 })();
 </script>
 

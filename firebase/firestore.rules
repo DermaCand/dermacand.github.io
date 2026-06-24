@@ -7,6 +7,7 @@ rules_version = '2';
 //   guias/{id}      → { section, subtype, name, path, updatedAt, uploadedBy }
 //   config/github   → { token }   (PAT de GitHub para subir PDFs; se gestiona en consola)
 //   reportes/{id}   → { texto, tipo, vista, build, ... }
+//   pushTokens/{uid}→ { enabled, tokens:{token:ts,...} }  (tokens FCM para avisar a admins)
 //
 // Lectura de guías: solo usuarios AUTORIZADOS (admin/editor, cuenta aprobada, o
 //   usuario heredado sin ficha de cuenta). Ver función isApproved().
@@ -78,6 +79,13 @@ service cloud.firestore {
                         && uid != 'IXktZrlu5KSWMSyt6MO1Kt1fRZf1'
                         && (resource == null || resource.data.role != 'admin')
                         && (request.resource == null || request.resource.data.role != 'admin') );
+    }
+
+    // ── Tokens de notificaciones push (FCM). Cada usuario guarda/borra el SUYO; las Cloud
+    // Functions (admin SDK) los leen para avisar a los administradores. Un admin puede leerlos. ──
+    match /pushTokens/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read: if isAdmin();
     }
 
     // ── Ficha de cada usuario que ha iniciado sesión (incl. creados a mano) ──

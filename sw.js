@@ -3,7 +3,7 @@
 // Estática (CSS/JS/imágenes/fuentes de PDF.js/PDFs locales): cache-first.
 // Versión: bump para forzar actualización de los clientes. DEBE coincidir con DC_BUILD en la app.
 
-const CACHE = 'dermacand-v28';
+const CACHE = 'dermacand-v29';
 // El recurso crítico es DermaCand_app.html (app autocontenida). El resto son auxiliares.
 // pdf.min.js + worker se auto-alojan y se precachean para que el visor de PDF funcione sin conexión.
 const APP_SHELL = ['/DermaCand_app.html', '/manifest.json', '/', '/index.html', '/pdf.min.js', '/pdf.worker.min.js'];
@@ -63,20 +63,26 @@ self.addEventListener('fetch', e => {
   const sameOrigin = url.origin === location.origin;
   const isHTML = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
 
-  // 1. HTML / navegación: network-first con fallback a cache.
+  // 1. HTML / navegación: STALE-WHILE-REVALIDATE con fallback a cache.
   if (isHTML) {
     e.respondWith(
-      // cache:'no-store' evita que la caché HTTP del navegador devuelva un HTML viejo:
-      // forzamos siempre la última versión de la red cuando hay conexión.
-      fetch(req, { cache: 'no-store' })
-        .then(resp => {
-          const copy = resp.clone();
-          caches.open(CACHE).then(c => safePut(c, req, copy));
-          return resp;
-        })
-        .catch(() =>
-          caches.match(req, { ignoreSearch: true })
-            .then(r => r || caches.match('/DermaCand_app.html'))
+      // STALE-WHILE-REVALIDATE: servir la copia en caché AL INSTANTE (arranque rápido y
+      // offline) y refrescar en segundo plano para la próxima vez. Las actualizaciones de
+      // versión siguen llegando por el ciclo del SW (install precachea el HTML nuevo y la
+      // app recarga al cambiar de controlador). Antes era network-first: descargaba todo el
+      // HTML ANTES de pintar, y con conexión lenta eso era el retraso al abrir.
+      caches.match(req, { ignoreSearch: true })
+        .then(r => r || caches.match('/DermaCand_app.html'))
+        .then(cached => {
+          const _net = fetch(req, { cache: 'no-store' })
+            .then(resp => {
+              const copy = resp.clone();
+              caches.open(CACHE).then(c => safePut(c, req, copy));
+              return resp;
+            });
+          if (cached) { e.waitUntil(_net.catch(function(){})); return cached; }
+          return _net.catch(() =>
+            caches.match('/DermaCand_app.html')
             .then(r => r || caches.match('/'))
             .then(r => r || new Response(
               `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DermaCand — Sin conexión</title></head>
@@ -90,7 +96,8 @@ self.addEventListener('fetch', e => {
 </div></body></html>`,
               { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
             ))
-        )
+          );
+        })
     );
     return;
   }
