@@ -779,7 +779,7 @@ function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');set
 // para todos) que da formato al texto copiado: {resultado} = el texto calculado; además, si la
 // función de copiado aporta variables con nombre, se pueden usar {nombre}. Sin plantilla, se copia
 // el texto tal cual (sin cambios). Editores/admin pueden editarla en el cuadro que aparece al copiar.
-var _SI_TPL_VIEWS={pasi:1,easi:1,scorad:1,dlqi:1,iga:1,scorten:1,hurley:1,salt:1,uas7:1,mswat:1,bpdai:1,ftu:1,dosispeso:1,bsa:1,crcl:1,ecog:1,regla9:1,tnm:1,calc:1};
+var _SI_TPL_VIEWS={pasi:1,easi:1,scorad:1,dlqi:1,iga:1,scorten:1,hurley:1,salt:1,uas7:1,mswat:1,bpdai:1,ftu:1,dosispeso:1,bsa:1,crcl:1,ecog:1,regla9:1,tnm_tumor:1,calc:1};
 function hpReportTpls(){ try{ return ls.g('reportTpls')||{}; }catch(e){ return {}; } }
 window.hpApplyPlantillas=function(map){ try{ ls.s('reportTpls', map||{}); }catch(e){} };
 function _hpFillTpl(tpl, resultText, vars){
@@ -1537,16 +1537,17 @@ function copyCG(){const d=window._cgData;if(!d){toast('Calcula primero');return}
 const sex=d.s==='M'?'varón':'mujer';
 const pesoTxt=d.pesoLabel==='peso real'?'el peso real':d.pesoLabel==='IBW (caquexia/IMC bajo)'?`el peso ideal (${d.pesoUsado.toFixed(1)} kg) por IMC bajo`:`el peso ajustado (ABW = ${d.pesoUsado.toFixed(1)} kg) por obesidad`;
 const ckdTxt=`${d.ckdepi.toFixed(1)} mL/min/1.73 m² por CKD-EPI 2021 (sin raza)`;
-const txt=`Aclaramiento de creatinina
+const talla=d.h?`, talla ${d.h} cm`:'';
+const imc=d.bmi!==null?` (IMC ${d.bmi.toFixed(1)} kg/m²)`:'';
+copy(`Aclaramiento de creatinina
 ─────────────────────────────────────────────
-Paciente ${sex} de ${d.a} años${d.h?`, talla ${d.h} cm`:''}, peso ${d.w} kg${d.bmi!==null?` (IMC ${d.bmi.toFixed(1)} kg/m²)`:''}, con creatinina sérica de ${d.cr} mg/dL.
+Paciente {sexo} de {edad} años{talla}, peso {peso} kg{imc}, con creatinina sérica de {creatinina} mg/dL.
 
-Aclaramiento de creatinina por Cockcroft-Gault de ${d.cg.toFixed(1)} mL/min usando ${pesoTxt}; equivalente a ${ckdTxt}. La función renal se clasifica como ${d.cat.toLowerCase()}.
+Aclaramiento de creatinina por Cockcroft-Gault de {cg} mL/min usando {pesoUsado}; equivalente a {ckdepi}. La función renal se clasifica como {categoria}.
 
 Este valor orienta el ajuste de dosis de fármacos dermatológicos de eliminación renal (valaciclovir/aciclovir, metotrexato, fluconazol, apremilast, alopurinol). Cockcroft-Gault es la fórmula de referencia para el ajuste según ficha técnica; CKD-EPI 2021 como referencia general de la función renal.
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'crcl', {sexo:sex, edad:d.a, talla:talla, peso:d.w, imc:imc, creatinina:d.cr, cg:d.cg.toFixed(1), pesoUsado:pesoTxt, ckdepi:ckdTxt, categoria:d.cat.toLowerCase(), fecha:new Date().toLocaleDateString('es-ES')});}
 
 VIEWS.bsa=()=>`<div class="card">
 <h2>Superficie corporal (BSA)</h2>
@@ -1585,12 +1586,11 @@ el.innerHTML=`<div class="res-h"><span class="score">${bsaMost.toFixed(2)} m²</
 window._bsaData={h,w,bsaMost};
 }
 function copyBSA(){const d=window._bsaData;if(!d){toast('Calcula primero');return}
-const txt=`Superficie corporal (BSA)
+copy(`Superficie corporal (BSA)
 ─────────────────────────────────────────────
-Con talla de ${d.h} cm y peso de ${d.w} kg, la superficie corporal calculada es de ${d.bsaMost.toFixed(2)} m² (fórmula de Mosteller).
+Con talla de {talla} cm y peso de {peso} kg, la superficie corporal calculada es de {valor} m² (fórmula de Mosteller).
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'bsa', {talla:d.h, peso:d.w, valor:d.bsaMost.toFixed(2), fecha:new Date().toLocaleDateString('es-ES')});}
 
 // ===== CALCULADORAS DERMATOLÓGICAS =====
 
@@ -1642,15 +1642,14 @@ ${regName} · ${FTU_AGE[age].label}<br>
 window._ftuData={age,reg,regName,freq,days,ftu,gApp,gDay,gTot,tubos30};
 }
 function copyFTU(){const d=window._ftuData;if(!d){toast('Calcula primero');return}
-const txt=`Pauta tópica (unidad falange / FTU)
+copy(`Pauta tópica (unidad falange / FTU)
 ─────────────────────────────────────────────
-Zona: ${d.regName} · ${FTU_AGE[d.age].label}.
-Cantidad: ${d.ftu} FTU por aplicación = ${d.gApp.toFixed(1)} g.
-Pauta: ${d.freq} aplicación(es)/día durante ${d.days} días → ${d.gTot.toFixed(0)} g en total (${d.tubos30} tubo[s] de 30 g).
+Zona: {zona} · {edad}.
+Cantidad: {ftu} FTU por aplicación = {gApp} g.
+Pauta: {freq} aplicación(es)/día durante {dias} días → {gTot} g en total ({tubos} tubo[s] de 30 g).
 (1 FTU = 0,5 g; cubre 2 palmas de adulto.)
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'ftu', {zona:d.regName, edad:FTU_AGE[d.age].label, ftu:d.ftu, gApp:d.gApp.toFixed(1), freq:d.freq, dias:d.days, gTot:d.gTot.toFixed(0), tubos:d.tubos30, fecha:new Date().toLocaleDateString('es-ES')});}
 
 // --- Regla de los 9 (extensión / % SCT) ---
 const R9=[['Cabeza y cuello',9,18],['Brazo derecho',9,9],['Brazo izquierdo',9,9],['Tronco anterior',18,18],['Tronco posterior',18,18],['Pierna derecha',18,13.5],['Pierna izquierda',18,13.5],['Genitales / periné',1,1]];
@@ -1691,12 +1690,11 @@ ${palmas?`<div class="res-s" style="margin-top:6px"><small>Incluye ${palmas} pal
 window._r9Data={age,sum,palmas,total,cat};
 }
 function copyR9(){const d=window._r9Data;if(!d||!d.total){toast('Marca alguna zona');return}
-const txt=`Extensión cutánea (Regla de los 9 — ${d.age==='ni'?'niño/lactante':'adulto'})
+copy(`Extensión cutánea (Regla de los 9 — {grupo})
 ─────────────────────────────────────────────
-Superficie corporal afectada estimada: ${d.total.toFixed(1)} %${d.cat?` (${d.cat.toLowerCase()})`:''}.
+Superficie corporal afectada estimada: {valor} %{categoria}.
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'regla9', {grupo:(d.age==='ni'?'niño/lactante':'adulto'), valor:d.total.toFixed(1), categoria:(d.cat?` (${d.cat.toLowerCase()})`:''), fecha:new Date().toLocaleDateString('es-ES')});}
 
 // --- Dosificación por peso ---
 VIEWS.dosispeso=()=>`<div class="card">
@@ -1752,13 +1750,12 @@ window._dpData={w,mgkg,max,tomas,bruto,dia,porToma,capped,acum};
 function copyDP(){const d=window._dpData;if(!d){toast('Calcula primero');return}
 let acumTxt='';
 if(d.acum&&d.w){const totalMg=d.acum*d.w;const dias=d.bruto?Math.round(totalMg/d.bruto):null;acumTxt=` Objetivo acumulado ${d.acum} mg/kg = ${totalMg.toFixed(0)} mg totales${dias?` (≈ ${dias} días)`:''}.`;}
-const txt=`Dosificación por peso
+copy(`Dosificación por peso
 ─────────────────────────────────────────────
-Peso ${d.w} kg × ${d.mgkg} mg/kg = ${d.bruto.toFixed(1)} mg/día${d.capped?` (limitado al tope de ${d.max} mg/día)`:''}.
-Pauta: ${d.dia.toFixed(1)} mg/día repartidos en ${d.tomas} toma(s) = ${d.porToma.toFixed(1)} mg por toma.${acumTxt}
+Peso {peso} kg × {mgkg} mg/kg = {bruto} mg/día{tope}.
+Pauta: {dia} mg/día repartidos en {tomas} toma(s) = {porToma} mg por toma.{acum}
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'dosispeso', {peso:d.w, mgkg:d.mgkg, bruto:d.bruto.toFixed(1), tope:(d.capped?` (limitado al tope de ${d.max} mg/día)`:''), dia:d.dia.toFixed(1), tomas:d.tomas, porToma:d.porToma.toFixed(1), acum:acumTxt, fecha:new Date().toLocaleDateString('es-ES')});}
 
 // --- Fototipo de Fitzpatrick ---
 const FOTO=[
@@ -1874,13 +1871,13 @@ el.innerHTML=`<div class="res-h"><span class="score">${total.toFixed(1)}</span><
 window._pasiData={total,cat,parts};
 }
 function copyPASI(){const d=window._pasiData;if(!d){toast('Calcula primero');return}
-const txt=`PASI (psoriasis)
+const detalle=d.parts.map(p=>`· ${p.name}: eritema ${p.e}, induración ${p.i}, descamación ${p.d}, área ${p.a} → ${p.sub.toFixed(1)}`).join('\n');
+copy(`PASI (psoriasis)
 ─────────────────────────────────────────────
-PASI total: ${d.total.toFixed(1)} / 72 (${d.cat}).
-${d.parts.map(p=>`· ${p.name}: eritema ${p.e}, induración ${p.i}, descamación ${p.d}, área ${p.a} → ${p.sub.toFixed(1)}`).join('\n')}
+PASI total: {valor} / 72 ({categoria}).
+{detalle}
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'pasi', {valor:d.total.toFixed(1), categoria:d.cat, detalle:detalle, fecha:new Date().toLocaleDateString('es-ES')});}
 
 // --- EASI (dermatitis atópica) ---
 const EASI_REG=[['hn','Cabeza y cuello',0.1,0.2],['u','Extremidades superiores',0.2,0.2],['t','Tronco',0.3,0.3],['l','Extremidades inferiores',0.4,0.3]];
@@ -1918,13 +1915,13 @@ el.innerHTML=`<div class="res-h"><span class="score">${total.toFixed(1)}</span><
 window._easiData={total,cat,parts,child};
 }
 function copyEASI(){const d=window._easiData;if(!d){toast('Calcula primero');return}
-const txt=`EASI (dermatitis atópica)
+const detalle=d.parts.map(p=>`· ${p.name}: eritema ${p.e}, edema/pápulas ${p.p}, excoriación ${p.x}, liquenificación ${p.li}, área ${p.a} → ${p.sub.toFixed(1)}`).join('\n');
+copy(`EASI (dermatitis atópica)
 ─────────────────────────────────────────────
-EASI total: ${d.total.toFixed(1)} / 72 (${d.cat}).${d.child?' Pesos pediátricos (0–7 años).':''}
-${d.parts.map(p=>`· ${p.name}: eritema ${p.e}, edema/pápulas ${p.p}, excoriación ${p.x}, liquenificación ${p.li}, área ${p.a} → ${p.sub.toFixed(1)}`).join('\n')}
+EASI total: {valor} / 72 ({categoria}).{pediatrico}
+{detalle}
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'easi', {valor:d.total.toFixed(1), categoria:d.cat, pediatrico:(d.child?' Pesos pediátricos (0–7 años).':''), detalle:detalle, fecha:new Date().toLocaleDateString('es-ES')});}
 
 // --- SCORAD (dermatitis atópica) ---
 const SCORAD_B=[['er','Eritema'],['ed','Edema / pápulas'],['ex','Exudación / costras'],['exc','Excoriación'],['liq','Liquenificación'],['seq','Sequedad (piel sana)']];
@@ -1963,13 +1960,12 @@ A (extensión) ${A}% → ${(A/5).toFixed(1)} · B (intensidad) ${B}/18 → ${(7*
 window._scoradData={A,B,C,pr,sl,score,oscorad,cat};
 }
 function copySCORAD(){const d=window._scoradData;if(!d){toast('Calcula primero');return}
-const txt=`SCORAD (dermatitis atópica)
+copy(`SCORAD (dermatitis atópica)
 ─────────────────────────────────────────────
-SCORAD: ${d.score.toFixed(1)} / 103 (${d.cat}). oSCORAD: ${d.oscorad.toFixed(1)}.
-A (extensión): ${d.A}% · B (intensidad): ${d.B}/18 · C (prurito ${d.pr} + sueño ${d.sl}): ${d.C}/20.
+SCORAD: {valor} / 103 ({categoria}). oSCORAD: {oscorad}.
+A (extensión): {A}% · B (intensidad): {B}/18 · C (prurito {pr} + sueño {sl}): {C}/20.
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'scorad', {valor:d.score.toFixed(1), categoria:d.cat, oscorad:d.oscorad.toFixed(1), A:d.A, B:d.B, pr:d.pr, sl:d.sl, C:d.C, fecha:new Date().toLocaleDateString('es-ES')});}
 
 // --- DLQI (calidad de vida) ---
 const DLQI_Q=['Picor, dolor o escozor','Vergüenza o azoramiento por la piel','Interferir en compras, casa o jardín','Influir en la ropa que se pone','Afectar actividades sociales o de ocio','Dificultar la práctica de deporte','Impedir trabajar o estudiar','Problemas con pareja, amigos o familia','Dificultades sexuales','Tratamiento (tiempo y molestias en casa)'];
@@ -1997,12 +1993,11 @@ el.innerHTML=`<div class="res-h"><span class="score">${total}</span><span>DLQI �
 window._dlqiData={total,cat};
 }
 function copyDLQI(){const d=window._dlqiData;if(!d){toast('Calcula primero');return}
-const txt=`DLQI (calidad de vida)
+copy(`DLQI (calidad de vida)
 ─────────────────────────────────────────────
-DLQI: ${d.total} / 30 — ${d.cat}.
+DLQI: {valor} / 30 — {categoria}.
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'dlqi', {valor:d.total, categoria:d.cat, fecha:new Date().toLocaleDateString('es-ES')});}
 
 // --- IGA (evaluación global) ---
 const IGA_SCALE=[[0,'Aclarado','Sin signos de la enfermedad (puede persistir hiperpigmentación residual)'],[1,'Casi aclarado','Signos mínimos, apenas perceptibles'],[2,'Leve','Signos leves'],[3,'Moderado','Signos moderados'],[4,'Grave','Signos intensos o extensos']];
@@ -2027,12 +2022,11 @@ el.innerHTML=`<div class="res-h"><span class="score">${v}</span><span>IGA · ${s
 window._igaData={v,label:s[1],desc:s[2]};
 }
 function copyIGA(){const d=window._igaData;if(!d){toast('Selecciona un grado');return}
-const txt=`IGA (evaluación global)
+copy(`IGA (evaluación global)
 ─────────────────────────────────────────────
-IGA ${d.v}/4 — ${d.label}. ${d.desc}.
+IGA {valor}/4 — {categoria}. {desc}.
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'iga', {valor:d.v, categoria:d.label, desc:d.desc, fecha:new Date().toLocaleDateString('es-ES')});}
 
 // ===== ESCALAS Y SCORES DERMATOLÓGICOS · LOTE 3 =====
 
@@ -2071,12 +2065,11 @@ el.innerHTML=`<div class="res-h"><span class="score">${n}</span><span>SCORTEN ·
 window._sctData={n,mort};
 }
 function copySCORTEN(){const d=window._sctData;if(!d){toast('Marca los criterios');return}
-const txt=`SCORTEN (NET / SJS)
+copy(`SCORTEN (NET / SJS)
 ─────────────────────────────────────────────
-SCORTEN: ${d.n}/7 — mortalidad estimada ${d.mort} %.
+SCORTEN: {valor}/7 — mortalidad estimada {mortalidad} %.
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'scorten', {valor:d.n, mortalidad:d.mort, fecha:new Date().toLocaleDateString('es-ES')});}
 
 // --- Hurley (hidradenitis supurativa) ---
 const HURLEY=[
@@ -2104,12 +2097,11 @@ el.innerHTML=`<div class="res-h"><span class="score">${roman}</span><span>Hurley
 window._hurData={roman,desc:h[2]};
 }
 function copyHurley(){const d=window._hurData;if(!d){toast('Selecciona un estadio');return}
-const txt=`Hurley (hidradenitis supurativa)
+copy(`Hurley (hidradenitis supurativa)
 ─────────────────────────────────────────────
-Estadio de Hurley ${d.roman}. ${d.desc}
+Estadio de Hurley {valor}. {desc}
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'hurley', {valor:d.roman, desc:d.desc, fecha:new Date().toLocaleDateString('es-ES')});}
 
 // --- SALT (alopecia areata) ---
 const SALT_REG=[['top','Vértex / parte superior',0.40],['post','Posterior / occipucio',0.24],['der','Lateral derecho',0.18],['izq','Lateral izquierdo',0.18]];
@@ -2139,12 +2131,11 @@ el.innerHTML=`<div class="res-h"><span class="score">${salt}</span><span>SALT ·
 window._saltData={salt,s};
 }
 function copySALT(){const d=window._saltData;if(!d){toast('Calcula primero');return}
-const txt=`SALT (alopecia areata)
+copy(`SALT (alopecia areata)
 ─────────────────────────────────────────────
-SALT: ${d.salt}% de pérdida del cuero cabelludo — categoría ${d.s}.
+SALT: {valor}% de pérdida del cuero cabelludo — categoría {categoria}.
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'salt', {valor:d.salt, categoria:d.s, fecha:new Date().toLocaleDateString('es-ES')});}
 
 // --- UAS7 (urticaria crónica espontánea) ---
 const UAS_DAYS=['Día 1','Día 2','Día 3','Día 4','Día 5','Día 6','Día 7'];
@@ -2174,12 +2165,11 @@ el.innerHTML=`<div class="res-h"><span class="score">${total}</span><span>UAS7 �
 window._uas7Data={total,cat};
 }
 function copyUAS7(){const d=window._uas7Data;if(!d){toast('Calcula primero');return}
-const txt=`UAS7 (urticaria crónica)
+copy(`UAS7 (urticaria crónica)
 ─────────────────────────────────────────────
-UAS7: ${d.total}/42 — ${d.cat}.
+UAS7: {valor}/42 — {categoria}.
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'uas7', {valor:d.total, categoria:d.cat, fecha:new Date().toLocaleDateString('es-ES')});}
 
 // --- mSWAT (micosis fungoide / linfoma cutáneo T) ---
 const MSWAT_REG=[['cab','Cabeza',7],['cue','Cuello',2],['tra','Tronco anterior',13],['trp','Tronco posterior',13],['glu','Glúteos',5],['bra','Brazos',8],['ant','Antebrazos',6],['man','Manos',5],['mus','Muslos',19],['pie','Piernas',14],['pies','Pies',7],['ing','Ingle',1]];
@@ -2211,13 +2201,12 @@ el.innerHTML=`<div class="res-h"><span class="score">${score}</span><span>mSWAT 
 window._mswatData={score,pa:rp(pa),pl:rp(pl),tu:rp(tu)};
 }
 function copyMSWAT(){const d=window._mswatData;if(!d){toast('Calcula primero');return}
-const txt=`mSWAT (linfoma cutáneo T)
+copy(`mSWAT (linfoma cutáneo T)
 ─────────────────────────────────────────────
-mSWAT: ${d.score} / 400.
-%SC afecta — parche ${d.pa} · placa ${d.pl} · tumor ${d.tu}.
+mSWAT: {valor} / 400.
+%SC afecta — parche {parche} · placa {placa} · tumor {tumor}.
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'mswat', {valor:d.score, parche:d.pa, placa:d.pl, tumor:d.tu, fecha:new Date().toLocaleDateString('es-ES')});}
 
 // --- BPDAI (penfigoide ampolloso) ---
 const BPDAI_SKIN=['Cabeza','Cuello','Pecho','Abdomen','Espalda','Nalgas / periné','Brazo izquierdo','Brazo derecho','Pierna izquierda','Pierna derecha','Palmas / manos','Plantas / pies'];
@@ -2255,16 +2244,15 @@ el.innerHTML=`<div class="res-h"><span class="score">${total}</span><span>BPDAI 
 window._bpdaiData={be,er,mu,skin,total,cat};
 }
 function copyBPDAI(){const d=window._bpdaiData;if(!d){toast('Calcula primero');return}
-const txt=`BPDAI (penfigoide ampolloso)
+copy(`BPDAI (penfigoide ampolloso)
 ─────────────────────────────────────────────
-BPDAI actividad total: ${d.total}.
-· Piel ampollas/erosiones: ${d.be}/120
-· Piel eritema/urticaria: ${d.er}/120
-· Mucosa: ${d.mu}/120
-Gravedad cutánea: ${d.cat} (${d.skin}).
+BPDAI actividad total: {valor}.
+· Piel ampollas/erosiones: {be}/120
+· Piel eritema/urticaria: {er}/120
+· Mucosa: {mu}/120
+Gravedad cutánea: {categoria} ({skin}).
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'bpdai', {valor:d.total, be:d.be, er:d.er, mu:d.mu, categoria:d.cat, skin:d.skin, fecha:new Date().toLocaleDateString('es-ES')});}
 
 VIEWS.ecog=()=>`<div class="card">
 <h2>ECOG / Performance Status</h2>
@@ -2290,12 +2278,12 @@ el.innerHTML=`<div class="res-h"><span class="score">ECOG ${v}</span><span>${lbl
 function copyECOG(){const r=$('ec_res');if(r.style.display==='none'){toast('Selecciona valor');return}
 const result=r.textContent.replace(/\s+/g,' ').trim();
 const num=(result.match(/\d/)||[''])[0];
-const txt=`Estado funcional – Escala ECOG
+const categoria=result.replace(/ECOG\s*\d\s*-?\s*/,'').trim()||result;
+copy(`Estado funcional – Escala ECOG
 ─────────────────────────────────────────────
-${patientHeader()}Se evalúa el estado funcional del paciente mediante la escala ECOG/PS, obteniendo un valor de ECOG ${num} (${result.replace(/ECOG\s*\d\s*-?\s*/,'').trim()||result}).
+{cabecera}Se evalúa el estado funcional del paciente mediante la escala ECOG/PS, obteniendo un valor de ECOG {valor} ({categoria}).
 
-[Fecha: ${new Date().toLocaleDateString('es-ES')}]`;
-copy(txt);}
+[Fecha: {fecha}]`, 'ecog', {cabecera:patientHeader(), valor:num, categoria:categoria, fecha:new Date().toLocaleDateString('es-ES')});}
 
 // === Estadiaje de tumores cutaneos (AJCC 8.a / BWH / NCCN) ===
 const TNM_TYPES=[['melanoma','Melanoma (AJCC 8.ª)'],['cec','Carcinoma escamoso (BWH)'],['merkel','Carcinoma de Merkel (AJCC 8.ª)'],['cbc','Carcinoma basocelular (riesgo NCCN)']];
@@ -2410,8 +2398,7 @@ window._tnmData={type:t,score:score,cat:cat,detail:detail};
 function tnmGo(){go(tnmType());}
 function copyTNM(){const d=window._tnmData;if(!d){toast('Completa los datos');return;}
 const names={melanoma:'Melanoma (AJCC 8a ed.)',cec:'Carcinoma escamoso cutaneo (BWH)',merkel:'Carcinoma de Merkel (AJCC 8a ed.)',cbc:'Carcinoma basocelular (NCCN)'};
-const txt='Estadiaje - '+names[d.type]+'\n─────────────────────────────────────────────\n'+d.score+' ('+d.cat+').\n'+d.detail+'\n\n[Fecha: '+new Date().toLocaleDateString('es-ES')+']';
-copy(txt);}
+copy('Estadiaje - {tipo}\n─────────────────────────────────────────────\n{valor} ({categoria}).\n{detalle}\n\n[Fecha: {fecha}]', 'tnm_tumor', {tipo:names[d.type], valor:d.score, categoria:d.cat, detalle:d.detail, fecha:new Date().toLocaleDateString('es-ES')});}
 
 // === INDEXEDDB (almacenamiento de PDFs sin límite 5MB) ===
 const idb={
@@ -9702,7 +9689,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 34;
+  var DC_BUILD = 35;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
