@@ -30,6 +30,11 @@ service cloud.firestore {
     function isAdmin() {
       return hasRole() && roleData().role == 'admin';
     }
+    // ¿Es admin o editor (de cualquier sección)? Lo usa el listín telefónico, que no
+    // está ligado a una sección concreta de guías.
+    function isEditor() {
+      return hasRole() && (roleData().role == 'admin' || roleData().role == 'editor');
+    }
     // ¿Puede el usuario actual editar guías de la sección indicada?
     function canEdit(section) {
       return isAdmin()
@@ -120,11 +125,12 @@ service cloud.firestore {
       allow write: if request.auth != null && request.auth.uid == 'IXktZrlu5KSWMSyt6MO1Kt1fRZf1';
     }
 
-    // ── Listín telefónico: contactos personalizados añadidos desde la app ──
-    // Los lee cualquier usuario autorizado; solo el administrador los crea/edita/borra.
+    // ── Listín telefónico: contactos personalizados y ediciones de los oficiales (overrides) ──
+    // Los lee cualquier usuario autorizado; los crea/edita/borra cualquier editor o administrador
+    // (el listín no está ligado a una sección concreta de guías).
     match /directorio/{id} {
       allow read:  if isApproved();
-      allow write: if isAdmin();
+      allow write: if isEditor();
     }
 
     // ── Créditos de colaboradores (editores) por tema ──

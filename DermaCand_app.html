@@ -1159,6 +1159,8 @@ let _hpPageSec=null;
 function _hpPageSecMap(){ if(_hpPageSec) return _hpPageSec; const m={}; try{ MENU.forEach(function(sec){ const gi=sec.items.find(function(it){return it.id&&it.id.indexOf('g_')===0;}); const sid=gi?gi.id.slice(2):null; sec.items.forEach(function(it){ if(it.id) m[it.id]=sid; }); }); }catch(e){} _hpPageSec=m; return m; }
 function hpPageSection(id){ return _hpPageSecMap()[id]||null; }
 function hpCanEditPage(id){ if(!hpPageEditable(id)) return false; const sec=hpPageSection(id); if(sec) return !!(window.HemoCloud&&window.HemoCloud.canEdit&&window.HemoCloud.canEdit(sec)); return !!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin()); }
+// Listín telefónico: editable por administradores y por cualquier editor (de cualquier sección).
+function hpCanEditDir(){ return !!(window.HemoCloud && window.HemoCloud.isEditor && window.HemoCloud.isEditor()); }
 function hpPages(){ try{ return ls.g('pageOv')||{}; }catch(e){ return {}; } }
 window.hpApplyPages=function(map){ try{ ls.s('pageOv', map||{}); }catch(e){} };
 function hpPageWrap(id, base){
@@ -2517,18 +2519,17 @@ return [];
 const DEFAULT_COLLABORATORS={};
 function getCollaborators(id){const all=getAllCollaborators();return all[id]||[]}
 function getAllCollaborators(){
-// DEFAULT_COLLABORATORS es la fuente autoritativa (se actualiza con la app); se conservan
-// secciones extra que pudiera traer la sincronización y no estén en el código.
-const stored=ls.g('collaborators')||{};
-const base=Object.assign({},stored,DEFAULT_COLLABORATORS);
-// Los EDITORES asignados (sincronizados desde 'colaboradores') SUSTITUYEN a los colaboradores
-// fijos en SU tema, para que el Aviso Legal refleje quién mantiene cada sección.
+// Única fuente: los EDITORES validados que la administración ha acreditado (cada uno con su
+// nombre de crédito y sus secciones). Ya no se mezcla ningún equipo fijo ni lista heredada,
+// de modo que el Aviso Legal y los créditos por sección reflejan solo a los editores reales.
 let ed=null; try{ ed=ls.g('editorCollabs'); }catch(e){}
-if(ed){ Object.keys(ed).forEach(function(sec){ if(ed[sec]&&ed[sec].length) base[sec]=ed[sec]; }); }
-return base;
+return ed||{};
 }
 // Cache local del crédito de editores por tema (la rellena la sincronización de 'colaboradores').
 window.hpStoreEditorCollabs=function(map){ try{ ls.s('editorCollabs', map||{}); }catch(e){} };
+// Cache local de la lista plana de colaboradores con su perfil (admin/editor) para el Aviso Legal.
+window.hpStoreCollabPeople=function(list){ try{ ls.s('collabPeople', Array.isArray(list)?list:[]); }catch(e){} };
+function hpCollabPeople(){ try{ return ls.g('collabPeople')||[]; }catch(e){ return []; } }
 function renderCollaboratorsBlock(id){
 const list=getCollaborators(id);
 if(!list.length)return '';
@@ -7984,8 +7985,8 @@ function chatRefsHTML(results){
 const CHAT_INTROS=['Claro, esto es lo que encontré 👇','Por supuesto, aquí lo tienes:','Encantado, mira lo que encontré sobre esto:','Genial, esto es lo que hay en la app:'];
 function chatLead(){if(!_chatGreeted){_chatGreeted=true;return '¡Hola! 👋 Soy <strong>Kera</strong>, tu asistente de DermaCand. Con gusto te ayudo — esto es lo que encontré:';}return CHAT_INTROS[Math.floor(Math.random()*CHAT_INTROS.length)];}
 // Lead NEUTRO para preguntas de actitud terapéutica / caso / diagnóstico: Eri nunca emite un juicio ("claro/por supuesto" da por hecho un "sí"); solo remite a la fuente.
-const CHAT_INTROS_NEUTRAL=['No me corresponde decidir el manejo, pero te remito a lo que aplica 👇','No emito juicios clínicos; esto es lo que dice la fuente:','La decisión es del clínico según el caso — aquí tienes la referencia:','Eso no lo decido yo por el paciente; te abro lo que aplica 👇'];
-function chatLeadNeutral(){if(!_chatGreeted){_chatGreeted=true;return '¡Hola! 👋 Soy <strong>Kera</strong>. No me corresponde decidir el manejo de un paciente, pero te remito a la fuente que aplica:';}return CHAT_INTROS_NEUTRAL[Math.floor(Math.random()*CHAT_INTROS_NEUTRAL.length)];}
+const CHAT_INTROS_NEUTRAL=['Lo siento, no puedo ayudarte con la decisión clínica de un caso, pero aquí tienes una referencia que puede servirte de ayuda 👇','No me corresponde decidir el manejo del paciente, pero te dejo la referencia que puede orientarte:','Esa decisión es del clínico según cada caso — aun así, aquí tienes una referencia que puede ayudarte 👇','Disculpa, eso no puedo decidirlo yo, pero con gusto te abro la fuente que puede servirte de ayuda:'];
+function chatLeadNeutral(){if(!_chatGreeted){_chatGreeted=true;return '¡Hola! 👋 Soy <strong>Kera</strong>. Lo siento, no puedo ayudarte con la decisión clínica de un caso concreto, pero con gusto te dejo la referencia que puede servirte de ayuda:';}return CHAT_INTROS_NEUTRAL[Math.floor(Math.random()*CHAT_INTROS_NEUTRAL.length)];}
 function chatAnswerHTML(query,results,neutral){
   if(!results.length){const hi=_chatGreeted?'':'¡Hola! 👋 Soy <strong>Kera</strong>. ';_chatGreeted=true;return `<div style="${CHAT_BOT}">${hi}No he encontrado nada sobre <em>"${chatEsc(query)}"</em> en el contenido de la app 🤔. Prueba con el nombre del fármaco, el esquema, una sección o «teléfono de …».</div>`;}
   let h=`<div style="${CHAT_BOT}"><div style="margin-bottom:9px;font-size:13.5px;color:var(--txt)">${neutral?chatLeadNeutral():chatLead()}</div><div style="display:flex;flex-direction:column;gap:9px">`;
@@ -8249,7 +8250,7 @@ function eriInit(){const w=$('eriWrap');if(!w)return;if(eriIsHidden())w.hidden=t
 
 
 VIEWS.phone=()=>{
-const _adm=!!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin());
+const _adm=hpCanEditDir();
 return `<div class="card">
 <h2>Listín Telefónico</h2>
 <p class="intro">Directorio de extensiones del HUNSC y red de centros. Agrupado por servicio. Usa el buscador para filtrar por servicio, ubicación o extensión.</p>
@@ -8261,56 +8262,159 @@ ${_adm?'<div class="btns" style="margin-bottom:10px"><button class="btn btn-out 
 };
 VIEWS.phone_post=()=>renderDir();
 
-// ── Listín editable: directorio efectivo = HOSP_DIR de fábrica + contactos custom (cloud 'directorio') ──
+// ── Listín editable: contactos personalizados + ediciones de los oficiales ──
+// Política "todo editable": cualquier entrada (incluidas las oficiales) puede editarse,
+// eliminarse o (si fue editada) restaurarse al original. Las ediciones se guardan como
+// "overrides" en la misma colección que los contactos nuevos, con un id estable derivado
+// del contenido original de la entrada (prefijo og_). __del:true = entrada eliminada.
 function hpDirAdd(){ try{ return ls.g('dirAdd')||{}; }catch(e){ return {}; } }
 window.hpApplyDirectorio=function(map){ try{ ls.s('dirAdd', map||{}); }catch(e){} };
+// Hash determinista (cyrb53) -> id estable e igual en todos los dispositivos.
+function _hpHash(str){var h1=0xdeadbeef,h2=0x41c6ce57;for(var i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);return (4294967296*(2097151&h2)+(h1>>>0)).toString(36);}
+// Aplana HOSP_DIR una sola vez y asigna a cada entrada oficial su id og_ estable.
+let _HP_DIR_BASE=null;
+function _hpDirBase(){
+  if(_HP_DIR_BASE) return _HP_DIR_BASE;
+  const nrm=function(s){return (s||'').toString().toLowerCase().normalize('NFD').replace(/\s+/g,' ').trim();};
+  const out=[];
+  HOSP_DIR.forEach(function(sec){
+    (sec[1]||[]).forEach(function(e){
+      const id='og_'+_hpHash(nrm(sec[0])+'|'+nrm(e[0])+'|'+(e[2]||'')+'|'+(e[3]||''));
+      out.push({svc:sec[0], d:e[0], l:e[1]||'', t:e[2]||'', s:e[3]||'', id:id});
+    });
+  });
+  _HP_DIR_BASE=out; return out;
+}
 function hpEffectiveDir(){
-  const map=new Map();
-  HOSP_DIR.forEach(function(sec){ map.set(sec[0], (sec[1]||[]).slice()); });
-  const add=hpDirAdd();
-  Object.keys(add).forEach(function(id){ const x=add[id]; if(!x||(!x.nombre&&!x.ext&&!x.tel))return; const svc=(x.servicio||'Otros'); if(!map.has(svc))map.set(svc,[]); map.get(svc).push([x.nombre||'—', x.loc||'', x.tel||'', x.ext||'', id]); });
   const norm=function(s){return (s||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').trim();};
+  const map=new Map();        // servicio canónico -> filas [d,l,t,s,id,flags]
+  const keyToName=new Map();  // clave normalizada exacta -> nombre canónico
+  const baseToName=new Map(); // clave normalizada SIN paréntesis -> nombre oficial (fusiona variantes con/sin paréntesis)
+  const byId={};              // id -> valores efectivos actuales (precarga del editor)
+  const normBase=function(s){return norm((s||'').toString().replace(/\([^)]*\)/g,' '));};
+  HOSP_DIR.forEach(function(sec){ map.set(sec[0], []); keyToName.set(norm(sec[0]), sec[0]); const bk=normBase(sec[0]); if(bk && !baseToName.has(bk)) baseToName.set(bk, sec[0]); });
+  const add=hpDirAdd();
+  // Asigna un servicio escrito a un grupo existente: 1) coincidencia exacta (ignora may/acentos),
+  // 2) coincidencia ignorando paréntesis con un servicio existente, 3) si no, grupo nuevo.
+  const canonSvc=function(raw){ const k=norm(raw); if(!k) return 'Otros'; let n=keyToName.get(k); if(!n){ const bk=normBase(raw); if(bk) n=baseToName.get(bk); } if(!n){ n=(raw||'').trim()||'Otros'; keyToName.set(k,n); const b2=normBase(raw); if(b2 && !baseToName.has(b2)) baseToName.set(b2,n); } if(!map.has(n)) map.set(n,[]); return n; };
+  const push=function(svc,row){ if(!map.has(svc)) map.set(svc,[]); map.get(svc).push(row); };
+  // 1) Entradas oficiales, aplicando override (edición) o tombstone (eliminar)
+  _hpDirBase().forEach(function(b){
+    const ov=add[b.id];
+    if(ov&&ov.__del){
+      byId[b.id]={nombre:b.d,servicio:b.svc,ext:b.s,tel:b.t,loc:b.l};
+      push(b.svc,[b.d,b.l,b.t,b.s,b.id,{og:true,del:true}]);
+    }else if(ov){
+      const svc=canonSvc(ov.servicio||b.svc);
+      byId[b.id]={nombre:ov.nombre||'',servicio:svc,ext:ov.ext||'',tel:ov.tel||'',loc:ov.loc||''};
+      push(svc,[ov.nombre||'—',ov.loc||'',ov.tel||'',ov.ext||'',b.id,{og:true,edited:true}]);
+    }else{
+      byId[b.id]={nombre:b.d,servicio:b.svc,ext:b.s,tel:b.t,loc:b.l};
+      push(b.svc,[b.d,b.l,b.t,b.s,b.id,{og:true}]);
+    }
+  });
+  // 2) Contactos nuevos (los oficiales editados llevan prefijo og_ y ya se procesaron arriba)
+  Object.keys(add).forEach(function(id){
+    if(id.indexOf('og_')===0) return;
+    const x=add[id]; if(!x||x.__del||(!x.nombre&&!x.ext&&!x.tel)) return;
+    const svc=canonSvc(x.servicio||'Otros');
+    byId[id]={nombre:x.nombre||'',servicio:svc,ext:x.ext||'',tel:x.tel||'',loc:x.loc||''};
+    push(svc,[x.nombre||'—', x.loc||'', x.tel||'', x.ext||'', id, {}]);
+  });
+  window._hpDirById=byId;
   const out=Array.from(map.entries());
   out.forEach(function(sec){ sec[1].sort(function(a,b){return norm(a[0]).localeCompare(norm(b[0]),'es');}); });
   out.sort(function(a,b){return norm(a[0]).localeCompare(norm(b[0]),'es');});
   return out;
 }
+// Nombres de servicio ya existentes (oficiales + añadidos), para agrupar sin duplicar.
+function _hpDirSvcNames(){ try{ return hpEffectiveDir().map(function(g){return g[0];}); }catch(e){ return []; } }
+// Si el servicio escrito coincide (ignorando may/acentos, y si no ignorando paréntesis) con uno
+// existente, devuelve el nombre canónico de ese servicio; si no, el texto tal cual (recortado).
+function _hpDirCanonSvc(raw){
+  const norm=function(s){return (s||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').trim();};
+  const k=norm(raw); if(!k) return '';
+  const nb=function(s){return norm((s||'').toString().replace(/\([^)]*\)/g,' '));};
+  const kb=nb(raw);
+  const names=_hpDirSvcNames();
+  let hit=names.filter(function(n){return norm(n)===k;})[0];
+  if(!hit && kb) hit=names.filter(function(n){return nb(n)===kb;})[0];
+  return hit||(raw||'').trim();
+}
 async function hpAddContacto(){
-  const servicio=prompt('Servicio (p. ej. Dermatología):'); if(servicio==null)return;
+  const servicio=prompt('Servicio (p. ej. Dermatología).\nSi ya existe, el contacto se añade a ese servicio (no se duplica):'); if(servicio==null)return;
   const nombre=prompt('Nombre / descripción del contacto:'); if(nombre==null)return;
   const ext=(prompt('Extensión interna (opcional):')||'').trim();
   const tel=(prompt('Teléfono externo (opcional):')||'').trim();
   const loc=(prompt('Ubicación / planta (opcional):')||'').trim();
   if(!servicio.trim()&&!nombre.trim()&&!ext&&!tel){ return; }
-  const id='ct_'+Date.now(); const data={nombre:nombre.trim(),servicio:servicio.trim()||'Otros',ext:ext,tel:tel,loc:loc};
+  const id='ct_'+Date.now(); const data={nombre:nombre.trim(),servicio:_hpDirCanonSvc(servicio)||'Otros',ext:ext,tel:tel,loc:loc};
   const m=hpDirAdd(); m[id]=data; try{ls.s('dirAdd',m);}catch(e){}
   renderDir();
   if(window.hpSaveContacto){ try{ await window.hpSaveContacto(id,data); toast('✓ Contacto añadido · para todos'); }catch(e){ toast('Guardado solo en este equipo (sin permiso o sin conexión)'); } }
   else toast('✓ Añadido');
 }
+// Editar cualquier entrada del listín (oficial o añadida). Precarga con los valores
+// efectivos actuales; al guardar crea/actualiza el override (oficial) o el contacto (nuevo).
+async function hpEditContacto(id){
+  const cur=(window._hpDirById&&window._hpDirById[id])||hpDirAdd()[id]||{};
+  const servicio=prompt('Servicio:', cur.servicio||''); if(servicio==null)return;
+  const nombre=prompt('Nombre / descripción del contacto:', cur.nombre||''); if(nombre==null)return;
+  const ext=(prompt('Extensión interna (opcional):', cur.ext||'')||'').trim();
+  const tel=(prompt('Teléfono externo (opcional):', cur.tel||'')||'').trim();
+  const loc=(prompt('Ubicación / planta (opcional):', cur.loc||'')||'').trim();
+  if(!nombre.trim()&&!ext&&!tel){ toast('Sin datos: no se guardó'); return; }
+  const data={nombre:nombre.trim(),servicio:_hpDirCanonSvc(servicio)||'Otros',ext:ext,tel:tel,loc:loc};
+  const m=hpDirAdd(); m[id]=data; try{ls.s('dirAdd',m);}catch(e){}
+  renderDir();
+  if(window.hpSaveContacto){ try{ await window.hpSaveContacto(id,data); toast('✓ Contacto actualizado · para todos'); }catch(e){ toast('Guardado solo en este equipo (sin permiso o sin conexión)'); } }
+  else toast('✓ Actualizado');
+}
 async function hpDelContacto(id){
-  if(!confirm('¿Eliminar este contacto para todos?'))return;
+  if(!confirm('¿Eliminar esta entrada del listín para todos? Esta acción no se puede deshacer.'))return;
+  const esOficial=String(id).indexOf('og_')===0;
+  const m=hpDirAdd();
+  if(esOficial){
+    // Las entradas oficiales viven fijas en el código y no pueden borrarse del archivo desde la
+    // app: se marcan con un tombstone que las suprime del listín para TODOS (borrado efectivo).
+    const data={__del:true}; m[id]=data; try{ls.s('dirAdd',m);}catch(e){}
+    renderDir();
+    if(window.hpSaveContacto){ try{ await window.hpSaveContacto(id,data); toast('✓ Eliminada · para todos'); }catch(e){ toast('Eliminada solo en este equipo (sin permiso o sin conexión)'); } }
+    else toast('✓ Eliminada');
+    return;
+  }
+  delete m[id]; try{ls.s('dirAdd',m);}catch(e){}
+  renderDir();
+  if(window.hpDelContactoCloud){ try{ await window.hpDelContactoCloud(id); toast('✓ Eliminado · para todos'); }catch(e){ toast('Eliminado solo en este equipo'); } }
+}
+// Deshacer una edición de una entrada oficial: borra el override y vuelve al valor original.
+async function hpRestaurarContacto(id){
+  if(!confirm('¿Restaurar el contenido original de esta entrada? Se perderá la edición para todos.'))return;
   const m=hpDirAdd(); delete m[id]; try{ls.s('dirAdd',m);}catch(e){}
   renderDir();
-  if(window.hpDelContactoCloud){ try{ await window.hpDelContactoCloud(id); toast('✓ Eliminado'); }catch(e){ toast('Eliminado solo en este equipo'); } }
+  if(window.hpDelContactoCloud){ try{ await window.hpDelContactoCloud(id); toast('✓ Original restaurado'); }catch(e){ toast('Restaurado solo en este equipo'); } }
 }
 function renderDir(){
 const q=($('ph_q')?.value||'').toLowerCase().trim();
 const _strip=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'');const qn=_strip(q);
 const el=$('ph_list'); if(!el) return;
-let groups=0, rows=0, html='';
-const _EDIR=hpEffectiveDir(); const _esAdm=!!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin());
-for(const [svc,items] of _EDIR){
+let groups=0, rows=0, totalRows=0, html='';
+const _EDIR=hpEffectiveDir(); const _esAdm=hpCanEditDir();
+for(const [svc,items0] of _EDIR){
+  // Las entradas eliminadas (tombstone) desaparecen para TODOS, también para los editores
+  const items = items0.filter(it=>!(it[5]&&it[5].del));
+  totalRows += items.length;
   let matched=items;
   const svcMatch = !q || _strip(svc.toLowerCase()).includes(qn);
   if(q && !svcMatch){
     matched=items.filter(it=>_strip((it[0]+' '+it[1]+' '+it[2]+' '+it[3]).toLowerCase()).includes(qn));
-    if(!matched.length) continue;
   }
+  if(!matched.length) continue;
   groups++; rows+=matched.length;
   const open = q ? ' open' : '';
   let inner='<div class="dir-rows">';
-  for(const [d,l,t,s,cid] of matched){
+  for(const [d,l,t,s,cid,fl] of matched){
+    const flags=fl||{};
     const show = s || t || '';
     let right='';
     if(t){
@@ -8319,7 +8423,11 @@ for(const [svc,items] of _EDIR){
     } else if(s){
       right=`<button class="dir-ext-btn" onclick="event.stopPropagation();copy('${s}')" title="Copiar ${s}">${s}</button><span class="dir-int-badge">interna</span>`;
     }
-    if(cid && _esAdm){ right+=`<button class="dir-ext-btn" style="color:#b00020" onclick="event.stopPropagation();hpDelContacto('${cid}')" title="Eliminar contacto">×</button>`; }
+    if(cid && _esAdm){
+      right+='<button class="dir-ext-btn" onclick="event.stopPropagation();hpEditContacto(\''+cid+'\')" title="Editar">✏️</button>';
+      if(flags.edited) right+='<button class="dir-ext-btn" onclick="event.stopPropagation();hpRestaurarContacto(\''+cid+'\')" title="Deshacer la edición (volver al original)">↩</button>';
+      right+='<button class="dir-ext-btn" style="color:#b00020" onclick="event.stopPropagation();hpDelContacto(\''+cid+'\')" title="Eliminar">×</button>';
+    }
     inner+=`<div class="dir-row">
       <div class="dir-main"><div class="dir-name">${d==='—'?'·':hlMark(d.replace(/\n/g,' '),q)}</div>${l?`<div class="dir-sub">${hlMark(l,q)}</div>`:''}</div>
       <div class="dir-right">${right}</div>
@@ -8334,7 +8442,7 @@ for(const [svc,items] of _EDIR){
   </div>`;
 }
 if(!groups){ el.innerHTML='<div style="padding:16px;text-align:center;color:var(--mut);font-size:13px">Sin resultados.</div>'; $('ph_meta').textContent=''; return; }
-$('ph_meta').textContent = q ? `${rows} extensiones en ${groups} servicios` : `${HOSP_DIR.length} servicios · ${HOSP_DIR.reduce((a,g)=>a+g[1].length,0)} extensiones`;
+$('ph_meta').textContent = q ? `${rows} extensiones en ${groups} servicios` : `${groups} servicios · ${totalRows} extensiones`;
 el.innerHTML=html;
 }
 
@@ -8664,15 +8772,19 @@ function hpResult(orig,idx){return hpClean(hpLine(orig,idx)).replace(/^[:=\-\s]+
 const ORINA=[{a:'pH',p:/\bph\b/},{a:'glucosa',p:/glucosa/},{a:'proteinas',p:/prote[ií]nas/},{a:'densidad',p:/densidad/},{a:'hematies',p:/hematies/},{a:'leucocitos',p:/leucocitos/},{a:'nitritos',p:/nitritos/}];
 function parseCoombs(orig,folded,rs,re){const region=folded.slice(rs,re);const comps=[{a:'IgG',p:/tadm[\s\-]*igg/},{a:'IgM',p:/tadm[\s\-]*igm/},{a:'C3',p:/tadm[\s\-]*c3/},{a:'C4',p:/tadm[\s\-]*c4/}];const parts=[];comps.forEach(c=>{const mm=region.match(c.p);if(!mm)return;const r=hpResult(orig,rs+mm.index+mm[0].length).toLowerCase();if(r)parts.push(c.a+' '+r);});let iga='';const im=region.match(/\biga\b/);if(im){const r2=hpResult(orig,rs+im.index+im[0].length).toLowerCase();if(r2)iga='IgA '+r2;}if(!parts.length&&!iga){const cm=region.match(/coombs directo|antiglobulina directa/);if(cm){const rc=hpResult(orig,rs+cm.index+cm[0].length).toLowerCase();if(rc)return rc;}return '';}let out=parts.join(', ');if(iga)out+='. '+iga;return out;}
 function parseOrina(orig,folded,rs,re){const parts=[];ORINA.forEach(o=>{const region=folded.slice(rs,re);const mm=region.match(o.p);if(!mm)return;const s=hpLine(orig,rs+mm.index+mm[0].length).replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g,' ').replace(/\b\d{1,2}:\d{2}(?::\d{2})?\b/g,' ').replace(/[↑↓▲▼]/g,' ').replace(/\([^)]*\)/g,p=>/[a-z]/i.test(p)?' ':p).replace(/\s+/g,' ').trim().replace(/^[:=\-\s]+/,'').trim();if(!s)return;const vm=s.match(/^([<>]?\d+(?:[.,]\d+)?)\s*([A-Za-zµ%][A-Za-zµ%\/]*)?/);const val=vm?(vm[1]+(vm[2]?' '+vm[2]:'')):s.split(/\s/)[0].toLowerCase();parts.push(o.a+' '+val);});return parts;}
-function transcribe(input){const orig=input;let work=foldText(orig);const found={};const _valued={};
+function transcribe(input){const orig=input;let work=foldText(orig);const _work0=work;const found={};const _valued={};
+const SECT='hemograma|coagulacion|inmunohematologia|test de coombs directo|antiglobulina directa|autoinmunidad|sistematico de orina|sedimento de orina|gasometria[\\t ]+(?:arterial|venosa|capilar|mixta)|perfil lipidico|proteinograma|marcadores tumorales|bioquimica|serologia|hepatitis|estudio vih|microbiologia';
+const nextHdr=(start,src)=>{let e=work.length,m;const g=new RegExp(src,'g');while((m=g.exec(work))!==null){if(m.index>start&&m.index<e)e=m.index;}return e;};
 // === Gasometría (arterial/venosa): bloque propio, se borra del texto para no contaminar bioquímica ===
 let gType='',gIdx=-1;const gmH=work.match(/gasometria[\t ]+(arterial|venosa|capilar|mixta)/);if(gmH){gType=gmH[1];gIdx=gmH.index;}else{const gmL=work.match(/(?:^|[\n\r])[\t ]*gasometria\b/);if(gmL)gIdx=gmL.index+gmL[0].indexOf('gasometria');}
-if(gIdx>=0){const region=work.slice(gIdx);const gitems=[];for(const g of GASO){const mm=region.match(new RegExp(g.pat));if(!mm)continue;const rv=gasReadLine(orig,gIdx+mm.index+mm[0].length);if(!rv)continue;const val=(Math.round(rv.f*1000)/1000).toString().replace('.',',');gitems.push(g.a+' '+val+(g.u?' '+g.u:''));}if(gitems.length){found.gasometria=gitems;found.__gasoLabel=(gType?('Gasometría '+gType):'Gasometría');}work=work.slice(0,gIdx)+work.slice(gIdx).replace(/[^\n\r]/g,' ');}
+if(gIdx>=0){const gEnd=nextHdr(gIdx,SECT);const region=work.slice(gIdx,gEnd);const gitems=[];for(const g of GASO){const mm=region.match(new RegExp(g.pat));if(!mm)continue;const rv=gasReadLine(orig,gIdx+mm.index+mm[0].length);if(!rv)continue;const val=(Math.round(rv.f*1000)/1000).toString().replace('.',',');gitems.push(g.a+' '+val+(g.u?' '+g.u:''));}if(gitems.length){found.gasometria=gitems;found.__gasoLabel=(gType?('Gasometría '+gType):'Gasometría');}work=work.slice(0,gIdx)+work.slice(gIdx,gEnd).replace(/[^\n\r]/g,' ')+work.slice(gEnd);}
 // === Bloques especiales (Coombs directo, sistemático de orina): se extraen aparte y se borran del texto ===
-const nextHdr=(start,src)=>{let e=work.length,m;const g=new RegExp(src,'g');while((m=g.exec(work))!==null){if(m.index>start&&m.index<e)e=m.index;}return e;};
 const cmH=work.match(/inmunohematologia|test de coombs directo|antiglobulina directa/);if(cmH){const cs=cmH.index,ce=nextHdr(cs,'autoinmunidad|sistematico de orina|gasometria[\\t ]+(?:arterial|venosa|capilar|mixta)');const out=parseCoombs(orig,work,cs,ce);if(out)found.__coombs=out;else found.__coombsPend=1;work=work.slice(0,cs)+work.slice(cs,ce).replace(/[^\n\r]/g,' ')+work.slice(ce);}
 const oH=work.match(/sistematico de orina/);if(oH){const os=oH.index,oeFull=nextHdr(os,'inmunohematologia|test de coombs directo|autoinmunidad|gasometria[\\t ]+(?:arterial|venosa|capilar|mixta)');const sedRel=work.slice(os,oeFull).search(/sedimento de orina/);const oeParam=sedRel>=0?os+sedRel:oeFull;const out=parseOrina(orig,work,os,oeParam);if(out&&out.length)found.__orina=out;work=work.slice(0,os)+work.slice(os,oeFull).replace(/[^\n\r]/g,' ')+work.slice(oeFull);}
-for(const e of DICT){const re=new RegExp('(?:'+e.pats.join('|')+')','g');let match;const cand=[];while((match=re.exec(work))!==null){const ns=match.index,ne=match.index+match[0].length;if(work.slice(ns,ne).trim()==='')continue;if(e.k==='text'||e.k==='cm'||e.k==='grupo'){cand.push({ns,ne});break;}if(e.k==='sero'){cand.push({ns,ne});continue;}if(e.rp){const v=readValAbs(orig,ne);if(v)cand.push({ns,ne,v});continue;}const v=readVal(orig,ne);if(!v)continue;cand.push({ns,ne,v});}if(!cand.length)continue;let pick=null;if(e.k==='text'||e.k==='cm'||e.k==='grupo')pick=cand[0];else if(e.k==='sero')pick=cand.find(c=>seroResult(orig,c.ne))||null;else if(e.rp){pick=cand.find(c=>!c.v.isPct&&c.v.countUnit)||cand.find(c=>!c.v.isPct)||cand[0];}else pick=cand[0];if(!pick)continue;let disp=null,cs=pick.ns,ce=pick.ne;if(e.k==='text'){const t=readTxt(orig,pick.ne,400);if(!t)continue;disp=(e.nolabel?'':e.a+': ')+t;ce=lineEndIdx(orig,pick.ne);}else if(e.k==='sero'){const t=seroResult(orig,pick.ne);if(!t)continue;disp=e.a+': '+t;ce=lineEndIdx(orig,pick.ne);}else if(e.k==='cm'){const segEnd=lineEndIdx(orig,pick.ne);const seg=orig.slice(pick.ne,segEnd);const segF=foldText(seg);const isoM=segF.match(/\big\s*([gamde])\b/);const iso=isoM?('Ig'+isoM[1].toUpperCase()):'';const lcM=segF.match(/(kappa|lambda|κ|λ)/);const lc=lcM?((lcM[1]==='κ')?'kappa':((lcM[1]==='λ')?'lambda':lcM[1])):'';const typ=(iso&&lc)?iso+'-'+lc:(iso||lc||'');const numM=seg.match(/(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?)\s*(mg\/dl|gr\/dl|g\/dl|g\/l|mg\/l)?/i);let val='',unit='';if(numM){val=fmtNum(sp2f(numM[1]));unit=numM[2]?numM[2].toLowerCase().replace('gr/dl','g/dl'):'g/dl';}disp='CM'+(typ?' '+typ:'')+(val?' '+val+(unit?' '+unit:''):'');ce=segEnd;}else if(e.k==='grupo'){const segEnd=lineEndIdx(orig,pick.ne);const seg=orig.slice(pick.ne,segEnd);let segC=foldText(seg).replace(/\babo\b/g,' ').replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g,' ').replace(/\b\d{1,2}:\d{2}(?::\d{2})?\b/g,' ').replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();const gM=segC.match(/\b(ab|a|b|0|o)\b/);const grupo=gM?(gM[1]==='0'?'O':gM[1].toUpperCase()):'';let rh='';const rhM=foldText(orig).match(/\b(?:factor\s+)?rh\b(?:\s*\(d\))?[^\n\r]{0,40}?(positiv|negativ)/);if(rhM)rh=rhM[1]+'o';let gv=grupo;if(rh)gv=(grupo?grupo+' ':'')+'Rh (D) '+rh;if(!gv)continue;disp=gv;ce=segEnd;}else if(e.k==='retic'){const abs=cand.find(c=>c.v&&!c.v.isPct),pc=cand.find(c=>c.v&&c.v.isPct);const _tz=s=>(''+s).replace(/(,\d*?)0+$/,'$1').replace(/,$/,'');let absStr='';if(abs){let vs=abs.v.raw;if(abs.v.countUnit==='/µL'||(!abs.v.countUnit&&abs.v.f>=1000))vs=fmtNum(abs.v.f/1000);absStr=_tz(vs)+' x10E9/L';}const pctStr=pc?_tz(pc.v.raw)+'%':'';if(!absStr&&!pctStr)continue;disp='Reticulocitos '+(absStr&&pctStr?(absStr+' ('+pctStr+')'):(absStr||pctStr));const _an=abs||pc;cs=_an.ns;ce=lineEndIdx(orig,_an.ne);}else{const v=pick.v;let unit=e.u;let valStr=v.raw;if(e.k==='count'){unit='x10E9/L';if(v.countUnit==='/µL'||(!v.countUnit&&v.f>=1000))valStr=fmtNum(v.f/1000);}else if(e.k==='retic'){if(v.isPct)unit='%';else{unit='x10E9/L';if(v.countUnit==='/µL'||(!v.countUnit&&v.f>=1000))valStr=fmtNum(v.f/1000);}}else if(e.k==='pct')unit='%';else if(e.keepUnit){const su=readUnit(v.after);if(su)unit=su;}const space=unit.startsWith('/')?'':' ';disp=(e.a+' '+valStr+(unit?space+unit:'')).replace(/\s+$/,'');ce=v.end;}(found[e.c]=found[e.c]||[]).push(disp);_valued[e.a]=1;const len=Math.max(0,ce-cs);work=work.slice(0,cs)+' '.repeat(len)+work.slice(ce);}{const _wf=foldText(orig);const _pend=[];const _ps={};for(const _e of DICT){if(_valued[_e.a]||_ps[_e.a]||_e.k==='cm'||_e.k==='grupo'||_e.k==='text')continue;var _re2;try{_re2=new RegExp('(?:'+_e.pats.join('|')+')','g');}catch(_x){continue;}var _mm,_isP=false;while((_mm=_re2.exec(_wf))!==null){var _ns=_mm.index,_ne=_ns+_mm[0].length;if(!_wf.slice(_ns,_ne).trim())continue;if(!work.slice(_ns,_ne).trim())continue;var _ls=_ns;while(_ls>0&&_wf[_ls-1]!=='\n'&&_wf[_ls-1]!=='\r')_ls--;var _line=_wf.slice(_ls,lineEndIdx(orig,_ns));var _pre=_wf.slice(_ls,_ns);if(_pre.length>24||!/^[\s├│└─*↑↓▲▼a-z0-9,\.\-]*$/.test(_pre))continue;if(/^[\s├│└─]*\(/.test(_line)||/comentario|interpretaci|categoria|normalidad poblacional|kdigo/.test(_line))continue;if(_e.k==='sero'&&/serologia\s*$/.test(_line))continue;var _hr=_e.k==='sero'?!!seroResult(orig,_ne):!!(_e.rp?readValAbs(orig,_ne):readVal(orig,_ne));if(_hr){_isP=false;break;}_isP=true;}if(_isP){_pend.push(_e.a);_ps[_e.a]=1;}}if(found.__coombsPend&&!found.__coombs){_pend.unshift('Coombs directo');}if(_pend.length)found.__pending=_pend;}let dateGuess='';const dms=orig.match(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g);if(dms&&dms.length){const counts={};let best='',bestN=0;dms.forEach(d=>{const pp=d.split(/[\/\-.]/);const key=pp[0].padStart(2,'0')+'-'+pp[1].padStart(2,'0')+'-'+pp[2].slice(-2);counts[key]=(counts[key]||0)+1;if(counts[key]>bestN){bestN=counts[key];best=key;}});dateGuess=best;}return {found,dateGuess};}
+for(const e of DICT){const re=new RegExp('(?:'+e.pats.join('|')+')','g');let match;const cand=[];while((match=re.exec(work))!==null){const ns=match.index,ne=match.index+match[0].length;if(work.slice(ns,ne).trim()==='')continue;if(e.k==='text'||e.k==='cm'||e.k==='grupo'){cand.push({ns,ne});break;}if(e.k==='sero'){cand.push({ns,ne});continue;}if(e.rp){const v=readValAbs(orig,ne);if(v)cand.push({ns,ne,v});continue;}const v=readVal(orig,ne);if(!v)continue;cand.push({ns,ne,v});}if(!cand.length)continue;let pick=null;if(e.k==='text'||e.k==='cm'||e.k==='grupo')pick=cand[0];else if(e.k==='sero')pick=cand.find(c=>seroResult(orig,c.ne))||null;else if(e.rp){pick=cand.find(c=>!c.v.isPct&&c.v.countUnit)||cand.find(c=>!c.v.isPct)||cand[0];}else pick=cand[0];if(!pick)continue;let disp=null,cs=pick.ns,ce=pick.ne;if(e.k==='text'){const t=readTxt(orig,pick.ne,400);if(!t)continue;disp=(e.nolabel?'':e.a+': ')+t;ce=lineEndIdx(orig,pick.ne);}else if(e.k==='sero'){const t=seroResult(orig,pick.ne);if(!t)continue;disp=e.a+': '+t;ce=lineEndIdx(orig,pick.ne);}else if(e.k==='cm'){const segEnd=lineEndIdx(orig,pick.ne);const seg=orig.slice(pick.ne,segEnd);const segF=foldText(seg);const isoM=segF.match(/\big\s*([gamde])\b/);const iso=isoM?('Ig'+isoM[1].toUpperCase()):'';const lcM=segF.match(/(kappa|lambda|κ|λ)/);const lc=lcM?((lcM[1]==='κ')?'kappa':((lcM[1]==='λ')?'lambda':lcM[1])):'';const typ=(iso&&lc)?iso+'-'+lc:(iso||lc||'');const numM=seg.match(/(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?)\s*(mg\/dl|gr\/dl|g\/dl|g\/l|mg\/l)?/i);let val='',unit='';if(numM){val=fmtNum(sp2f(numM[1]));unit=numM[2]?numM[2].toLowerCase().replace('gr/dl','g/dl'):'g/dl';}disp='CM'+(typ?' '+typ:'')+(val?' '+val+(unit?' '+unit:''):'');ce=segEnd;}else if(e.k==='grupo'){const segEnd=lineEndIdx(orig,pick.ne);const seg=orig.slice(pick.ne,segEnd);let segC=foldText(seg).replace(/\babo\b/g,' ').replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g,' ').replace(/\b\d{1,2}:\d{2}(?::\d{2})?\b/g,' ').replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();const gM=segC.match(/\b(ab|a|b|0|o)\b/);const grupo=gM?(gM[1]==='0'?'O':gM[1].toUpperCase()):'';let rh='';const rhM=foldText(orig).match(/\b(?:factor\s+)?rh\b(?:\s*\(d\))?[^\n\r]{0,40}?(positiv|negativ)/);if(rhM)rh=rhM[1]+'o';let gv=grupo;if(rh)gv=(grupo?grupo+' ':'')+'Rh (D) '+rh;if(!gv)continue;disp=gv;ce=segEnd;}else if(e.k==='retic'){const abs=cand.find(c=>c.v&&!c.v.isPct),pc=cand.find(c=>c.v&&c.v.isPct);const _tz=s=>(''+s).replace(/(,\d*?)0+$/,'$1').replace(/,$/,'');let absStr='';if(abs){let vs=abs.v.raw;if(abs.v.countUnit==='/µL'||(!abs.v.countUnit&&abs.v.f>=1000))vs=fmtNum(abs.v.f/1000);absStr=_tz(vs)+' x10E9/L';}const pctStr=pc?_tz(pc.v.raw)+'%':'';if(!absStr&&!pctStr)continue;disp='Reticulocitos '+(absStr&&pctStr?(absStr+' ('+pctStr+')'):(absStr||pctStr));const _an=abs||pc;cs=_an.ns;ce=lineEndIdx(orig,_an.ne);}else{const v=pick.v;let unit=e.u;let valStr=v.raw;if(e.k==='count'){unit='x10E9/L';if(v.countUnit==='/µL'||(!v.countUnit&&v.f>=1000))valStr=fmtNum(v.f/1000);}else if(e.k==='retic'){if(v.isPct)unit='%';else{unit='x10E9/L';if(v.countUnit==='/µL'||(!v.countUnit&&v.f>=1000))valStr=fmtNum(v.f/1000);}}else if(e.k==='pct')unit='%';else if(e.keepUnit){const su=readUnit(v.after);if(su)unit=su;}const space=unit.startsWith('/')?'':' ';disp=(e.a+' '+valStr+(unit?space+unit:'')).replace(/\s+$/,'');ce=v.end;}(found[e.c]=found[e.c]||[]).push(disp);_valued[e.a]=1;const len=Math.max(0,ce-cs);work=work.slice(0,cs)+' '.repeat(len)+work.slice(ce);}{const _wf=foldText(orig);const _pend=[];const _ps={};for(const _e of DICT){if(_valued[_e.a]||_ps[_e.a]||_e.k==='cm'||_e.k==='grupo'||_e.k==='text')continue;var _re2;try{_re2=new RegExp('(?:'+_e.pats.join('|')+')','g');}catch(_x){continue;}var _mm,_isP=false;while((_mm=_re2.exec(_wf))!==null){var _ns=_mm.index,_ne=_ns+_mm[0].length;if(!_wf.slice(_ns,_ne).trim())continue;if(!work.slice(_ns,_ne).trim())continue;var _ls=_ns;while(_ls>0&&_wf[_ls-1]!=='\n'&&_wf[_ls-1]!=='\r')_ls--;var _line=_wf.slice(_ls,lineEndIdx(orig,_ns));var _pre=_wf.slice(_ls,_ns);if(_pre.length>24||!/^[\s├│└─*↑↓▲▼a-z0-9,\.\-]*$/.test(_pre))continue;if(/^[\s├│└─]*\(/.test(_line)||/comentario|interpretaci|categoria|normalidad poblacional|kdigo/.test(_line))continue;if(_e.k==='sero'&&/serologia\s*$/.test(_line))continue;var _hr=_e.k==='sero'?!!seroResult(orig,_ne):!!(_e.rp?readValAbs(orig,_ne):readVal(orig,_ne));if(_hr){_isP=false;break;}_isP=true;}if(_isP){_pend.push(_e.a);_ps[_e.a]=1;}}if(found.__coombsPend&&!found.__coombs){_pend.unshift('Coombs directo');}if(_pend.length)found.__pending=_pend;}
+// === Líneas con un valor que NO se han reconocido (posibles olvidos) ===
+{const _w0=_work0.split('\n');const _wn=work.split('\n');const _o=orig.split('\n');const _und=[];const _useen={};let _skipRe=null;try{const _sp=[];DICT.forEach(function(e){if(_valued[e.a])(e.pats||[]).forEach(function(p){_sp.push(p);});});_skipRe=_sp.length?new RegExp('(?:'+_sp.join('|')+')','i'):null;}catch(_e){_skipRe=null;}for(let i=0;i<_wn.length;i++){const wl=_wn[i]||'';if(_w0[i]===undefined||wl!==_w0[i])continue;const ol=(_o[i]||'');if(!ol.trim())continue;let probe=ol.replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g,' ').replace(/\b\d{1,2}:\d{2}(?::\d{2})?\b/g,' ');if(!/[a-zA-ZñÑáéíóúÁÉÍÓÚ]{3,}/.test(probe))continue;if(!/[<>]?\s*\d+(?:[.,]\d+)?/.test(probe))continue;const f=foldText(ol).trim();if(new RegExp('^[\\s*►•·\\-]*(?:'+SECT+')\\b').test(f))continue;if(_skipRe&&_skipRe.test(f))continue;if(/valor(?:es)? de referencia|intervalo de referencia|rango|comentario|observ|interpretaci|m[eé]?todo|t[eé]?cnica|laboratorio|firmad|validad|poblaci|peticion|episodio|n[ºo]\.?\s|muestra|tubo|paciente|nombre|apellido|edad|sexo|telefono|direccion/.test(f))continue;if(!/^[\s*►•·\-]*[a-zñáéíóú]/i.test(ol.trim()))continue;let show=ol.replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g,' ').replace(/\b\d{1,2}:\d{2}(?::\d{2})?\b/g,' ').replace(/[├│└─]/g,' ').replace(/\s+/g,' ').trim();if(show.length<3)continue;if(show.length>70)show=show.slice(0,70)+'…';const key=foldText(show);if(_useen[key])continue;_useen[key]=1;_und.push(show);}if(_und.length)found.__undetected=_und.slice(0,15);}
+let dateGuess='';const dms=orig.match(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g);if(dms&&dms.length){const counts={};let best='',bestN=0;dms.forEach(d=>{const pp=d.split(/[\/\-.]/);const key=pp[0].padStart(2,'0')+'-'+pp[1].padStart(2,'0')+'-'+pp[2].slice(-2);counts[key]=(counts[key]||0)+1;if(counts[key]>bestN){bestN=counts[key];best=key;}});dateGuess=best;}return {found,dateGuess};}
 function build(found,dateStr){const lines=[];const dtag=dateStr?(' ('+dateStr+')'):'';for(const cat of CAT_ORDER){if(!found[cat]||!found[cat].length)continue;let items=found[cat].slice();if(cat==='hemograma'){const diff=[],rest=[];items.forEach(it=>{(/^[NLM]\s/.test(it)?diff:rest).push(it);});if(diff.length){const parts=[];diff.forEach(it=>{const m=it.match(/^(\S+\s+\S+)\s+.*\S$/);parts.push(m?m[1]:it);});const group='('+parts.join(' - ')+')';const li=rest.findIndex(it=>/^Leucocitos\b/.test(it));if(li>=0)rest[li]=rest[li]+' '+group;else rest.push(group);items=rest;}}lines.push((cat==='gasometria'?(found.__gasoLabel||'Gasometría'):CAT_LABEL[cat])+dtag+': '+items.join(', '));if(cat==='hemograma'&&found.__coombs)lines.push('Coombs directo'+dtag+': '+found.__coombs);}if(found.__coombs&&!(found.hemograma&&found.hemograma.length))lines.unshift('Coombs directo'+dtag+': '+found.__coombs);if(found.__orina&&found.__orina.length)lines.push('Sistemático de orina'+dtag+': '+found.__orina.join(', '));if(found.__pending&&found.__pending.length)lines.push('Pendientes (sin resultado): '+found.__pending.join(', '));return lines.join('\n');}
 window.LCtranscribe=transcribe;window.LCbuild=build;
 })();
@@ -9011,7 +9123,7 @@ function lcNumMatch(v,inSet,allowScale){
   }
   return false;
 }
-function lcGuard(raw,out,mode){
+function lcGuard(raw,out,mode,undet){
   const box=$('lc_guard'); if(!box) return;
   if(!out||!out.trim()){ box.innerHTML=''; return; }
   const inNums=lcCanonNums(raw);
@@ -9019,12 +9131,18 @@ function lcGuard(raw,out,mode){
   const allowScale=(mode==='lab');
   const miss=[];
   outNums.forEach(v=>{ if(!lcNumMatch(v,inNums,allowScale)) miss.push(v); });
+  let html;
   if(!miss.length){
-    box.innerHTML='<div class="alert g" style="font-size:12px;margin:0"><strong>✓ Valores verificados.</strong> Todos los números del resultado provienen del texto original; el asistente solo ha reordenado y reformateado.</div>';
+    html='<div class="alert g" style="font-size:12px;margin:0"><strong>✓ Valores verificados.</strong> Todos los números del resultado provienen del texto original; el asistente solo ha reordenado y reformateado.</div>';
   }else{
     const uniq=[...new Set(miss.map(x=>x.toString().replace('.',',')))].slice(0,12).join(', ');
-    box.innerHTML='<div class="alert y" style="font-size:12px;margin:0"><strong>⚠ Revisa estos valores:</strong> '+uniq+'. No coinciden exactamente con ningún número del texto original. Comprueba que no se haya alterado ningún resultado antes de copiar.</div>';
+    html='<div class="alert y" style="font-size:12px;margin:0"><strong>⚠ Revisa estos valores:</strong> '+uniq+'. No coinciden exactamente con ningún número del texto original. Comprueba que no se haya alterado ningún resultado antes de copiar.</div>';
   }
+  if(mode==='lab'&&undet&&undet.length){
+    const items=undet.map(function(s){return '<li style="margin:1px 0">'+_hpEsc(s)+'</li>';}).join('');
+    html+='<div class="alert y" style="font-size:12px;margin:6px 0 0"><strong>📋 Posibles valores NO transcritos</strong> ('+undet.length+'): líneas con un resultado que el asistente no ha reconocido. Revisa si deben incluirse.<ul style="margin:4px 0 0;padding-left:18px">'+items+'</ul></div>';
+  }
+  box.innerHTML=html;
 }
 function runAssistant(){
   const raw=($('lc_in').value||'');
@@ -9040,7 +9158,7 @@ function runAssistant(){
   const date=r.dateGuess||'';
   const out=window.LCbuild(r.found,date);
   $('lc_out').value=out||'No se han reconocido valores. Revisa el texto pegado o complétalo manualmente.';
-  lcGuard(raw, (out&&out.indexOf('No se han reconocido')!==0)?out:'', 'lab');
+  lcGuard(raw, (out&&out.indexOf('No se han reconocido')!==0)?out:'', 'lab', r.found&&r.found.__undetected);
   if(!out)toast('No se reconocieron valores');
   else if(!date)toast('No se detectó fecha en el texto');
 }
@@ -9361,7 +9479,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 30;
+  var DC_BUILD = 31;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -9437,58 +9555,26 @@ if(document.readyState!=='loading')init();
 </div>
 <script>
 function poblarRevisoresAviso() {
-  // Genera la lista de revisores a partir de los mismos datos que la vista "Equipo",
-  // así siempre refleja el equipo real (sincronizado), tenga las personas que tenga.
+  // Equipo a partir de los colaboradores sincronizados (editores y administradores), con
+  // etiqueta simple. Los autores (Busnego Barreto, García Silvera) figuran en 'Autoría', no aquí;
+  // la administración principal se omite (la reconciliación la salta) para no duplicarla.
   var ul = document.getElementById('aviso-revisores');
-  if (!ul || typeof getAllCollaborators !== 'function') return;
-  var all;
-  try { all = getAllCollaborators(); } catch (e) { return; }
-  if (!all) return;
-  // Clave normalizada para deduplicar (sin tildes, sin "Dr./Dra.", minúsculas) y así no repetir a la misma persona.
+  if (!ul) return;
+  var people = [];
+  try { if (typeof hpCollabPeople === 'function') people = hpCollabPeople() || []; } catch (e) { people = []; }
   var _norm = function (s) { return (s || '').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/^(dr|dra)\.?\s+/, '').replace(/\s+/g, ' ').trim(); };
-  var map = new Map(); // claveNorm -> { display, explicit:Set, areas:Set }
-  Object.keys(all).forEach(function (id) {
-    (all[id] || []).forEach(function (c) {
-      var name = (c.n || c.name || '').trim();
-      if (!name) return;
-      if (/busnego|garcía silvera|garcia silvera/i.test(name)) return; // los autores ya están acreditados arriba
-      var key = _norm(name); if (!key) return;
-      var role = (c.r || c.role || '').trim(); // rol explícito (p. ej. Farmacéutico/a, Dermatopatólogo/a)
-      var area = (!role && typeof GUIDES_TITLES !== 'undefined' && GUIDES_TITLES[id]) ? GUIDES_TITLES[id] : '';
-      var e = map.get(key);
-      if (!e) { e = { display: name, explicit: new Set(), areas: new Set() }; map.set(key, e); }
-      if (name.split(/\s+/).length > e.display.split(/\s+/).length) e.display = name; // conserva el nombre más completo
-      if (role) e.explicit.add(role); else if (area) e.areas.add(area);
-    });
+  var seen = {}, uniq = [];
+  people.forEach(function (e) { if (!e || !e.n) return; var k = _norm(e.n); if (!k || seen[k]) return; seen[k] = 1; uniq.push(e); });
+  uniq.sort(function (a, b) {
+    var pa = a.perfil === 'admin' ? 0 : 1, pb = b.perfil === 'admin' ? 0 : 1;
+    if (pa !== pb) return pa - pb;
+    return _norm(a.n).localeCompare(_norm(b.n), 'es');
   });
-  if (!map.size) return; // sin datos: dejamos el listado estático por defecto
-  // Fusiona la misma persona escrita con/ sin apellido: si una clave (≥3 palabras) es prefijo de otra más larga.
-  var entries = Array.from(map.entries());
-  entries.sort(function (a, b) { return a[0].length - b[0].length; });
-  for (var i = 0; i < entries.length; i++) {
-    if (entries[i][0] === null) continue;
-    var ki = entries[i][0]; if (ki.split(' ').length < 3) continue;
-    for (var j = i + 1; j < entries.length; j++) {
-      if (entries[j][0] === null || entries[j][0] === ki) continue;
-      if ((entries[j][0] + ' ').indexOf(ki + ' ') === 0) {
-        var ei = entries[i][1], ej = entries[j][1];
-        ei.explicit.forEach(function (r) { ej.explicit.add(r); });
-        ei.areas.forEach(function (r) { ej.areas.add(r); });
-        if (ei.display.split(/\s+/).length > ej.display.split(/\s+/).length) ej.display = ei.display;
-        entries[i][0] = null; break;
-      }
-    }
-  }
-  var items = [];
-  entries.forEach(function (en) {
-    if (en[0] === null) return;
-    var e = en[1];
-    var roles = e.explicit.size ? Array.from(e.explicit) : Array.from(e.areas); // el rol explícito manda sobre el área
-    var r = roles.join(' · ');
-    items.push(r ? '<li><strong>' + e.display + '</strong> — ' + r + '</li>'
-                 : '<li><strong>' + e.display + '</strong></li>');
+  var items = uniq.map(function (e) {
+    var label = (e.perfil === 'admin') ? 'Administrador/a' : ((e.r || '').trim() || 'Dermatólogo/a');
+    return '<li><strong>' + e.n + '</strong> — ' + label + '</li>';
   });
-  ul.innerHTML = items.join('');
+  ul.innerHTML = items.join('') || '<li style="list-style:none;margin-left:-1.2rem;color:var(--mut)">El equipo se acreditará aquí conforme se asignen editores y administradores.</li>';
 }
 // ── Aviso Legal editable (SOLO el admin principal) ──
 let _AVISO_DEFAULT='';
@@ -9796,13 +9882,19 @@ function hpRoleSelector(uid, roleInfo, credName, credRole){
   s+='<select id="rol_'+uid+'" onchange="hpRolChange(\''+uid+'\')" style="width:100%;padding:7px;border:1px solid var(--bd,#ccc);border-radius:7px;font-size:13px;background:var(--card,#fff);color:var(--txt,#222)">';
   s+=opt('usuario','Usuario — solo consulta')+opt('editor','Editor — solo subir/bajar guías PDF')+(soyPrincipal?opt('admin','Administrador — control total'):'');
   s+='</select>';
+  // Nombre para créditos: visible para EDITOR o ADMINISTRADOR (ambos se acreditan en el Aviso Legal).
+  s+='<div id="cred_box_'+uid+'" style="display:'+((cur==='editor'||cur==='admin')?'block':'none')+';margin-top:8px">';
+  s+='<label style="font-size:12px;color:var(--mut,#666);display:block;margin-bottom:3px">Nombre para créditos (figurará como colaborador en el Aviso Legal)</label>';
+  s+='<input id="cred_'+uid+'" type="text" value="'+(credName?String(credName).replace(/"/g,'&quot;'):'')+'" placeholder="Ej: Dra. Nombre Apellido" style="width:100%;padding:6px 8px;border:1px solid var(--bd,#ccc);border-radius:6px;font-size:12.5px;background:var(--card,#fff);color:var(--txt,#222)">';
+  s+='</div>';
+  // Secciones + asistentes: solo para EDITOR.
   s+='<div id="secs_'+uid+'" style="display:'+(cur==='editor'?'block':'none')+';margin-top:8px">';
   s+='<div style="font-size:12px;color:var(--mut,#666);margin-bottom:4px">Secciones cuyas guías PDF podrá subir/bajar:</div>';
   s+='<label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;font-weight:600;margin-bottom:3px"><input type="checkbox" id="secall_'+uid+'" onchange="hpSecToggleAll(\''+uid+'\')"'+(allOn?' checked':'')+'> Todas las secciones</label>';
   s+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 10px">'+hpSecChecks(uid,secs)+'</div>';
   s+='<label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd,#e2e2e2)"><input type="checkbox" id="asist_'+uid+'"'+(secs.indexOf('asistentes')!==-1?' checked':'')+'> ✏️ <strong>Editar asistentes</strong> (asistente de redacción y de recetas)</label>';
-  s+='<div style="margin-top:8px"><label style="font-size:12px;color:var(--mut,#666);display:block;margin-bottom:3px">Nombre para créditos (figurará como colaborador en el Aviso Legal)</label><input id="cred_'+uid+'" type="text" value="'+(credName?String(credName).replace(/"/g,'&quot;'):'')+'" placeholder="Ej: Dra. Nombre Apellido" style="width:100%;padding:6px 8px;border:1px solid var(--bd,#ccc);border-radius:6px;font-size:12.5px;background:var(--card,#fff);color:var(--txt,#222)"></div>';
-  s+='</div></div>';
+  s+='</div>';
+  s+='</div>';
   return s;
 }
 function hpReadCred(uid){ const el=document.getElementById('cred_'+uid); return el?el.value.trim():''; }
@@ -9818,8 +9910,11 @@ function hpReadSecs(uid){
   return out;
 }
 window.hpRolChange=function(uid){
-  const sel=document.getElementById('rol_'+uid), box=document.getElementById('secs_'+uid);
-  if(box) box.style.display=(sel&&sel.value==='editor')?'block':'none';
+  const sel=document.getElementById('rol_'+uid); const v=sel?sel.value:'usuario';
+  const box=document.getElementById('secs_'+uid);
+  if(box) box.style.display=(v==='editor')?'block':'none';
+  const cb=document.getElementById('cred_box_'+uid);
+  if(cb) cb.style.display=(v==='editor'||v==='admin')?'block':'none';
 };
 window.hpSecToggleAll=function(uid){
   const all=document.getElementById('secall_'+uid), box=document.getElementById('secs_'+uid); if(!all||!box) return;
@@ -9837,14 +9932,38 @@ window.hpGuardarRol=function(uid){
   if(uid===window.__hpUid && role!=='admin'){ if(typeof toast==='function')toast('No puedes quitarte a ti mismo el rol de administrador'); return; }
   const secs=role==='editor'?hpReadSecs(uid):[];
   if(role==='editor'&&!secs.length){ if(typeof toast==='function')toast('Marca al menos una sección'); return; }
-  const nombre=role==='editor'?hpReadCred(uid):'';
+  const nombre=(role==='editor'||role==='admin')?hpReadCred(uid):'';
+  if((role==='editor'||role==='admin')&&!nombre){ if(typeof toast==='function')toast('Escribe el nombre para créditos'); return; }
   const spec=role==='editor'?'Dermatólogo/a':'';
-  const msg=role==='admin'?'¿Asignar perfil ADMINISTRADOR (co-admin)? Podrá gestionar secciones, contenido, editores y cuentas, pero NO a otros administradores (eso solo el principal).':role==='editor'?('¿Guardar como EDITOR de '+secs.length+' sección(es)'+(spec?(', acreditado como '+spec):'')+'?'):'¿Dejar como usuario, sin permisos de edición?';
+  const msg=role==='admin'?'¿Asignar perfil ADMINISTRADOR (co-admin)? Podrá gestionar secciones, contenido, editores y cuentas, pero NO a otros administradores (eso solo el principal). Figurará como administrador en el Aviso Legal.':role==='editor'?('¿Guardar como EDITOR de '+secs.length+' sección(es)'+(spec?(', acreditado como '+spec):'')+'? Figurará como colaborador en el Aviso Legal.'):'¿Dejar como usuario, sin permisos de edición?';
   if(window.hpConfirm) window.hpConfirm(msg,function(){_hpDoRol(uid,role,secs,nombre,spec);}); else _hpDoRol(uid,role,secs,nombre,spec);
 };
 async function _hpDoRol(uid,role,secs,nombre,spec){
   try{ if(window.hpAsignarRol) await window.hpAsignarRol(uid,role,secs,nombre,spec); if(window.hpSyncColaboradores) window.hpSyncColaboradores(); if(typeof toast==='function')toast('✔ Perfil actualizado'); if(window.hpRenderSolicitudes) window.hpRenderSolicitudes(); }
   catch(e){ if(typeof toast==='function')toast('Error: '+(e.message||'')); }
+}
+// Acredita automáticamente como colaboradores a los editores/administradores que YA existen
+// (tienen rol) pero aún no figuran en 'colaboradores' o les falta el perfil. Usa el mejor nombre
+// disponible (crédito previo > nombre de cuenta > parte del correo). Idempotente: solo escribe lo
+// que falta. Solo la ejecuta la administración al abrir el panel (tiene permiso de escritura).
+async function hpReconcileColaboradores(roles, usuarios, colabs){
+  if(!window.hpAsignarRolColab) return false;
+  roles=roles||{}; usuarios=usuarios||{}; colabs=colabs||{};
+  const tasks=[];
+  Object.keys(roles).forEach(function(uid){
+    if(uid===HP_PRINCIPAL_UID) return;
+    const r=roles[uid]||{}; if(r.role!=='editor'&&r.role!=='admin') return;
+    const ex=colabs[uid];
+    if(ex && ex.perfil) return; // ya acreditado con perfil
+    const u=usuarios[uid]||{};
+    const nom=((ex&&ex.nombre)||((u.nombre||'')+' '+(u.apellido||'')).trim()||(u.email||'').split('@')[0]||'').toString().trim();
+    if(!nom) return;
+    const secs=Array.isArray(r.sections)?r.sections:[];
+    const esp=(ex&&(ex.rol||ex.r))||'';
+    tasks.push(window.hpAsignarRolColab(uid, r.role, nom, secs, esp).catch(function(){}));
+  });
+  if(tasks.length){ try{ await Promise.all(tasks); }catch(e){} return true; }
+  return false;
 }
 window.hpRenderSolicitudes=async function(){
 const box=document.getElementById('sol_list'); if(!box) return;
@@ -9863,6 +9982,9 @@ Object.keys(usuarios).forEach(uid=>{
   if(byUid[uid]){ if(usuarios[uid].ultimoAcceso) byUid[uid].ultimoAcceso=usuarios[uid].ultimoAcceso; if(!byUid[uid].email) byUid[uid].email=usuarios[uid].email; }
   else { byUid[uid]=Object.assign({uid:uid,origen:'manual'},usuarios[uid]); }
 });
+// Acredita a editores/administradores ya existentes que aún no figuran (una sola vez; idempotente).
+// Se usa byUid (cuentas + usuarios) para tomar el mejor nombre disponible.
+try{ if(await hpReconcileColaboradores(roles, byUid, colabs)){ if(window.hpListColaboradores) colabs=await window.hpListColaboradores(); if(window.hpSyncColaboradores) window.hpSyncColaboradores(); } }catch(e){}
 const all=Object.values(byUid);
 const pend=all.filter(c=>c.estado==='pendiente'); window._hpSolNew=pend.length; if(typeof renderMenu==='function')renderMenu(($('search')&&$('search').value)||'');
 const rech=all.filter(c=>c.estado==='rechazada');
@@ -9893,8 +10015,9 @@ const sel=document.getElementById('rol_'+uid), role=sel?sel.value:'usuario';
 if(role==='admin' && window.__hpUid!==HP_PRINCIPAL_UID){ if(typeof toast==='function')toast('Solo el administrador principal puede asignar administradores'); return; }
 const secs=role==='editor'?hpReadSecs(uid):[];
 if(role==='editor'&&!secs.length){ if(typeof toast==='function')toast('Marca al menos una sección para el editor'); return; }
-const nombre=role==='editor'?hpReadCred(uid):'';
-const msg=role==='admin'?'¿Aprobar y asignar ADMINISTRADOR? Tendrá control total, incluido gestionar cuentas.':role==='editor'?('¿Aprobar como EDITOR de '+secs.length+' sección(es)?'):'¿Aprobar esta cuenta? El usuario podrá acceder a la app.';
+const nombre=(role==='editor'||role==='admin')?hpReadCred(uid):'';
+if((role==='editor'||role==='admin')&&!nombre){ if(typeof toast==='function')toast('Escribe el nombre para créditos'); return; }
+const msg=role==='admin'?'¿Aprobar y asignar ADMINISTRADOR? Tendrá control total, incluido gestionar cuentas. Figurará como administrador en el Aviso Legal.':role==='editor'?('¿Aprobar como EDITOR de '+secs.length+' sección(es)? Figurará como colaborador en el Aviso Legal.'):'¿Aprobar esta cuenta? El usuario podrá acceder a la app.';
 if(window.hpConfirm) window.hpConfirm(msg,()=>_hpDoAccion(uid,'aprobar',role,secs,nombre)); else _hpDoAccion(uid,'aprobar',role,secs,nombre);
 };
 window.hpRechazarUI=function(uid){ if(window.hpConfirm) window.hpConfirm('¿Rechazar esta cuenta?',()=>_hpDoAccion(uid,'rechazar')); else _hpDoAccion(uid,'rechazar'); };
@@ -10161,6 +10284,9 @@ async function ghDeleteFile(token, path, message){
 window.HemoCloud = {
   role: null, token: null,
   isAdmin(){ return !!this.role && this.role.role === 'admin'; },
+  // Cualquier editor (de cualquier sección) o administrador. Lo usa el listín telefónico,
+  // que no está ligado a una sección concreta de guías.
+  isEditor(){ return !!this.role && (this.role.role === 'admin' || this.role.role === 'editor'); },
   canEdit(section){
     const r = this.role; if(!r) return false;
     if(r.role === 'admin') return true;
@@ -10441,22 +10567,36 @@ window.hpRechazarCuenta=async function(uid){ await updateDoc(doc(fs,'cuentas',ui
 //  - 'editor' -> roles/{uid} = { role:'editor', sections:[...] }
 //  - otro     -> se elimina el documento de rol (queda como usuario de consulta)
 window.hpAsignarRol = async function(uid, role, sections, nombre, spec){
+  const nom = (nombre||'').toString().trim();
   if(role === 'admin'){
     await setDoc(doc(fs, 'roles', uid), { role:'admin', asignadoPor: curUid || null, fechaAsignacion: serverTimestamp() });
-    try { await deleteDoc(doc(fs, 'colaboradores', uid)); } catch(e){}
+    // Crédito PÚBLICO: el administrador figura como tal en el Aviso Legal de todos.
+    if(nom) await setDoc(doc(fs, 'colaboradores', uid), { nombre: nom, perfil:'admin', rol:'', sections: [], actualizadoPor: curUid || null, fechaActualizacion: serverTimestamp() });
+    else { try { await deleteDoc(doc(fs, 'colaboradores', uid)); } catch(e){} }
   } else if(role === 'editor'){
     const secs = Array.isArray(sections) ? sections.filter(Boolean) : [];
     await setDoc(doc(fs, 'roles', uid), { role:'editor', sections: secs, asignadoPor: curUid || null, fechaAsignacion: serverTimestamp() });
     // Crédito PÚBLICO de colaborador por tema (lo refleja el Aviso Legal de todos).
-    const nom = (nombre||'').toString().trim();
-    // Rol/especialidad para los créditos (p. ej. "Farmacéutico/a"). Vacío = dermatólogo/a (se acredita por su área).
+    // Rol/especialidad para los créditos (p. ej. "Dermatopatólogo/a"). Vacío = dermatólogo/a (se acredita por su área).
     const rol = (spec||'').toString().trim();
-    if(nom) await setDoc(doc(fs, 'colaboradores', uid), { nombre: nom, rol: rol, sections: secs, actualizadoPor: curUid || null, fechaActualizacion: serverTimestamp() });
+    if(nom) await setDoc(doc(fs, 'colaboradores', uid), { nombre: nom, perfil:'editor', rol: rol, sections: secs, actualizadoPor: curUid || null, fechaActualizacion: serverTimestamp() });
     else { try { await deleteDoc(doc(fs, 'colaboradores', uid)); } catch(e){} }
   } else {
     await deleteDoc(doc(fs, 'roles', uid));
     try { await deleteDoc(doc(fs, 'colaboradores', uid)); } catch(e){}
   }
+};
+// Escritura directa del crédito de colaborador (la usa la reconciliación para acreditar
+// automáticamente a editores/administradores ya existentes que aún no figuran).
+window.hpAsignarRolColab = async function(uid, perfil, nombre, sections, rolEsp){
+  const nom = (nombre||'').toString().trim(); if(!nom) return;
+  await setDoc(doc(fs, 'colaboradores', uid), {
+    nombre: nom,
+    perfil: (perfil==='admin'?'admin':'editor'),
+    rol: (rolEsp||'').toString().trim(),
+    sections: (Array.isArray(sections)?sections:[]),
+    actualizadoPor: curUid || null, fechaActualizacion: serverTimestamp()
+  });
 };
 // Lee todos los roles (solo administrador). Devuelve un mapa uid -> { role, sections }.
 window.hpListRoles = async function(){
@@ -10474,9 +10614,20 @@ window.hpListUsuarios = async function(){
 window.hpSyncColaboradores = async function(){
   try{
     const snap = await getDocs(collection(fs, 'colaboradores'));
-    const map = {};
-    snap.forEach(d => { const x = d.data()||{}; const nom = (x.nombre||'').toString().trim(); if(!nom) return; const rol = (x.rol||'').toString().trim(); (Array.isArray(x.sections)?x.sections:[]).forEach(s => { const c = { n: nom }; if(rol) c.r = rol; (map[s]=map[s]||[]).push(c); }); });
+    const map = {};      // sección -> [{n,r}] (solo editores con secciones; para los bloques por sección de cada guía)
+    const people = [];   // lista plana para el Aviso Legal, con el perfil (admin/editor) de cada persona
+    snap.forEach(d => {
+      const x = d.data()||{};
+      const nom = (x.nombre||'').toString().trim(); if(!nom) return;
+      // Docs antiguos sin 'perfil' eran todos editores: se tratan como tal por defecto.
+      const perfil = (x.perfil==='admin') ? 'admin' : 'editor';
+      const rol = (x.rol||'').toString().trim();
+      const secs = Array.isArray(x.sections) ? x.sections : [];
+      people.push({ uid: d.id, n: nom, perfil: perfil, r: rol, sections: secs });
+      secs.forEach(s => { const c = { n: nom }; if(rol) c.r = rol; (map[s]=map[s]||[]).push(c); });
+    });
     if(window.hpStoreEditorCollabs) window.hpStoreEditorCollabs(map);
+    if(window.hpStoreCollabPeople) window.hpStoreCollabPeople(people);
     return map;
   }catch(e){ return null; }
 };
