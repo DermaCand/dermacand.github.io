@@ -8889,9 +8889,45 @@ function hpCanEditAsist(){ return !!(window.HemoCloud && ((window.HemoCloud.isAd
 function rxOverride(){ try{ return ls.g('rxOverride')||{}; }catch(e){ return {}; } }
 window.hpApplyRx=function(o){ try{ ls.s('rxOverride', o||{}); }catch(e){} };
 function _rxEsc(s){ return (''+s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+// Recetas a medida ("por ejemplo"): pega la línea del fármaco y escribe su salida deseada.
+// El "disparador" es el nombre del fármaco (las letras iniciales antes del primer número):
+// cuanto más pegues, más específico. Si una receta contiene ese disparador, se usa la salida tal cual.
+function _rxNorm(s){ return (''+s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').trim(); }
+function _rxTrigger(inp){ var t=_rxNorm(inp).replace(/^[\s\-•*.\d)]+/,''); var m=t.match(/^[a-zñ][a-zñ./\s]*?(?=\s*\d|\s+-\s|$)/); var tr=m?m[0].replace(/[.\s]+$/,'').trim():t; return tr.length>=3?tr:t.slice(0,40); }
+function rxExamples(){ try{ var ov=rxOverride(); return (ov.ejemplos||[]).filter(function(e){return e&&(''+e.from).trim()&&(''+e.to).trim();}).map(function(e){ return {to:(''+e.to).trim(), _t:_rxTrigger(e.from)}; }).filter(function(e){return e._t;}); }catch(e){ return []; } }
+// Equivalencias de pauta INCORPORADAS (siempre activas, antes del diccionario del usuario).
+function rxPautaDefaults(t){
+  // Fracciones: ½ ¼ ¾ y 1/2 1/4 3/4 → decimales
+  t=t.replace(/½/g,'0,5').replace(/¼/g,'0,25').replace(/¾/g,'0,75');
+  t=t.replace(/\b1\s*\/\s*2\b/g,'0,5').replace(/\b1\s*\/\s*4\b/g,'0,25').replace(/\b3\s*\/\s*4\b/g,'0,75');
+  // "media pastilla / medio comprimido…" → "0,5 …" (pastilla se asimila a comprimido)
+  t=t.replace(/\bmedi[oa]\s+pastillas?\b/gi,'0,5 comprimidos');
+  t=t.replace(/\bmedi[oa]\s+(comprimidos?|c[aá]psulas?|tabletas?|grageas?|sobres?|ampollas?|[oó]vulos?|supositorios?)\b/gi,'0,5 $1');
+  // "en el desayuno / en la cena…" → "con el/la …"
+  t=t.replace(/\ben\s+(el|la|los|las)\s+(desayunos?|almuerzos?|comidas?|cenas?|meriendas?)\b/gi,'con $1 $2');
+  // "días alternos" / "un día sí y otro no" → cada 48 horas (antes de convertir números)
+  t=t.replace(/\b(?:un\s+d[ií]a\s+s[íi]\s+y\s+otro\s+no|(?:a\s+|en\s+)?d[ií]as\s+alternos)\b/gi,'cada 48 horas');
+  // Números escritos → cifras cuando preceden a forma o a tiempo (NO "vez", que es frecuencia)
+  var _NW={uno:'1',una:'1',un:'1',dos:'2',tres:'3',cuatro:'4',cinco:'5',seis:'6',siete:'7',ocho:'8',nueve:'9',diez:'10',doce:'12',veinticuatro:'24'};
+  t=t.replace(/\b(uno|una|un|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|doce|veinticuatro)\s+(?=(?:comprimidos?|c[aá]psulas?|caps|comp|tabletas?|grageas?|sobres?|gotas?|ampollas?|viales?|aplicaci[oó]n(?:es)?|pulsaci[oó]n(?:es)?|inhalaci[oó]n(?:es)?|supositorios?|[oó]vulos?|d[ií]as?|horas?|semanas?|meses?)\b)/gi,function(m,w){return (_NW[w.toLowerCase()]||w)+' ';});
+  // Notación de 4 posiciones: "1-1-1-1", "1-0-0-1" → desayuno, comida, merienda, cena
+  t=t.replace(/\b(\d+(?:[.,]\d+)?)-(\d+(?:[.,]\d+)?)-(\d+(?:[.,]\d+)?)-(\d+(?:[.,]\d+)?)\b/g,function(m,a,b,c,d){
+    const v=[a,b,c,d],M=['con el desayuno','con la comida','con la merienda','con la cena'],P=[];
+    for(let i=0;i<4;i++){const n=parseFloat((''+v[i]).replace(',','.'));if(!(n>0))continue;if(n>4)return m;P.push((n===1?'':v[i]+' ')+M[i]);}
+    return P.length?(' '+P.join(', ')+' '):m;
+  });
+  // Notación desayuno-comida-cena: "1-0-1", "1-1-1", "0-0-1", "0,5-0-0,5"… → tomas por momento
+  t=t.replace(/\b(\d+(?:[.,]\d+)?)-(\d+(?:[.,]\d+)?)-(\d+(?:[.,]\d+)?)\b/g,function(m,a,b,c){
+    const v=[a,b,c],M=['con el desayuno','con la comida','con la cena'],P=[];
+    for(let i=0;i<3;i++){const n=parseFloat((''+v[i]).replace(',','.'));if(!(n>0))continue;if(n>4)return m;P.push((n===1?'':v[i]+' ')+M[i]);}
+    return P.length?(' '+P.join(', ')+' '):m;
+  });
+  return t;
+}
 function rxApplyDict(raw){
   const ov=rxOverride(); let t=''+raw;
-  (ov.abbr||[]).concat(ov.rename||[]).forEach(function(p){
+  try{ t=rxPautaDefaults(t); }catch(e){}
+  (ov.pauta||[]).concat(ov.abbr||[], ov.rename||[]).forEach(function(p){
     if(p&&(p.from!=null)&&(''+p.from).trim()&&(p.to!=null)){
       try{ t=t.replace(new RegExp('\\b'+_rxEsc((''+p.from).trim())+'\\b','gi'), (''+p.to)); }catch(e){}
     }
@@ -8984,9 +9020,12 @@ function RXtranscribe(raw){
   };
 
   const out=[];
+  const _exlist=rxExamples();
   for(let c of chunks){
     c=c.replace(/[–—]/g,'-').trim().replace(/^[\-•*\.\d\)\s]+(?=[A-Za-zÁÉÍÓÚ])/,'');
     if(!c||c.length<2) continue;
+    // 0a) RECETA A MEDIDA: si el fármaco coincide con un ejemplo guardado, usar su salida tal cual.
+    if(_exlist.length){ var _cn=_rxNorm(c); var _hit=null; for(var _ei=0;_ei<_exlist.length;_ei++){ if(_cn.indexOf(_exlist[_ei]._t)>=0){ _hit=_exlist[_ei]; break; } } if(_hit){ out.push(_hit.to); continue; } }
 
     // 0) METADATOS administrativos que NO forman parte de la pauta:
     //    fecha de inicio/fin (con o sin la fecha), duración, "hasta nueva revisión", "indefinida"…
@@ -8996,6 +9035,19 @@ function RXtranscribe(raw){
     c=c.replace(/\bhasta\s+(?:nueva\s+revisi[oó]n|nuevo\s+aviso|nueva\s+orden|nueva\s+indicaci[oó]n)\b/gi,' ');
     c=c.replace(/\bindefinid[ao]s?\b/gi,' ');
     c=c.replace(/\b(?:pr[oó]xima\s+)?revisi[oó]n\b/gi,' ');
+    c=c.replace(/\s+/g,' ').trim();
+    if(!c||c.length<2) continue;
+
+    // 0b) DESCRIPCIÓN GALÉNICA (inhaladores, nebulizadores…): ensucia el nombre y confunde la forma.
+    //     "suspensión/solución/polvo para inhalación en envase a presión", "para inhalación", "EFG", "microgramos/dosis"…
+    c=c.replace(/\b(?:suspensi[oó]n|soluci[oó]n|polvo|aerosol|emulsi[oó]n|gas|l[ií]quido|espuma|pasta)\s+(?:y\s+disolvente\s+)?para\s+(?:inhalaci[oó]n|nebulizaci[oó]n|pulverizaci[oó]n)[a-zñáéíóú]*(?:\s+(?:en|por)\s+[a-zñáéíóú]+(?:\s+a\s+presi[oó]n)?)?/gi,' ');
+    c=c.replace(/\b(?:en\s+)?envase\s+a\s+presi[oó]n\b/gi,' ');
+    c=c.replace(/\bpara\s+(?:inhalaci[oó]n|nebulizaci[oó]n|pulverizaci[oó]n)\b/gi,' ');
+    c=c.replace(/\binhalador\b(?:\s+de\s+polvo\s+seco)?/gi,' ');
+    c=c.replace(/\bmicrogramos?\b/gi,'mcg').replace(/\bmcg\s*\/\s*dosis\b/gi,'mcg');
+    c=c.replace(/\befg\b/gi,' ');
+    // Nombres de laboratorios de genéricos que aparecen en la receta y ensucian el nombre del fármaco.
+    c=c.replace(/\b(?:cinfa|normon|sandoz|teva|kern(?:\s+pharma)?|stada|mylan|aristo|aurovitas|qualigen|tecnigen|ratiopharm|combix|bexal|aldo[\s-]?uni[oó]n|ranbaxy|edigen|korhispana|viatris|pensa|davur|accord|krka|zentiva)\b/gi,' ');
     c=c.replace(/\s+/g,' ').trim();
     if(!c||c.length<2) continue;
 
@@ -9023,8 +9075,22 @@ function RXtranscribe(raw){
 
     // 1c) MOMENTO DE LA TOMA (con el desayuno / almuerzo / comida / cena)
     let meal='';
-    const mealM=c.match(/\bcon\s+(?:el|la|las|los)?\s*(desayunos?|almuerzos?|comidas?|cenas?|meriendas?)\b/i);
-    if(mealM){let w=mealM[1].toLowerCase().replace(/s$/,'');const art=(w==='comida'||w==='cena'||w==='merienda')?'la':'el';meal='con '+art+' '+w;c=c.replace(mealM[0],' ');}
+    // Momento(s) de la toma: captura TODOS (p. ej. 1-0-1 → desayuno Y cena), sin perder ninguna toma.
+    const mealMs=c.match(/\bcon\s+(?:el|la|las|los)?\s*(?:desayunos?|almuerzos?|comidas?|cenas?|meriendas?)\b/gi);
+    if(mealMs&&mealMs.length){
+      const _mw=function(mm){var w=mm.match(/(desayunos?|almuerzos?|comidas?|cenas?|meriendas?)/i)[1].toLowerCase().replace(/s$/,'');var art=(w==='comida'||w==='cena'||w==='merienda')?'la':'el';return 'con '+art+' '+w;};
+      const _seen={}; const _parts=[]; mealMs.forEach(function(mm){var p=_mw(mm); if(!_seen[p]){_seen[p]=1;_parts.push(p);} c=c.replace(mm,' ');});
+      meal=_parts.join(' y ');
+    }
+
+    // 1d) DOSIS "suelta" antes de la frecuencia: "1 cada 24 horas", "1 al día" (sin la palabra
+    //     comprimido/cápsula). Sin esto el motor cogería por error la cantidad del ENVASE
+    //     (p. ej. "30 comprimidos cada 24h" en lugar de "1 comprimido cada 24h").
+    let doseQty='';
+    if(!meal){
+      const dq=c.match(/(\d+(?:[.,]\d+)?)\s+(?=(?:cada\s+\d|al\s+d[ií]a|diari[oa]|una\s+vez|\d+\s*veces|en\s+ayunas|por\s+la\s+(?:noche|ma[ñn]ana)|antes\s+de\s+(?:dormir|acostarse)))/i);
+      if(dq){ doseQty=dq[1]; c=c.slice(0,dq.index)+' '+c.slice(dq.index+dq[0].length); }
+    }
 
     // 2) FRECUENCIA
     c=c.replace(/\bc\/\s*(\d+)\s*h\b/gi,'cada $1 h').replace(/(?:^|\s)\/\s*(\d+)\s*h\b/gi,' cada $1 h').replace(/(?:^|\s)\/\s*(\d+)\s*d[ií]as?\b/gi,function(m,n){return n==='1'?' diario':' cada '+n+' días';});
@@ -9051,7 +9117,7 @@ function RXtranscribe(raw){
     // 3) FORMA (pauta) y CABECERA (nombre+dosis, conservando compuestos "A - B")
     const formsAll=[...c.matchAll(FORM)];
     let head=c, form='';
-    if(formsAll.length){ const fi=formsAll.find(f=>f.index>0)||formsAll[0]; head=c.slice(0,fi.index); const last=formsAll[formsAll.length-1]; form=normForm(last[1],last[2]); }
+    if(formsAll.length){ const fi=formsAll.find(f=>f.index>0)||formsAll[0]; head=c.slice(0,fi.index); const _isCont=n=>/^(?:envase|caja|cartucho|blister|estuche)/i.test(n||''); const last=[...formsAll].reverse().find(f=>f[1]!=null&&!_isCont(f[2]))||[...formsAll].reverse().find(f=>!_isCont(f[2]))||formsAll[formsAll.length-1]; form=normForm(doseQty||last[1],last[2]); }
     const nameDose=fmtHead(head);
     if(!nameDose) continue;
 
@@ -9127,28 +9193,46 @@ VIEWS.labconv_post=()=>setLCmode('lab');
 
 // ── Editor del DICCIONARIO de recetas (correcciones de nombre + abreviaturas) ──
 let _rxDraft=null;
-function rxEditOpen(){ if(!hpCanEditAsist()){ toast('Sin permiso para editar'); return; } const ov=rxOverride(); _rxDraft={ rename:JSON.parse(JSON.stringify(ov.rename||[])), abbr:JSON.parse(JSON.stringify(ov.abbr||[])) }; go('rxedit'); }
+function rxEditOpen(){ if(!hpCanEditAsist()){ toast('Sin permiso para editar'); return; } const ov=rxOverride(); _rxDraft={ ejemplos:JSON.parse(JSON.stringify(ov.ejemplos||[])), rename:JSON.parse(JSON.stringify(ov.rename||[])), abbr:JSON.parse(JSON.stringify(ov.abbr||[])), pauta:JSON.parse(JSON.stringify(ov.pauta||[])) }; go('rxedit'); }
 VIEWS.rxedit=()=>{
   if(!hpCanEditAsist()) return '<div class="card"><h2>Editar recetas</h2><div class="alert y">No tienes permiso para editar este asistente.</div></div>';
   const d=_rxDraft; if(!d) return '<div class="card"><h2>Editar recetas</h2><div class="alert y">Nada que editar.</div></div>';
   const row=(list,p,i)=>'<div style="display:flex;gap:4px;align-items:center;margin-bottom:4px"><input style="flex:1;min-width:90px" value="'+_hpEsc(p.from||'')+'" onchange="rxField(\''+list+'\','+i+',\'from\',this.value)" placeholder="'+(list==='abbr'?'abreviatura':'lo que aparece')+'"><span>→</span><input style="flex:1;min-width:90px" value="'+_hpEsc(p.to||'')+'" onchange="rxField(\''+list+'\','+i+',\'to\',this.value)" placeholder="'+(list==='abbr'?'texto completo':'cómo debe quedar')+'"><button class="btn btn-out btn-sm" style="color:#c41e3a" onclick="rxDel(\''+list+'\','+i+')">×</button></div>';
   let h='<div class="card"><h2>💊 Editar el diccionario de recetas</h2>';
-  h+='<p class="intro">Corrige cómo el asistente transcribe los medicamentos. <strong>Efectivo para todos.</strong> El reconocimiento del texto pegado sigue siendo automático; aquí solo añades correcciones.</p>';
+  h+='<p class="intro">Enséñale con ejemplos: pega una línea de receta y escribe cómo quieres que quede. <strong>Efectivo para todos.</strong> No hace falta saber programar.</p>';
+  const exrow=(p,i)=>'<div style="border:1px solid var(--bd);border-radius:8px;padding:8px;margin-bottom:8px;background:var(--bg2)">'
+    +'<label style="font-size:11px;color:var(--mut);display:block;margin-bottom:2px">Entrada — pega la línea tal como aparece</label>'
+    +'<textarea rows="2" style="width:100%;box-sizing:border-box" onchange="rxField(\'ejemplos\','+i+',\'from\',this.value)" placeholder="BETAMETASONA 0,1% crema · aplicar 1 vez/día">'+_hpEsc(p.from||'')+'</textarea>'
+    +'<label style="font-size:11px;color:var(--mut);display:block;margin:4px 0 2px">Salida — cómo quieres que quede</label>'
+    +'<textarea rows="2" style="width:100%;box-sizing:border-box" onchange="rxField(\'ejemplos\','+i+',\'to\',this.value)" placeholder="Betametasona 0,1% crema: aplicar 1 vez al día">'+_hpEsc(p.to||'')+'</textarea>'
+    +'<div style="text-align:right;margin-top:4px"><button class="btn btn-out btn-sm" style="color:#c41e3a" onclick="rxDel(\'ejemplos\','+i+')">🗑 Eliminar</button> <button class="btn btn-g btn-sm" onclick="rxExDone('+i+')">✓ Hecho</button></div></div>';
+  const exline=(p,i)=>'<div style="display:flex;gap:6px;align-items:center;margin-bottom:4px;padding:6px 8px;border:1px solid var(--bd);border-radius:8px"><span style="flex:1;font-size:13px;word-break:break-word">💊 '+_hpEsc(p.to||'')+'</span><button class="btn btn-out btn-sm" onclick="rxExEdit('+i+')">✏️</button><button class="btn btn-out btn-sm" style="color:#c41e3a" onclick="rxDel(\'ejemplos\','+i+')">🗑</button></div>';
+  h+='<h3>📝 Recetas a medida (por ejemplo)</h3><p style="font-size:12px;color:var(--mut)">Cuando el asistente reconozca un fármaco que coincida con el de un ejemplo, usará exactamente tu salida. Lo identifica por el nombre del fármaco al inicio de la línea de entrada.</p>';
+  (d.ejemplos||[]).forEach(function(p,i){ if(p._edit||!(''+(p.to||'')).trim()){ h+=exrow(p,i); } else { h+=exline(p,i); } });
+  h+='<button class="btn btn-out btn-sm" onclick="rxExAdd()">➕ Añadir ejemplo</button>';
+  h+='<details style="margin-top:16px"><summary style="cursor:pointer;font-weight:600">⚙️ Opciones avanzadas (diccionarios)</summary><div style="margin-top:8px">';
   h+='<h3>Correcciones de nombre</h3><p style="font-size:12px;color:var(--mut)">Sustituye un término por otro (p. ej. «Losartan»→«Losartán», «AAS»→«Ácido acetilsalicílico»). No distingue mayúsculas; se aplica a palabras completas.</p>';
   (d.rename||[]).forEach(function(p,i){ h+=row('rename',p,i); });
   h+='<button class="btn btn-out btn-sm" onclick="rxAdd(\'rename\')">➕ Añadir corrección</button>';
   h+='<h3 style="margin-top:14px">Abreviaturas</h3><p style="font-size:12px;color:var(--mut)">Expande abreviaturas de forma, vía o frecuencia (p. ej. «cp»→«comprimido», «sc»→«subcutánea», «ev»→«intravenosa»).</p>';
   (d.abbr||[]).forEach(function(p,i){ h+=row('abbr',p,i); });
   h+='<button class="btn btn-out btn-sm" onclick="rxAdd(\'abbr\')">➕ Añadir abreviatura</button>';
+  h+='<h3 style="margin-top:14px">Pautas y posología</h3><p style="font-size:12px;color:var(--mut)">Normaliza formas distintas de escribir la dosis o la frecuencia para una salida homogénea. <strong>Ya se reconocen de serie:</strong> «1-0-1» / «1-1-1» / «0-0-1»… (desayuno-comida-cena), «½», «¼», «1/2», «media pastilla», «en el desayuno»→«con el desayuno». Aquí añades las tuyas (p. ej. «cada mañana»→«cada 24 horas», abreviaturas locales). Se aplica antes de transcribir, a palabras completas y sin distinguir mayúsculas.</p>';
+  (d.pauta||[]).forEach(function(p,i){ h+=row('pauta',p,i); });
+  h+='<button class="btn btn-out btn-sm" onclick="rxAdd(\'pauta\')">➕ Añadir pauta</button>';
+  h+='</div></details>';
   h+='<hr style="margin:12px 0"><div class="btns"><button class="btn btn-out" onclick="rxEditCancelar()">✖ Cancelar</button><button class="btn btn-out" onclick="rxEditReset()">Restablecer</button><button class="btn btn-g" onclick="rxEditGuardar()">💾 Guardar para todos</button></div>';
   h+='</div>'; return h;
 };
+function rxExAdd(){ if(!_rxDraft)return; if(!_rxDraft.ejemplos)_rxDraft.ejemplos=[]; _rxDraft.ejemplos.push({from:'',to:'',_edit:true}); go('rxedit'); }
+function rxExEdit(i){ if(!_rxDraft||!_rxDraft.ejemplos||!_rxDraft.ejemplos[i])return; _rxDraft.ejemplos[i]._edit=true; go('rxedit'); }
+function rxExDone(i){ if(!_rxDraft||!_rxDraft.ejemplos||!_rxDraft.ejemplos[i])return; var p=_rxDraft.ejemplos[i]; if(!(''+(p.from||'')).trim()||!(''+(p.to||'')).trim()){ _rxDraft.ejemplos.splice(i,1); } else { p._edit=false; } go('rxedit'); }
 function rxField(list,i,f,v){ if(!_rxDraft||!_rxDraft[list]||!_rxDraft[list][i])return; _rxDraft[list][i][f]=v; }
 function rxAdd(list){ if(!_rxDraft)return; if(!_rxDraft[list])_rxDraft[list]=[]; _rxDraft[list].push({from:'',to:''}); go('rxedit'); }
 function rxDel(list,i){ if(!_rxDraft||!_rxDraft[list])return; _rxDraft[list].splice(i,1); go('rxedit'); }
 function rxEditCancelar(){ _rxDraft=null; go('labconv'); }
-async function rxEditGuardar(){ const d=_rxDraft; if(!d)return; const clean=function(a){return (a||[]).filter(function(p){return p&&(''+p.from).trim()&&(''+p.to).trim();}).map(function(p){return {from:(''+p.from).trim(),to:(''+p.to).trim()};});}; const o={ rename:clean(d.rename), abbr:clean(d.abbr) }; try{ls.s('rxOverride',o);}catch(e){} if(window.hpSaveRx){ try{ await window.hpSaveRx(o); toast('✓ Diccionario de recetas actualizado · para todos'); }catch(e){ toast('Guardado solo en este equipo (sin permiso o sin conexión)'); } } else toast('✓ Guardado'); _rxDraft=null; go('labconv'); }
-async function rxEditReset(){ if(!confirm('¿Restablecer el diccionario de recetas? Se perderán los cambios para todos.'))return; try{ localStorage.removeItem('hc_rxOverride'); }catch(e){} if(window.hpSaveRx){ try{ await window.hpSaveRx({}); }catch(e){} } _rxDraft={rename:[],abbr:[]}; toast('✓ Restablecido'); go('rxedit'); }
+async function rxEditGuardar(){ const d=_rxDraft; if(!d)return; const clean=function(a){return (a||[]).filter(function(p){return p&&(''+p.from).trim()&&(''+p.to).trim();}).map(function(p){return {from:(''+p.from).trim(),to:(''+p.to).trim()};});}; const o={ ejemplos:clean(d.ejemplos), rename:clean(d.rename), abbr:clean(d.abbr), pauta:clean(d.pauta) }; try{ls.s('rxOverride',o);}catch(e){} if(window.hpSaveRx){ try{ await window.hpSaveRx(o); toast('✓ Diccionario de recetas actualizado · para todos'); }catch(e){ toast('Guardado solo en este equipo (sin permiso o sin conexión)'); } } else toast('✓ Guardado'); _rxDraft=null; go('labconv'); }
+async function rxEditReset(){ if(!confirm('¿Restablecer el diccionario de recetas? Se perderán los cambios para todos.'))return; try{ localStorage.removeItem('hc_rxOverride'); }catch(e){} if(window.hpSaveRx){ try{ await window.hpSaveRx({}); }catch(e){} } _rxDraft={rename:[],abbr:[],pauta:[]}; toast('✓ Restablecido'); go('rxedit'); }
 
 // ── Blindaje del asistente de redacción: verificación de integridad numérica ──
 // Garantiza que el asistente SOLO reordena/reformatea: ningún número del resultado puede
@@ -9539,7 +9623,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 32;
+  var DC_BUILD = 33;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
