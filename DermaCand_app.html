@@ -1066,11 +1066,48 @@ function hpRebuildMenu(){
     groups.sort(function(a,b){ var ia=SUB_ORDER.indexOf(a.name), ib=SUB_ORDER.indexOf(b.name); return (ia<0?999:ia)-(ib<0?999:ib); });
     var out=[];
     groups.forEach(function(g){ out.push({sub:true,name:g.name}); g.items.forEach(function(x){ out.push(x); }); });
-    loose.forEach(function(x){ out.push(x); });
+    if(loose.length){ out.push({sub:true,_loose:true}); loose.forEach(function(x){ out.push(x); }); } // reset de sangrado para los sueltos (p.ej. Guías) tras los grupos
     MENU[i].items=out;
   });
 }
 try{ hpRebuildMenu(); }catch(e){ if(window.console) console.warn('hpRebuildMenu', e); }
+
+// ── Subsecciones EDITABLES (Nivel 2): la administración asigna/crea/quita subsecciones desde
+// «Gestionar secciones». Guarda el campo .sub en ls 'itemOverrides' y en la nube ('menuitems'),
+// efectivo para todos. _hpContenidoTema y _hpSecGuiaId eran stubs invocados-pero-no-definidos. ──
+function _hpSecSubs(sec){ var set={}; (sec.items||[]).forEach(function(it){ if(it.id){ var s=_hpItemSub(it.id); if(s) set[s]=1; } }); var arr=Object.keys(set); arr.sort(function(a,b){ var ia=SUB_ORDER.indexOf(a),ib=SUB_ORDER.indexOf(b); return (ia<0?999:ia)-(ib<0?999:ib); }); return arr; }
+function _hpSubOptions(sec, itemId){
+  var cur=_hpItemSub(itemId)||''; var subs=_hpSecSubs(sec); if(cur && subs.indexOf(cur)<0) subs.push(cur);
+  var esc=function(s){ return _hpEsc(s).replace(/"/g,'&quot;'); };
+  var o='<option value="__none"'+(cur?'':' selected')+'>— sin subsección —</option>';
+  subs.forEach(function(s){ o+='<option value="'+esc(s)+'"'+(s===cur?' selected':'')+'>'+_hpEsc(s)+'</option>'; });
+  o+='<option value="__new">➕ Nueva subsección…</option>';
+  return o;
+}
+function _hpContenidoTema(sec){
+  var tools=(sec.items||[]).filter(function(it){ return it.id && !it.sub && it.id.indexOf('g_')!==0; });
+  if(!tools.length) return '';
+  var h='<div style="font-size:11px;color:var(--mut);margin:2px 0 6px">Agrupa el menú: asigna cada herramienta a una <strong>subsección</strong>. «➕ Nueva subsección…» crea una.</div>';
+  tools.forEach(function(it){
+    h+='<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:5px 0;border-bottom:1px solid var(--bd)">';
+    h+='<span style="flex:1 1 140px;min-width:110px;font-size:13px">'+_hpEsc(hpItemName(it.id,it.name))+(hpItemOculto(it.id)?' <span style="color:var(--mut);font-size:11px">(oculta)</span>':'')+'</span>';
+    h+='<select onchange="hpAsignarSub(\''+it.id+'\',this.value)" title="Subsección dentro de esta sección" style="font-size:12px;padding:3px 6px;border:1px solid var(--bd);border-radius:6px;background:var(--bg,#fff);color:var(--txt,#222)">'+_hpSubOptions(sec,it.id)+'</select>';
+    h+='</div>';
+  });
+  return h;
+}
+async function hpAsignarSub(id, val){
+  var sub;
+  if(val==='__new'){ var n=prompt('Nombre de la subsección (p. ej. «Psoriasis y eccema»):',''); if(n==null){ go('gsecciones'); return; } sub=(n||'').trim(); }
+  else if(val==='__none') sub='';
+  else sub=val;
+  var m=hpItemMap(); m[id]=Object.assign({},m[id],{sub:sub}); try{ ls.s('itemOverrides',m); }catch(e){}
+  if(typeof hpRebuildMenu==='function') hpRebuildMenu();
+  if(typeof renderMenu==='function') renderMenu(($('search')&&$('search').value)||'');
+  go('gsecciones');
+  if(window.hpSaveItem){ try{ await window.hpSaveItem(id,{sub:sub}); toast(sub?('✓ En «'+sub+'» · para todos'):'✓ Sin subsección · para todos'); }catch(e){ toast('Guardado solo en este equipo (sin permiso o sin conexión)'); } }
+  else toast('✓ Guardado');
+}
 function hpItemHidden(id){ const o=hpItemMap()[id]; return !!(o&&o.oculta); }
 function hpItemName(id,def){ const o=hpItemMap()[id]; return (o&&o.nombre)||def; }
 function hpItemOculto(id){ if(!id) return false; if((''+id).indexOf('g_')===0) return hpSecHidden((''+id).slice(2)); return hpItemHidden(id); }
@@ -1173,7 +1210,7 @@ h+=`<div class="menu-section"><div class="menu-cat ${open?'open':''}" onclick="t
 let inSub=false;
 visible.forEach(it=>{
 if(it.admin&&!isAdminUI)return;
-if(it.sub){inSub=true;h+=`<div class="menu-sub">${it.name}</div>`;return}
+if(it.sub){if(it._loose){inSub=false;return}inSub=true;h+=`<div class="menu-sub">${it.name}</div>`;return}
 const isFav=S.favs.includes(it.id);
 const isNew=it.new && isRecentlyNew(it.new);
 const repBadge=(it.id==='reportes'&&window._hpRepNew)?`<span class="tag-new" style="background:var(--er)" title="reportes sin resolver">${window._hpRepNew}</span>`:'';
@@ -9728,7 +9765,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 36;
+  var DC_BUILD = 37;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -10659,10 +10696,10 @@ window.hpSyncSecciones = async function(){
   }catch(e){ return false; }
 };
 // ── Elementos del menú (visibilidad/nombre): solo colaboradores escriben; lo leen todos.
-window.hpSaveItem = async function(id, data){ await setDoc(doc(fs, 'itemOverrides', id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, data||{}), { merge:true }); };
+window.hpSaveItem = async function(id, data){ await setDoc(doc(fs, 'menuitems', id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, data||{}), { merge:true }); };
 window.hpSyncItems = async function(){
   try{
-    const snap = await getDocs(collection(fs, 'itemOverrides'));
+    const snap = await getDocs(collection(fs, 'menuitems'));
     const map = {}; snap.forEach(d => { map[d.id] = d.data()||{}; });
     if(window.hpApplyItems) window.hpApplyItems(map);
     return true;
