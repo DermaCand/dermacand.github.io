@@ -2684,6 +2684,17 @@ patol:[{id:'docs',name:'Documentos y referencias (PDF)'}]
 
 function getSubtypes(id){return ls.g('subtypes_'+id)||DEFAULT_SUBTYPES[id]||[]}
 function setSubtypes(id,subs){ls.s('subtypes_'+id,subs)}
+// Capa nube de apartados de guías: la nube (colección 'subtipos') prevalece sobre el JSON estático.
+window.hpApplySubtipos=function(section, items){ try{ if(Array.isArray(items)) ls.s('subtypes_'+section, items); }catch(e){} };
+// Puente UI→nube: guarda local + sube el array COMPLETO (con order/hidden/names si los hay). Best-effort.
+async function _hpPropagaSubtipos(id, subs, okMsg){
+  setSubtypes(id, subs);
+  if(window.hpSaveSubtipos){
+    try{ await window.hpSaveSubtipos(id, (subs||[]).map(function(s){ var o={id:s.id,name:s.name}; if(Array.isArray(s.order)&&s.order.length)o.order=s.order; if(Array.isArray(s.hidden)&&s.hidden.length)o.hidden=s.hidden; if(s.names&&typeof s.names==='object'&&Object.keys(s.names).length)o.names=s.names; return o; })); if(typeof toast==='function') toast((okMsg||'✓ Guardado')+' · para todos'); }
+    catch(e){ if(typeof toast==='function') toast('Guardado solo en este equipo (sin permiso o sin conexión)'); }
+  } else if(typeof toast==='function') toast(okMsg||'✓ Guardado');
+}
+function moveSubtype(id,i,dir){ const subs=getSubtypes(id); const j=i+dir; if(j<0||j>=subs.length)return; const t=subs[i]; subs[i]=subs[j]; subs[j]=t; _hpPropagaSubtipos(id,subs,'✓ Orden de apartados actualizado'); go('g_'+id); }
 // ── Orden de las CATEGORÍAS del menú (reordenable por admin, efectivo para todos) ──
 function hpCatOrden(h){ try{ const m=ls.g('catOrden')||{}; return (h in m)?m[h]:null; }catch(e){ return null; } }
 window.hpApplyCatOrden=function(m){ try{ ls.s('catOrden', m||{}); }catch(e){} try{ if(typeof renderMenu==='function' && document.getElementById('menu')) renderMenu(($('search')&&$('search').value)||''); }catch(e){} };
@@ -2797,7 +2808,7 @@ h+='<div class="alert b">Sin apartados. Añade uno con el botón ➕.</div>';
 const _canUp=!!(window.HemoCloud&&window.HemoCloud.canEdit&&window.HemoCloud.canEdit(id));
 subs.forEach((st,i)=>{
 const v=st.name.replace(/"/g,'&quot;');
-h+=`<div class="st-edit"><input type="text" value="${v}" data-id="${id}" data-i="${i}" onchange="renameSubtype(this)"><button onclick="delSubtype('${id}',${i})" title="Eliminar">×</button></div>`;
+h+=`<div class="st-edit"><button onclick="moveSubtype('${id}',${i},-1)" title="Subir apartado"${i===0?' disabled':''} style="flex:0 0 auto">↑</button><button onclick="moveSubtype('${id}',${i},1)" title="Bajar apartado"${i===subs.length-1?' disabled':''} style="flex:0 0 auto">↓</button><input type="text" value="${v}" data-id="${id}" data-i="${i}" onchange="renameSubtype(this)"><button onclick="delSubtype('${id}',${i})" title="Eliminar">×</button></div>`;
 if(_canUp)h+=`<div style="margin:-4px 0 12px 2px"><button class="btn btn-out btn-sm" onclick="hcUpload('${id}','${st.id}')">⬆️ Subir PDF a «${st.name.replace(/'/g,"\\'")}»</button></div>`;
 });
 }
@@ -3228,9 +3239,8 @@ const name=prompt('Nombre del nuevo apartado:');
 if(!name||!name.trim())return;
 const subs=getSubtypes(id);
 subs.push({id:'c_'+Date.now(),name:name.trim()});
-setSubtypes(id,subs);
+_hpPropagaSubtipos(id,subs,'✓ Apartado añadido');
 go('g_'+id);
-toast('✓ Apartado añadido');
 }
 
 function renameSubtype(inp){
@@ -3238,8 +3248,7 @@ const id=inp.dataset.id,i=+inp.dataset.i,v=inp.value.trim();
 if(!v){inp.value=getSubtypes(id)[i].name;return}
 const subs=getSubtypes(id);
 subs[i].name=v;
-setSubtypes(id,subs);
-toast('✓ Renombrado');
+_hpPropagaSubtipos(id,subs,'✓ Renombrado');
 }
 
 async function delSubtype(id,i){
@@ -3256,16 +3265,15 @@ if(matchingKeys.length)msg+=`\n\n⚠️ Se borrarán ${matchingKeys.length} PDF(
 if(!confirm(msg))return;
 for(const key of matchingKeys){try{await idb.del(key)}catch(e){}}
 subs.splice(i,1);
-setSubtypes(id,subs);
+_hpPropagaSubtipos(id,subs,'✓ Eliminado');
 go('g_'+id);
-toast('✓ Eliminado');
 }
 
 function resetSubtypes(id){
-if(!confirm('¿Restaurar la lista por defecto de apartados?\n\nLos cambios personalizados se perderán. Los PDFs descargados no se borran.'))return;
+if(!confirm('¿Restaurar la lista por defecto de apartados?\n\nLos cambios personalizados se perderán (para todo el equipo). Los PDFs descargados no se borran.'))return;
 localStorage.removeItem('hc_subtypes_'+id);
+if(window.hpResetSubtiposCloud){ window.hpResetSubtiposCloud(id).then(function(){if(typeof toast==='function')toast('✓ Restaurado · para todos');}).catch(function(){if(typeof toast==='function')toast('✓ Restaurado (solo en este equipo)');}); } else if(typeof toast==='function') toast('✓ Restaurado');
 go('g_'+id);
-toast('✓ Restaurado');
 }
 
 async function loadPDFs(k){
@@ -3274,31 +3282,94 @@ if(!el||el.dataset.loaded==='1')return;
 el.dataset.loaded='1';
 el.innerHTML='<div style="color:var(--mut);font-size:12px;padding:6px 0">Cargando...</div>';
 try{
+// Sección = primer segmento de la clave (ids de GUIDES_TITLES no llevan "_"); el resto = id del apartado.
+const section=k.split('_')[0];
+const subId=k.slice(section.length+1);
+const st=(getSubtypes(section)||[]).find(function(s){return s.id===subId;})||{};
+const hidden=Array.isArray(st.hidden)?st.hidden:[];
+const names=(st.names&&typeof st.names==='object')?st.names:{};
 const allKeys=await idb.keys();
-const matching=allKeys.filter(key=>typeof key==='string'&&key.startsWith(k+'|'));
+let matching=allKeys.filter(key=>typeof key==='string'&&key.startsWith(k+'|'));
+matching=matching.filter(function(key){ return hidden.indexOf(_guideIdent(key))===-1; });
 if(!matching.length){
 el.innerHTML='<div style="color:var(--mut);font-size:12px;padding:6px 0">Sin PDFs en este apartado.</div>';
 return;
 }
-const items=await Promise.all(matching.map(async key=>{
+let items=(await Promise.all(matching.map(async key=>{
 const data=await idb.get(key);
 return data?{key,...data}:null;
-}));
-// Sección = primer segmento de la clave (ids de GUIDES_TITLES no llevan "_"). Permite mostrar
-// el botón de borrar a los editores de esa sección sobre las guías subidas a la nube.
-const section=k.split('_')[0];
+}))).filter(Boolean);
+items=_sortGuides(items, st.order);
 const canEd=!!(window.HemoCloud&&window.HemoCloud.canEdit&&window.HemoCloud.canEdit(section));
-el.innerHTML=items.filter(Boolean).map(item=>{
+el.innerHTML=items.map(function(item,idx){
+const ident=_guideIdent(item.key);
+const dispName=names[ident]||item.name;
 const safeKey=encodeURIComponent(item.key);
 const rawKey=item.key.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
 const cloudId=item.cloudId?("'"+item.cloudId+"'"):'null';
 const rawPath=(item.path||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-const del=(item.cloud&&canEd)?`<button onclick="event.stopPropagation();hcDeleteGuide(${cloudId},'${rawPath}','${rawKey}')" title="Eliminar guía" style="background:none;border:none;color:var(--er);cursor:pointer;font-size:16px;line-height:1;padding:0 4px;flex:0 0 auto">×</button>`:'';
-return `<div class="pdf-item" style="display:flex;align-items:center;gap:6px"><span class="name" onclick="openPDF('${safeKey}')" style="cursor:pointer;flex:1">📄 ${item.name}${item.size?' ('+(item.size/1024).toFixed(0)+' KB)':''}</span>${del}</div>`;
+const encId=encodeURIComponent(ident);
+let ctrl='';
+if(canEd){
+const up=(idx===0)?'':`<button onclick="event.stopPropagation();moveGuide('${section}','${subId}','${encId}',-1)" title="Subir" style="background:none;border:none;cursor:pointer;font-size:14px;line-height:1;padding:0 3px;flex:0 0 auto">↑</button>`;
+const down=(idx===items.length-1)?'':`<button onclick="event.stopPropagation();moveGuide('${section}','${subId}','${encId}',1)" title="Bajar" style="background:none;border:none;cursor:pointer;font-size:14px;line-height:1;padding:0 3px;flex:0 0 auto">↓</button>`;
+const ren=`<button onclick="event.stopPropagation();renameGuide('${safeKey}','${section}','${subId}')" title="Renombrar" style="background:none;border:none;cursor:pointer;font-size:13px;line-height:1;padding:0 3px;flex:0 0 auto">✏️</button>`;
+const del=item.cloud?`<button onclick="event.stopPropagation();hcDeleteGuide(${cloudId},'${rawPath}','${rawKey}')" title="Eliminar guía (nube)" style="background:none;border:none;color:var(--er);cursor:pointer;font-size:16px;line-height:1;padding:0 4px;flex:0 0 auto">×</button>`:`<button onclick="event.stopPropagation();hcHideGuide('${safeKey}','${section}','${subId}')" title="Ocultar guía" style="background:none;border:none;cursor:pointer;font-size:14px;line-height:1;padding:0 4px;flex:0 0 auto">🚫</button>`;
+ctrl=up+down+ren+del;
+}
+return `<div class="pdf-item" style="display:flex;align-items:center;gap:6px"><span class="name" onclick="openPDF('${safeKey}')" style="cursor:pointer;flex:1">📄 ${_hpEsc(dispName)}${item.size?' ('+(item.size/1024).toFixed(0)+' KB)':''}</span>${ctrl}</div>`;
 }).join('');
 }catch(e){
 el.innerHTML=`<div style="color:var(--er);font-size:12px;padding:6px 0">Error: ${e.message}</div>`;
 }
+}
+// ── Helpers de guías (ident estable = lo que sigue al primer '|' de la clave idb) + gestión por guía ──
+function _guideIdent(key){ var s=''+key; var i=s.indexOf('|'); return i<0?s:s.slice(i+1); }
+function _sortGuides(items, order){ if(!Array.isArray(order)||!order.length) return items; var pos={}; order.forEach(function(id,i){pos[id]=i;}); return items.slice().sort(function(a,b){ var ia=pos[_guideIdent(a.key)]; var ib=pos[_guideIdent(b.key)]; ia=(ia==null?9999:ia); ib=(ib==null?9999:ib); return ia-ib; }); }
+async function _hpVisibleIdents(section, subId){
+  const k=section+'_'+subId; const subs=getSubtypes(section); const st=(subs||[]).find(function(s){return s.id===subId;})||{};
+  let keys=[]; try{ keys=(await idb.keys()).filter(function(key){return typeof key==='string'&&key.indexOf(k+'|')===0;}); }catch(e){}
+  const hidden=Array.isArray(st.hidden)?st.hidden:[];
+  let idents=keys.map(_guideIdent).filter(function(id){return hidden.indexOf(id)===-1;});
+  if(Array.isArray(st.order)&&st.order.length){ var pos={}; st.order.forEach(function(id,i){pos[id]=i;}); idents.sort(function(a,b){return (pos[a]==null?9999:pos[a])-(pos[b]==null?9999:pos[b]);}); }
+  return {subs:subs, st:st, idents:idents};
+}
+async function moveGuide(section, subId, encIdent, dir){
+  const ident=decodeURIComponent(encIdent); const k=section+'_'+subId;
+  const ctx=await _hpVisibleIdents(section, subId); const st=ctx.st; if(!st.id)return;
+  const idents=ctx.idents; const i=idents.indexOf(ident); if(i<0)return; const j=i+dir; if(j<0||j>=idents.length)return;
+  const t=idents[i]; idents[i]=idents[j]; idents[j]=t; st.order=idents;
+  _hpPropagaSubtipos(section, ctx.subs, '✓ Orden de guías actualizado');
+  var el=$('pdfs_'+k); if(el){ el.dataset.loaded=''; loadPDFs(k); }
+}
+async function renameGuide(safeKey, section, subId){
+  const key=decodeURIComponent(safeKey); const ident=_guideIdent(key); const k=section+'_'+subId;
+  let rec=null; try{ rec=await idb.get(key); }catch(e){}
+  const subs=getSubtypes(section); const st=(subs||[]).find(function(s){return s.id===subId;}); if(!st)return;
+  const names=(st.names&&typeof st.names==='object')?st.names:{};
+  const actual=names[ident]||(rec&&rec.name)||'';
+  const nuevo=prompt('Nombre de la guía (deja vacío para restablecer):', actual);
+  if(nuevo==null)return; const tt=nuevo.trim();
+  st.names=names;
+  if(!tt){ delete st.names[ident]; }
+  else {
+    st.names[ident]=tt;
+    if(rec){ rec.name=tt; try{ await idb.set(key, rec); }catch(e){} }
+    if(rec&&rec.cloud&&rec.cloudId&&window.HemoCloud&&window.HemoCloud.renameGuide){ try{ await window.HemoCloud.renameGuide(rec.cloudId, tt); }catch(e){} }
+  }
+  _hpPropagaSubtipos(section, subs, '✓ Guía renombrada');
+  var el=$('pdfs_'+k); if(el){ el.dataset.loaded=''; loadPDFs(k); }
+}
+async function hcHideGuide(safeKey, section, subId){
+  const key=decodeURIComponent(safeKey); const ident=_guideIdent(key); const k=section+'_'+subId;
+  if(!confirm('¿Ocultar esta guía para todo el equipo?\n\nNo se borra el archivo; puedes recuperarla con «Restaurar default».'))return;
+  const subs=getSubtypes(section); const st=(subs||[]).find(function(s){return s.id===subId;}); if(!st)return;
+  st.hidden=Array.isArray(st.hidden)?st.hidden:[]; if(st.hidden.indexOf(ident)===-1) st.hidden.push(ident);
+  if(Array.isArray(st.order)) st.order=st.order.filter(function(x){return x!==ident;});
+  if(st.names) delete st.names[ident];
+  try{ await idb.del(key); }catch(e){}
+  _hpPropagaSubtipos(section, subs, '✓ Guía oculta');
+  var el=$('pdfs_'+k); if(el){ el.dataset.loaded=''; loadPDFs(k); }
 }
 
 // === VISOR PDF (PDF.js, lazy load + offline cache) ===
@@ -9765,7 +9836,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 37;
+  var DC_BUILD = 38;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -10627,6 +10698,8 @@ window.HemoCloud = {
     }
     if(fs && docId) await deleteDoc(doc(fs,'guias',docId));
   },
+  // Renombrar una guía de la nube: actualiza solo 'name' en el doc 'guias' (efectivo al re-descargar).
+  async renameGuide(docId, name){ if(fs && docId) await setDoc(doc(fs,'guias',docId), { name: name }, { merge:true }); },
   // Los PDF se sirven desde github.io con su ruta relativa (mismo origen → offline + sin bloqueo).
   async downloadURL(path){ return path; }
 };
@@ -10702,6 +10775,17 @@ window.hpSyncItems = async function(){
     const snap = await getDocs(collection(fs, 'menuitems'));
     const map = {}; snap.forEach(d => { map[d.id] = d.data()||{}; });
     if(window.hpApplyItems) window.hpApplyItems(map);
+    return true;
+  }catch(e){ return false; }
+};
+// ── Apartados de guías (subtipos): orden/oculto/nombres por sección. Doc por sección en 'subtipos'
+// {items:[...]}. Editable por admin (cualquier sección) o editor de ESA sección; lo lee todo el equipo. ──
+window.hpSaveSubtipos = async function(section, items){ await setDoc(doc(fs, 'subtipos', section), { items: items||[], actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }); };
+window.hpResetSubtiposCloud = async function(section){ await deleteDoc(doc(fs, 'subtipos', section)); };
+window.hpSyncSubtipos = async function(){
+  try{
+    const snap = await getDocs(collection(fs, 'subtipos'));
+    snap.forEach(d => { const x=d.data()||{}; if(window.hpApplySubtipos && Array.isArray(x.items)) window.hpApplySubtipos(d.id, x.items); });
     return true;
   }catch(e){ return false; }
 };
@@ -10790,6 +10874,7 @@ function revealAndEnter(user){
   if(window.hpSyncSecciones) setTimeout(()=>window.hpSyncSecciones(),1200);
   if(window.hpSyncCatOrden) setTimeout(()=>window.hpSyncCatOrden(),1010);
   if(window.hpSyncItems) setTimeout(()=>window.hpSyncItems(),1250);
+  if(window.hpSyncSubtipos) setTimeout(()=>window.hpSyncSubtipos(),1270);
   if(window.hpSyncPlantillas) setTimeout(()=>window.hpSyncPlantillas(),1260);
   if(window.hpSyncCalcs) setTimeout(()=>window.hpSyncCalcs(),1300);
   if(window.hpSyncAlgos) setTimeout(()=>window.hpSyncAlgos(),1050);

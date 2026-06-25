@@ -174,6 +174,13 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // ── Apartados de guías (subtipos): orden, ocultos y renombrados, por sección ──
+    // Editable por admin (cualquier sección) o editor de ESA sección; lo lee cualquier autorizado.
+    match /subtipos/{seccion} {
+      allow read:  if isApproved();
+      allow write: if canEdit(seccion);
+    }
+
     // ── Orden de las categorías del menú (doc 'orden') y diccionario del asistente de recetas ──
     // 'orden' (categorías) es solo-admin; 'recetas' (diccionario del asistente de recetas) lo pueden
     // editar también los editores del área 'asistentes'. Lo lee cualquier usuario autorizado.
