@@ -9862,7 +9862,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 39;
+  var DC_BUILD = 40;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -10770,23 +10770,59 @@ window.hpRecordTermsAcceptance = async function(){
   try { await updateDoc(doc(fs, 'cuentas', uid), { aceptaTerminos: true, versionTerminos: TERMS_VERSION, fechaAceptacion: serverTimestamp() }); } catch(e){}
 };
 // ── Aviso Legal (texto): lo escribe SOLO la admin principal; lo leen todos.
-window.hpSaveAviso = async function(html){ await setDoc(doc(fs, 'textos', 'avisolegal'), { html: html||'', actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }); };
+// ── Cola de escrituras pendientes (ls 'hc_pendingWrites'): si un guardado falla SIN conexión se
+// encola y se publica para todos al reconectar (listener 'online' + al sincronizar). Clave estable:
+// la última edición de un recurso sustituye la anterior. Todos los hpSave* pasan por hpQSet. ──
+function hpwqGet(){ try{ return JSON.parse(localStorage.getItem('hc_pendingWrites'))||{}; }catch(e){ return {}; } }
+function hpwqSet(q){ try{ localStorage.setItem('hc_pendingWrites', JSON.stringify(q||{})); }catch(e){} }
+async function hpQSet(key, colId, docId, data, merge){
+  try{
+    await setDoc(doc(fs, colId, docId), Object.assign({}, data||{}, { actualizadoPor:(curUid||null), fechaActualizacion: serverTimestamp() }), merge?{merge:true}:undefined);
+    var q=hpwqGet(); if(q[key]){ delete q[key]; hpwqSet(q); }
+    return true;
+  }catch(e){
+    if(!navigator.onLine){ var q2=hpwqGet(); q2[key]={colId:colId,docId:docId,data:data||{},merge:!!merge,ts:Date.now()}; hpwqSet(q2); }
+    throw e;
+  }
+}
+let _hpFlushing=false;
+window.hpFlushWrites = async function(){
+  if(_hpFlushing||!navigator.onLine) return;
+  var q=hpwqGet(); var keys=Object.keys(q); if(!keys.length) return;
+  _hpFlushing=true; var _ok=0;
+  try{
+    for(var i=0;i<keys.length;i++){
+      var k=keys[i], op=q[k];
+      if(!op||!op.colId||!op.docId){ var c0=hpwqGet(); delete c0[k]; hpwqSet(c0); continue; }
+      try{
+        await setDoc(doc(fs, op.colId, op.docId), Object.assign({}, op.data||{}, { actualizadoPor:(curUid||null), fechaActualizacion: serverTimestamp() }), op.merge?{merge:true}:undefined);
+        var c1=hpwqGet(); delete c1[k]; hpwqSet(c1); _ok++;
+      }catch(e){
+        var c2=hpwqGet(); if(c2[k]){ c2[k].tries=(c2[k].tries||0)+1; if(c2[k].tries>=8) delete c2[k]; hpwqSet(c2); }
+        if(!navigator.onLine) break;
+      }
+    }
+  } finally { _hpFlushing=false; }
+  if(_ok>0 && typeof toast==='function'){ try{ toast('✓ '+_ok+' cambio'+(_ok===1?'':'s')+' pendiente'+(_ok===1?'':'s')+' publicado'+(_ok===1?'':'s')+' para todos'); }catch(e){} }
+};
+try{ window.addEventListener('online', function(){ setTimeout(function(){ if(window.hpFlushWrites) window.hpFlushWrites(); }, 1200); }); }catch(e){}
+window.hpSaveAviso = async function(html){ await hpQSet('aviso','textos','avisolegal',{ html: html||'' }); };
 window.hpSyncAviso = async function(){ try{ const s = await getDoc(doc(fs, 'textos', 'avisolegal')); if(s.exists() && window.hpApplyAviso) window.hpApplyAviso((s.data()||{}).html||''); return true; }catch(e){ return false; } };
 // ── Orden de las categorías del menú: lo escribe un admin; lo leen todos. ──
-window.hpSaveCatOrden = async function(m){ await setDoc(doc(fs, 'menuconfig', 'orden'), { orden: m||{}, actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }); };
+window.hpSaveCatOrden = async function(m){ await hpQSet('catorden','menuconfig','orden',{ orden: m||{} }); };
 window.hpSyncCatOrden = async function(){ try{ const s = await getDoc(doc(fs, 'menuconfig', 'orden')); if(s.exists()){ const d=s.data()||{}; if(window.hpApplyCatOrden) window.hpApplyCatOrden(d.orden||{}); } return true; }catch(e){ return false; } };
 // ── Listín editable (directorio): cloud ──
-window.hpSaveContacto = async function(id, data){ await setDoc(doc(fs, 'directorio', id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, data)); };
+window.hpSaveContacto = async function(id, data){ await hpQSet('ct:'+id,'directorio',id,data||{}); };
 window.hpDelContactoCloud = async function(id){ await deleteDoc(doc(fs, 'directorio', id)); };
 window.hpSyncDirectorio = async function(){ try{ const snap = await getDocs(collection(fs, 'directorio')); const map = {}; snap.forEach(d => { map[d.id] = d.data(); }); if(window.hpApplyDirectorio) window.hpApplyDirectorio(map); return true; }catch(e){ return false; } };
 // ── Interpretación personalizada de los scores integrados (colección 'scoretextos') ──
 // La edita cualquier editor/administrador para unificar la forma de informar; la leen todos.
-window.hpSaveScoreInterp = async function(id, html){ if(!fs) throw new Error('sin conexión'); await setDoc(doc(fs, 'scoretextos', id), { html: (html||'').toString(), actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }); };
+window.hpSaveScoreInterp = async function(id, html){ if(!fs) throw new Error('sin conexión'); await hpQSet('score:'+id,'scoretextos',id,{ html: (html||'').toString() }); };
 window.hpDelScoreInterp = async function(id){ if(!fs) throw new Error('sin conexión'); await deleteDoc(doc(fs, 'scoretextos', id)); };
 window.hpSyncScoreInterp = async function(){ if(!fs) return; try{ const snap = await getDocs(collection(fs, 'scoretextos')); const m={}; snap.forEach(d => { const x=d.data()||{}; if(x.html!=null) m[d.id]=x.html; }); try{ ls.s('scoreInterp', m); }catch(e){} }catch(e){} };
 
 // ── Secciones del menú (titulo/visibilidad/nuevas): solo colaboradores escriben; lo leen todos.
-window.hpSaveSeccion = async function(id, data){ await setDoc(doc(fs, 'secciones', id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, data||{}), { merge:true }); };
+window.hpSaveSeccion = async function(id, data){ await hpQSet('sec:'+id,'secciones',id,data||{},true); };
 window.hpBorrarSeccion = async function(id){ await deleteDoc(doc(fs, 'secciones', id)); };
 window.hpSyncSecciones = async function(){
   try{
@@ -10797,7 +10833,7 @@ window.hpSyncSecciones = async function(){
   }catch(e){ return false; }
 };
 // ── Elementos del menú (visibilidad/nombre): solo colaboradores escriben; lo leen todos.
-window.hpSaveItem = async function(id, data){ await setDoc(doc(fs, 'menuitems', id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, data||{}), { merge:true }); };
+window.hpSaveItem = async function(id, data){ await hpQSet('item:'+id,'menuitems',id,data||{},true); };
 window.hpSyncItems = async function(){
   try{
     const snap = await getDocs(collection(fs, 'menuitems'));
@@ -10808,7 +10844,7 @@ window.hpSyncItems = async function(){
 };
 // ── Apartados de guías (subtipos): orden/oculto/nombres por sección. Doc por sección en 'subtipos'
 // {items:[...]}. Editable por admin (cualquier sección) o editor de ESA sección; lo lee todo el equipo. ──
-window.hpSaveSubtipos = async function(section, items){ await setDoc(doc(fs, 'subtipos', section), { items: items||[], actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }); };
+window.hpSaveSubtipos = async function(section, items){ await hpQSet('subt:'+section,'subtipos',section,{ items: items||[] }); };
 window.hpResetSubtiposCloud = async function(section){ await deleteDoc(doc(fs, 'subtipos', section)); };
 window.hpSyncSubtipos = async function(){
   try{
@@ -10819,7 +10855,7 @@ window.hpSyncSubtipos = async function(){
 };
 // ── Plantillas de informe (formato del texto que se copia de cada calculadora). Doc por id de
 // calculadora; las edita admin/editor y las lee todo el equipo. ──
-window.hpSavePlantilla = async function(id, tpl){ await setDoc(doc(fs, 'plantillas', id), { tpl: tpl, actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, { merge:true }); };
+window.hpSavePlantilla = async function(id, tpl){ await hpQSet('tpl:'+id,'plantillas',id,{ tpl: tpl },true); };
 window.hpDeletePlantilla = async function(id){ await deleteDoc(doc(fs, 'plantillas', id)); };
 window.hpSyncPlantillas = async function(){
   try{
@@ -10831,7 +10867,7 @@ window.hpSyncPlantillas = async function(){
 };
 
 // Algoritmos interactivos (por seccion). Lo escribe quien edita esa seccion; lo leen todos.
-window.hpSaveAlgo = async function(algo){ await setDoc(doc(fs, 'algoritmos', algo.id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, algo)); };
+window.hpSaveAlgo = async function(algo){ await hpQSet('algo:'+algo.id,'algoritmos',algo.id,algo); };
 window.hpDeleteAlgo = async function(id){ await deleteDoc(doc(fs, 'algoritmos', id)); };
 window.hpSyncAlgos = async function(){
   try{
@@ -10842,7 +10878,7 @@ window.hpSyncAlgos = async function(){
   }catch(e){ return false; }
 };
 // ── Calculadoras propias (por sección). Las edita quien edita esa sección; las leen todos.
-window.hpSaveCalc = async function(calc){ await setDoc(doc(fs, 'calculadoras', calc.id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, calc)); };
+window.hpSaveCalc = async function(calc){ await hpQSet('calc:'+calc.id,'calculadoras',calc.id,calc); };
 window.hpDeleteCalc = async function(id){ await deleteDoc(doc(fs, 'calculadoras', id)); };
 window.hpSyncCalcs = async function(){
   try{
@@ -10853,10 +10889,10 @@ window.hpSyncCalcs = async function(){
   }catch(e){ return false; }
 };
 // ── Diccionario del asistente de recetas. Lo editan admin/editores del área "Asistentes"; lo leen todos. ──
-window.hpSaveRx = async function(o){ await setDoc(doc(fs, 'menuconfig', 'recetas'), { data: o||{}, actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }); };
+window.hpSaveRx = async function(o){ await hpQSet('rx','menuconfig','recetas',{ data: o||{} }); };
 window.hpSyncRx = async function(){ try{ const s = await getDoc(doc(fs, 'menuconfig', 'recetas')); if(s.exists()){ const d=s.data()||{}; if(window.hpApplyRx) window.hpApplyRx(d.data||{}); } return true; }catch(e){ return false; } };
 // ── Páginas editadas (override del contenido de vistas). Las edita quien edita esa sección (o admin). ──
-window.hpSavePage = async function(id, data){ await setDoc(doc(fs, 'paginas', id), Object.assign({ actualizadoPor: curUid||null, fechaActualizacion: serverTimestamp() }, data||{})); };
+window.hpSavePage = async function(id, data){ await hpQSet('page:'+id,'paginas',id,data||{}); };
 window.hpDeletePage = async function(id){ await deleteDoc(doc(fs, 'paginas', id)); };
 window.hpSyncPages = async function(){
   try{
@@ -10867,6 +10903,43 @@ window.hpSyncPages = async function(){
   }catch(e){ return false; }
 };
 
+// ── Sincronización de CONTENIDO en vivo entre equipos: trae los cambios de la nube y re-pinta
+// (solo vistas pasivas y si algo cambió de verdad; nunca encima de una edición en curso). ──
+function _hpSig(){ try{ var s=0,total=0; for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(!k)continue; var v=localStorage.getItem(k)||''; total+=k.length+v.length; if(total>3000000)break; var str=k+'='+v; for(var j=0;j<str.length;j++){ s=((s<<5)-s+str.charCodeAt(j))|0; } } return s; }catch(e){ return 0; } }
+function _hpSafeRerender(){ try{
+  if(document.getElementById('hp-tpl-modal')||document.getElementById('hp-updating')) return false;
+  var ae=document.activeElement; if(ae&&(ae.tagName==='INPUT'||ae.tagName==='TEXTAREA'||ae.isContentEditable)) return false;
+  var v=(typeof S!=='undefined'&&S&&S.view)||''; if(/edit$/.test(String(v))) return false;
+  return true;
+}catch(e){ return false; } }
+let _hpResyncAt=0,_hpResyncing=false;
+window.hpResyncContent=async function(opts){
+  opts=opts||{};
+  if(_hpResyncing) return;
+  if(!navigator.onLine || !window.__hpUid) return;
+  var now=Date.now();
+  if(!opts.force && now-_hpResyncAt<20000) return;
+  _hpResyncAt=now; _hpResyncing=true;
+  try{
+    try{ if(window.hpFlushWrites) await window.hpFlushWrites(); }catch(e){}
+    var before=_hpSig();
+    var fns=['hpSyncSecciones','hpSyncCatOrden','hpSyncItems','hpSyncSubtipos','hpSyncPlantillas','hpSyncRx','hpSyncPages','hpSyncAlgos','hpSyncCalcs','hpSyncDirectorio','hpSyncAviso','hpSyncScoreInterp','hpSyncColaboradores'];
+    for(var i=0;i<fns.length;i++){ var fn=fns[i]; if(window[fn]){ try{ await window[fn](); }catch(e){} } }
+    try{ if(typeof renderMenu==='function') renderMenu(($('search')&&$('search').value)||''); }catch(e){}
+    if(opts.rerender && (_hpSig()!==before) && _hpSafeRerender()){ try{
+      var _cv=(typeof S!=='undefined'&&S&&S.view)||'';
+      var _po=(typeof hpPages==='function')?hpPages()[_cv]:null;
+      var _passive=/^g_/.test(_cv) || ['home','acerca','sync'].indexOf(_cv)!==-1 || !!(_po&&_po.html&&_po.estado==='publicado');
+      if(_passive && typeof go==='function') go(_cv);
+    }catch(e){} }
+  } finally { _hpResyncing=false; }
+};
+try{
+  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') window.hpResyncContent({rerender:true}); });
+  window.addEventListener('focus',function(){ window.hpResyncContent({rerender:true}); });
+  window.addEventListener('online',function(){ setTimeout(function(){ window.hpResyncContent({force:true,rerender:true}); },1800); });
+  setInterval(function(){ window.hpResyncContent({rerender:true}); },120000);
+}catch(e){}
 function hidePending(){ const pe=document.getElementById('hp-pending-overlay'); if(pe) pe.style.display='none'; }
 function showPending(name){
   const ov=document.getElementById('hp-auth-overlay'); if(ov) ov.classList.add('hidden');
