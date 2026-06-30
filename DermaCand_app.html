@@ -1322,6 +1322,9 @@ function go(id, params) {
     let _skipPost = false;
     try{ const _pw = hpPageWrap(id, _base); _base = _pw.html; _skipPost = _pw.skipPost; }catch(e){}
     $('content').innerHTML = _base;
+    // "Última actualización" al pie de cada sección de contenido (no en vistas de utilidad/editores).
+    // Usa el campo upd:/new: del ítem en MENU si lo tiene; si no, la fecha-base DC_UPD_DEFAULT.
+    try{ if(!DC_NO_UPD.has(id)){ var _uit=getAll().find(function(x){return x.id===id;}); var _udt=(_uit&&(_uit.upd||_uit.new))||DC_UPD_DEFAULT; if(_udt){ var _up=String(_udt).split('-'); if(_up.length===3){ var _uel=document.createElement('p'); _uel.style.cssText='font-size:11px;color:var(--mut);text-align:right;padding:4px 4px 10px;margin:0'; _uel.textContent='Actualizado: '+_up[2]+'/'+_up[1]+'/'+_up[0]; var _uc=$('content'); if(_uc)_uc.appendChild(_uel); } } } }catch(e){}
     if (!_skipPost && VIEWS[id + '_post']) VIEWS[id + '_post'](params);
     if (typeof wrapTbls === 'function') wrapTbls($('content'));
     if (typeof makeStepsCollapsible === 'function') makeStepsCollapsible($('content'));
@@ -1339,6 +1342,10 @@ const VIEWS={};
 // original). Se excluyen las vistas funcionales (calculadoras y asistentes, paneles de admin, guías)
 // y CUALQUIER vista interactiva (con _post) para no romper sus cálculos: solo el contenido puro es editable.
 const HP_NOPAGE=new Set(['home','sync','phone','viewer','acerca','solicitudes','reportes','gsecciones','calc','calcedit','algo','algoedit','labconv','recetas','pageedit']);
+// "Última actualización" por sección: fecha-base de respaldo (EDITABLE) y vistas de utilidad/editores
+// que NO llevan la nota. Para una fecha precisa por apartado, añade upd:'AAAA-MM-DD' al ítem en MENU.
+const DC_UPD_DEFAULT='2026-06-01';
+const DC_NO_UPD=new Set(['home','sync','phone','viewer','acerca','solicitudes','reportes','gsecciones','calc','calcedit','algo','algoedit','labconv','recetas','pageedit','rxedit']);
 function hpPageEditable(id){ return !!id && !HP_NOPAGE.has(id) && id.indexOf('g_')!==0 && !VIEWS[id+'_post']; }
 let _hpPageSec=null;
 function _hpPageSecMap(){ if(_hpPageSec) return _hpPageSec; const m={}; try{ MENU.forEach(function(sec){ const gi=sec.items.find(function(it){return it.id&&it.id.indexOf('g_')===0;}); const sid=gi?gi.id.slice(2):null; sec.items.forEach(function(it){ if(it.id) m[it.id]=sid; }); }); }catch(e){} _hpPageSec=m; return m; }
@@ -9895,7 +9902,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 41;
+  var DC_BUILD = 42;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
