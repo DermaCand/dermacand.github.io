@@ -1410,12 +1410,38 @@ function _pageCmd(cmd,val){ try{ var a=document.getElementById('page-edit-area')
 function _pageInsert(html){ try{ var a=document.getElementById('page-edit-area'); if(!a)return; a.focus(); if(!document.execCommand('insertHTML',false,html)){ a.insertAdjacentHTML('beforeend',html); } }catch(e){} }
 function _pageDesplegable(){ _pageInsert('<div class="coll"><div class="coll-h" onclick="this.parentElement.classList.toggle(\'open\')"><span>Nuevo desplegable</span><span class="ar">▶</span></div><div class="coll-c"><p>Escribe aquí el contenido…</p></div></div><p><br></p>'); }
 function _pageTabla(){ _pageInsert('<table class="tbl"><tbody><tr><td>Celda</td><td>Celda</td></tr><tr><td>Celda</td><td>Celda</td></tr></tbody></table><p><br></p>'); }
-function _pageCurTable(){ try{ var s=window.getSelection&&window.getSelection(); var n=s&&s.anchorNode; var a=document.getElementById('page-edit-area'); while(n&&n!==a){ if(n.nodeType===1&&n.tagName==='TABLE')return n; n=n.parentNode; } }catch(e){} return null; }
-function _pageAddRow(){ var t=_pageCurTable(); if(!t){ toast('Pon el cursor dentro de una tabla'); return; } var rows=t.rows; if(!rows.length)return; var cols=rows[rows.length-1].cells.length; var tb=t.tBodies[0]||t; var tr=document.createElement('tr'); for(var i=0;i<cols;i++){ var td=document.createElement('td'); td.textContent='Celda'; tr.appendChild(td); } tb.appendChild(tr); }
-function _pageAddCol(){ var t=_pageCurTable(); if(!t){ toast('Pon el cursor dentro de una tabla'); return; } for(var i=0;i<t.rows.length;i++){ var cc=t.rows[i].insertCell(-1); cc.textContent='Celda'; } }
+// Recuerda la última posición del cursor DENTRO de un área editable. En móvil, al tocar un botón
+// de la barra se pierde la selección viva; así los botones (➕ Fila/Columna…) saben dónde estaba.
+var _pgLastSelNode=null;
+function _pgEditAreas(){ return [document.getElementById('page-edit-area'), document.getElementById('aviso-cuerpo')].filter(Boolean); }
+function _pgRememberSel(){ try{ var s=window.getSelection&&window.getSelection(); if(!s||!s.anchorNode)return; var areas=_pgEditAreas(); for(var i=0;i<areas.length;i++){ if(areas[i].contains(s.anchorNode)){ _pgLastSelNode=s.anchorNode; return; } } }catch(e){} }
+try{ document.addEventListener('selectionchange', _pgRememberSel); }catch(e){}
+function _pageCurTable(){
+  try{
+    var s=window.getSelection&&window.getSelection();
+    var n=(s&&s.anchorNode)||null;
+    var areas=_pgEditAreas();
+    var inEditor=function(node){ for(var i=0;i<areas.length;i++){ if(areas[i].contains(node))return true; } return false; };
+    if(!n || !inEditor(n)) n=_pgLastSelNode; // selección perdida (móvil) → usa la recordada
+    while(n){ if(n.nodeType===1&&n.tagName==='TABLE')return n; n=n.parentNode; }
+  }catch(e){}
+  return null;
+}
+function _pageAddRow(){ var t=_pageCurTable(); if(!t){ toast('Toca primero una celda de la tabla y vuelve a pulsar'); return; } var rows=t.rows; if(!rows.length)return; var cols=rows[rows.length-1].cells.length; var tb=t.tBodies[0]||t; var tr=document.createElement('tr'); for(var i=0;i<cols;i++){ var td=document.createElement('td'); td.textContent='Celda'; tr.appendChild(td); } tb.appendChild(tr); }
+function _pageAddCol(){ var t=_pageCurTable(); if(!t){ toast('Toca primero una celda de la tabla y vuelve a pulsar'); return; } for(var i=0;i<t.rows.length;i++){ var cc=t.rows[i].insertCell(-1); cc.textContent='Celda'; } }
 function _pageArea(aid){ return document.getElementById(aid||'page-edit-area'); }
 function _pageCurBlock(aid){ try{ var a=_pageArea(aid); if(!a)return null; var s=window.getSelection&&window.getSelection(); if(!s||!s.anchorNode)return null; var n=s.anchorNode; if(!a.contains(n))return null; return _pgUnit(n,a); }catch(e){ return null; } }
-function _pageMark(aid){ try{ var a=_pageArea(aid); if(!a)return; var cur=_pageCurBlock(aid); Array.prototype.forEach.call(a.querySelectorAll('.pg-cur'),function(x){ if(x!==cur)x.classList.remove('pg-cur'); }); if(cur&&cur.classList)cur.classList.add('pg-cur'); }catch(e){} }
+function _pageMark(aid){ try{ _pgRememberSel(); var a=_pageArea(aid); if(!a)return; var cur=_pageCurBlock(aid); Array.prototype.forEach.call(a.querySelectorAll('.pg-cur'),function(x){ if(x!==cur)x.classList.remove('pg-cur'); }); if(cur&&cur.classList)cur.classList.add('pg-cur'); }catch(e){} }
+// Enter = salto de línea DENTRO del cuadro/bloque (no lo parte en dos). Shift+Enter = comportamiento nativo.
+function _pageKeydown(e){
+  if(!e || e.key!=='Enter' || e.shiftKey) return;
+  e.preventDefault();
+  try{
+    if(document.queryCommandSupported && document.queryCommandSupported('insertLineBreak')) document.execCommand('insertLineBreak');
+    else document.execCommand('insertHTML', false, '<br>');
+  }catch(err){ try{ document.execCommand('insertHTML', false, '<br>'); }catch(_e){} }
+  try{ _pageMark(e.currentTarget && e.currentTarget.id); }catch(_m){}
+}
 function _pageMoveBlock(dir,aid){ var b=_pageCurBlock(aid); if(!b){ toast('Pon el cursor en el bloque que quieras mover'); return; } if(dir<0){ if(b.previousElementSibling) b.parentNode.insertBefore(b,b.previousElementSibling); } else { if(b.nextElementSibling) b.parentNode.insertBefore(b.nextElementSibling,b); } _pageMark(aid); }
 function _pageDelBlock(aid){ var b=_pageCurBlock(aid); if(!b){ toast('Pon el cursor en el bloque que quieras borrar'); return; } if(b.getAttribute&&b.getAttribute('contenteditable')==='false'){ toast('Ese bloque es automático; no se puede borrar'); return; } if(!confirm('¿Borrar este bloque entero (cuadro, tabla, lista…)?')) return; b.remove(); _pageMark(aid); }
 function _pageAddAlert(cls,aid){ var a=_pageArea(aid); if(!a)return; var L={y:'Aviso',b:'Información',g:'Nota',r:'Importante'}; var html='<div class="alert '+cls+'"><strong>'+(L[cls]||'Aviso')+'.</strong> Escribe aquí el contenido…</div>'; var u=_pageCurBlock(aid); var b=null; if(u){ var p=u.parentNode; if(p===a||(p.classList&&(p.classList.contains('alert')||p.classList.contains('coll-c')))) b=u; else b=_pgTop(u,a); } if(b){ b.insertAdjacentHTML('afterend',html); } else { a.insertAdjacentHTML('beforeend',html); } _pageMark(aid); }
@@ -1459,7 +1485,7 @@ VIEWS.pageedit=()=>{
   let h='<div class="card"><h2>✏️ Editar página</h2>';
   h+='<p class="intro">Edita el contenido y guárdalo: sustituye al original <strong>para todos</strong> y siempre puedes <strong>restaurar el original</strong>.</p>';
   h+=_pageToolbar();
-  h+='<div id="page-edit-area" contenteditable="true" onclick="_pageMark()" onkeyup="_pageMark()" onmousemove="_pgGripFollow(event,this)" onmouseleave="_pgGripHide()" style="border:1px solid var(--bd);border-radius:8px;padding:10px;min-height:300px;outline:none">'+_hpSanHtml(d.html||'')+'</div>';
+  h+='<div id="page-edit-area" contenteditable="true" onkeydown="_pageKeydown(event)" onclick="_pageMark()" onkeyup="_pageMark()" onmousemove="_pgGripFollow(event,this)" onmouseleave="_pgGripHide()" style="border:1px solid var(--bd);border-radius:8px;padding:10px;min-height:300px;outline:none">'+_hpSanHtml(d.html||'')+'</div>';
   h+='<hr style="margin:12px 0"><div class="btns"><button class="btn btn-out" onclick="pageCancelar()">✖ Cancelar</button><button class="btn btn-out" onclick="hpRestaurarPage(\''+d.id+'\')">↺ Restaurar original</button><button class="btn btn-g" onclick="pageGuardar()">💾 Guardar para todos</button></div>';
   h+='</div>'; return h;
 };
@@ -9805,8 +9831,8 @@ if(document.readyState!=='loading')init();
         if(nw.state === 'installed' && navigator.serviceWorker.controller) window.hpApplyUpdate(nw);
       });
     });
-    // Comprobar si hay actualización cada 30 min y al volver a la pestaña
-    setInterval(function(){ reg.update().catch(function(){}); }, 60*1000);
+    // Comprobar si hay actualización a menudo (20 s) y al volver a la pestaña
+    setInterval(function(){ reg.update().catch(function(){}); }, 20*1000);
     document.addEventListener('visibilitychange', function(){
       if(document.visibilityState === 'visible') reg.update().catch(function(){});
     });
@@ -9836,7 +9862,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 38;
+  var DC_BUILD = 39;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -9860,18 +9886,20 @@ if(document.readyState!=='loading')init();
       // siguiente arranque (quitando la marca), sin forzar al usuario a conectarse.
       setTimeout(function(){
         if(_hpReloaded) return; // el controllerchange ya recargó a la versión nueva
-        var o = document.getElementById('hp-updating'); if(o && o.remove) o.remove();
         try{ sessionStorage.removeItem('hp_fr'); }catch(e){}
-      }, 7000);
+        // En vez de retirar el aviso, lo convertimos en un botón «Recargar» (el SW sigue en segundo plano).
+        var o = document.getElementById('hp-updating');
+        if(o){ o.innerHTML='<span style="font-size:13px;color:#fff">Nueva versión disponible · <button onclick="location.reload()" style="background:rgba(255,255,255,.25);border:none;color:#fff;padding:3px 10px;border-radius:5px;font-size:13px;cursor:pointer;font-weight:600">Recargar</button></span>'; }
+      }, 20000);
     }catch(e){}
   }
   var _hpVGlast = 0;
-  function hpVGthrottled(){ if(Date.now() - _hpVGlast < 30000) return; _hpVGlast = Date.now(); hpVersionGuard(); }
+  function hpVGthrottled(){ if(Date.now() - _hpVGlast < 10000) return; _hpVGlast = Date.now(); hpVersionGuard(); }
   // INMEDIATO al abrir (sin esperas), al volver a la pestaña y cada 10 min con la app abierta.
   if(document.readyState === 'complete') hpVGthrottled();
   else window.addEventListener('load', hpVGthrottled);
   document.addEventListener('visibilitychange', function(){ if(document.visibilityState === 'visible') hpVGthrottled(); });
-  setInterval(hpVGthrottled, 60*1000);
+  setInterval(hpVGthrottled, 20*1000);
 })();
 </script>
 <div id="modal-aviso-legal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; padding:1rem;" role="dialog" aria-modal="true">
@@ -10020,7 +10048,7 @@ function hpEditarAviso(){
   html=html.replace(/<ul[^>]*id=["']aviso-revisores["'][\s\S]*?<\/ul>/i,_AVISO_REV_PH);
   cu.innerHTML=html;
   cu.setAttribute('contenteditable','true');
-  cu.onclick=function(){_pageMark('aviso-cuerpo');}; cu.onkeyup=function(){_pageMark('aviso-cuerpo');}; cu.onmousemove=function(e){_pgGripFollow(e,cu);}; cu.onmouseleave=_pgGripHide;
+  cu.onkeydown=function(e){_pageKeydown(e);}; cu.onclick=function(){_pageMark('aviso-cuerpo');}; cu.onkeyup=function(){_pageMark('aviso-cuerpo');}; cu.onmousemove=function(e){_pgGripFollow(e,cu);}; cu.onmouseleave=_pgGripHide;
   cu.style.border='1px solid var(--bd)'; cu.style.borderRadius='8px'; cu.style.padding='10px'; cu.style.outline='none';
   var eb=document.getElementById('aviso-edit-btn'); if(eb) eb.style.display='none';
   var old=document.getElementById('aviso-toolbar'); if(old) old.remove();
