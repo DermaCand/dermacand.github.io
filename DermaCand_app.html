@@ -73,6 +73,8 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .menu-item{padding:7px 10px 7px 22px;cursor:pointer;border-radius:var(--rs);font-size:12.5px;color:var(--mut);display:flex;justify-content:space-between;align-items:center;gap:6px;position:relative;transition:background .15s,color .15s}
 .menu-sub{padding:6px 10px 3px 14px;font-size:11px;text-transform:uppercase;color:var(--mut);font-weight:600;letter-spacing:.4px;opacity:.8}
 .menu-sub + .menu-item, .menu-sub ~ .menu-item.in-sub{padding-left:30px}
+#hp-edit-fab{position:fixed;left:14px;bottom:16px;z-index:9000;border-radius:22px;padding:10px 16px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3);background:var(--card,#fff);color:var(--c2,#1d4ed8);border:1px solid var(--bd,#ccc)}
+#hp-edit-fab.on{background:#1d8a4e;color:#fff;border-color:#1d8a4e}
 .menu-item:hover,.menu-item.active{background:var(--hov);color:var(--txt)}
 .menu-item.active{font-weight:600}
 .menu-item.active::before{content:"";position:absolute;left:8px;top:50%;transform:translateY(-50%);width:3px;height:15px;border-radius:2px;background:var(--c1)}
@@ -782,6 +784,34 @@ function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');set
 var _SI_TPL_VIEWS={pasi:1,easi:1,scorad:1,dlqi:1,iga:1,scorten:1,hurley:1,salt:1,uas7:1,mswat:1,bpdai:1,ftu:1,dosispeso:1,bsa:1,crcl:1,ecog:1,regla9:1,tnm_tumor:1,calc:1};
 function hpReportTpls(){ try{ return ls.g('reportTpls')||{}; }catch(e){ return {}; } }
 window.hpApplyPlantillas=function(map){ try{ ls.s('reportTpls', map||{}); }catch(e){} };
+// ── MODO EDICIÓN GLOBAL ──────────────────────────────────────────────────────────────────
+// Un único interruptor flotante (solo admin/editor). APAGADO = app limpia (sin lápices/➕/botones
+// de edición). ENCENDIDO = aparecen los controles. NO cambia los permisos reales de guardado
+// (eso lo siguen decidiendo isEditor()/canEdit()); solo muestra/oculta las herramientas.
+function hpEditing(){ try{ return localStorage.getItem('hpEdit')==='1'; }catch(e){ return false; } }
+function hpEditUI(){ return hpEditing() && !!(window.HemoCloud&&HemoCloud.isEditor&&HemoCloud.isEditor()); }
+function hpEditUISec(sec){ return hpEditing() && !!(window.HemoCloud&&HemoCloud.canEdit&&HemoCloud.canEdit(sec)); }
+function hpEditUIAdmin(){ return hpEditing() && !!(window.HemoCloud&&HemoCloud.isAdmin&&HemoCloud.isAdmin()); }
+window.hpToggleEdit=function(){
+  var on=!hpEditing();
+  try{ localStorage.setItem('hpEdit', on?'1':''); }catch(e){}
+  try{ document.body.classList.toggle('hp-editing', on); }catch(e){}
+  try{ hpEditFab(); }catch(e){}
+  try{ if(typeof renderMenu==='function' && document.getElementById('menu')) renderMenu(($('search')&&$('search').value)||''); }catch(e){}
+  try{ var v=(typeof S!=='undefined')&&S&&S.view; if(v && typeof go==='function') go(v); }catch(e){}
+  if(typeof toast==='function') toast(on?'✏️ Modo edición activado · los cambios se guardan para todos':'Modo edición desactivado');
+};
+function hpEditFab(){
+  var ed=!!(window.HemoCloud&&HemoCloud.isEditor&&HemoCloud.isEditor());
+  var b=document.getElementById('hp-edit-fab');
+  if(!ed){ if(b&&b.remove)b.remove(); try{ document.body.classList.remove('hp-editing'); }catch(e){} return; }
+  if(!b){ b=document.createElement('button'); b.id='hp-edit-fab'; b.type='button'; b.onclick=window.hpToggleEdit; document.body.appendChild(b); }
+  var on=hpEditing();
+  try{ document.body.classList.toggle('hp-editing', on); }catch(e){}
+  b.className=on?'on':'';
+  b.title=on?'Estás editando · toca para salir':'Activar modo edición';
+  b.textContent=on?'✓ Editando':'✏️ Editar';
+}
 function _hpFillTpl(tpl, resultText, vars){
   if(tpl==null || tpl==='') return resultText;
   var out=String(tpl).split('{resultado}').join(resultText).split('{r}').join(resultText);
@@ -808,7 +838,7 @@ function copy(arg, id, vars){
   _hpDoCopy(_hpFillTpl(tpl, resultText, vars));
   // Editores/admin: ofrecer ajustar la plantilla de informe de ESTA calculadora (para todos).
   try{
-    if(id && _SI_TPL_VIEWS[id] && window.HemoCloud && window.HemoCloud.isEditor && window.HemoCloud.isEditor()
+    if(id && _SI_TPL_VIEWS[id] && hpEditUI()
        && !(localStorage.getItem('hpTplHide')==='1')){
       hpReportTplModal(id, resultText, vars, defTpl);
     }
@@ -1384,7 +1414,7 @@ function hpPageWrap(id, base){
   // _post se imponían solo al editar en el cliente; aquí evitan que un doc inyectado en Firestore
   // (p. ej. id='calc' o 'solicitudes') suplante una calculadora o panel saltándose su _post.
   if(!hpPageEditable(id)) return {html:base, skipPost:false};
-  const ov=hpPages()[id]; const canEd=hpCanEditPage(id);
+  const ov=hpPages()[id]; const canEd=hpCanEditPage(id) && hpEditing();
   // El override solo se aplica si la sección que registró coincide con la sección REAL de la página:
   // impide que un editor de otra sección sobrescriba esta página vía un doc con seccion ajena.
   const secOk = !ov || !ov.seccion || ov.seccion===hpPageSection(id);
@@ -2811,7 +2841,8 @@ function guidesView(id,headTitle){
 const title=GUIDES_TITLES[id];
 const subs=getSubtypes(id);
 const lastUpd=ls.g('lastUpdate');
-const editing=_editGuide===id;
+const _canManage=hpEditUISec(id);
+const editing=_canManage&&_editGuide===id;
 let h=`<div class="card"><h2>${headTitle||('Guías Clínicas - '+title)}</h2>`;
 h+=renderCollaboratorsBlock(id);
 if(!lastUpd){
@@ -2819,11 +2850,13 @@ h+='<div class="alert y" style="margin-bottom:14px">⚠️ <strong>Sin sincroniz
 }else{
 h+=`<p class="intro">Última actualización: <strong>${new Date(lastUpd).toLocaleDateString('es-ES')}</strong>. <a onclick="go('sync')" style="cursor:pointer;text-decoration:underline">Actualizar</a></p>`;
 }
-h+=`<div class="btns" style="margin-bottom:12px">
-<button class="btn ${editing?'btn-2':'btn-out'} btn-sm" onclick="toggleEditGuide('${id}')">${editing?'✓ Salir de edición':'✏️ Editar'}</button>`;
+h+=`<div class="btns" style="margin-bottom:12px">`;
+if(_canManage){
+h+=`<button class="btn ${editing?'btn-2':'btn-out'} btn-sm" onclick="toggleEditGuide('${id}')">${editing?'✓ Salir de edición':'✏️ Editar'}</button>`;
 if(editing){
 h+=`<button class="btn btn-out btn-sm" onclick="addSubtype('${id}')">➕ Añadir</button>
 <button class="btn btn-out btn-sm" onclick="resetSubtypes('${id}')">Restaurar default</button>`;
+}
 }
 h+='</div>';
 if(editing){
@@ -2831,7 +2864,7 @@ h+='<p style="font-size:12px;color:var(--mut);margin-bottom:8px">Edita los nombr
 if(!subs.length){
 h+='<div class="alert b">Sin apartados. Añade uno con el botón ➕.</div>';
 }else{
-const _canUp=!!(window.HemoCloud&&window.HemoCloud.canEdit&&window.HemoCloud.canEdit(id));
+const _canUp=hpEditUISec(id);
 subs.forEach((st,i)=>{
 const v=st.name.replace(/"/g,'&quot;');
 h+=`<div class="st-edit"><button onclick="moveSubtype('${id}',${i},-1)" title="Subir apartado"${i===0?' disabled':''} style="flex:0 0 auto">↑</button><button onclick="moveSubtype('${id}',${i},1)" title="Bajar apartado"${i===subs.length-1?' disabled':''} style="flex:0 0 auto">↓</button><input type="text" value="${v}" data-id="${id}" data-i="${i}" onchange="renameSubtype(this)"><button onclick="delSubtype('${id}',${i})" title="Eliminar">×</button></div>`;
@@ -2869,7 +2902,7 @@ function hpAlgos(){ try{ return ls.g('algos')||{}; }catch(e){ return {}; } }
 window.hpApplyAlgos=function(map){ try{ ls.s('algos', map||{}); }catch(e){} };
 function algosForSection(sec){ const m=hpAlgos(); return Object.keys(m).map(function(k){return m[k];}).filter(function(a){return a&&a.seccion===sec;}); }
 function renderAlgosBlock(sec){
-  const canEd=!!(window.HemoCloud&&window.HemoCloud.canEdit&&window.HemoCloud.canEdit(sec));
+  const canEd=hpEditUISec(sec);
   const list=algosForSection(sec); const pub=list.filter(function(a){return a.estado==='publicado';});
   if(!canEd && !pub.length) return '';
   let h='<div class="coll" style="margin-top:14px"><div class="coll-h" onclick="this.parentElement.classList.toggle(\'open\')"><span>Algoritmos interactivos</span><span class="ar">&#9654;</span></div><div class="coll-c">';
@@ -3019,9 +3052,9 @@ function hpCalcs(){ return Object.assign({}, DEFAULT_CALCS, _calcsStored()); }
 window.hpApplyCalcs=function(map){ try{ ls.s('calcs', map||{}); }catch(e){} };
 function calcsForSection(sec){ const m=hpCalcs(); return Object.keys(m).map(function(k){return m[k];}).filter(function(c){return c&&c.seccion===sec;}); }
 function renderCalcsBlock(sec){
-  const canEd=!!(window.HemoCloud&&window.HemoCloud.canEdit&&window.HemoCloud.canEdit(sec));
+  const canEd=hpEditUISec(sec);
   const list=calcsForSection(sec); const pub=list.filter(function(c){return c.estado==='publicado';});
-  if(!canEd) return '';
+  if(!canEd && !pub.length) return '';
   let h='<div class="coll" style="margin-top:14px"><div class="coll-h" onclick="this.parentElement.classList.toggle(\'open\')"><span>🧮 Calculadoras propias</span><span class="ar">▶</span></div><div class="coll-c">';
   (canEd?list:pub).forEach(function(c){
     const draft=c.estado!=='publicado';
@@ -3326,7 +3359,7 @@ const data=await idb.get(key);
 return data?{key,...data}:null;
 }))).filter(Boolean);
 items=_sortGuides(items, st.order);
-const canEd=!!(window.HemoCloud&&window.HemoCloud.canEdit&&window.HemoCloud.canEdit(section));
+const canEd=hpEditUISec(section);
 el.innerHTML=items.map(function(item,idx){
 const ident=_guideIdent(item.key);
 const dispName=names[ident]||item.name;
@@ -8549,7 +8582,7 @@ function eriInit(){const w=$('eriWrap');if(!w)return;if(eriIsHidden())w.hidden=t
 
 
 VIEWS.phone=()=>{
-const _adm=hpCanEditDir();
+const _adm=hpCanEditDir()&&hpEditing();
 return `<div class="card">
 <h2>Listín Telefónico</h2>
 <p class="intro">Directorio de extensiones del HUNSC y red de centros. Agrupado por servicio. Usa el buscador para filtrar por servicio, ubicación o extensión.</p>
@@ -8698,7 +8731,7 @@ const q=($('ph_q')?.value||'').toLowerCase().trim();
 const _strip=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'');const qn=_strip(q);
 const el=$('ph_list'); if(!el) return;
 let groups=0, rows=0, totalRows=0, html='';
-const _EDIR=hpEffectiveDir(); const _esAdm=hpCanEditDir();
+const _EDIR=hpEffectiveDir(); const _esAdm=hpCanEditDir()&&hpEditing();
 for(const [svc,items0] of _EDIR){
   // Las entradas eliminadas (tombstone) desaparecen para TODOS, también para los editores
   const items = items0.filter(it=>!(it[5]&&it[5].del));
@@ -9420,7 +9453,7 @@ return `<div class="card">
 <textarea id="lc_out" style="min-height:150px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px"></textarea></div>
 <div id="lc_guard" style="margin:8px 0"></div>
 <div class="btns"><button class="btn btn-g" onclick="copyLabConv()">📋 Copiar resultado</button></div>
-${hpCanEditAsist()?'<div class="btns" style="margin-top:6px"><button id="lc_edit_rx" class="btn btn-out btn-sm" style="display:none" onclick="rxEditOpen()">✏️ Editar diccionario de recetas</button></div>':''}
+${(hpCanEditAsist()&&hpEditing())?'<div class="btns" style="margin-top:6px"><button id="lc_edit_rx" class="btn btn-out btn-sm" style="display:none" onclick="rxEditOpen()">✏️ Editar diccionario de recetas</button></div>':''}
 
 <div class="coll" style="margin-top:14px">
 <div class="coll-h" onclick="this.parentElement.classList.toggle('open')"><span>ℹ️ Qué hace y reglas aplicadas</span><span class="ar">▶</span></div>
@@ -9862,7 +9895,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 40;
+  var DC_BUILD = 41;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -10471,7 +10504,7 @@ window.hpReporteResolverUI=function(id){ _hpRepAccion(id,'resolver'); };
 window.hpReporteBorrarUI=function(id){ if(window.hpConfirm) window.hpConfirm('¿Borrar este reporte?',()=>_hpRepAccion(id,'borrar')); else _hpRepAccion(id,'borrar'); };
 
 // Tras cargar el rol del usuario (admin/editor): refresca el menú (muestra apartados admin) y el badge.
-window.hpOnRoleLoaded=function(){renderMenu(($('search')&&$('search').value)||'');const v=S.view;if(v&&v!=='home'&&v!=='viewer'&&typeof VIEWS!=='undefined'&&VIEWS[v]){try{go(v);}catch(e){}}if(window.hpUpdateRepBadge)window.hpUpdateRepBadge();if(window.hpUpdateSolBadge)window.hpUpdateSolBadge();if(window.hpLoadPushState)window.hpLoadPushState();};
+window.hpOnRoleLoaded=function(){try{hpEditFab();}catch(e){}renderMenu(($('search')&&$('search').value)||'');const v=S.view;if(v&&v!=='home'&&v!=='viewer'&&typeof VIEWS!=='undefined'&&VIEWS[v]){try{go(v);}catch(e){}}if(window.hpUpdateRepBadge)window.hpUpdateRepBadge();if(window.hpUpdateSolBadge)window.hpUpdateSolBadge();if(window.hpLoadPushState)window.hpLoadPushState();};
 // Red de seguridad (móvil): si el rol no se cargó por conexión intermitente, reintentar al
 // volver ONLINE o al REANUDAR la app, para recuperar permisos sin reiniciar.
 function hpReloadRoleIfNeeded(){ try{ const u=window.__hpUid; if(u && window.HemoCloud && !window.HemoCloud.role){ window.HemoCloud.loadRole(u).then(function(){ if(window.hpOnRoleLoaded) window.hpOnRoleLoaded(); }); } }catch(e){} }
