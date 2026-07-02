@@ -1233,7 +1233,7 @@ if(_grpG && hpSecHidden(_grpG.id.slice(2))) return;
 const realItems=sec.items.filter(it=>!it.sub && !(it.admin&&!isAdminUI) && !isGuideHidden(it) && !hpItemHidden(it.id) && (!f||it.name.toLowerCase().includes(f)||it.kw.includes(f)));
 if(!realItems.length)return;
 const visible=f?realItems:sec.items.filter(it=>!isGuideHidden(it) && !hpItemHidden(it.id));
-const open=f||sec._o||sec.o;
+const open=f?true:_hpSecOpenIs('h:'+(sec.h||''), sec.o);
 // Cabecera: si la sección de guías de este grupo se renombró, usar el nombre nuevo.
 let _hdr=sec.h; const _gi=sec.items.find(it=>it.id&&it.id.indexOf('g_')===0); if(_gi){const _sid=_gi.id.slice(2);const _t=hpSecTitle(_sid); if(_t&&_t!==GUIDES_TITLES[_sid])_hdr=_t.toUpperCase();}
 h+=`<div class="menu-section"><div class="menu-cat ${open?'open':''}" onclick="toggleSec(${si})"><span>${_hdr}${(!open&&(sec.h==='AJUSTES')&&(((window._hpRepNew||0)+(window._hpSolNew||0))>0))?`<span class="tag-new" style="background:#c41e3a" title="solicitudes y reportes pendientes">${(window._hpRepNew||0)+(window._hpSolNew||0)}</span>`:''}</span><span class="ar">▶</span></div><div class="menu-items"${open?' style="max-height:1500px"':''}>`;
@@ -1259,7 +1259,13 @@ try{ if(typeof hpNewSectionsOrdered==='function'){ hpNewSectionsOrdered().forEac
 $('menu').innerHTML=h;
 }
 
-function toggleSec(i){MENU[i]._o=!(MENU[i]._o||MENU[i].o);MENU[i].o=0;renderMenu($('search').value)}
+// Estado abierto/cerrado de cada sección del menú, PERSISTENTE (localStorage 'hpSecOpen'): sobrevive a
+// la reconstrucción del menú (sync) y a las recargas, así la sección que abras se queda abierta hasta
+// que la cierres tú.
+function _hpSecOpenMap(){ try{ return JSON.parse(localStorage.getItem('hpSecOpen')||'{}')||{}; }catch(e){ return {}; } }
+function _hpSecOpenIs(key, defOpen){ var m=_hpSecOpenMap(); return (key in m)? !!m[key] : !!defOpen; }
+function hpToggleSecKey(key, defOpen){ var m=_hpSecOpenMap(); var cur=(key in m)?!!m[key]:!!defOpen; m[key]=!cur; try{ localStorage.setItem('hpSecOpen', JSON.stringify(m)); }catch(e){} if(typeof renderMenu==='function') renderMenu(($('search')&&$('search').value)||''); }
+function toggleSec(i){ hpToggleSecKey('h:'+(MENU[i].h||''), MENU[i].o); }
 function toggleFav(id){const i=S.favs.indexOf(id);if(i>=0)S.favs.splice(i,1);else if(S.favs.length<4)S.favs.push(id);else{toast('Máx 4 favoritos. Quita uno primero.');return}ls.s('favs',S.favs);renderMenu($('search').value)}
 function homeFav(id){toggleFav(id);if(S.view==='home')$('content').innerHTML=homeView();}
 function filterMenu(v){renderMenu(v)}
@@ -1344,7 +1350,7 @@ const VIEWS={};
 const HP_NOPAGE=new Set(['home','sync','phone','viewer','acerca','solicitudes','reportes','gsecciones','calc','calcedit','algo','algoedit','labconv','recetas','pageedit']);
 // "Última actualización" por sección: fecha-base de respaldo (EDITABLE) y vistas de utilidad/editores
 // que NO llevan la nota. Para una fecha precisa por apartado, añade upd:'AAAA-MM-DD' al ítem en MENU.
-const DC_UPD_DEFAULT='2026-06-01';
+const DC_UPD_DEFAULT='2026-07-02';
 const DC_NO_UPD=new Set(['home','sync','phone','viewer','acerca','solicitudes','reportes','gsecciones','calc','calcedit','algo','algoedit','labconv','recetas','pageedit','rxedit']);
 function hpPageEditable(id){ return !!id && !HP_NOPAGE.has(id) && id.indexOf('g_')!==0 && !VIEWS[id+'_post']; }
 let _hpPageSec=null;
@@ -9902,7 +9908,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 42;
+  var DC_BUILD = 43;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
