@@ -8743,6 +8743,9 @@ function renderDir(){
 const q=($('ph_q')?.value||'').toLowerCase().trim();
 const _strip=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'');const qn=_strip(q);
 const el=$('ph_list'); if(!el) return;
+// Preservar apartados abiertos antes de redibujar (no se cierran al editar/borrar).
+const _openSvcs=new Set();
+try{ el.querySelectorAll('.coll[data-svc]').forEach(function(c){ if(c.classList.contains('open')) _openSvcs.add(c.dataset.svc); }); }catch(e){}
 let groups=0, rows=0, totalRows=0, html='';
 const _EDIR=hpEffectiveDir(); const _esAdm=hpCanEditDir()&&hpEditing();
 for(const [svc,items0] of _EDIR){
@@ -8756,7 +8759,8 @@ for(const [svc,items0] of _EDIR){
   }
   if(!matched.length) continue;
   groups++; rows+=matched.length;
-  const open = q ? ' open' : '';
+  const open = (q || _openSvcs.has(svc)) ? ' open' : '';
+  const svcDelBtn = _esAdm ? '<button class="dir-ext-btn" style="color:#c41e3a;margin-left:6px" onclick="event.stopPropagation();hpDelSection(this)" data-svc="'+_hpEsc(svc)+'" title="Eliminar apartado completo">🗑</button>' : '';
   let inner='<div class="dir-rows">';
   for(const [d,l,t,s,cid,fl] of matched){
     const flags=fl||{};
@@ -8774,22 +8778,30 @@ for(const [svc,items0] of _EDIR){
       right+='<button class="dir-ext-btn" style="color:#b00020" onclick="event.stopPropagation();hpDelContacto(\''+cid+'\')" title="Eliminar">×</button>';
     }
     inner+=`<div class="dir-row">
-      <div class="dir-main"><div class="dir-name">${d==='—'?'·':hlMark(d.replace(/\n/g,' '),q)}</div>${l?`<div class="dir-sub">${hlMark(l,q)}</div>`:''}</div>
+      <div class="dir-main"${(cid&&_esAdm)?' style="display:flex;align-items:center"':''}>${(cid&&_esAdm)?('<input type="checkbox" class="dir-chk" data-id="'+cid+'" onchange="hpDirChkChange()" style="flex-shrink:0;width:16px;height:16px;margin-right:6px;cursor:pointer">'):''}<div><div class="dir-name">${d==='—'?'·':hlMark(d.replace(/\n/g,' '),q)}</div>${l?`<div class="dir-sub">${hlMark(l,q)}</div>`:''}</div></div>
       <div class="dir-right">${right}</div>
     </div>`;
   }
   inner+='</div>';
-  html+=`<div class="coll${open}">
+  html+=`<div class="coll${open}" data-svc="${_hpEsc(svc)}">
     <div class="coll-h" onclick="this.parentElement.classList.toggle('open')">
-      <span>${svc} <span class="dir-count">${matched.length}</span></span><span class="ar">▶</span>
+      <span>${svc} <span class="dir-count">${matched.length}</span>${svcDelBtn}</span><span class="ar">▶</span>
     </div>
     <div class="coll-c">${inner}</div>
   </div>`;
 }
 if(!groups){ el.innerHTML='<div style="padding:16px;text-align:center;color:var(--mut);font-size:13px">Sin resultados.</div>'; $('ph_meta').textContent=''; return; }
 $('ph_meta').textContent = q ? `${rows} extensiones en ${groups} servicios` : `${groups} servicios · ${totalRows} extensiones`;
-el.innerHTML=html;
+// Barra fija de multiselección (solo modo edición).
+const selBar = _esAdm ? '<div id="ph_sel_bar" style="display:none;position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--bd);padding:10px 12px;align-items:center;justify-content:space-between;gap:10px;z-index:10"><span id="ph_sel_count" style="font-size:13px;color:var(--mut)"></span><button class="btn btn-sm" style="background:#c41e3a;color:#fff;border:none;padding:6px 14px;border-radius:8px" onclick="hpDelSelected()">Eliminar seleccionados</button></div>' : '';
+el.innerHTML=html+(selBar||'');
+if(_esAdm) hpDirChkChange();
 }
+// Multiselección del listín (solo modo edición): barra "Eliminar seleccionados" + borrar apartado completo.
+function hpDirChkChange(){ var bar=$('ph_sel_bar'); if(!bar) return; var n=document.querySelectorAll('#ph_list .dir-chk:checked').length; bar.style.display=n?'flex':'none'; var c=$('ph_sel_count'); if(c) c.textContent=n+' seleccionad'+(n===1?'o':'os'); }
+async function _hpDirBorra(cids){ var m=hpDirAdd(); var ops=[]; for(var i=0;i<cids.length;i++){ var cid=cids[i]; if(!cid) continue; if(String(cid).indexOf('og_')===0){ m[cid]={__del:true}; if(window.hpSaveContacto) ops.push(window.hpSaveContacto(cid,{__del:true}).catch(function(){})); } else { delete m[cid]; if(window.hpDelContactoCloud) ops.push(window.hpDelContactoCloud(cid).catch(function(){})); } } try{ls.s('dirAdd',m);}catch(e){} renderDir(); try{ await Promise.all(ops); }catch(e){} }
+async function hpDelSection(btn){ var svc=btn.dataset.svc; if(!svc) return; if(!confirm('¿Eliminar el apartado "'+svc+'" completo?\nTodos sus contactos desaparecerán para todos los usuarios.')) return; var dir=hpEffectiveDir(); var sec=dir.find(function(x){return x[0]===svc;}); if(!sec) return; var cids=sec[1].filter(function(it){return !(it[5]&&it[5].del);}).map(function(it){return it[4];}).filter(Boolean); await _hpDirBorra(cids); toast('✓ Apartado "'+svc+'" eliminado para todos'); }
+async function hpDelSelected(){ var chks=Array.prototype.slice.call(document.querySelectorAll('#ph_list .dir-chk:checked')); if(!chks.length) return; if(!confirm('¿Eliminar '+chks.length+' contacto(s) seleccionado(s) para todos?')) return; await _hpDirBorra(chks.map(function(x){return x.dataset.id;})); toast('✓ '+chks.length+' eliminado(s) para todos'); }
 
 // ─── 2. BRIDGING PERIOPERATORIO ─────────────────────────────────
 const BR={};
@@ -9908,7 +9920,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 43;
+  var DC_BUILD = 44;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
