@@ -64,6 +64,21 @@ service cloud.firestore {
           || accountData().estado == 'aprobada' );
     }
 
+    // ── Multi-hospital (F5): aislamiento de ESCRITURA por centro, FAIL-OPEN. Un usuario solo puede
+    // escribir contenido de SU hospital. El principal puede con cualquiera. Si el usuario no tiene
+    // centro en su ficha, o el documento no lleva campo 'centro' (heredado), NO se restringe: así
+    // nunca se bloquea una edición legítima. El centro del usuario sale de su ficha 'cuentas'. ──
+    function myCentro() {
+      return (hasAccount() && ('centro' in accountData())) ? accountData().centro : null;
+    }
+    function centroWriteOk(dc) {
+      return request.auth != null
+        && ( request.auth.uid == 'IXktZrlu5KSWMSyt6MO1Kt1fRZf1'
+          || myCentro() == null
+          || !(dc is string)
+          || dc == myCentro() );
+    }
+
     match /guias/{id} {
       allow read:   if isApproved();
       allow create: if canEdit(request.resource.data.section);
@@ -129,8 +144,9 @@ service cloud.firestore {
     // Los lee cualquier usuario autorizado; los crea/edita/borra cualquier editor o administrador
     // (el listín no está ligado a una sección concreta de guías).
     match /directorio/{id} {
-      allow read:  if isApproved();
-      allow write: if isEditor();
+      allow read:   if isApproved();
+      allow create, update: if isEditor() && centroWriteOk(request.resource.data.centro);
+      allow delete: if isEditor() && centroWriteOk(resource.data.centro);
     }
 
     // ── Interpretación personalizada de los scores integrados (PASI, EASI, …) ──
@@ -184,8 +200,9 @@ service cloud.firestore {
     // ── Recuadros editables (bloques de texto de las herramientas): un doc por clave ──
     // Los lee cualquier usuario autorizado; los editan administradores y editores.
     match /bloques/{id} {
-      allow read:  if isApproved();
-      allow write: if isEditor();
+      allow read:   if isApproved();
+      allow create, update: if isEditor() && centroWriteOk(request.resource.data.centro);
+      allow delete: if isEditor() && centroWriteOk(resource.data.centro);
     }
 
     // ── Hospitales / centros (multi-hospital): lista PÚBLICA (el desplegable del registro la lee sin
@@ -236,12 +253,15 @@ service cloud.firestore {
       allow read:   if isApproved();
       allow create: if (isAdmin() || (request.resource.data.seccion is string && canEdit(request.resource.data.seccion)))
                     && request.resource.data.html is string
-                    && request.resource.data.html.size() <= 200000;
+                    && request.resource.data.html.size() <= 200000
+                    && centroWriteOk(request.resource.data.centro);
       allow update: if (isAdmin() || (resource.data.seccion is string && canEdit(resource.data.seccion)
                                       && request.resource.data.seccion is string && canEdit(request.resource.data.seccion)))
                     && request.resource.data.html is string
-                    && request.resource.data.html.size() <= 200000;
-      allow delete: if isAdmin() || (resource.data.seccion is string && canEdit(resource.data.seccion));
+                    && request.resource.data.html.size() <= 200000
+                    && centroWriteOk(request.resource.data.centro);
+      allow delete: if (isAdmin() || (resource.data.seccion is string && canEdit(resource.data.seccion)))
+                    && centroWriteOk(resource.data.centro);
     }
 
     match /config/{doc} {
