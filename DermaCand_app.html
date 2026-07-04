@@ -559,6 +559,10 @@ body{font-size:13px}
         <input class="hp-login-input" id="hp_reg_email" type="email" autocomplete="email" placeholder="usuario@hospital.es" inputmode="email">
       </div>
       <div class="hp-login-field">
+        <label class="hp-login-label" for="hp_reg_centro">Hospital / centro</label>
+        <select class="hp-login-input" id="hp_reg_centro"><option value="">Cargando hospitales…</option></select>
+      </div>
+      <div class="hp-login-field">
         <label class="hp-login-label" for="hp_reg_pw">Contraseña</label>
         <input class="hp-login-input" id="hp_reg_pw" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
       </div>
@@ -1141,6 +1145,7 @@ const MENU=[
 {id:'sync',name:'Sincronización',kw:'sincronizacion actualizar online offline backup exportar importar guias actualizaciones ajustes configuracion'},
 {id:'reportes',name:'Errores reportados',kw:'errores reportes reportar fallos bugs incidencias problemas sugerencias buzon administrador admin',admin:true},
 {id:'solicitudes',name:'Solicitudes de acceso',kw:'solicitudes cuentas usuarios aprobar aprobacion registro altas administrador admin pendientes terminos',admin:true},
+{id:'centros',name:'Hospitales / Centros',kw:'hospitales centros organizaciones multihospital multicentro acceso visibilidad permisos administrador principal',admin:true,principal:true},
 {id:'gsecciones',name:'Gestionar secciones',kw:'gestionar secciones guias crear renombrar ocultar ordenar eliminar menu administrador estructura',admin:true}
 ]}
 ];
@@ -1326,7 +1331,7 @@ const isGuideHidden=it=>!!(it.id&&it.id.indexOf('g_')===0&&hpSecHidden(it.id.sli
 // Si la sección de guías de este grupo está OCULTA, se oculta el grupo entero del menú.
 const _grpG=sec.items.find(it=>it.id&&it.id.indexOf('g_')===0);
 if(_grpG && hpSecHidden(_grpG.id.slice(2))) return;
-const realItems=sec.items.filter(it=>!it.sub && !(it.admin&&!isAdminUI) && !isGuideHidden(it) && !hpItemHidden(it.id) && (!f||it.name.toLowerCase().includes(f)||it.kw.includes(f)));
+const realItems=sec.items.filter(it=>!it.sub && !(it.admin&&!isAdminUI) && !(it.principal && window.__hpUid!==HP_PRINCIPAL_UID) && !isGuideHidden(it) && !hpItemHidden(it.id) && (!f||it.name.toLowerCase().includes(f)||it.kw.includes(f)));
 if(!realItems.length)return;
 const visible=f?realItems:sec.items.filter(it=>!isGuideHidden(it) && !hpItemHidden(it.id));
 const open=f?true:_hpSecOpenIs('h:'+(sec.h||''), sec.o);
@@ -1336,6 +1341,7 @@ h+=`<div class="menu-section"><div class="menu-cat ${open?'open':''}" onclick="t
 let inSub=false;
 visible.forEach(it=>{
 if(it.admin&&!isAdminUI)return;
+if(it.principal && window.__hpUid!==HP_PRINCIPAL_UID)return;
 if(it.sub){if(it._loose){inSub=false;return}inSub=true;h+=`<div class="menu-sub">${it.name}</div>`;return}
 const isFav=S.favs.includes(it.id);
 const isNew=it.new && isRecentlyNew(it.new);
@@ -10018,7 +10024,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 50;
+  var DC_BUILD = 51;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -10364,6 +10370,44 @@ return `<div class="card">
 <div id="sol_list">Cargando…</div></div>`;
 };
 VIEWS.solicitudes_post=()=>{ if(window.hpRenderSolicitudes) window.hpRenderSolicitudes(); };
+// === HOSPITALES / CENTROS (gestión, solo administradores) ===
+VIEWS.centros=()=>{
+  if(!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin())) return '<div class="card"><h2>🏥 Hospitales / Centros</h2><div class="alert y">Solo disponible para administradores.</div></div>';
+  return `<div class="card">
+  <h2>🏥 Hospitales / Centros</h2>
+  <p class="intro">Crea aquí los hospitales/centros que usan la app. Después, a cada usuario le asignas su centro en <strong>«Solicitudes de acceso»</strong>. Más adelante podrás restringir cada contenido a los centros que elijas (todo lo que no restrinjas seguirá siendo visible para todos).</p>
+  <div class="btns" style="margin-bottom:10px"><button class="btn btn-2 btn-sm" onclick="hpCentroNuevo()">➕ Añadir hospital / centro</button></div>
+  <div id="cent_list">Cargando…</div>
+  </div>`;
+};
+VIEWS.centros_post=()=>hpRenderCentros();
+function _hpCentrosOrden(){ const m=hpCentros(); return Object.keys(m).sort(function(a,b){ if(a==='hunsc')return -1; if(b==='hunsc')return 1; return hpCentroNombre(a).localeCompare(hpCentroNombre(b)); }); }
+function hpRenderCentros(){
+  const el=document.getElementById('cent_list'); if(!el) return;
+  const m=hpCentros(); const ids=_hpCentrosOrden();
+  let h='';
+  ids.forEach(function(id){ const c=m[id]||{}; const casa=!!c.casa||id==='hunsc';
+    h+='<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bd)"><span style="flex:1;min-width:0"><strong>'+_hpEsc(c.nombre||id)+'</strong>'+(casa?' <span style="display:inline-block;background:#1d8a4e;color:#fff;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:10px;vertical-align:middle">Principal</span>':'')+'<br><span style="font-size:11px;color:var(--mut)">id: '+_hpEsc(id)+(c.lema?(' · lema: «'+_hpEsc(c.lema)+'»'):'')+'</span></span>';
+    h+='<button class="btn btn-out btn-sm" onclick="hpCentroRen(\''+id+'\')" title="Renombrar">✏️</button>';
+    h+='<button class="btn btn-out btn-sm" onclick="hpCentroLema(\''+id+'\')" title="Lema / subtítulo del hospital">🏷️</button>';
+    if(!casa) h+='<button class="btn btn-out btn-sm" style="color:#c41e3a" onclick="hpCentroDel(\''+id+'\')" title="Eliminar">🗑</button>';
+    h+='</div>';
+  });
+  el.innerHTML=h||'<div class="alert b">Aún no hay centros.</div>';
+}
+async function hpCentroNuevo(){ if(!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin()))return; const nombre=prompt('Nombre del hospital / centro:'); if(!nombre||!nombre.trim())return; const id='c_'+Date.now(); const m=hpCentros(); m[id]={nombre:nombre.trim()}; if(window.hpApplyCentros)window.hpApplyCentros(m); hpRenderCentros(); if(window.hpSaveCentro){ try{ await window.hpSaveCentro(id,{nombre:nombre.trim()}); toast('✓ Centro creado'); }catch(e){ toast('Creado solo en este equipo (sin permiso o sin conexión)'); } } }
+async function hpCentroRen(id){ if(!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin()))return; const m=hpCentros(); const actual=(m[id]&&m[id].nombre)||''; const nombre=prompt('Nuevo nombre del centro:',actual); if(nombre==null||!nombre.trim())return; m[id]=Object.assign({},m[id],{nombre:nombre.trim()}); if(window.hpApplyCentros)window.hpApplyCentros(m); hpRenderCentros(); if(window.hpSaveCentro){ try{ await window.hpSaveCentro(id,{nombre:nombre.trim()}); toast('✓ Renombrado'); }catch(e){ toast('Guardado solo en este equipo'); } } }
+async function hpCentroLema(id){ if(!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin()))return; const m=hpCentros(); const actual=(m[id]&&m[id].lema)||''; const lema=prompt('Lema / subtítulo que verá este hospital en la cabecera (vacío = el genérico):',actual); if(lema==null)return; const v=lema.trim().slice(0,80); m[id]=Object.assign({},m[id],{lema:v}); if(window.hpApplyCentros)window.hpApplyCentros(m); hpRenderCentros(); if(window.hpUpdateBrand)window.hpUpdateBrand(); if(window.hpSaveCentro){ try{ await window.hpSaveCentro(id,{lema:v}); toast('✓ Lema actualizado · para ese hospital'); }catch(e){ toast('Guardado solo en este equipo'); } } }
+async function hpCentroDel(id){ if(!(window.HemoCloud&&window.HemoCloud.isAdmin&&window.HemoCloud.isAdmin()))return; if(id==='hunsc'){ toast('El centro principal no se puede eliminar'); return; } const m=hpCentros(); if(!confirm('¿Eliminar el centro «'+((m[id]&&m[id].nombre)||id)+'»? Los usuarios de ese centro quedarán sin centro asignado.'))return; delete m[id]; if(window.hpApplyCentros)window.hpApplyCentros(m); hpRenderCentros(); if(window.hpDeleteCentro){ try{ await window.hpDeleteCentro(id); toast('✓ Eliminado'); }catch(e){ toast('Eliminado solo en este equipo'); } } }
+// Selector de centro para asignar a un usuario (se muestra en su ficha de «Solicitudes»).
+function hpCentroSelector(uid, cur){
+  const ids=_hpCentrosOrden(); const c=(cur||'hunsc');
+  let s='<div style="margin-top:8px;padding:9px 10px;border:1px solid var(--bd,#e2e2e2);border-radius:8px;background:var(--bg,#f7f8fa)"><label style="font-size:12.5px;font-weight:600;display:block;margin-bottom:5px">🏥 Hospital / centro</label>';
+  s+='<select id="centro_'+uid+'" style="width:100%;padding:7px;border:1px solid var(--bd,#ccc);border-radius:7px;font-size:13px;background:var(--card,#fff);color:var(--txt,#222)">'+ids.map(function(id){return '<option value="'+id+'"'+(c===id?' selected':'')+'>'+_hpEsc(hpCentroNombre(id))+'</option>';}).join('')+'</select>';
+  s+='<div style="font-size:11px;color:var(--mut,#666);margin-top:4px">Determina qué contenidos restringidos podrá ver este usuario.</div></div>';
+  return s;
+}
+function hpReadCentro(uid){ var el=document.getElementById('centro_'+uid); return el?el.value:null; }
 
 const HP_PRINCIPAL_UID='IXktZrlu5KSWMSyt6MO1Kt1fRZf1'; // admin principal intocable
 function solCard(c,withActions,roleInfo,colabInfo){
@@ -11187,15 +11231,31 @@ window.hpShowRegister=function(){
   const l=document.getElementById('hp-login-view'); if(l) l.style.display='none';
   const r=document.getElementById('hp-register-view'); if(r) r.style.display='';
   const e=document.getElementById('hp_reg_err'); if(e){ e.textContent=''; e.className='hp-login-err'; }
+  try{ window.hpFillRegCentros && window.hpFillRegCentros(); }catch(_e){}
 };
 window.hpShowLogin=function(){
   const r=document.getElementById('hp-register-view'); if(r) r.style.display='none';
   const l=document.getElementById('hp-login-view'); if(l) l.style.display='';
 };
+// Rellena el desplegable de hospitales del registro (lista pública: solo id+nombre).
+window.hpFillRegCentros = async function(){
+  const sel = document.getElementById('hp_reg_centro'); if(!sel) return;
+  try{
+    const snap = await getDocs(collection(fs, 'centros'));
+    const arr = []; snap.forEach(d => { const x = d.data()||{}; arr.push({ id:d.id, nombre:x.nombre||d.id, orden:(x.orden!=null?x.orden:999) }); });
+    if(!arr.length) arr.push({ id:'hunsc', nombre:'HUNSC', orden:0 });
+    arr.sort((a,b)=>(a.orden-b.orden)||String(a.nombre).localeCompare(String(b.nombre)));
+    const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    sel.innerHTML = '<option value="">— Elige tu hospital —</option>' + arr.map(c=>'<option value="'+esc(c.id)+'">'+esc(c.nombre)+'</option>').join('');
+  }catch(e){
+    sel.innerHTML = '<option value="hunsc">HUNSC</option>';
+  }
+};
 window.hpRegister=async function(){
   const nombre=(document.getElementById('hp_reg_nombre').value||'').trim();
   const apellido=(document.getElementById('hp_reg_apellido').value||'').trim();
   const email=(document.getElementById('hp_reg_email').value||'').trim();
+  const centro=((document.getElementById('hp_reg_centro')||{}).value||'').trim();
   const pw=document.getElementById('hp_reg_pw').value;
   const pw2=document.getElementById('hp_reg_pw2').value;
   const terms=document.getElementById('hp_reg_terms').checked;
@@ -11204,6 +11264,7 @@ window.hpRegister=async function(){
   errEl.className='hp-login-err';
   if(!auth||!fs){ errEl.textContent='El servidor de cuentas aún no está configurado.'; return; }
   if(!nombre||!apellido||!email||!pw){ errEl.textContent='Completa todos los campos.'; return; }
+  if(!centro){ errEl.textContent='Elige tu hospital en el desplegable.'; return; }
   if(pw.length<6){ errEl.textContent='La contraseña debe tener al menos 6 caracteres.'; return; }
   if(pw!==pw2){ errEl.textContent='Las contraseñas no coinciden.'; return; }
   if(!terms){ errEl.textContent='Debes aceptar el Aviso Legal y la Política de Privacidad.'; return; }
@@ -11214,7 +11275,7 @@ window.hpRegister=async function(){
     const user=cred.user;
     try{ await updateProfile(user,{ displayName:(nombre+' '+apellido).trim() }); }catch(e){}
     await setDoc(doc(fs,'cuentas',user.uid),{
-      email, nombre, apellido,
+      email, nombre, apellido, centro, centroSolicitado:centro,
       aceptaTerminos:true, versionTerminos:TERMS_VERSION,
       fechaAceptacion:serverTimestamp(),
       estado:'pendiente', createdAt:serverTimestamp()
