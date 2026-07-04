@@ -839,6 +839,9 @@ function hpUserCentro(){ try{ return window.__hpCentro || 'hunsc'; }catch(e){ re
 function hpCentroNombre(id){ var m=hpCentros(); return (m[id]&&m[id].nombre)||id||''; }
 function hpCasaCentro(){ try{ var m=hpCentros(); for(var k in m){ if(m[k]&&m[k].casa) return k; } }catch(e){} return 'hunsc'; }
 function hpIsPrincipal(){ try{ return typeof HP_PRINCIPAL_UID!=='undefined' && window.__hpUid===HP_PRINCIPAL_UID; }catch(e){ return false; } }
+// Branding por hospital: si el usuario pertenece a un hospital con lema propio, se refleja en la
+// cabecera de Inicio (y su nombre como distintivo). Re-renderiza Inicio si es la vista actual.
+window.hpUpdateBrand=function(){ try{ if(typeof S!=='undefined' && S && S.view==='home' && typeof go==='function') go('home'); }catch(e){} };
 // ── RECUADROS EDITABLES (EB): envuelven un texto por defecto; en MODO EDICIÓN el recuadro se toca
 // para editarlo (modal), se guarda en la nube (colección 'bloques') para todo el equipo y es
 // restaurable. Cola 'hpBloquePend' para que ninguna sincronización revierta una edición sin confirmar.
@@ -1675,7 +1678,8 @@ function homeView() {
         <div class="home-wordmark">
             <span class="hp-hemo">DERMA</span><span class="hp-pocket">CAND</span>
         </div>
-        <p class="home-tagline">Guía de consulta rápida en Dermatología</p>
+        <p class="home-tagline">${(()=>{ try{ var _c=hpUserCentro(),_m=hpCentros(),_i=(_m&&_m[_c])||{}; return (_i.lema&&_i.lema.trim())?_hpEsc(_i.lema):'Guía de consulta rápida en Dermatología'; }catch(e){ return 'Guía de consulta rápida en Dermatología'; } })()}</p>
+        ${(()=>{ try{ var _c=hpUserCentro(); if(_c&&_c!==hpCasaCentro()){ var _n=hpCentroNombre(_c); if(_n) return '<div style="text-align:center;font-size:12px;font-weight:700;color:var(--c1);margin-top:6px;letter-spacing:.5px">🏥 '+_hpEsc(_n)+'</div>'; } }catch(e){} return ''; })()}
       </div>
       <button class="home-search" onclick="openCmd()" aria-label="Buscar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -10024,7 +10028,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 51;
+  var DC_BUILD = 52;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -10430,14 +10434,17 @@ if(c.origen==='manual') h+='<div style="font-size:11.5px;color:#5a6a85;margin-bo
 if(fecha) h+='<div style="font-size:12px;color:var(--mut);margin-bottom:3px"><strong>Aceptó términos:</strong> '+fecha+(c.versionTerminos?(' (v'+c.versionTerminos+')'):'')+'</div>';
 if(acceso) h+='<div style="font-size:12px;color:var(--mut);margin-bottom:3px"><strong>Último acceso:</strong> '+acceso+'</div>';
 if(withActions||manageable){ const _cred=(colabInfo&&colabInfo.nombre)||((c.nombre||'')+' '+(c.apellido||'')).trim()||((c.email||'').split('@')[0]); const _crole=(colabInfo&&(colabInfo.rol||colabInfo.r))||''; h+=hpRoleSelector(c.uid,roleInfo,_cred,_crole); }
+if((withActions||manageable) && c.uid!==HP_PRINCIPAL_UID && typeof hpCentroSelector==='function'){ h+=hpCentroSelector(c.uid, c.centro||c.centroSolicitado||'hunsc'); }
 if(withActions){
 h+='<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">';
 h+='<button class="btn btn-sm" onclick="hpAprobarUI(\''+c.uid+'\')">Aprobar</button>';
 h+='<button class="btn btn-out btn-sm" onclick="hpRechazarUI(\''+c.uid+'\')">Rechazar</button>';
+h+='<button class="btn btn-out btn-sm" onclick="hpGuardarCentro(\''+c.uid+'\')">🏥 Guardar hospital</button>';
 h+='</div>';
 } else if(manageable && c.uid!==HP_PRINCIPAL_UID && !((roleInfo&&roleInfo.role==='admin') && window.__hpUid!==HP_PRINCIPAL_UID)){
 h+='<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">';
 h+='<button class="btn btn-sm" onclick="hpGuardarRol(\''+c.uid+'\')">Guardar perfil</button>';
+if(c.uid!==HP_PRINCIPAL_UID) h+='<button class="btn btn-out btn-sm" onclick="hpGuardarCentro(\''+c.uid+'\')">🏥 Guardar hospital</button>';
 h+='</div>';
 }
 h+='</div></div>';
@@ -10524,6 +10531,13 @@ window.hpGuardarRol=function(uid){
   const spec=role==='editor'?'Dermatólogo/a':'';
   const msg=role==='admin'?'¿Asignar perfil ADMINISTRADOR (co-admin)? Podrá gestionar secciones, contenido, editores y cuentas, pero NO a otros administradores (eso solo el principal). Figurará como administrador en el Aviso Legal.':role==='editor'?('¿Guardar como EDITOR de '+secs.length+' sección(es)'+(spec?(', acreditado como '+spec):'')+'? Figurará como colaborador en el Aviso Legal.'):'¿Dejar como usuario, sin permisos de edición?';
   if(window.hpConfirm) window.hpConfirm(msg,function(){_hpDoRol(uid,role,secs,nombre,spec);}); else _hpDoRol(uid,role,secs,nombre,spec);
+};
+// Asigna a un usuario el hospital elegido en su ficha (solo admin; lo refuerzan las reglas).
+window.hpGuardarCentro=function(uid){
+  if(typeof hpReadCentro!=='function') return;
+  const centro=hpReadCentro(uid); if(!centro) return;
+  if(!window.hpSetUserCentro){ if(typeof toast==='function')toast('Sin conexión'); return; }
+  window.hpSetUserCentro(uid,centro).then(function(){ if(typeof toast==='function')toast('✓ Hospital asignado'); if(window.hpRenderSolicitudes)window.hpRenderSolicitudes(); }).catch(function(e){ if(typeof toast==='function')toast('Error: '+(e.message||'')); });
 };
 async function _hpDoRol(uid,role,secs,nombre,spec){
   try{ if(window.hpAsignarRol) await window.hpAsignarRol(uid,role,secs,nombre,spec); if(window.hpSyncColaboradores) window.hpSyncColaboradores(); if(typeof toast==='function')toast('✔ Perfil actualizado'); if(window.hpRenderSolicitudes) window.hpRenderSolicitudes(); }
