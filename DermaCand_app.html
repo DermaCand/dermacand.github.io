@@ -1687,6 +1687,17 @@ if(S.p.sex){parts.push(S.p.sex==='M'?'varón':'mujer')}
 return parts.length?`Paciente de ${parts.join(', ')}. `:'';
 }
 
+const CRCL_AJUSTE=`<div class="alert b">
+<ul style="padding-left:20px;line-height:1.7">
+<li><strong>Valaciclovir / aciclovir / famciclovir</strong> (herpes zóster y simple): reducir dosis e intervalo si CrCl &lt; 50 mL/min; en zóster con CrCl &lt; 10 mL/min, valaciclovir 500 mg/24 h. Aciclovir IV: hidratar para evitar nefropatía por cristales y ajustar por CrCl.</li>
+<li><strong>Metotrexato</strong> (psoriasis): evitar si CrCl &lt; 30 mL/min; reducir dosis y extremar monitorización si 30–60 (riesgo de mielosupresión). Contraindicado asociar AINE en insuficiencia renal.</li>
+<li><strong>Fluconazol</strong> (candidiasis, onicomicosis): reducir el 50&nbsp;% de la dosis de mantenimiento si CrCl ≤ 50 mL/min.</li>
+<li><strong>Terbinafina</strong>: no recomendada si CrCl &lt; 50 mL/min (datos farmacocinéticos insuficientes).</li>
+<li><strong>Apremilast</strong> (psoriasis / artritis psoriásica): si CrCl &lt; 30 mL/min reducir a 30 mg/24 h Y emplear solo las dosis matutinas del esquema de titulación.</li>
+<li><strong>Alopurinol</strong>: iniciar a dosis baja y titular en enfermedad renal crónica; la dosis alta inicial aumenta el riesgo de <strong>DRESS / SCAR</strong> (cribado HLA-B*58:01 en poblaciones de riesgo).</li>
+<li><strong>Cockcroft-Gault</strong> es la fórmula de referencia para el ajuste de dosis en ficha técnica; <strong>CKD-EPI 2021</strong> se usa para clasificar la función renal.</li>
+</ul>
+</div>`;
 VIEWS.crcl=()=>`<div class="card">
 <h2>Aclaramiento de creatinina (CrCl)</h2>
 ${EB('crcl_intro','<p class="intro">Calcula <strong>Cockcroft-Gault</strong> (con peso ideal/ajustado automático según IMC) y <strong>CKD-EPI 2021</strong> (sin raza), con la categoría KDIGO. Orienta el ajuste de fármacos dermatológicos de eliminación renal (antivirales, metotrexato, fluconazol, apremilast, alopurinol…).</p>')}
@@ -1702,17 +1713,7 @@ ${EB('crcl_intro','<p class="intro">Calcula <strong>Cockcroft-Gault</strong> (co
 <div id="cg_res" class="res" style="display:none"></div>
 
 <h3>Ajuste de fármacos dermatológicos según función renal</h3>
-<div class="alert b">
-<ul style="padding-left:20px;line-height:1.7">
-<li><strong>Valaciclovir / aciclovir / famciclovir</strong> (herpes zóster y simple): reducir dosis e intervalo si CrCl &lt; 50 mL/min; en zóster con CrCl &lt; 10 mL/min, valaciclovir 500 mg/24 h. Aciclovir IV: hidratar para evitar nefropatía por cristales y ajustar por CrCl.</li>
-<li><strong>Metotrexato</strong> (psoriasis): evitar si CrCl &lt; 30 mL/min; reducir dosis y extremar monitorización si 30–60 (riesgo de mielosupresión). Contraindicado asociar AINE en insuficiencia renal.</li>
-<li><strong>Fluconazol</strong> (candidiasis, onicomicosis): reducir el 50&nbsp;% de la dosis de mantenimiento si CrCl ≤ 50 mL/min.</li>
-<li><strong>Terbinafina</strong>: no recomendada si CrCl &lt; 50 mL/min (datos farmacocinéticos insuficientes).</li>
-<li><strong>Apremilast</strong> (psoriasis / artritis psoriásica): si CrCl &lt; 30 mL/min reducir a 30 mg/24 h Y emplear solo las dosis matutinas del esquema de titulación.</li>
-<li><strong>Alopurinol</strong>: iniciar a dosis baja y titular en enfermedad renal crónica; la dosis alta inicial aumenta el riesgo de <strong>DRESS / SCAR</strong> (cribado HLA-B*58:01 en poblaciones de riesgo).</li>
-<li><strong>Cockcroft-Gault</strong> es la fórmula de referencia para el ajuste de dosis en ficha técnica; <strong>CKD-EPI 2021</strong> se usa para clasificar la función renal.</li>
-</ul>
-</div>
+${EB('crcl_ajuste', CRCL_AJUSTE)}
 
 ${EB('crcl_ref','<div class="ref">Cockcroft DW, Gault MH. Nephron. 1976;16(1):31-41. Inker LA et al. New creatinine- and cystatin C-based equations to estimate GFR without race (CKD-EPI 2021). N Engl J Med. 2021;385(19):1737-1749. KDIGO 2012/2024 CKD Guideline. Fichas técnicas (AEMPS/EMA) de valaciclovir, metotrexato, fluconazol, terbinafina y apremilast.</div>')}
 </div>`;
@@ -1780,6 +1781,13 @@ Este valor orienta el ajuste de dosis de fármacos dermatológicos de eliminaci�
 
 [Fecha: {fecha}]`, 'crcl', {sexo:sex, edad:d.a, talla:talla, peso:d.w, imc:imc, creatinina:d.cr, cg:d.cg.toFixed(1), pesoUsado:pesoTxt, ckdepi:ckdTxt, categoria:d.cat.toLowerCase(), fecha:new Date().toLocaleDateString('es-ES')});}
 
+const BSA_USO=`<div class="alert b">
+<ul style="padding-left:20px;line-height:1.7">
+<li><strong>DuBois &amp; DuBois</strong> es la fórmula histórica de referencia; <strong>Mosteller</strong> es más sencilla y prácticamente equivalente (diferencia &lt; 3&nbsp;% en adultos).</li>
+<li>La <strong>fototerapia</strong> se dosifica por <strong>fototipo / DEM</strong> (dosis eritematógena mínima), no por BSA.</li>
+<li>La mayoría de sistémicos dermatológicos (metotrexato, ciclosporina, acitretina, isotretinoína, biológicos) se dosifican por <strong>peso</strong> o a dosis fija, no por BSA.</li>
+</ul>
+</div>`;
 VIEWS.bsa=()=>`<div class="card">
 <h2>Superficie corporal (BSA)</h2>
 ${EB('bsa_intro','<p class="intro">Calcula la superficie corporal por la fórmula de <strong>Mosteller</strong>. En dermatología es un valor de referencia general (adulto ≈ 1,7–2,0 m²) y orienta la dosificación de algunos sistémicos.</p>')}
@@ -1795,13 +1803,7 @@ ${EB('bsa_intro','<p class="intro">Calcula la superficie corporal por la fórmul
 ${EB('bsa_nota','<div class="alert y" style="margin-top:14px">⚠️ <strong>No confundir la BSA (m²) con la extensión de la enfermedad cutánea (% de superficie afecta).</strong> Para la extensión usa la <strong>Regla de los 9</strong> o el <strong>método de la palma</strong> (la palma con los dedos del paciente ≈ 1&nbsp;% de su superficie corporal).</div>')}
 
 <h3>Uso en dermatología</h3>
-<div class="alert b">
-<ul style="padding-left:20px;line-height:1.7">
-<li><strong>DuBois &amp; DuBois</strong> es la fórmula histórica de referencia; <strong>Mosteller</strong> es más sencilla y prácticamente equivalente (diferencia &lt; 3&nbsp;% en adultos).</li>
-<li>La <strong>fototerapia</strong> se dosifica por <strong>fototipo / DEM</strong> (dosis eritematógena mínima), no por BSA.</li>
-<li>La mayoría de sistémicos dermatológicos (metotrexato, ciclosporina, acitretina, isotretinoína, biológicos) se dosifican por <strong>peso</strong> o a dosis fija, no por BSA.</li>
-</ul>
-</div>
+${EB('bsa_uso', BSA_USO)}
 
 ${EB('bsa_ref','<div class="ref">Mosteller RD. Simplified calculation of body-surface area. N Engl J Med. 1987;317(17):1098. DuBois D, DuBois EF. A formula to estimate the approximate surface area if height and weight be known. Arch Intern Med. 1916;17:863-871.</div>')}
 </div>`;
@@ -10006,7 +10008,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 47;
+  var DC_BUILD = 48;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
