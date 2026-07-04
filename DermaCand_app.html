@@ -75,6 +75,10 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .menu-sub + .menu-item, .menu-sub ~ .menu-item.in-sub{padding-left:30px}
 #hp-edit-fab{position:fixed;left:14px;bottom:16px;z-index:9000;border-radius:22px;padding:10px 16px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3);background:var(--card,#fff);color:var(--c2,#1d4ed8);border:1px solid var(--bd,#ccc)}
 #hp-edit-fab.on{background:#1d8a4e;color:#fff;border-color:#1d8a4e}
+.eb{position:relative}
+.eb-edit{cursor:pointer;outline:1px dashed var(--c2,#1d4ed8);outline-offset:3px;border-radius:6px}
+.eb-edit:hover{background:rgba(29,78,216,.06)}
+.eb-edit::after{content:'✏️ tocar para editar';display:inline-block;margin-top:6px;font-size:10.5px;color:var(--c2,#1d4ed8);font-weight:600}
 .menu-item:hover,.menu-item.active{background:var(--hov);color:var(--txt)}
 .menu-item.active{font-weight:600}
 .menu-item.active::before{content:"";position:absolute;left:8px;top:50%;transform:translateY(-50%);width:3px;height:15px;border-radius:2px;background:var(--c1)}
@@ -812,6 +816,79 @@ function hpEditFab(){
   b.title=on?'Estás editando · toca para salir':'Activar modo edición';
   b.textContent=on?'✓ Editando':'✏️ Editar';
 }
+// ── RECUADROS EDITABLES (EB): envuelven un texto por defecto; en MODO EDICIÓN el recuadro se toca
+// para editarlo (modal), se guarda en la nube (colección 'bloques') para todo el equipo y es
+// restaurable. Cola 'hpBloquePend' para que ninguna sincronización revierta una edición sin confirmar.
+function hpBloques(){ try{ return ls.g('bloques')||{}; }catch(e){ return {}; } }
+function _hpBloquePendGet(){ try{ return JSON.parse(localStorage.getItem('hpBloquePend')||'{}')||{}; }catch(e){ return {}; } }
+function _hpBloquePendSet(p){ try{ localStorage.setItem('hpBloquePend', JSON.stringify(p||{})); }catch(e){} }
+function _hpBloquePendClear(key, expected){ try{ var p=_hpBloquePendGet(); if(key in p && p[key]===expected){ delete p[key]; _hpBloquePendSet(p); } }catch(e){} }
+window.hpApplyBloques=function(map){
+  try{
+    var m=map||{}, pend=_hpBloquePendGet(), changed=false;
+    Object.keys(pend).forEach(function(k){ var pv=pend[k];
+      if(pv===null){ if(!(k in m)){ delete pend[k]; changed=true; } else { delete m[k]; } }
+      else { if(m[k]===pv){ delete pend[k]; changed=true; } else { m[k]=pv; } }
+    });
+    if(changed) _hpBloquePendSet(pend);
+    ls.s('bloques', m);
+  }catch(e){}
+};
+window.hpRepushBloques=function(){
+  try{ var pend=_hpBloquePendGet(); Object.keys(pend).forEach(function(k){
+    if(pend[k]===null){ if(window.hpDeleteBloque) window.hpDeleteBloque(k).then(function(){ _hpBloquePendClear(k, null); }).catch(function(){}); }
+    else { var val=pend[k]; if(window.hpSaveBloque) window.hpSaveBloque(k, val).then(function(){ _hpBloquePendClear(k, val); }).catch(function(){}); }
+  }); }catch(e){}
+};
+function EB(key, defHtml){
+  var ov=hpBloques()[key];
+  var html=(ov!=null && String(ov).trim()!=='') ? _hpSanHtml(ov) : defHtml;
+  if(hpEditUI()){
+    return '<div class="eb eb-edit" data-eb="'+_hpEsc(key)+'" onclick="ebEdit(\''+key+'\')" title="Tocar para editar este texto (para todo el equipo)"><div class="eb-c">'+html+'</div></div>';
+  }
+  return '<div class="eb" data-eb="'+_hpEsc(key)+'"><div class="eb-c">'+html+'</div></div>';
+}
+function ebEdit(key){
+  if(!(window.HemoCloud&&HemoCloud.isEditor&&HemoCloud.isEditor())){ toast('Sin permiso'); return; }
+  if(document.getElementById('eb-modal')) return;
+  var live=document.querySelector('[data-eb="'+key+'"] .eb-c');
+  var html=live?live.innerHTML:(hpBloques()[key]||'');
+  var ov=document.createElement('div'); ov.id='eb-modal';
+  ov.setAttribute('style','position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10001;display:flex;align-items:center;justify-content:center;padding:1rem');
+  ov.innerHTML='<div style="background:var(--card,#fff);color:var(--txt,#222);border-radius:12px;padding:1rem;max-width:580px;width:100%;max-height:88vh;overflow:auto;position:relative">'
+    +'<button onclick="ebClose()" style="position:absolute;top:.5rem;right:.6rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#888" aria-label="Cerrar">✕</button>'
+    +'<h2 style="color:#c41e3a;margin:0 0 .5rem;font-size:1.05rem">✏️ Editar texto · para todo el equipo</h2>'
+    +'<p style="font-size:.78rem;color:var(--mut,#666);margin:.1rem 0 .5rem">Edita como en un procesador de textos. Enter = salto de línea. Se guarda para todos y puedes restaurar el original.</p>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">'
+      +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="document.execCommand(\'bold\')" title="Negrita"><strong>N</strong></button>'
+      +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="document.execCommand(\'italic\')" title="Cursiva"><em>C</em></button>'
+      +'<button type="button" class="btn btn-out btn-sm" onmousedown="event.preventDefault()" onclick="document.execCommand(\'insertUnorderedList\')" title="Lista">• Lista</button>'
+    +'</div>'
+    +'<div id="eb-edit-area" contenteditable="true" onkeydown="_pageKeydown(event)" style="border:1px solid var(--bd);border-radius:8px;padding:10px;min-height:120px;outline:none">'+_hpSanHtml(html)+'</div>'
+    +'<div class="btns" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:.7rem"><button class="btn btn-g btn-sm" onclick="ebSave(\''+key+'\')">💾 Guardar para todos</button><button class="btn btn-out btn-sm" onclick="ebRestore(\''+key+'\')">↺ Restaurar original</button></div>'
+    +'</div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click',function(e){ if(e.target===ov) ebClose(); });
+}
+function ebClose(){ var m=document.getElementById('eb-modal'); if(m&&m.remove)m.remove(); }
+async function ebSave(key){
+  var a=document.getElementById('eb-edit-area'); if(!a)return;
+  var html=_hpSanHtml(a.innerHTML);
+  var m=hpBloques(); m[key]=html; try{ ls.s('bloques',m); }catch(e){}
+  try{ var _p=_hpBloquePendGet(); _p[key]=html; _hpBloquePendSet(_p); }catch(e){}
+  try{ document.querySelectorAll('[data-eb="'+key+'"] .eb-c').forEach(function(c){ c.innerHTML=html; }); }catch(e){}
+  ebClose();
+  if(window.hpSaveBloque){ try{ await window.hpSaveBloque(key, html); _hpBloquePendClear(key, html); toast('✓ Guardado · para todos'); }catch(e){ toast('Guardado. Si fue por falta de conexión, se publicará para todos al reconectar'); } }
+  else toast('✓ Guardado');
+}
+async function ebRestore(key){
+  if(!confirm('¿Restaurar el texto original (para todo el equipo)?'))return;
+  var m=hpBloques(); delete m[key]; try{ ls.s('bloques',m); }catch(e){}
+  try{ var _p=_hpBloquePendGet(); _p[key]=null; _hpBloquePendSet(_p); }catch(e){}
+  ebClose();
+  if(window.hpDeleteBloque){ try{ await window.hpDeleteBloque(key); _hpBloquePendClear(key, null); }catch(e){} }
+  toast('✓ Original restaurado'); try{ if(typeof S!=='undefined' && S&&S.view) go(S.view); }catch(e){}
+}
 function _hpFillTpl(tpl, resultText, vars){
   if(tpl==null || tpl==='') return resultText;
   var out=String(tpl).split('{resultado}').join(resultText).split('{r}').join(resultText);
@@ -1350,7 +1427,7 @@ const VIEWS={};
 const HP_NOPAGE=new Set(['home','sync','phone','viewer','acerca','solicitudes','reportes','gsecciones','calc','calcedit','algo','algoedit','labconv','recetas','pageedit']);
 // "Última actualización" por sección: fecha-base de respaldo (EDITABLE) y vistas de utilidad/editores
 // que NO llevan la nota. Para una fecha precisa por apartado, añade upd:'AAAA-MM-DD' al ítem en MENU.
-const DC_UPD_DEFAULT='2026-07-02';
+const DC_UPD_DEFAULT='2026-07-04';
 const DC_NO_UPD=new Set(['home','sync','phone','viewer','acerca','solicitudes','reportes','gsecciones','calc','calcedit','algo','algoedit','labconv','recetas','pageedit','rxedit']);
 function hpPageEditable(id){ return !!id && !HP_NOPAGE.has(id) && id.indexOf('g_')!==0 && !VIEWS[id+'_post']; }
 let _hpPageSec=null;
@@ -1603,7 +1680,7 @@ return parts.length?`Paciente de ${parts.join(', ')}. `:'';
 
 VIEWS.crcl=()=>`<div class="card">
 <h2>Aclaramiento de creatinina (CrCl)</h2>
-<p class="intro">Calcula <strong>Cockcroft-Gault</strong> (con peso ideal/ajustado automático según IMC) y <strong>CKD-EPI 2021</strong> (sin raza), con la categoría KDIGO. Orienta el ajuste de fármacos dermatológicos de eliminación renal (antivirales, metotrexato, fluconazol, apremilast, alopurinol…).</p>
+${EB('crcl_intro','<p class="intro">Calcula <strong>Cockcroft-Gault</strong> (con peso ideal/ajustado automático según IMC) y <strong>CKD-EPI 2021</strong> (sin raza), con la categoría KDIGO. Orienta el ajuste de fármacos dermatológicos de eliminación renal (antivirales, metotrexato, fluconazol, apremilast, alopurinol…).</p>')}
 <div class="row">
 <div class="fld"><label class="lbl">Edad (años)</label><input type="number" id="cg_age" value="${S.p.age||''}" oninput="calcCG()"></div>
 <div class="fld"><label class="lbl">Sexo</label><select id="cg_sex" onchange="calcCG()"><option value="M" ${S.p.sex==='M'?'selected':''}>Hombre</option><option value="F" ${S.p.sex==='F'?'selected':''}>Mujer</option></select></div>
@@ -1628,7 +1705,7 @@ VIEWS.crcl=()=>`<div class="card">
 </ul>
 </div>
 
-<div class="ref">Cockcroft DW, Gault MH. Nephron. 1976;16(1):31-41. Inker LA et al. New creatinine- and cystatin C-based equations to estimate GFR without race (CKD-EPI 2021). N Engl J Med. 2021;385(19):1737-1749. KDIGO 2012/2024 CKD Guideline. Fichas técnicas (AEMPS/EMA) de valaciclovir, metotrexato, fluconazol, terbinafina y apremilast.</div>
+${EB('crcl_ref','<div class="ref">Cockcroft DW, Gault MH. Nephron. 1976;16(1):31-41. Inker LA et al. New creatinine- and cystatin C-based equations to estimate GFR without race (CKD-EPI 2021). N Engl J Med. 2021;385(19):1737-1749. KDIGO 2012/2024 CKD Guideline. Fichas técnicas (AEMPS/EMA) de valaciclovir, metotrexato, fluconazol, terbinafina y apremilast.</div>')}
 </div>`;
 VIEWS.crcl_post=()=>{if($('cg_age')?.value&&$('cg_w')?.value&&$('cg_cr')?.value)calcCG()};
 
@@ -1696,7 +1773,7 @@ Este valor orienta el ajuste de dosis de fármacos dermatológicos de eliminaci�
 
 VIEWS.bsa=()=>`<div class="card">
 <h2>Superficie corporal (BSA)</h2>
-<p class="intro">Calcula la superficie corporal por la fórmula de <strong>Mosteller</strong>. En dermatología es un valor de referencia general (adulto ≈ 1,7–2,0 m²) y orienta la dosificación de algunos sistémicos.</p>
+${EB('bsa_intro','<p class="intro">Calcula la superficie corporal por la fórmula de <strong>Mosteller</strong>. En dermatología es un valor de referencia general (adulto ≈ 1,7–2,0 m²) y orienta la dosificación de algunos sistémicos.</p>')}
 <div class="row">
 <div class="fld"><label class="lbl">Talla (cm)</label><input type="number" id="bs_h" value="${S.p.height||''}" oninput="calcBSA()"></div>
 <div class="fld"><label class="lbl">Peso (kg)</label><input type="number" step="0.1" id="bs_w" value="${S.p.weight||''}" oninput="calcBSA()"></div>
@@ -1706,7 +1783,7 @@ VIEWS.bsa=()=>`<div class="card">
 <button class="btn btn-out btn-sm" onclick="copyBSA()">Copiar</button></div>
 <div id="bs_res" class="res" style="display:none"></div>
 
-<div class="alert y" style="margin-top:14px">⚠️ <strong>No confundir la BSA (m²) con la extensión de la enfermedad cutánea (% de superficie afecta).</strong> Para la extensión usa la <strong>Regla de los 9</strong> o el <strong>método de la palma</strong> (la palma con los dedos del paciente ≈ 1&nbsp;% de su superficie corporal).</div>
+${EB('bsa_nota','<div class="alert y" style="margin-top:14px">⚠️ <strong>No confundir la BSA (m²) con la extensión de la enfermedad cutánea (% de superficie afecta).</strong> Para la extensión usa la <strong>Regla de los 9</strong> o el <strong>método de la palma</strong> (la palma con los dedos del paciente ≈ 1&nbsp;% de su superficie corporal).</div>')}
 
 <h3>Uso en dermatología</h3>
 <div class="alert b">
@@ -1717,7 +1794,7 @@ VIEWS.bsa=()=>`<div class="card">
 </ul>
 </div>
 
-<div class="ref">Mosteller RD. Simplified calculation of body-surface area. N Engl J Med. 1987;317(17):1098. DuBois D, DuBois EF. A formula to estimate the approximate surface area if height and weight be known. Arch Intern Med. 1916;17:863-871.</div>
+${EB('bsa_ref','<div class="ref">Mosteller RD. Simplified calculation of body-surface area. N Engl J Med. 1987;317(17):1098. DuBois D, DuBois EF. A formula to estimate the approximate surface area if height and weight be known. Arch Intern Med. 1916;17:863-871.</div>')}
 </div>`;
 VIEWS.bsa_post=()=>{if($('bs_h')?.value&&$('bs_w')?.value)calcBSA()};
 
@@ -1751,7 +1828,7 @@ const FTU_AGE={
 function ftuVal(age,region){const a=FTU_AGE[age];if(region==='cuerpo')return a.cara+2*a.brazo+2*a.pierna+a.tronco_ant+a.tronco_post;return a[region];}
 VIEWS.ftu=()=>`<div class="card">
 <h2>Unidad falange (FTU)</h2>
-<p class="intro">Calcula la cantidad de crema o pomada para una aplicación según la zona y la edad. <strong>1 FTU = 0,5 g</strong> (lo que sale en la última falange del índice de un adulto desde un tubo de boquilla de 5 mm) y cubre la superficie de <strong>2 palmas de adulto</strong>.</p>
+${EB('ftu_intro','<p class="intro">Calcula la cantidad de crema o pomada para una aplicación según la zona y la edad. <strong>1 FTU = 0,5 g</strong> (lo que sale en la última falange del índice de un adulto desde un tubo de boquilla de 5 mm) y cubre la superficie de <strong>2 palmas de adulto</strong>.</p>')}
 <div class="row">
 <div class="fld"><label class="lbl">Edad</label><select id="ftu_age" onchange="calcFTU()">${Object.keys(FTU_AGE).map(k=>`<option value="${k}" ${k==='adulto'?'selected':''}>${FTU_AGE[k].label}</option>`).join('')}</select></div>
 <div class="fld"><label class="lbl">Zona</label><select id="ftu_reg" onchange="calcFTU()">${FTU_REGIONS.map(r=>`<option value="${r[0]}">${r[1]}</option>`).join('')}</select></div>
@@ -1767,8 +1844,8 @@ VIEWS.ftu=()=>`<div class="card">
 <tr><th>Zona</th><th>3–6 m</th><th>1–2 a</th><th>3–5 a</th><th>6–10 a</th><th>Adulto</th></tr>
 ${FTU_REGIONS.filter(r=>r[0]!=='cuerpo').map(r=>`<tr><td>${r[1]}</td>${Object.keys(FTU_AGE).map(k=>`<td>${FTU_AGE[k][r[0]]}</td>`).join('')}</tr>`).join('')}
 </table>
-<div class="alert b" style="margin-top:12px;font-size:12.5px">En miembros (brazo o pierna) las cifras son por <strong>un</strong> lado; multiplica ×2 si tratas ambos. El "cuerpo completo" del adulto (≈ 40 FTU ≈ 20 g) ya incluye los dos brazos y las dos piernas.</div>
-<div class="ref">Long CC, Finlay AY. The finger-tip unit—a new practical measure. Clin Exp Dermatol. 1991;16(6):444-447. Long CC, Mills CM, Finlay AY. A practical guide to topical therapy in children. Br J Dermatol. 1998;138(2):293-296.</div>
+${EB('ftu_nota','<div class="alert b" style="margin-top:12px;font-size:12.5px">En miembros (brazo o pierna) las cifras son por <strong>un</strong> lado; multiplica ×2 si tratas ambos. El "cuerpo completo" del adulto (≈ 40 FTU ≈ 20 g) ya incluye los dos brazos y las dos piernas.</div>')}
+${EB('ftu_ref','<div class="ref">Long CC, Finlay AY. The finger-tip unit—a new practical measure. Clin Exp Dermatol. 1991;16(6):444-447. Long CC, Mills CM, Finlay AY. A practical guide to topical therapy in children. Br J Dermatol. 1998;138(2):293-296.</div>')}
 </div>`;
 VIEWS.ftu_post=()=>calcFTU();
 function calcFTU(){
@@ -1800,7 +1877,7 @@ Pauta: {freq} aplicación(es)/día durante {dias} días → {gTot} g en total ({
 const R9=[['Cabeza y cuello',9,18],['Brazo derecho',9,9],['Brazo izquierdo',9,9],['Tronco anterior',18,18],['Tronco posterior',18,18],['Pierna derecha',18,13.5],['Pierna izquierda',18,13.5],['Genitales / periné',1,1]];
 VIEWS.regla9=()=>`<div class="card">
 <h2>Regla de los 9 (extensión / % SCT)</h2>
-<p class="intro">Estima el <strong>porcentaje de superficie corporal afectada</strong> marcando las regiones implicadas. Útil para cuantificar la extensión en eritrodermia, exantemas, SJS/NET, quemaduras y dermatosis generalizadas.</p>
+${EB('regla9_intro','<p class="intro">Estima el <strong>porcentaje de superficie corporal afectada</strong> marcando las regiones implicadas. Útil para cuantificar la extensión en eritrodermia, exantemas, SJS/NET, quemaduras y dermatosis generalizadas.</p>')}
 <div class="row2">
 <div class="fld"><label class="lbl">Paciente</label><select id="r9_age" onchange="renderR9();calcR9()"><option value="ad">Adulto</option><option value="ni">Niño / lactante</option></select></div>
 <div class="fld"><label class="lbl">Método palma (nº palmas)</label><input type="number" step="0.5" id="r9_palm" placeholder="≈ 1% cada una" oninput="calcR9()"></div>
@@ -1808,8 +1885,8 @@ VIEWS.regla9=()=>`<div class="card">
 <div id="r9_list" style="margin-top:12px"></div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="copyR9()">Copiar</button></div>
 <div id="r9_res" class="res in" style="display:none"></div>
-<div class="alert y" style="margin-top:12px;font-size:12.5px">Para mayor precisión (sobre todo en niños) usa el diagrama de <strong>Lund-Browder</strong>. La <strong>palma con los dedos</strong> del paciente ≈ <strong>1&nbsp;%</strong> de su superficie — útil para áreas parcheadas.</div>
-<div class="ref">Wallace AB. The exposure treatment of burns. Lancet. 1951;1(6653):501-504. Lund CC, Browder NC. The estimation of areas of burns. Surg Gynecol Obstet. 1944;79:352-358.</div>
+${EB('regla9_nota','<div class="alert y" style="margin-top:12px;font-size:12.5px">Para mayor precisión (sobre todo en niños) usa el diagrama de <strong>Lund-Browder</strong>. La <strong>palma con los dedos</strong> del paciente ≈ <strong>1&nbsp;%</strong> de su superficie — útil para áreas parcheadas.</div>')}
+${EB('regla9_ref','<div class="ref">Wallace AB. The exposure treatment of burns. Lancet. 1951;1(6653):501-504. Lund CC, Browder NC. The estimation of areas of burns. Surg Gynecol Obstet. 1944;79:352-358.</div>')}
 </div>`;
 VIEWS.regla9_post=()=>{renderR9();calcR9();};
 function renderR9(){
@@ -1844,7 +1921,7 @@ Superficie corporal afectada estimada: {valor} %{categoria}.
 // --- Dosificación por peso ---
 VIEWS.dosispeso=()=>`<div class="card">
 <h2>Dosificación por peso</h2>
-<p class="intro">Calcula la dosis total a partir de mg/kg, con tope máximo opcional y reparto en tomas. Útil en prednisona, ciclosporina, antihistamínicos, isotretinoína, hidroxicloroquina o dapsona.</p>
+${EB('dosispeso_intro','<p class="intro">Calcula la dosis total a partir de mg/kg, con tope máximo opcional y reparto en tomas. Útil en prednisona, ciclosporina, antihistamínicos, isotretinoína, hidroxicloroquina o dapsona.</p>')}
 <div class="row">
 <div class="fld"><label class="lbl">Peso (kg)</label><input type="number" step="0.1" id="dp_w" value="${S.p.weight||''}" oninput="calcDP()"></div>
 <div class="fld"><label class="lbl">Dosis (mg/kg/día)</label><input type="number" step="0.1" id="dp_mgkg" placeholder="ej: 0.5" oninput="calcDP()"></div>
@@ -1869,7 +1946,7 @@ VIEWS.dosispeso=()=>`<div class="card">
 <div class="fld"><label class="lbl">Objetivo acumulado isotretinoína (mg/kg, opc.)</label><input type="number" step="1" id="dp_acum" placeholder="ej: 120" oninput="calcDP()"></div>
 </div>
 <div id="dp_acum_res" style="margin-top:8px"></div>
-<div class="ref">Fichas técnicas (AEMPS/EMA). Guías AAD/EADV de isotretinoína (objetivo acumulado 120–150 mg/kg). AAO 2016 — cribado de retinopatía por hidroxicloroquina (≤ 5 mg/kg/día de peso real).</div>
+${EB('dosispeso_ref','<div class="ref">Fichas técnicas (AEMPS/EMA). Guías AAD/EADV de isotretinoína (objetivo acumulado 120–150 mg/kg). AAO 2016 — cribado de retinopatía por hidroxicloroquina (≤ 5 mg/kg/día de peso real).</div>')}
 </div>`;
 VIEWS.dosispeso_post=()=>calcDP();
 function calcDP(){
@@ -1913,7 +1990,7 @@ const FOTO=[
 ];
 VIEWS.fototipo=()=>`<div class="card">
 <h2>Fototipo de Fitzpatrick</h2>
-<p class="intro">Clasificación I–VI según la respuesta de la piel a la radiación UV. Selecciona el fototipo o estímalo con las dos preguntas clave (quemadura y bronceado), base de la clasificación original de Fitzpatrick.</p>
+${EB('fototipo_intro','<p class="intro">Clasificación I–VI según la respuesta de la piel a la radiación UV. Selecciona el fototipo o estímalo con las dos preguntas clave (quemadura y bronceado), base de la clasificación original de Fitzpatrick.</p>')}
 <div class="row2">
 <div class="fld"><label class="lbl">¿Se quema al sol?</label><select id="ft_burn" onchange="estFototipo()">
 <option value="">—</option>
@@ -1935,9 +2012,9 @@ VIEWS.fototipo=()=>`<div class="card">
 ${FOTO.map((f,i)=>`<option value="${i}">Tipo ${f.t}</option>`).join('')}
 </select></div>
 <div id="ft_res" style="margin-top:14px"></div>
-<div class="alert y" style="margin-top:6px;font-size:12.5px">El fototipo se asigna <strong>clínicamente</strong>; las preguntas son orientativas. La DEM (dosis eritematógena mínima) son rangos aproximados para UVB de banda estrecha y deben individualizarse antes de iniciar fototerapia.</div>
-<div class="alert b" style="margin-top:6px;font-size:12.5px">El fototipo de Fitzpatrick mide la <strong>respuesta a la UV</strong>, no el tono cutáneo. En fototipos V–VI vigilar especialmente el <strong>melanoma acral, subungueal y mucoso</strong>, de peor pronóstico por diagnóstico tardío.</div>
-<div class="ref">Fitzpatrick TB. The validity and practicality of sun-reactive skin types I through VI. Arch Dermatol. 1988;124(6):869-871.</div>
+${EB('fototipo_nota1','<div class="alert y" style="margin-top:6px;font-size:12.5px">El fototipo se asigna <strong>clínicamente</strong>; las preguntas son orientativas. La DEM (dosis eritematógena mínima) son rangos aproximados para UVB de banda estrecha y deben individualizarse antes de iniciar fototerapia.</div>')}
+${EB('fototipo_nota2','<div class="alert b" style="margin-top:6px;font-size:12.5px">El fototipo de Fitzpatrick mide la <strong>respuesta a la UV</strong>, no el tono cutáneo. En fototipos V–VI vigilar especialmente el <strong>melanoma acral, subungueal y mucoso</strong>, de peor pronóstico por diagnóstico tardío.</div>')}
+${EB('fototipo_ref','<div class="ref">Fitzpatrick TB. The validity and practicality of sun-reactive skin types I through VI. Arch Dermatol. 1988;124(6):869-871.</div>')}
 </div>`;
 VIEWS.fototipo_post=()=>{};
 function estFototipo(){
@@ -1987,7 +2064,7 @@ const ESC_AREA6=[['0','0%'],['1','&lt;10%'],['2','10–29%'],['3','30–49%'],['
 const PASI_REG=[['h','Cabeza',0.1],['t','Tronco',0.3],['u','Extremidades superiores',0.2],['l','Extremidades inferiores',0.4]];
 VIEWS.pasi=()=>`<div class="card">
 <h2>PASI — Psoriasis Area and Severity Index</h2>
-<p class="intro">Gravedad de la psoriasis en placas. En cada región puntúa <strong>eritema</strong>, <strong>induración</strong> y <strong>descamación</strong> (0–4) y el <strong>área</strong> afectada (0–6). Rango total <strong>0–72</strong>.</p>
+${EB('pasi_intro','<p class="intro">Gravedad de la psoriasis en placas. En cada región puntúa <strong>eritema</strong>, <strong>induración</strong> y <strong>descamación</strong> (0–4) y el <strong>área</strong> afectada (0–6). Rango total <strong>0–72</strong>.</p>')}
 ${PASI_REG.map(r=>`<div style="border:1px solid var(--bd);border-radius:var(--rs);padding:10px;margin-bottom:8px">
 <div style="font-weight:600;margin-bottom:6px">${r[1]} <span style="color:var(--mut);font-weight:400">(peso ×${r[2]})</span></div>
 <div class="row2">
@@ -1998,8 +2075,8 @@ ${PASI_REG.map(r=>`<div style="border:1px solid var(--bd);border-radius:var(--rs
 </div></div>`).join('')}
 <div class="btns"><button class="btn btn-out btn-sm" onclick="copyPASI()">Copiar</button></div>
 <div id="pasi_res" class="res" style="display:none"></div>
-<div class="perla" style="margin-top:10px"><strong>Derivación a sistémico (regla de los 10):</strong> PASI &gt; 10 <em>o</em> BSA &gt; 10 % <em>o</em> DLQI &gt; 10. Con los biológicos actuales (anti-IL17 / anti-IL23) el objetivo realista es <strong>PASI 90–100</strong>, no solo PASI 75.</div>
-<div class="ref">Fredriksson T, Pettersson U. Severe psoriasis—oral therapy with a new retinoid. Dermatologica. 1978;157(4):238-244.</div>
+${EB('pasi_perla','<div class="perla" style="margin-top:10px"><strong>Derivación a sistémico (regla de los 10):</strong> PASI &gt; 10 <em>o</em> BSA &gt; 10 % <em>o</em> DLQI &gt; 10. Con los biológicos actuales (anti-IL17 / anti-IL23) el objetivo realista es <strong>PASI 90–100</strong>, no solo PASI 75.</div>')}
+${EB('pasi_ref','<div class="ref">Fredriksson T, Pettersson U. Severe psoriasis—oral therapy with a new retinoid. Dermatologica. 1978;157(4):238-244.</div>')}
 </div>`;
 VIEWS.pasi_post=()=>calcPASI();
 function calcPASI(){
@@ -2028,7 +2105,7 @@ PASI total: {valor} / 72 ({categoria}).
 const EASI_REG=[['hn','Cabeza y cuello',0.1,0.2],['u','Extremidades superiores',0.2,0.2],['t','Tronco',0.3,0.3],['l','Extremidades inferiores',0.4,0.3]];
 VIEWS.easi=()=>`<div class="card">
 <h2>EASI — Eczema Area and Severity Index</h2>
-<p class="intro">Gravedad de la dermatitis atópica. En cada región puntúa <strong>eritema</strong>, <strong>edema/pápulas</strong>, <strong>excoriación</strong> y <strong>liquenificación</strong> (0–3) y el <strong>área</strong> (0–6). Rango total <strong>0–72</strong>.</p>
+${EB('easi_intro','<p class="intro">Gravedad de la dermatitis atópica. En cada región puntúa <strong>eritema</strong>, <strong>edema/pápulas</strong>, <strong>excoriación</strong> y <strong>liquenificación</strong> (0–3) y el <strong>área</strong> (0–6). Rango total <strong>0–72</strong>.</p>')}
 <div class="fld" style="margin-bottom:10px"><label class="lbl">Edad (cambia los pesos por región)</label><select id="easi_age" onchange="calcEASI()"><option value="ad">≥ 8 años / adulto</option><option value="ni">0–7 años</option></select></div>
 ${EASI_REG.map(r=>`<div style="border:1px solid var(--bd);border-radius:var(--rs);padding:10px;margin-bottom:8px">
 <div style="font-weight:600;margin-bottom:6px">${r[1]}</div>
@@ -2041,9 +2118,9 @@ ${EASI_REG.map(r=>`<div style="border:1px solid var(--bd);border-radius:var(--rs
 </div></div>`).join('')}
 <div class="btns"><button class="btn btn-out btn-sm" onclick="copyEASI()">Copiar</button></div>
 <div id="easi_res" class="res" style="display:none"></div>
-<div class="perla" style="margin-top:10px"><strong>Dianas de respuesta modernas:</strong> EASI-75 / EASI-90 con dupilumab, tralokinumab, lebrikizumab y los JAKi orales (upadacitinib, abrocitinib, baricitinib).</div>
-<div class="alert r" style="margin-top:6px;font-size:12.5px"><strong>Advertencia de clase EMA 2023 sobre los JAKi:</strong> riesgo cardiovascular, neoplásico y tromboembólico; restringir en mayores de 65 años, fumadores y factores de riesgo CV/oncológico.</div>
-<div class="ref">Hanifin JM et al. The eczema area and severity index (EASI). Exp Dermatol. 2001;10(1):11-18. Leshem YA et al. EASI severity strata. Br J Dermatol. 2015;172(5):1353-1357.</div>
+${EB('easi_perla','<div class="perla" style="margin-top:10px"><strong>Dianas de respuesta modernas:</strong> EASI-75 / EASI-90 con dupilumab, tralokinumab, lebrikizumab y los JAKi orales (upadacitinib, abrocitinib, baricitinib).</div>')}
+${EB('easi_nota','<div class="alert r" style="margin-top:6px;font-size:12.5px"><strong>Advertencia de clase EMA 2023 sobre los JAKi:</strong> riesgo cardiovascular, neoplásico y tromboembólico; restringir en mayores de 65 años, fumadores y factores de riesgo CV/oncológico.</div>')}
+${EB('easi_ref','<div class="ref">Hanifin JM et al. The eczema area and severity index (EASI). Exp Dermatol. 2001;10(1):11-18. Leshem YA et al. EASI severity strata. Br J Dermatol. 2015;172(5):1353-1357.</div>')}
 </div>`;
 VIEWS.easi_post=()=>calcEASI();
 function calcEASI(){
@@ -2072,7 +2149,7 @@ EASI total: {valor} / 72 ({categoria}).{pediatrico}
 const SCORAD_B=[['er','Eritema'],['ed','Edema / pápulas'],['ex','Exudación / costras'],['exc','Excoriación'],['liq','Liquenificación'],['seq','Sequedad (piel sana)']];
 VIEWS.scorad=()=>`<div class="card">
 <h2>SCORAD — Scoring Atopic Dermatitis</h2>
-<p class="intro">Combina <strong>extensión</strong> (A), <strong>intensidad</strong> (B, 6 signos 0–3) y <strong>síntomas subjetivos</strong> (C, prurito + pérdida de sueño). Fórmula: <strong>A/5 + 7B/2 + C</strong>. Rango 0–103.</p>
+${EB('scorad_intro','<p class="intro">Combina <strong>extensión</strong> (A), <strong>intensidad</strong> (B, 6 signos 0–3) y <strong>síntomas subjetivos</strong> (C, prurito + pérdida de sueño). Fórmula: <strong>A/5 + 7B/2 + C</strong>. Rango 0–103.</p>')}
 <h3>A · Extensión</h3>
 <div class="fld"><label class="lbl">% superficie corporal afectada (regla de los 9)</label><input type="number" id="sc_a" min="0" max="100" placeholder="0–100" oninput="calcSCORAD()"></div>
 <h3>B · Intensidad (0–3 cada signo)</h3>
@@ -2086,7 +2163,7 @@ ${SCORAD_B.map(it=>`<div class="fld"><label class="lbl">${it[1]}</label>${escNum
 </div>
 <div class="btns" style="margin-top:10px"><button class="btn btn-out btn-sm" onclick="copySCORAD()">Copiar</button></div>
 <div id="sc_res" class="res" style="display:none"></div>
-<div class="ref">European Task Force on Atopic Dermatitis. Severity scoring of atopic dermatitis: the SCORAD index. Dermatology. 1993;186(1):23-31.</div>
+${EB('scorad_ref','<div class="ref">European Task Force on Atopic Dermatitis. Severity scoring of atopic dermatitis: the SCORAD index. Dermatology. 1993;186(1):23-31.</div>')}
 </div>`;
 VIEWS.scorad_post=()=>calcSCORAD();
 function calcSCORAD(){
@@ -2117,11 +2194,11 @@ const DLQI_Q=['Picor, dolor o escozor','Vergüenza o azoramiento por la piel','I
 const DLQI_OPTS=[['0','Nada / no procede'],['1','Un poco'],['2','Bastante'],['3','Muchísimo']];
 VIEWS.dlqi=()=>`<div class="card">
 <h2>DLQI — Índice de calidad de vida en dermatología</h2>
-<p class="intro">Impacto de la enfermedad cutánea en la última semana. 10 preguntas (0–3). Rango <strong>0–30</strong>.</p>
+${EB('dlqi_intro','<p class="intro">Impacto de la enfermedad cutánea en la última semana. 10 preguntas (0–3). Rango <strong>0–30</strong>.</p>')}
 ${DLQI_Q.map((q,i)=>`<div class="fld" style="margin-bottom:8px"><label class="lbl">${i+1}. ${q}</label>${escOptSel('dlqi_'+i,DLQI_OPTS,'calcDLQI()')}</div>`).join('')}
 <div class="btns"><button class="btn btn-out btn-sm" onclick="copyDLQI()">Copiar</button></div>
 <div id="dlqi_res" class="res" style="display:none"></div>
-<div class="ref">Finlay AY, Khan GK. Dermatology Life Quality Index (DLQI)—a simple practical measure for routine clinical use. Clin Exp Dermatol. 1994;19(3):210-216.</div>
+${EB('dlqi_ref','<div class="ref">Finlay AY, Khan GK. Dermatology Life Quality Index (DLQI)—a simple practical measure for routine clinical use. Clin Exp Dermatol. 1994;19(3):210-216.</div>')}
 </div>`;
 VIEWS.dlqi_post=()=>calcDLQI();
 function calcDLQI(){
@@ -2148,14 +2225,14 @@ DLQI: {valor} / 30 — {categoria}.
 const IGA_SCALE=[[0,'Aclarado','Sin signos de la enfermedad (puede persistir hiperpigmentación residual)'],[1,'Casi aclarado','Signos mínimos, apenas perceptibles'],[2,'Leve','Signos leves'],[3,'Moderado','Signos moderados'],[4,'Grave','Signos intensos o extensos']];
 VIEWS.iga=()=>`<div class="card">
 <h2>IGA — Evaluación global del investigador</h2>
-<p class="intro">Escala estática global de 5 puntos (0–4) aplicable a psoriasis, dermatitis atópica, acné o rosácea. El objetivo terapéutico habitual es <strong>0/1</strong> (aclarado o casi aclarado).</p>
+${EB('iga_intro','<p class="intro">Escala estática global de 5 puntos (0–4) aplicable a psoriasis, dermatitis atópica, acné o rosácea. El objetivo terapéutico habitual es <strong>0/1</strong> (aclarado o casi aclarado).</p>')}
 <div class="fld"><label class="lbl">Grado</label><select id="iga_sel" onchange="calcIGA()">${IGA_SCALE.map(s=>`<option value="${s[0]}">${s[0]} — ${s[1]}</option>`).join('')}</select></div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="copyIGA()">Copiar</button></div>
 <div id="iga_res" class="res" style="display:none"></div>
 <table class="tbl" style="margin-top:12px"><tr><th>Grado</th><th>Categoría</th><th>Descripción</th></tr>
 ${IGA_SCALE.map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td><td>${s[2]}</td></tr>`).join('')}</table>
-<div class="perla" style="margin-top:10px">El <em>endpoint</em> validado de los ensayos suele exigir además una <strong>reducción ≥ 2 puntos</strong> respecto al basal (no basta llegar a 0/1 si se partía de 2). En acné moderado-grave, el <strong>IGA 0/1</strong> es el objetivo de los ensayos.</div>
-<div class="ref">Escala IGA estática de 5 puntos (FDA/EMA). El descriptor concreto varía según la patología (sPGA en psoriasis, vIGA-AD en dermatitis atópica, IGA de acné).</div>
+${EB('iga_perla','<div class="perla" style="margin-top:10px">El <em>endpoint</em> validado de los ensayos suele exigir además una <strong>reducción ≥ 2 puntos</strong> respecto al basal (no basta llegar a 0/1 si se partía de 2). En acné moderado-grave, el <strong>IGA 0/1</strong> es el objetivo de los ensayos.</div>')}
+${EB('iga_ref','<div class="ref">Escala IGA estática de 5 puntos (FDA/EMA). El descriptor concreto varía según la patología (sPGA en psoriasis, vIGA-AD en dermatitis atópica, IGA de acné).</div>')}
 </div>`;
 VIEWS.iga_post=()=>calcIGA();
 function calcIGA(){
@@ -2188,7 +2265,7 @@ const SCORTEN_C=[
 const SCORTEN_MORT=[3.2,3.2,12.1,35.3,58.3];
 VIEWS.scorten=()=>`<div class="card">
 <h2>SCORTEN — pronóstico en NET / SJS</h2>
-<p class="intro">Escala pronóstica de gravedad en la necrólisis epidérmica tóxica y el síndrome de Stevens-Johnson. Suma 1 punto por cada criterio presente, con los valores de las primeras 24 h; se recomienda recalcular al día 3.</p>
+${EB('scorten_intro','<p class="intro">Escala pronóstica de gravedad en la necrólisis epidérmica tóxica y el síndrome de Stevens-Johnson. Suma 1 punto por cada criterio presente, con los valores de las primeras 24 h; se recomienda recalcular al día 3.</p>')}
 <div style="margin-top:4px">
 ${SCORTEN_C.map(c=>`<label style="display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--bd);cursor:pointer"><input type="checkbox" id="sct_${c[0]}" onchange="calcSCORTEN()" style="width:18px;height:18px;flex:0 0 auto"><span>${c[1]}</span></label>`).join('')}
 </div>
@@ -2196,8 +2273,8 @@ ${SCORTEN_C.map(c=>`<label style="display:flex;align-items:center;gap:10px;paddi
 <div id="sct_res" class="res" style="display:none"></div>
 <table class="tbl" style="margin-top:12px"><tr><th>SCORTEN</th><th>Mortalidad estimada</th></tr>
 <tr><td>0–1</td><td>3.2 %</td></tr><tr><td>2</td><td>12.1 %</td></tr><tr><td>3</td><td>35.3 %</td></tr><tr><td>4</td><td>58.3 %</td></tr><tr><td>≥ 5</td><td>&gt; 90 %</td></tr></table>
-<div class="alert" style="margin-top:12px"><strong>Cautela interpretativa:</strong> con el manejo intensivo actual SCORTEN tiende a <strong>sobreestimar la mortalidad</strong> y pierde calibración fuera de las primeras 24–72 h. Considerar <strong>ABCD-10</strong> (2019) como alternativa o complemento. El <strong>traslado precoz a una unidad de quemados</strong> mejora el pronóstico con independencia de la puntuación.</div>
-<div class="ref">Bastuji-Garin S, et al. SCORTEN: a severity-of-illness score for toxic epidermal necrolysis. J Invest Dermatol. 2000;115(2):149-53.</div>
+${EB('scorten_nota','<div class="alert" style="margin-top:12px"><strong>Cautela interpretativa:</strong> con el manejo intensivo actual SCORTEN tiende a <strong>sobreestimar la mortalidad</strong> y pierde calibración fuera de las primeras 24–72 h. Considerar <strong>ABCD-10</strong> (2019) como alternativa o complemento. El <strong>traslado precoz a una unidad de quemados</strong> mejora el pronóstico con independencia de la puntuación.</div>')}
+${EB('scorten_ref','<div class="ref">Bastuji-Garin S, et al. SCORTEN: a severity-of-illness score for toxic epidermal necrolysis. J Invest Dermatol. 2000;115(2):149-53.</div>')}
 </div>`;
 VIEWS.scorten_post=()=>calcSCORTEN();
 function calcSCORTEN(){
@@ -2224,14 +2301,14 @@ const HURLEY=[
 ];
 VIEWS.hurley=()=>`<div class="card">
 <h2>Estadiaje de Hurley — hidradenitis supurativa</h2>
-<p class="intro">Clasificación clínica estática de la gravedad de la hidradenitis supurativa (acné inverso). Orienta el escalado terapéutico, pero no mide la actividad inflamatoria (para el seguimiento se usan IHS4 o HiSCR).</p>
+${EB('hurley_intro','<p class="intro">Clasificación clínica estática de la gravedad de la hidradenitis supurativa (acné inverso). Orienta el escalado terapéutico, pero no mide la actividad inflamatoria (para el seguimiento se usan IHS4 o HiSCR).</p>')}
 <div class="fld"><label class="lbl">Estadio</label><select id="hur_sel" onchange="calcHurley()">${HURLEY.map(h=>`<option value="${h[0]}">${h[1]}</option>`).join('')}</select></div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="copyHurley()">Copiar</button></div>
 <div id="hur_res" class="res" style="display:none"></div>
 <table class="tbl" style="margin-top:12px"><tr><th>Estadio</th><th>Descripción</th></tr>
 ${HURLEY.map(h=>`<tr><td><strong>${['','I','II','III'][h[0]]}</strong></td><td>${h[2]}</td></tr>`).join('')}</table>
-<div class="perla" style="margin-top:12px"><strong>Orientación por estadio:</strong> en Hurley II–III refractario, las opciones biológicas aprobadas en HS incluyen <strong>adalimumab</strong>, <strong>secukinumab</strong> (2023) y <strong>bimekizumab</strong> (2024); en enfermedad cicatricial fija, valorar <strong>cirugía / deroofing</strong>.</div>
-<div class="ref">Hurley HJ. Axillary hyperhidrosis, apocrine bromhidrosis, hidradenitis suppurativa and familial benign pemphigus: surgical approach. En: Dermatologic Surgery. 1989.</div>
+${EB('hurley_perla','<div class="perla" style="margin-top:12px"><strong>Orientación por estadio:</strong> en Hurley II–III refractario, las opciones biológicas aprobadas en HS incluyen <strong>adalimumab</strong>, <strong>secukinumab</strong> (2023) y <strong>bimekizumab</strong> (2024); en enfermedad cicatricial fija, valorar <strong>cirugía / deroofing</strong>.</div>')}
+${EB('hurley_ref','<div class="ref">Hurley HJ. Axillary hyperhidrosis, apocrine bromhidrosis, hidradenitis suppurativa and familial benign pemphigus: surgical approach. En: Dermatologic Surgery. 1989.</div>')}
 </div>`;
 VIEWS.hurley_post=()=>calcHurley();
 function calcHurley(){
@@ -2252,12 +2329,12 @@ Estadio de Hurley {valor}. {desc}
 const SALT_REG=[['top','Vértex / parte superior',0.40],['post','Posterior / occipucio',0.24],['der','Lateral derecho',0.18],['izq','Lateral izquierdo',0.18]];
 VIEWS.salt=()=>`<div class="card">
 <h2>SALT — Severity of Alopecia Tool</h2>
-<p class="intro">Cuantifica el porcentaje de cuero cabelludo con pérdida de cabello en la alopecia areata. El cuero cabelludo se divide en 4 regiones ponderadas; en cada una se estima el % de pérdida.</p>
+${EB('salt_intro','<p class="intro">Cuantifica el porcentaje de cuero cabelludo con pérdida de cabello en la alopecia areata. El cuero cabelludo se divide en 4 regiones ponderadas; en cada una se estima el % de pérdida.</p>')}
 ${SALT_REG.map(r=>`<div class="fld"><label class="lbl">${r[1]} <small style="color:var(--mut)">(${Math.round(r[2]*100)}% del cuero cabelludo)</small></label><input type="number" min="0" max="100" step="1" id="salt_${r[0]}" placeholder="% pérdida" oninput="calcSALT()"></div>`).join('')}
 <div class="btns"><button class="btn" onclick="calcSALT()">Calcular</button><button class="btn btn-out btn-sm" onclick="copySALT()">Copiar</button></div>
 <div id="salt_res" class="res" style="display:none"></div>
-<div class="perla" style="margin-top:12px"><strong>JAKi en alopecia areata grave (SALT ≥ 50):</strong> aprobados <strong>baricitinib</strong> (2022), <strong>ritlecitinib</strong> (≥ 12 años, 2023) y <strong>deuruxolitinib</strong> (2024). Criterios de respuesta habituales: <strong>SALT ≤ 20</strong> o <strong>SALT ≤ 10</strong>.</div>
-<div class="ref">SALT = Σ (% pérdida en cada región × peso de la región). S0 = 0% · S1 &lt;25% · S2 25–49% · S3 50–74% · S4 75–99% · S5 100%. Olsen EA, et al. J Am Acad Dermatol. 2004;51(3):440-7.</div>
+${EB('salt_perla','<div class="perla" style="margin-top:12px"><strong>JAKi en alopecia areata grave (SALT ≥ 50):</strong> aprobados <strong>baricitinib</strong> (2022), <strong>ritlecitinib</strong> (≥ 12 años, 2023) y <strong>deuruxolitinib</strong> (2024). Criterios de respuesta habituales: <strong>SALT ≤ 20</strong> o <strong>SALT ≤ 10</strong>.</div>')}
+${EB('salt_ref','<div class="ref">SALT = Σ (% pérdida en cada región × peso de la región). S0 = 0% · S1 &lt;25% · S2 25–49% · S3 50–74% · S4 75–99% · S5 100%. Olsen EA, et al. J Am Acad Dermatol. 2004;51(3):440-7.</div>')}
 </div>`;
 VIEWS.salt_post=()=>calcSALT();
 function calcSALT(){
@@ -2286,14 +2363,14 @@ SALT: {valor}% de pérdida del cuero cabelludo — categoría {categoria}.
 const UAS_DAYS=['Día 1','Día 2','Día 3','Día 4','Día 5','Día 6','Día 7'];
 VIEWS.uas7=()=>`<div class="card">
 <h2>UAS7 — Urticaria Activity Score (7 días)</h2>
-<p class="intro">Mide la actividad de la urticaria crónica espontánea sumando, durante 7 días consecutivos, la puntuación diaria de habones (ronchas) y de prurito. Cada día puntúa de 0 a 6; el UAS7 va de 0 a 42.</p>
+${EB('uas7_intro','<p class="intro">Mide la actividad de la urticaria crónica espontánea sumando, durante 7 días consecutivos, la puntuación diaria de habones (ronchas) y de prurito. Cada día puntúa de 0 a 6; el UAS7 va de 0 a 42.</p>')}
 <table class="tbl" style="margin-top:4px"><tr><th>Día</th><th>Habones (0–3)</th><th>Prurito (0–3)</th></tr>
 ${UAS_DAYS.map((d,i)=>`<tr><td>${d}</td><td>${escNumSel('uas_w'+i,3,'calcUAS7()')}</td><td>${escNumSel('uas_p'+i,3,'calcUAS7()')}</td></tr>`).join('')}
 </table>
-<div class="alert b" style="margin-top:10px"><strong>Habones:</strong> 0 ninguno · 1 leve (&lt;20/día) · 2 moderado (20–50/día) · 3 intenso (&gt;50/día). <strong>Prurito:</strong> 0 ninguno · 1 leve · 2 moderado · 3 intenso.</div>
+${EB('uas7_nota','<div class="alert b" style="margin-top:10px"><strong>Habones:</strong> 0 ninguno · 1 leve (&lt;20/día) · 2 moderado (20–50/día) · 3 intenso (&gt;50/día). <strong>Prurito:</strong> 0 ninguno · 1 leve · 2 moderado · 3 intenso.</div>')}
 <div class="btns"><button class="btn btn-out btn-sm" onclick="copyUAS7()">Copiar</button></div>
 <div id="uas_res" class="res" style="display:none"></div>
-<div class="ref">UAS7 0 libre de síntomas · 1–6 bien controlada · 7–15 leve · 16–27 moderada · 28–42 grave. Objetivo del tratamiento: UAS7 ≤ 6. Zuberbier T, et al. Guía EAACI/GA²LEN/EDF/WAO de la urticaria.</div>
+${EB('uas7_ref','<div class="ref">UAS7 0 libre de síntomas · 1–6 bien controlada · 7–15 leve · 16–27 moderada · 28–42 grave. Objetivo del tratamiento: UAS7 ≤ 6. Zuberbier T, et al. Guía EAACI/GA²LEN/EDF/WAO de la urticaria.</div>')}
 </div>`;
 VIEWS.uas7_post=()=>calcUAS7();
 function calcUAS7(){
@@ -2320,13 +2397,13 @@ UAS7: {valor}/42 — {categoria}.
 const MSWAT_REG=[['cab','Cabeza',7],['cue','Cuello',2],['tra','Tronco anterior',13],['trp','Tronco posterior',13],['glu','Glúteos',5],['bra','Brazos',8],['ant','Antebrazos',6],['man','Manos',5],['mus','Muslos',19],['pie','Piernas',14],['pies','Pies',7],['ing','Ingle',1]];
 VIEWS.mswat=()=>`<div class="card">
 <h2>mSWAT — modified Severity-Weighted Assessment Tool</h2>
-<p class="intro">Cuantifica la carga tumoral cutánea en la micosis fungoide / síndrome de Sézary. En cada región corporal se estima el % afectado por <strong>parche</strong> (×1), <strong>placa</strong> (×2) y <strong>tumor</strong> (×4). Como referencia, la palma del paciente con los dedos ≈ 1% de superficie corporal.</p>
+${EB('mswat_intro','<p class="intro">Cuantifica la carga tumoral cutánea en la micosis fungoide / síndrome de Sézary. En cada región corporal se estima el % afectado por <strong>parche</strong> (×1), <strong>placa</strong> (×2) y <strong>tumor</strong> (×4). Como referencia, la palma del paciente con los dedos ≈ 1% de superficie corporal.</p>')}
 <table class="tbl" style="margin-top:4px;font-size:.92em"><tr><th>Región (%SC)</th><th>Parche %</th><th>Placa %</th><th>Tumor %</th></tr>
 ${MSWAT_REG.map(r=>`<tr><td>${r[1]} <small style="color:var(--mut)">(${r[2]})</small></td><td><input type="number" min="0" max="100" step="1" id="msw_${r[0]}_pa" oninput="calcMSWAT()" style="width:62px"></td><td><input type="number" min="0" max="100" step="1" id="msw_${r[0]}_pl" oninput="calcMSWAT()" style="width:62px"></td><td><input type="number" min="0" max="100" step="1" id="msw_${r[0]}_tu" oninput="calcMSWAT()" style="width:62px"></td></tr>`).join('')}
 </table>
 <div class="btns"><button class="btn" onclick="calcMSWAT()">Calcular</button><button class="btn btn-out btn-sm" onclick="copyMSWAT()">Copiar</button></div>
 <div id="msw_res" class="res" style="display:none"></div>
-<div class="ref">mSWAT = %SC parche ×1 + %SC placa ×2 + %SC tumor ×4 (rango 0–400). %SC de cada tipo = Σ (%SC de la región × % de la región afectado). Olsen EA, et al. J Clin Oncol. 2011;29(18):2598-607.</div>
+${EB('mswat_ref','<div class="ref">mSWAT = %SC parche ×1 + %SC placa ×2 + %SC tumor ×4 (rango 0–400). %SC de cada tipo = Σ (%SC de la región × % de la región afectado). Olsen EA, et al. J Clin Oncol. 2011;29(18):2598-607.</div>')}
 </div>`;
 VIEWS.mswat_post=()=>calcMSWAT();
 function calcMSWAT(){
@@ -2359,7 +2436,7 @@ const BPDAI_MUC=['Ojos','Nariz','Mucosa yugal','Paladar duro','Paladar blando','
 const BPDAI_OPTS=[['0','0 — ausente'],['1','1 — 1-3 lesiones'],['2','2 — 4-9 lesiones'],['3','3 — 10-30 lesiones'],['5','5 — >30 lesiones'],['10','10 — >30 y/o lesión >6 cm']];
 VIEWS.bpdai=()=>`<div class="card">
 <h2>BPDAI — Bullous Pemphigoid Disease Area Index</h2>
-<p class="intro">Mide la actividad del penfigoide ampolloso. Suma tres componentes: ampollas/erosiones cutáneas (0–120), eritema/urticaria cutáneo (0–120) y afectación mucosa (0–120). En cada región se puntúa según el número (y tamaño) de lesiones.</p>
+${EB('bpdai_intro','<p class="intro">Mide la actividad del penfigoide ampolloso. Suma tres componentes: ampollas/erosiones cutáneas (0–120), eritema/urticaria cutáneo (0–120) y afectación mucosa (0–120). En cada región se puntúa según el número (y tamaño) de lesiones.</p>')}
 <div style="font-weight:600;margin:14px 0 4px;color:var(--c1)">Piel</div>
 <table class="tbl" style="font-size:.9em"><tr><th>Región</th><th>Ampollas/erosiones</th><th>Eritema/urticaria</th></tr>
 ${BPDAI_SKIN.map((r,i)=>`<tr><td>${r}</td><td>${escOptSel('bp_be'+i,BPDAI_OPTS,'calcBPDAI()')}</td><td>${escOptSel('bp_er'+i,BPDAI_OPTS,'calcBPDAI()')}</td></tr>`).join('')}
@@ -2370,8 +2447,8 @@ ${BPDAI_MUC.map((r,i)=>`<tr><td>${r}</td><td>${escOptSel('bp_mu'+i,BPDAI_OPTS,'c
 </table>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="copyBPDAI()">Copiar</button></div>
 <div id="bp_res" class="res" style="display:none"></div>
-<div class="perla" style="margin-top:12px"><strong>Novedad terapéutica:</strong> además de corticoides ± doxiciclina / inmunosupresores ahorradores, el <strong>dupilumab</strong> demostró eficacia y obtuvo aprobación FDA para el penfigoide ampolloso (2025).</div>
-<div class="ref">Actividad total BPDAI = piel (ampollas/erosiones + eritema/urticaria) + mucosa. Gravedad por actividad cutánea: leve ≤19 · moderada 20–56 · grave ≥57. Murrell DF, et al. J Am Acad Dermatol. 2012;66(3):479-85; cortes: Wijayanti A, et al. 2017.</div>
+${EB('bpdai_perla','<div class="perla" style="margin-top:12px"><strong>Novedad terapéutica:</strong> además de corticoides ± doxiciclina / inmunosupresores ahorradores, el <strong>dupilumab</strong> demostró eficacia y obtuvo aprobación FDA para el penfigoide ampolloso (2025).</div>')}
+${EB('bpdai_ref','<div class="ref">Actividad total BPDAI = piel (ampollas/erosiones + eritema/urticaria) + mucosa. Gravedad por actividad cutánea: leve ≤19 · moderada 20–56 · grave ≥57. Murrell DF, et al. J Am Acad Dermatol. 2012;66(3):479-85; cortes: Wijayanti A, et al. 2017.</div>')}
 </div>`;
 VIEWS.bpdai_post=()=>calcBPDAI();
 function calcBPDAI(){
@@ -2401,7 +2478,7 @@ Gravedad cutánea: {categoria} ({skin}).
 
 VIEWS.ecog=()=>`<div class="card">
 <h2>ECOG / Performance Status</h2>
-<p class="intro">Estado funcional según escala ECOG (Eastern Cooperative Oncology Group).</p>
+${EB('ecog_intro','<p class="intro">Estado funcional según escala ECOG (Eastern Cooperative Oncology Group).</p>')}
 <label class="chk-card"><input type="radio" name="ec_v" value="0" onchange="calcECOG()"><span><strong>0</strong> – Asintomático. Actividad normal sin restricciones</span></label>
 <label class="chk-card"><input type="radio" name="ec_v" value="1" onchange="calcECOG()"><span><strong>1</strong> – Sintomático pero ambulatorio. Restricciones en actividad física intensa, capaz de trabajo ligero</span></label>
 <label class="chk-card"><input type="radio" name="ec_v" value="2" onchange="calcECOG()"><span><strong>2</strong> – En cama &lt;50% del día. Capaz de autocuidado pero no de trabajar</span></label>
@@ -2410,7 +2487,7 @@ VIEWS.ecog=()=>`<div class="card">
 <label class="chk-card"><input type="radio" name="ec_v" value="5" onchange="calcECOG()"><span><strong>5</strong> – Fallecido</span></label>
 <div id="ec_res" class="res" style="display:none"></div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="copyECOG()">Copiar</button></div>
-<div class="ref">Oken MM, et al. Toxicity and response criteria of the Eastern Cooperative Oncology Group. Am J Clin Oncol. 1982;5(6):649-655.</div>
+${EB('ecog_ref','<div class="ref">Oken MM, et al. Toxicity and response criteria of the Eastern Cooperative Oncology Group. Am J Clin Oncol. 1982;5(6):649-655.</div>')}
 </div>`;
 
 function calcECOG(){
@@ -2440,13 +2517,13 @@ cbc:'NCCN Clinical Practice Guidelines: Basal Cell Skin Cancer (estratificacion 
 };
 VIEWS.tnm_tumor=()=>`<div class="card">
 <h2>Estadiaje de tumores cutáneos</h2>
-<p class="intro"><strong>Categoría T y estadio orientativos</strong> por tipo tumoral. <strong>Melanoma</strong> y <strong>Merkel</strong> siguen la <strong>AJCC 8.ª edición</strong>; el <strong>escamoso</strong> usa la estadificación de <strong>Brigham (BWH)</strong>, más discriminante en piel; el <strong>basocelular</strong> no se estadifica de rutina y se estratifica por <strong>riesgo de recurrencia (NCCN)</strong>.</p>
+${EB('tnm_intro','<p class="intro"><strong>Categoría T y estadio orientativos</strong> por tipo tumoral. <strong>Melanoma</strong> y <strong>Merkel</strong> siguen la <strong>AJCC 8.ª edición</strong>; el <strong>escamoso</strong> usa la estadificación de <strong>Brigham (BWH)</strong>, más discriminante en piel; el <strong>basocelular</strong> no se estadifica de rutina y se estratifica por <strong>riesgo de recurrencia (NCCN)</strong>.</p>')}
 <div class="fld"><label class="lbl">Tipo de tumor</label><select id="tnm_type" onchange="tnmRenderInputs();calcTNM()">${TNM_TYPES.map(t=>`<option value="${t[0]}">${t[1]}</option>`).join('')}</select></div>
 <div id="tnm_inputs"></div>
 <div id="tnm_res" class="res" style="display:none"></div>
 <div class="btns"><button class="btn btn-out btn-sm" onclick="copyTNM()">Copiar</button><button class="btn btn-out btn-sm" onclick="tnmGo()">Ver enfermedad</button></div>
 <div class="ref" id="tnm_ref"></div>
-<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica.</strong> Estadificación orientativa; el estadio definitivo es anatomopatológico. Confirmar con el informe y el comité de tumores.</div>
+${EB('tnm_nota','<div class="alert b" style="margin-top:12px"><strong>Borrador para validación clínica.</strong> Estadificación orientativa; el estadio definitivo es anatomopatológico. Confirmar con el informe y el comité de tumores.</div>')}
 </div>`;
 VIEWS.tnm_tumor_post=(p)=>{if(p&&typeof p==='string'){const s=$('tnm_type');if(s)s.value=p;}tnmRenderInputs();calcTNM();};
 function tnmType(){return $('tnm_type')?$('tnm_type').value:'melanoma';}
@@ -9920,7 +9997,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 44;
+  var DC_BUILD = 45;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -10903,6 +10980,18 @@ window.hpSyncItems = async function(){
 // ── Apartados de guías (subtipos): orden/oculto/nombres por sección. Doc por sección en 'subtipos'
 // {items:[...]}. Editable por admin (cualquier sección) o editor de ESA sección; lo lee todo el equipo. ──
 window.hpSaveSubtipos = async function(section, items){ await hpQSet('subt:'+section,'subtipos',section,{ items: items||[] }); };
+// ── Recuadros editables (bloques): texto por clave; admin/editor escriben, todos leen. ──
+window.hpSaveBloque = async function(key, html){ await hpQSet('bloque:'+key, 'bloques', key, { html: html }, true); };
+window.hpDeleteBloque = async function(key){ await deleteDoc(doc(fs, 'bloques', key)); };
+window.hpSyncBloques = async function(){
+  try{
+    const snap = await getDocs(collection(fs, 'bloques'));
+    const map = {}; snap.forEach(d => { const v=d.data()||{}; if(typeof v.html==='string') map[d.id]=v.html; });
+    if(window.hpApplyBloques) window.hpApplyBloques(map);
+    if(window.hpRepushBloques) window.hpRepushBloques();
+    return true;
+  }catch(e){ return false; }
+};
 window.hpResetSubtiposCloud = async function(section){ await deleteDoc(doc(fs, 'subtipos', section)); };
 window.hpSyncSubtipos = async function(){
   try{
@@ -10981,7 +11070,7 @@ window.hpResyncContent=async function(opts){
   try{
     try{ if(window.hpFlushWrites) await window.hpFlushWrites(); }catch(e){}
     var before=_hpSig();
-    var fns=['hpSyncSecciones','hpSyncCatOrden','hpSyncItems','hpSyncSubtipos','hpSyncPlantillas','hpSyncRx','hpSyncPages','hpSyncAlgos','hpSyncCalcs','hpSyncDirectorio','hpSyncAviso','hpSyncScoreInterp','hpSyncColaboradores'];
+    var fns=['hpSyncSecciones','hpSyncCatOrden','hpSyncItems','hpSyncSubtipos','hpSyncBloques','hpSyncPlantillas','hpSyncRx','hpSyncPages','hpSyncAlgos','hpSyncCalcs','hpSyncDirectorio','hpSyncAviso','hpSyncScoreInterp','hpSyncColaboradores'];
     for(var i=0;i<fns.length;i++){ var fn=fns[i]; if(window[fn]){ try{ await window[fn](); }catch(e){} } }
     try{ if(typeof renderMenu==='function') renderMenu(($('search')&&$('search').value)||''); }catch(e){}
     if(opts.rerender && (_hpSig()!==before) && _hpSafeRerender()){ try{
@@ -11034,6 +11123,7 @@ function revealAndEnter(user){
   if(window.hpSyncCatOrden) setTimeout(()=>window.hpSyncCatOrden(),1010);
   if(window.hpSyncItems) setTimeout(()=>window.hpSyncItems(),1250);
   if(window.hpSyncSubtipos) setTimeout(()=>window.hpSyncSubtipos(),1270);
+  if(window.hpSyncBloques) setTimeout(()=>window.hpSyncBloques(),1280);
   if(window.hpSyncPlantillas) setTimeout(()=>window.hpSyncPlantillas(),1260);
   if(window.hpSyncCalcs) setTimeout(()=>window.hpSyncCalcs(),1300);
   if(window.hpSyncAlgos) setTimeout(()=>window.hpSyncAlgos(),1050);

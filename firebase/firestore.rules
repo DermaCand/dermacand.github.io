@@ -181,6 +181,13 @@ service cloud.firestore {
       allow write: if canEdit(seccion);
     }
 
+    // ── Recuadros editables (bloques de texto de las herramientas): un doc por clave ──
+    // Los lee cualquier usuario autorizado; los editan administradores y editores.
+    match /bloques/{id} {
+      allow read:  if isApproved();
+      allow write: if isEditor();
+    }
+
     // ── Orden de las categorías del menú (doc 'orden') y diccionario del asistente de recetas ──
     // 'orden' (categorías) es solo-admin; 'recetas' (diccionario del asistente de recetas) lo pueden
     // editar también los editores del área 'asistentes'. Lo lee cualquier usuario autorizado.
