@@ -825,6 +825,15 @@ function hpEditFab(){
   b.title=on?'Estás editando · toca para salir':'Activar modo edición';
   b.textContent=on?'✓ Editando':'✏️ Editar';
 }
+// ════════ CENTROS / HOSPITALES (multi-hospital · Fase 1: cimientos) ════════
+// Cada usuario pertenece a un centro (por defecto 'hunsc' = HUNSC/Candelaria). El filtrado de
+// contenido por centro y el panel de gestión llegan en fases posteriores; esto es solo la base.
+function hpCentros(){ var m; try{ m=ls.g('centros')||{}; }catch(e){ m={}; } if(!m.hunsc) m.hunsc={nombre:'HUNSC',casa:true}; return m; }
+window.hpApplyCentros=function(map){ try{ var m=map||{}; if(!m.hunsc) m.hunsc={nombre:'HUNSC',casa:true}; ls.s('centros', m); }catch(e){} try{ if(window.hpUpdateBrand) window.hpUpdateBrand(); }catch(e){} };
+function hpUserCentro(){ try{ return window.__hpCentro || 'hunsc'; }catch(e){ return 'hunsc'; } }
+function hpCentroNombre(id){ var m=hpCentros(); return (m[id]&&m[id].nombre)||id||''; }
+function hpCasaCentro(){ try{ var m=hpCentros(); for(var k in m){ if(m[k]&&m[k].casa) return k; } }catch(e){} return 'hunsc'; }
+function hpIsPrincipal(){ try{ return typeof HP_PRINCIPAL_UID!=='undefined' && window.__hpUid===HP_PRINCIPAL_UID; }catch(e){ return false; } }
 // ── RECUADROS EDITABLES (EB): envuelven un texto por defecto; en MODO EDICIÓN el recuadro se toca
 // para editarlo (modal), se guarda en la nube (colección 'bloques') para todo el equipo y es
 // restaurable. Cola 'hpBloquePend' para que ninguna sincronización revierta una edición sin confirmar.
@@ -10008,7 +10017,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 48;
+  var DC_BUILD = 49;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -11003,6 +11012,18 @@ window.hpSyncBloques = async function(){
     return true;
   }catch(e){ return false; }
 };
+// ── Centros / hospitales (multi-hospital): los gestiona el admin principal; lista pública. ──
+window.hpSaveCentro = async function(id, data){ await hpQSet('centro:'+id,'centros',id,data||{},true); };
+window.hpDeleteCentro = async function(id){ await deleteDoc(doc(fs, 'centros', id)); };
+window.hpSyncCentros = async function(){
+  try{
+    const snap = await getDocs(collection(fs, 'centros'));
+    const map = {}; snap.forEach(d => { map[d.id] = d.data()||{}; });
+    if(window.hpApplyCentros) window.hpApplyCentros(map);
+    return true;
+  }catch(e){ return false; }
+};
+window.hpSetUserCentro = async function(uid, centro){ await setDoc(doc(fs, 'cuentas', uid), { centro: centro||'hunsc' }, { merge:true }); };
 window.hpResetSubtiposCloud = async function(section){ await deleteDoc(doc(fs, 'subtipos', section)); };
 window.hpSyncSubtipos = async function(){
   try{
@@ -11081,7 +11102,7 @@ window.hpResyncContent=async function(opts){
   try{
     try{ if(window.hpFlushWrites) await window.hpFlushWrites(); }catch(e){}
     var before=_hpSig();
-    var fns=['hpSyncSecciones','hpSyncCatOrden','hpSyncItems','hpSyncSubtipos','hpSyncBloques','hpSyncPlantillas','hpSyncRx','hpSyncPages','hpSyncAlgos','hpSyncCalcs','hpSyncDirectorio','hpSyncAviso','hpSyncScoreInterp','hpSyncColaboradores'];
+    var fns=['hpSyncCentros','hpSyncSecciones','hpSyncCatOrden','hpSyncItems','hpSyncSubtipos','hpSyncBloques','hpSyncPlantillas','hpSyncRx','hpSyncPages','hpSyncAlgos','hpSyncCalcs','hpSyncDirectorio','hpSyncAviso','hpSyncScoreInterp','hpSyncColaboradores'];
     for(var i=0;i<fns.length;i++){ var fn=fns[i]; if(window[fn]){ try{ await window[fn](); }catch(e){} } }
     try{ if(typeof renderMenu==='function') renderMenu(($('search')&&$('search').value)||''); }catch(e){}
     if(opts.rerender && (_hpSig()!==before) && _hpSafeRerender()){ try{
@@ -11123,6 +11144,9 @@ function revealAndEnter(user){
   if(loginBtn){ loginBtn.disabled=false; loginBtn.textContent='Entrar'; }
   loadCloud(user.uid);
   window.__hpUid=user.uid;
+  // Multi-hospital: carga el centro del usuario desde su ficha (por defecto 'hunsc') + baja la lista de centros.
+  (async()=>{ try{ const s=await getDoc(doc(fs,'cuentas',user.uid)); window.__hpCentro=(s.exists() && s.data().centro)?s.data().centro:'hunsc'; }catch(e){ window.__hpCentro='hunsc'; } try{ if(window.hpUpdateBrand) window.hpUpdateBrand(); }catch(e){} })();
+  if(window.hpSyncCentros) setTimeout(()=>window.hpSyncCentros(),1040);
   HemoCloud.loadRole(user.uid).then(()=>{ if(window.hpOnRoleLoaded) window.hpOnRoleLoaded(); });
   if(window.syncCloudGuides) setTimeout(()=>window.syncCloudGuides(true),800);
   if(window.hpSyncColaboradores) setTimeout(()=>window.hpSyncColaboradores(),900);

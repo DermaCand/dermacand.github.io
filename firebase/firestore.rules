@@ -188,6 +188,14 @@ service cloud.firestore {
       allow write: if isEditor();
     }
 
+    // ── Hospitales / centros (multi-hospital): lista PÚBLICA (el desplegable del registro la lee sin
+    // sesión iniciada); solo el administrador principal la escribe. ──
+    match /centros/{id} {
+      allow read:  if true;
+      allow write: if request.auth != null
+                   && request.auth.uid == 'IXktZrlu5KSWMSyt6MO1Kt1fRZf1';
+    }
+
     // ── Orden de las categorías del menú (doc 'orden') y diccionario del asistente de recetas ──
     // 'orden' (categorías) es solo-admin; 'recetas' (diccionario del asistente de recetas) lo pueden
     // editar también los editores del área 'asistentes'. Lo lee cualquier usuario autorizado.
