@@ -10028,7 +10028,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 52;
+  var DC_BUILD = 53;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -11020,15 +11020,19 @@ window.hpFlushWrites = async function(){
   if(_ok>0 && typeof toast==='function'){ try{ toast('✓ '+_ok+' cambio'+(_ok===1?'':'s')+' pendiente'+(_ok===1?'':'s')+' publicado'+(_ok===1?'':'s')+' para todos'); }catch(e){} }
 };
 try{ window.addEventListener('online', function(){ setTimeout(function(){ if(window.hpFlushWrites) window.hpFlushWrites(); }, 1200); }); }catch(e){}
-window.hpSaveAviso = async function(html){ await hpQSet('aviso','textos','avisolegal',{ html: html||'' }); };
-window.hpSyncAviso = async function(){ try{ const s = await getDoc(doc(fs, 'textos', 'avisolegal')); if(s.exists() && window.hpApplyAviso) window.hpApplyAviso((s.data()||{}).html||''); return true; }catch(e){ return false; } };
+// ── Multi-hospital (Fase 3): id de doc por-centro. Para la 'casa'/hunsc se mantiene el id BASE
+// (retrocompatible con los docs ya existentes); para otros hospitales se le añade el sufijo del
+// centro. Así cada hospital tiene su propia versión del recuadro / página / aviso / contacto. ──
+window._hpCfgId = function(base){ var c=(window.__hpCentro)||'hunsc'; return (c==='hunsc')?base:(base+'_'+c); };
+window.hpSaveAviso = async function(html){ await hpQSet('aviso:'+window._hpCfgId('avisolegal'),'textos',window._hpCfgId('avisolegal'),{ html: html||'', centro:(window.__hpCentro||'hunsc') }); };
+window.hpSyncAviso = async function(){ try{ const s = await getDoc(doc(fs, 'textos', window._hpCfgId('avisolegal'))); if(window.hpApplyAviso) window.hpApplyAviso(s.exists()?((s.data()||{}).html||''):''); return true; }catch(e){ return false; } };
 // ── Orden de las categorías del menú: lo escribe un admin; lo leen todos. ──
 window.hpSaveCatOrden = async function(m){ await hpQSet('catorden','menuconfig','orden',{ orden: m||{} }); };
 window.hpSyncCatOrden = async function(){ try{ const s = await getDoc(doc(fs, 'menuconfig', 'orden')); if(s.exists()){ const d=s.data()||{}; if(window.hpApplyCatOrden) window.hpApplyCatOrden(d.orden||{}); } return true; }catch(e){ return false; } };
 // ── Listín editable (directorio): cloud ──
-window.hpSaveContacto = async function(id, data){ await hpQSet('ct:'+id,'directorio',id,data||{}); };
+window.hpSaveContacto = async function(id, data){ await hpQSet('ct:'+id,'directorio',id,Object.assign({}, data||{}, { centro:(window.__hpCentro||'hunsc') })); };
 window.hpDelContactoCloud = async function(id){ await deleteDoc(doc(fs, 'directorio', id)); };
-window.hpSyncDirectorio = async function(){ try{ const snap = await getDocs(collection(fs, 'directorio')); const map = {}; snap.forEach(d => { map[d.id] = d.data(); }); if(window.hpApplyDirectorio) window.hpApplyDirectorio(map); return true; }catch(e){ return false; } };
+window.hpSyncDirectorio = async function(){ try{ const c=(window.__hpCentro)||'hunsc'; const snap = await getDocs(collection(fs, 'directorio')); const map = {}; snap.forEach(d => { const v=d.data()||{}; if((v.centro||'hunsc')!==c) return; map[d.id] = v; }); if(window.hpApplyDirectorio) window.hpApplyDirectorio(map); return true; }catch(e){ return false; } };
 // ── Interpretación personalizada de los scores integrados (colección 'scoretextos') ──
 // La edita cualquier editor/administrador para unificar la forma de informar; la leen todos.
 window.hpSaveScoreInterp = async function(id, html){ if(!fs) throw new Error('sin conexión'); await hpQSet('score:'+id,'scoretextos',id,{ html: (html||'').toString() }); };
@@ -11060,12 +11064,13 @@ window.hpSyncItems = async function(){
 // {items:[...]}. Editable por admin (cualquier sección) o editor de ESA sección; lo lee todo el equipo. ──
 window.hpSaveSubtipos = async function(section, items){ await hpQSet('subt:'+section,'subtipos',section,{ items: items||[] }); };
 // ── Recuadros editables (bloques): texto por clave; admin/editor escriben, todos leen. ──
-window.hpSaveBloque = async function(key, html){ await hpQSet('bloque:'+key, 'bloques', key, { html: html }, true); };
-window.hpDeleteBloque = async function(key){ await deleteDoc(doc(fs, 'bloques', key)); };
+window.hpSaveBloque = async function(key, html){ await hpQSet('bloque:'+window._hpCfgId(key), 'bloques', window._hpCfgId(key), { html: html, bkey: key, centro:(window.__hpCentro||'hunsc') }, true); };
+window.hpDeleteBloque = async function(key){ await deleteDoc(doc(fs, 'bloques', window._hpCfgId(key))); };
 window.hpSyncBloques = async function(){
   try{
+    const c=(window.__hpCentro)||'hunsc';
     const snap = await getDocs(collection(fs, 'bloques'));
-    const map = {}; snap.forEach(d => { const v=d.data()||{}; if(typeof v.html==='string') map[d.id]=v.html; });
+    const map = {}; snap.forEach(d => { const v=d.data()||{}; if((v.centro||'hunsc')!==c) return; const k=v.bkey||d.id; if(typeof v.html==='string') map[k]=v.html; });
     if(window.hpApplyBloques) window.hpApplyBloques(map);
     if(window.hpRepushBloques) window.hpRepushBloques();
     return true;
@@ -11130,12 +11135,13 @@ window.hpSyncCalcs = async function(){
 window.hpSaveRx = async function(o){ await hpQSet('rx','menuconfig','recetas',{ data: o||{} }); };
 window.hpSyncRx = async function(){ try{ const s = await getDoc(doc(fs, 'menuconfig', 'recetas')); if(s.exists()){ const d=s.data()||{}; if(window.hpApplyRx) window.hpApplyRx(d.data||{}); } return true; }catch(e){ return false; } };
 // ── Páginas editadas (override del contenido de vistas). Las edita quien edita esa sección (o admin). ──
-window.hpSavePage = async function(id, data){ await hpQSet('page:'+id,'paginas',id,data||{}); };
-window.hpDeletePage = async function(id){ await deleteDoc(doc(fs, 'paginas', id)); };
+window.hpSavePage = async function(id, data){ await hpQSet('page:'+window._hpCfgId(id),'paginas',window._hpCfgId(id),Object.assign({}, data||{}, { pid:id, centro:(window.__hpCentro||'hunsc') })); };
+window.hpDeletePage = async function(id){ await deleteDoc(doc(fs, 'paginas', window._hpCfgId(id))); };
 window.hpSyncPages = async function(){
   try{
+    const c=(window.__hpCentro)||'hunsc';
     const snap = await getDocs(collection(fs, 'paginas'));
-    const map = {}; snap.forEach(d => { map[d.id] = d.data()||{}; });
+    const map = {}; snap.forEach(d => { const v=d.data()||{}; if((v.centro||'hunsc')!==c) return; const k=v.pid||d.id; map[k] = v; });
     if(window.hpApplyPages) window.hpApplyPages(map);
     return true;
   }catch(e){ return false; }
