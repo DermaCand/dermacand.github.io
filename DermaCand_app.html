@@ -1224,8 +1224,9 @@ function _hpContenidoTema(sec){
   var h='<div style="font-size:11px;color:var(--mut);margin:2px 0 6px">Agrupa el menú: asigna cada herramienta a una <strong>subsección</strong>. «➕ Nueva subsección…» crea una.</div>';
   tools.forEach(function(it){
     h+='<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:5px 0;border-bottom:1px solid var(--bd)">';
-    h+='<span style="flex:1 1 140px;min-width:110px;font-size:13px">'+_hpEsc(hpItemName(it.id,it.name))+(hpItemOculto(it.id)?' <span style="color:var(--mut);font-size:11px">(oculta)</span>':'')+'</span>';
+    h+='<span style="flex:1 1 140px;min-width:110px;font-size:13px">'+_hpEsc(hpItemName(it.id,it.name))+(hpItemOculto(it.id)?' <span style="color:var(--mut);font-size:11px">(oculta)</span>':'')+hpItemVisEtiqueta(it.id)+'</span>';
     h+='<select onchange="hpAsignarSub(\''+it.id+'\',this.value)" title="Subsección dentro de esta sección" style="font-size:12px;padding:3px 6px;border:1px solid var(--bd);border-radius:6px;background:var(--bg,#fff);color:var(--txt,#222)">'+_hpSubOptions(sec,it.id)+'</select>';
+    h+=hpItemVisControlHtml(it.id);
     h+='</div>';
   });
   return h;
@@ -1244,6 +1245,38 @@ async function hpAsignarSub(id, val){
 }
 function hpItemHidden(id){ const o=hpItemMap()[id]; return !!(o&&o.oculta); }
 function hpItemName(id,def){ const o=hpItemMap()[id]; return (o&&o.nombre)||def; }
+// ── Multi-hospital · VISIBILIDAD por centro (F4): un ítem/sección con vis=[] o vis=['todos'] lo ven
+// TODOS los hospitales; con vis=[centro,…] solo esos. Los administradores lo ven todo (para gestionarlo).
+function hpSecVis(id){ var o=hpSecMap()[id]; return (o&&Array.isArray(o.vis))?o.vis:[]; }
+function hpItemVis(id){ var o=hpItemMap()[id]; return (o&&Array.isArray(o.vis))?o.vis:[]; }
+function _hpVisOk(v){ if(window.HemoCloud&&HemoCloud.isAdmin&&HemoCloud.isAdmin())return true; if(!v||!v.length||v.indexOf('todos')!==-1)return true; return v.indexOf(hpUserCentro())!==-1; }
+function hpSecVisibleUser(id){ return _hpVisOk(hpSecVis(id)); }
+function hpItemVisibleUser(id){ return _hpVisOk(hpItemVis(id)); }
+// Lee los hospitales marcados en un grupo de checkboxes de visibilidad.
+function _hpVisRead(cbName){ try{ return Array.from(document.querySelectorAll('input[data-vis="'+cbName+'"]:checked')).map(function(x){return x.value;}); }catch(e){ return []; } }
+async function hpSetSecVis(id, arr){ const m=hpSecMap(); m[id]=Object.assign({}, m[id], {vis:arr}); try{ls.s('secOverrides',m);}catch(e){} if(typeof renderMenu==='function')renderMenu(($('search')&&$('search').value)||''); if(window.hpSaveSeccion){ try{ await window.hpSaveSeccion(id,{vis:arr}); toast(arr.length?'✓ Visibilidad de la sección actualizada · para todos':'✓ Sección visible para todos'); }catch(e){ toast('Guardado solo en este equipo'); } } }
+async function hpSetItemVis(id, arr){ const m=hpItemMap(); m[id]=Object.assign({},m[id],{vis:arr}); try{ls.s('itemOverrides',m);}catch(e){} if(typeof renderMenu==='function')renderMenu(($('search')&&$('search').value)||''); if(window.hpSaveItem){ try{ await window.hpSaveItem(id,{vis:arr}); toast(arr.length?'✓ Visibilidad actualizada · para todos':'✓ Visible para todos'); }catch(e){ toast('Guardado solo en este equipo'); } } }
+// Controles (solo se muestran si hay 2+ hospitales): checkboxes de qué hospitales ven la sección/ítem.
+function hpSecVisControlHtml(id){
+  try{ if(_hpCentrosOrden().length<2) return ''; }catch(e){ return ''; }
+  var v=hpSecVis(id).filter(function(x){return x!=='todos';});
+  var ids=_hpCentrosOrden(); var tok='secv_'+id;
+  var h='<div class="fld" style="margin:6px 0"><label class="lbl">¿Qué hospitales ven esta sección?</label>';
+  h+='<div style="font-size:11.5px;color:var(--mut,#666);margin:-2px 0 5px">Sin marcar ninguno = la ven <strong>todos</strong>. Marca hospitales para mostrarla <strong>solo</strong> a ellos.</div>';
+  ids.forEach(function(cid){ h+='<label style="display:flex;gap:6px;align-items:center;font-size:12.5px;margin-bottom:2px"><input type="checkbox" data-vis="'+tok+'" value="'+_hpEsc(cid)+'" '+(v.indexOf(cid)!==-1?'checked':'')+' onchange="hpSetSecVis(\''+id+'\',_hpVisRead(\''+tok+'\'))"> '+_hpEsc(hpCentroNombre(cid))+'</label>'; });
+  h+='</div>'; return h;
+}
+function hpItemVisControlHtml(id){
+  try{ if(_hpCentrosOrden().length<2) return ''; }catch(e){ return ''; }
+  var v=hpItemVis(id).filter(function(x){return x!=='todos';});
+  var ids=_hpCentrosOrden(); var tok='itmv_'+id;
+  var h='<div style="flex-basis:100%;margin-top:4px;padding:7px 9px;border:1px solid var(--bd);border-radius:7px;background:var(--bg,#f7f8fa)"><div style="font-size:11.5px;font-weight:600;margin-bottom:2px">👁️ ¿Qué hospitales ven este ítem?</div>';
+  h+='<div style="font-size:11px;color:var(--mut);margin-bottom:4px">Sin marcar ninguno = lo ven <strong>todos</strong>.</div>';
+  ids.forEach(function(cid){ h+='<label style="display:flex;gap:6px;align-items:center;font-size:12px;margin-bottom:2px"><input type="checkbox" data-vis="'+tok+'" value="'+_hpEsc(cid)+'" '+(v.indexOf(cid)!==-1?'checked':'')+' onchange="hpSetItemVis(\''+id+'\',_hpVisRead(\''+tok+'\'))"> '+_hpEsc(hpCentroNombre(cid))+'</label>'; });
+  h+='</div>'; return h;
+}
+function hpSecVisEtiqueta(id){ var v=hpSecVis(id); if(!Array.isArray(v)||!v.length||v.indexOf('todos')!==-1) return ''; return ' <span style="display:inline-block;background:#8a5a00;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:9px;vertical-align:middle">Solo: '+v.map(function(c){return _hpEsc(hpCentroNombre(c));}).join(', ')+'</span>'; }
+function hpItemVisEtiqueta(id){ var v=hpItemVis(id); if(!Array.isArray(v)||!v.length||v.indexOf('todos')!==-1) return ''; return ' <span style="display:inline-block;background:#8a5a00;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:9px;vertical-align:middle">Solo: '+v.map(function(c){return _hpEsc(hpCentroNombre(c));}).join(', ')+'</span>'; }
 function hpItemOculto(id){ if(!id) return false; if((''+id).indexOf('g_')===0) return hpSecHidden((''+id).slice(2)); return hpItemHidden(id); }
 function hpToggleItem(id){ const nuevo=!hpItemHidden(id); const m=hpItemMap(); m[id]=Object.assign({},m[id],{oculta:nuevo}); try{ls.s('itemOverrides',m);}catch(e){} return nuevo; }
 async function hpOcultarItem(id){
@@ -1321,7 +1354,7 @@ async function hpMoverSeccion(id,dir){
 
 function renderMenu(filter=''){
 const f=filter.toLowerCase().trim();
-const favs=S.favs.filter(id=>{const it=getAll().find(x=>x.id===id);return it&&_hpItemAllowed(it)&&!hpItemOculto(id);}).slice(0,4);
+const favs=S.favs.filter(id=>{const it=getAll().find(x=>x.id===id);return it&&_hpItemAllowed(it)&&!hpItemOculto(id)&&(id.indexOf('g_')===0?hpSecVisibleUser(id.slice(2)):hpItemVisibleUser(id));}).slice(0,4);
 let h='';
 if(favs.length){
 h+='<div class="menu-section"><div style="font-size:11px;text-transform:uppercase;color:var(--mut);font-weight:600;padding:8px 6px 4px;letter-spacing:.5px">Acceso Rápido</div>';
@@ -1334,7 +1367,8 @@ const isGuideHidden=it=>!!(it.id&&it.id.indexOf('g_')===0&&hpSecHidden(it.id.sli
 // Si la sección de guías de este grupo está OCULTA, se oculta el grupo entero del menú.
 const _grpG=sec.items.find(it=>it.id&&it.id.indexOf('g_')===0);
 if(_grpG && hpSecHidden(_grpG.id.slice(2))) return;
-const realItems=sec.items.filter(it=>!it.sub && !(it.admin&&!isAdminUI) && !(it.principal && window.__hpUid!==HP_PRINCIPAL_UID) && !isGuideHidden(it) && !hpItemHidden(it.id) && (!f||it.name.toLowerCase().includes(f)||it.kw.includes(f)));
+if(_grpG && !hpSecVisibleUser(_grpG.id.slice(2))) return;
+const realItems=sec.items.filter(it=>!it.sub && !(it.admin&&!isAdminUI) && !(it.principal && window.__hpUid!==HP_PRINCIPAL_UID) && hpItemVisibleUser(it.id) && !isGuideHidden(it) && !hpItemHidden(it.id) && (!f||it.name.toLowerCase().includes(f)||it.kw.includes(f)));
 if(!realItems.length)return;
 const visible=f?realItems:sec.items.filter(it=>!isGuideHidden(it) && !hpItemHidden(it.id));
 const open=f?true:_hpSecOpenIs('h:'+(sec.h||''), sec.o);
@@ -1345,6 +1379,7 @@ let inSub=false;
 visible.forEach(it=>{
 if(it.admin&&!isAdminUI)return;
 if(it.principal && window.__hpUid!==HP_PRINCIPAL_UID)return;
+if(!hpItemVisibleUser(it.id))return;
 if(it.sub){if(it._loose){inSub=false;return}inSub=true;h+=`<div class="menu-sub">${it.name}</div>`;return}
 const isFav=S.favs.includes(it.id);
 const isNew=it.new && isRecentlyNew(it.new);
@@ -10028,7 +10063,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 53;
+  var DC_BUILD = 54;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -10328,6 +10363,7 @@ VIEWS.gsecciones=()=>{
       h+='<button class="btn btn-out btn-sm" onclick="hpOcultarSeccion(\''+sid+'\')">'+(oc?'👁️ Mostrar sección':'🚫 Ocultar sección')+'</button>';
     }
     h+='</div>';
+    if(sid) h+=hpSecVisControlHtml(sid);
     if(!sid) h+='<div style="font-size:11px;color:var(--mut);margin-bottom:6px">Sección general del menú (sin apartado de guías). Su nombre forma parte de la app; aquí gestionas sus herramientas y su orden.</div>';
     const cont=(typeof _hpContenidoTema==='function')?_hpContenidoTema(sec):'';
     h+=cont||'<div style="font-size:12px;color:var(--mut)">Sin herramientas en esta sección.</div>';
