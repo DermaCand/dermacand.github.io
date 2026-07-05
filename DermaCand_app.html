@@ -990,8 +990,9 @@ async function hpTplRestore(){
 function upPt(k,v){S.p[k]=v;ls.s('patient',S.p)}
 function toggleTheme(){S.theme=S.theme==='light'?'dark':'light';document.documentElement.dataset.t=S.theme;ls.s('theme',S.theme)}
 function mostrarInicio(){go('home')}
-function openSb(){$('sb').classList.add('open');$('sb_bg').classList.add('show')}
-function closeSb(){$('sb').classList.remove('open');$('sb_bg').classList.remove('show')}
+var _sbTimer=null;
+function openSb(){$('sb').classList.add('open');$('sb_bg').classList.add('show');clearTimeout(_sbTimer);_sbTimer=setTimeout(closeSb,5*60*1000);}
+function closeSb(){$('sb').classList.remove('open');$('sb_bg').classList.remove('show');clearTimeout(_sbTimer);_sbTimer=null;}
 function isRecentlyNew(d){
 if(!d)return false;
 const seen=ls.g('lastSeen')||0;
@@ -10064,7 +10065,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 60; try{ window.DC_BUILD = DC_BUILD; }catch(e){}
+  var DC_BUILD = 61; try{ window.DC_BUILD = DC_BUILD; }catch(e){}
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
