@@ -767,14 +767,14 @@ body{font-size:13px}
 <button id="toTop" onclick="bttGo()" aria-label="Volver al inicio" title="Volver al inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></button>
 <div id="eriWrap">
 <button id="chatFab" class="pulse" onclick="toggleChat()" aria-label="Mel" title="Mel">
-<img src="mel-avatar.png" alt="Mel">
+<img src="mel-avatar.png?v=57" alt="Mel">
 </button>
 <button id="eriClose" onclick="eriHide(event)" aria-label="Ocultar asistente" title="Ocultar asistente">✕</button>
 </div>
 <div id="eriGreet" class="eri-greet" onclick="openChat()">¡Hola! Soy <b>Mel</b> 🔬<br>Pregúntame lo que necesites.</div>
 <div id="chatPanel" aria-hidden="true">
 <div class="chat-head">
-<div class="ttl"><img src="mel-avatar.png" alt="Mel"><span class="ttl-tx"><span class="ttl-name">Mel</span><span class="ttl-sub">Asistente virtual</span></span></div>
+<div class="ttl"><img src="mel-avatar.png?v=57" alt="Mel"><span class="ttl-tx"><span class="ttl-name">Mel</span><span class="ttl-sub">Asistente virtual</span></span></div>
 <button onclick="closeChat()" aria-label="Cerrar">✕</button>
 </div>
 <div id="chat_log" class="chat-log"></div>
@@ -10063,7 +10063,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 56;
+  var DC_BUILD = 57;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
