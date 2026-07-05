@@ -766,15 +766,15 @@ body{font-size:13px}
 </style>
 <button id="toTop" onclick="bttGo()" aria-label="Volver al inicio" title="Volver al inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></button>
 <div id="eriWrap">
-<button id="chatFab" class="pulse" onclick="toggleChat()" aria-label="Kera" title="Kera">
-<img src="kera-avatar.png" alt="Kera">
+<button id="chatFab" class="pulse" onclick="toggleChat()" aria-label="Mel" title="Mel">
+<img src="mel-avatar.png" alt="Mel">
 </button>
 <button id="eriClose" onclick="eriHide(event)" aria-label="Ocultar asistente" title="Ocultar asistente">✕</button>
 </div>
-<div id="eriGreet" class="eri-greet" onclick="openChat()">¡Hola! Soy <b>Kera</b> 🔬<br>Pregúntame lo que necesites.</div>
+<div id="eriGreet" class="eri-greet" onclick="openChat()">¡Hola! Soy <b>Mel</b> 🔬<br>Pregúntame lo que necesites.</div>
 <div id="chatPanel" aria-hidden="true">
 <div class="chat-head">
-<div class="ttl"><img src="kera-avatar.png" alt="Kera"><span class="ttl-tx"><span class="ttl-name">Kera</span><span class="ttl-sub">Asistente virtual</span></span></div>
+<div class="ttl"><img src="mel-avatar.png" alt="Mel"><span class="ttl-tx"><span class="ttl-name">Mel</span><span class="ttl-sub">Asistente virtual</span></span></div>
 <button onclick="closeChat()" aria-label="Cerrar">✕</button>
 </div>
 <div id="chat_log" class="chat-log"></div>
@@ -8471,12 +8471,12 @@ function chatRefsHTML(results){
   return `<div style="margin-top:11px;padding-top:9px;border-top:1px solid var(--bd)"><div style="font-size:12px;font-weight:600;color:var(--c2);margin-bottom:5px">📚 Referencias bibliográficas</div><ul style="margin:0;padding-left:16px;font-size:11px;color:var(--mut);line-height:1.45;font-style:italic">${refs.map(r=>`<li style="margin-bottom:3px">${chatEsc(r)}</li>`).join('')}</ul></div>`;
 }
 const CHAT_INTROS=['Claro, esto es lo que encontré 👇','Por supuesto, aquí lo tienes:','Encantado, mira lo que encontré sobre esto:','Genial, esto es lo que hay en la app:'];
-function chatLead(){if(!_chatGreeted){_chatGreeted=true;return '¡Hola! 👋 Soy <strong>Kera</strong>, tu asistente de DermaCand. Con gusto te ayudo — esto es lo que encontré:';}return CHAT_INTROS[Math.floor(Math.random()*CHAT_INTROS.length)];}
+function chatLead(){if(!_chatGreeted){_chatGreeted=true;return '¡Hola! 👋 Soy <strong>Mel</strong>, tu asistente de DermaCand. Con gusto te ayudo — esto es lo que encontré:';}return CHAT_INTROS[Math.floor(Math.random()*CHAT_INTROS.length)];}
 // Lead NEUTRO para preguntas de actitud terapéutica / caso / diagnóstico: Eri nunca emite un juicio ("claro/por supuesto" da por hecho un "sí"); solo remite a la fuente.
 const CHAT_INTROS_NEUTRAL=['Lo siento, no puedo ayudarte con la decisión clínica de un caso, pero aquí tienes una referencia que puede servirte de ayuda 👇','No me corresponde decidir el manejo del paciente, pero te dejo la referencia que puede orientarte:','Esa decisión es del clínico según cada caso — aun así, aquí tienes una referencia que puede ayudarte 👇','Disculpa, eso no puedo decidirlo yo, pero con gusto te abro la fuente que puede servirte de ayuda:'];
-function chatLeadNeutral(){if(!_chatGreeted){_chatGreeted=true;return '¡Hola! 👋 Soy <strong>Kera</strong>. Lo siento, no puedo ayudarte con la decisión clínica de un caso concreto, pero con gusto te dejo la referencia que puede servirte de ayuda:';}return CHAT_INTROS_NEUTRAL[Math.floor(Math.random()*CHAT_INTROS_NEUTRAL.length)];}
+function chatLeadNeutral(){if(!_chatGreeted){_chatGreeted=true;return '¡Hola! 👋 Soy <strong>Mel</strong>. Lo siento, no puedo ayudarte con la decisión clínica de un caso concreto, pero con gusto te dejo la referencia que puede servirte de ayuda:';}return CHAT_INTROS_NEUTRAL[Math.floor(Math.random()*CHAT_INTROS_NEUTRAL.length)];}
 function chatAnswerHTML(query,results,neutral){
-  if(!results.length){const hi=_chatGreeted?'':'¡Hola! 👋 Soy <strong>Kera</strong>. ';_chatGreeted=true;return `<div style="${CHAT_BOT}">${hi}No he encontrado nada sobre <em>"${chatEsc(query)}"</em> en el contenido de la app 🤔. Prueba con el nombre del fármaco, el esquema, una sección o «teléfono de …».</div>`;}
+  if(!results.length){const hi=_chatGreeted?'':'¡Hola! 👋 Soy <strong>Mel</strong>. ';_chatGreeted=true;return `<div style="${CHAT_BOT}">${hi}No he encontrado nada sobre <em>"${chatEsc(query)}"</em> en el contenido de la app 🤔. Prueba con el nombre del fármaco, el esquema, una sección o «teléfono de …».</div>`;}
   let h=`<div style="${CHAT_BOT}"><div style="margin-bottom:9px;font-size:13.5px;color:var(--txt)">${neutral?chatLeadNeutral():chatLead()}</div><div style="display:flex;flex-direction:column;gap:9px">`;
   results.forEach(doc=>{if(doc.type==='phone')h+=chatPhoneCard(doc);else if(doc.type==='pdf')h+=chatPdfCard(doc,query);else h+=chatToolCard(doc);});
   h+='</div>'+chatRefsHTML(results);
@@ -8503,7 +8503,7 @@ function chatSmallTalk(q){
   const n=chatNorm(q);if(!n)return null;
   // Identidad y ayuda (se comprueba antes de filtrar, porque lleva palabras "reales")
   if(/(que (puedes|sabes) hacer|que haces|para que sirves|quien eres|que eres|como te llamas|como funcionas|en que (me )?ayudas?|que me ofreces|^ayuda$|^help$|^funciones$|^menu$)/.test(n)){
-    return chatBotBox('Soy <strong>Kera</strong> 🔬, tu asistente de DermaCand. Puedo ayudarte a encontrar:'+
+    return chatBotBox('Soy <strong>Mel</strong> 🔬, tu asistente de DermaCand. Puedo ayudarte a encontrar:'+
       '<ul style="margin:7px 0 2px;padding-left:18px;line-height:1.65">'+
       '<li><strong>Dosis y pautas</strong> — p. ej. «dosis de isotretinoína» o «metotrexato en psoriasis»</li>'+
       '<li><strong>Teléfonos y extensiones</strong> internas — p. ej. «teléfono de dermatología»</li>'+
@@ -8532,7 +8532,7 @@ function chatSmallTalk(q){
     return chatBotBox('¡Hasta luego! 👋 Cuando quieras volver a consultar algo, aquí estaré.');
   // Saludo real → preséntate; si no es un saludo, no repitas la presentación
   if(/(hola|holi|holaa|holaaa|ola|olis|buenas|hey|ey|hello|hi|holis|wenas|saludos|buenos dias|buenas tardes|buenas noches|que tal|como estas|como te va|como vas|^eri$|^eri )/.test(n))
-    return chatBotBox('¡Hola! Soy <strong>Kera</strong> 🔬<br><br>Tu asistente de DermaCand. Puedo buscarte dosis, esquemas, teléfonos o el contenido de las guías clínicas.<br><br>¿Qué necesitas?');
+    return chatBotBox('¡Hola! Soy <strong>Mel</strong> 🔬<br><br>Tu asistente de DermaCand. Puedo buscarte dosis, esquemas, teléfonos o el contenido de las guías clínicas.<br><br>¿Qué necesitas?');
   // Mensaje vago que no es saludo: responde con coherencia (no con el saludo)
   return chatBotBox('Mmm, no estoy segura de haberte entendido 🤔 Prueba a escribirme un <strong>fármaco</strong>, un <strong>esquema</strong>, una <strong>sección</strong> o un <strong>tema clínico</strong> concreto y lo busco enseguida.');
 }
@@ -8588,7 +8588,7 @@ const CASE_FILLER=new Set(['tengo','hago','haria','haga','debo','debe','deberia'
 function chatCaseAnchors(q){let toks=[];try{toks=chatTokens(q);}catch(e){toks=[];}return toks.filter(t=>t&&!CHAT_STOP.has(t)&&!CHAT_GENERIC.has(t)&&!CASE_FILLER.has(t));}
 function chatCaseNoAnchor(q){const nq=chatNorm(q);if(!CASE_RX.test(nq))return false;return chatCaseAnchors(q).length===0;}
 function chatNoPrecise(query){
-  const hi=_chatGreeted?'':'¡Hola! 👋 Soy <strong>Kera</strong>. ';_chatGreeted=true;
+  const hi=_chatGreeted?'':'¡Hola! 👋 Soy <strong>Mel</strong>. ';_chatGreeted=true;
   const nq=chatNorm(query);
   const near=(_chatNear||[]).filter(d=>d&&d.title);
   let sugg='';
@@ -8630,7 +8630,7 @@ function chatBridgeIntent(q){
 const THERAPY_RX=/\b(puedo|podria|podriamos|debo|debe|debemos|deberia|deberiamos|podemos|conviene|procede|toca|hay que|se puede)\b[^?]{0,40}\b(transfund\w*|trasfund\w*|trasfu\w*|anticoagul\w*|dar(le|les)?|administr\w*|pautar|poner|ponerle|iniciar|empezar|comenzar|suspender|retirar|parar|tratar|profilax\w*|premedic\w*)\b|\b(esta|estaria) indicad|indicacion de (transfu|trasfu|anticoagul|tratar|dar|poner|profilax)|\b(transfundo|trasfundo|le doy|le pongo|le pauto|le administro)\b|\b(tratamiento|tratar|diagnostico|diagnosticar|que actitud|actitud a seguir|actitud terapeutica|conducta a seguir|que hago|que hacer)\b|como (lo |la |le )?(trato|tratar|manejo|manejar|trataria|manejaria)/;
 function chatIsTherapyQ(nq){return (THERAPY_RX.test(nq)||CASE_RX.test(nq))&&!PHONE_Q_RX.test(nq);}
 function chatIntent(q){return chatBridgeIntent(q);}
-// === Base de conocimiento de Kera (FAQ) ===
+// === Base de conocimiento de Mel (FAQ) ===
 // Respuestas breves a "qué es / cómo se puntúa X" para las escalas y herramientas de la app.
 // 'v' = vista a la que enlaza · 'rx' se prueba contra la consulta normalizada (sin tildes) ·
 // 'a' = respuesta HTML · 'neu' = tema de manejo/pronóstico → usa lead neutro.
@@ -8682,7 +8682,7 @@ function chatSend(preset){
 function chatInit(){
   const log=$('chat_log');if(!log)return;log.innerHTML='';_chatGreeted=true;
   _chatBase=chatBuildBase();
-  chatPushHTML(`<div style="${CHAT_BOT}">¡Hola! Soy <strong>Kera</strong> 🔬<br><br>Tu asistente de DermaCand. Puedo buscarte dosis, esquemas, teléfonos o el contenido de las guías clínicas.<br><br>¿Qué necesitas?</div>`);
+  chatPushHTML(`<div style="${CHAT_BOT}">¡Hola! Soy <strong>Mel</strong> 🔬<br><br>Tu asistente de DermaCand. Puedo buscarte dosis, esquemas, teléfonos o el contenido de las guías clínicas.<br><br>¿Qué necesitas?</div>`);
   if(!_chatIndexing){
     _chatIndexing=true;const st=$('chat_status');if(st)st.textContent='Preparando guías clínicas…';
     chatIndexGuides((d,t)=>{const s=$('chat_status');if(s)s.textContent=`Indexando guías clínicas… ${d}/${t}`;}).then(()=>{_chatIndexing=false;const s=$('chat_status');if(s)s.textContent=_chatPdfDocs.length?('✓ '+_chatPdfDocs.length+' guías clínicas indexadas'):'';}).catch(()=>{_chatIndexing=false;const s=$('chat_status');if(s)s.textContent='';});
@@ -8721,7 +8721,7 @@ function closeIosInstall(){const m=$('iosInstall');if(m)m.hidden=true;}
 function hpInitInstall(){if(hpStandalone())return;if(window._hpBIP)hpShowInstall();else if(_hpIOS)hpShowInstall('ios');}
 function toggleChat(){const w=$('eriWrap');if(w&&w._suppressClick)return;const p=$('chatPanel');if(p&&p.classList.contains('open'))closeChat();else openChat();}
 function eriIsHidden(){try{return localStorage.getItem('hp_eriHidden')==='1';}catch(_){return false;}}
-function eriHide(e){if(e){e.stopPropagation();e.preventDefault();}const w=$('eriWrap');if(w)w.hidden=true;const g=$('eriGreet');if(g)g.classList.remove('show');closeChat();try{localStorage.setItem('hp_eriHidden','1');}catch(_){}if(typeof toast==='function')toast('Asistente oculto · ábrelo de nuevo desde 🔍 buscando «Kera»');}
+function eriHide(e){if(e){e.stopPropagation();e.preventDefault();}const w=$('eriWrap');if(w)w.hidden=true;const g=$('eriGreet');if(g)g.classList.remove('show');closeChat();try{localStorage.setItem('hp_eriHidden','1');}catch(_){}if(typeof toast==='function')toast('Asistente oculto · ábrelo de nuevo desde 🔍 buscando «Mel»');}
 function eriShow(open){const w=$('eriWrap');if(w){w.hidden=false;w._manual=false;}try{localStorage.removeItem('hp_eriHidden');}catch(_){}if(typeof eriAnchor==='function')eriAnchor();const f=$('chatFab');if(f)f.classList.add('pulse');if(open!==false)setTimeout(openChat,60);}
 function eriClampApply(w,l,t){const pad=6,bw=w.offsetWidth||64,bh=w.offsetHeight||64;const maxL=window.innerWidth-bw-pad,maxT=window.innerHeight-bh-pad;l=Math.max(pad,Math.min(l,maxL));t=Math.max(pad,Math.min(t,maxT));w.style.left=l+'px';w.style.top=t+'px';w.style.right='auto';w.style.bottom='auto';}
 function eriRestorePos(){const w=$('eriWrap');if(!w)return;let raw;try{raw=localStorage.getItem('hp_eriPos');}catch(_){}if(!raw)return;try{const p=JSON.parse(raw);if(p&&typeof p.l==='number')eriClampApply(w,p.l,p.t);}catch(_){}}
@@ -9849,14 +9849,14 @@ renderCmd();
 setTimeout(()=>inp.focus(),50);
 }
 function closeCmd(){$('cmd_bg')?.classList.remove('show')}
-// índice global: apartados del menú + teléfonos + Kera (cacheado)
+// índice global: apartados del menú + teléfonos + Mel (cacheado)
 function cmdBuildIndex(){
 const idx=[];
 try{MENU.forEach(sec=>sec.items.forEach(it=>{if(it.sub)return;
   idx.push({kind:'tool',id:it.id,name:it.name,sec:sec.h,_new:it.new,adm:!!it.admin,nf:chatNorm(it.name),nb:chatNorm(it.name+' '+(it.kw||'')+' '+sec.h)});}));}catch(e){}
 try{HOSP_DIR.forEach(sec=>{const sn=sec[0];(sec[1]||[]).forEach(e=>{const nm=(e[0]||'').replace(/\n/g,' ');
   idx.push({kind:'phone',name:nm,sec:sn,ext:e[3],phone:e[2],loc:e[1],nf:chatNorm(nm),nb:chatNorm(sn+' '+nm+' '+(e[1]||'')+' '+(e[3]||''))});});});}catch(e){}
-idx.push({kind:'eri',id:'__eri',name:'Asistente Kera',sec:'Asistente',nf:chatNorm('asistente mel'),nb:chatNorm('mel chat asistente ayuda preguntar bot dermatologia melanocito piel')});
+idx.push({kind:'eri',id:'__eri',name:'Asistente Mel',sec:'Asistente',nf:chatNorm('asistente mel'),nb:chatNorm('mel chat asistente ayuda preguntar bot dermatologia melanocito piel')});
 return idx;
 }
 function cmdScore(it,qtokens,qraw){
@@ -10063,7 +10063,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 55;
+  var DC_BUILD = 56;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
@@ -10677,12 +10677,12 @@ function repCard(r){
 let fecha='';
 try{ if(r.createdAt&&r.createdAt.seconds) fecha=new Date(r.createdAt.seconds*1000).toLocaleString('es-ES'); }catch(e){}
 const resuelto=r.estado==='resuelto';
-const tipoT=r.tipo==='auto'?'⚙️ Error técnico (automático)':r.tipo==='mel_miss'?'🔎 Kera sin respuesta':'💬 Reporte de usuario';
+const tipoT=r.tipo==='auto'?'⚙️ Error técnico (automático)':r.tipo==='mel_miss'?'🔎 Mel sin respuesta':'💬 Reporte de usuario';
 const badge=resuelto?'<span style="color:#1a7f37;font-weight:600">✔ resuelto</span>':'<span style="color:#b8860b;font-weight:600">⏳ nuevo</span>';
 let h='<div class="team-card"><h3 style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span style="font-size:14px">'+tipoT+'</span>'+badge+'</h3>';
 h+='<div style="font-size:13px;line-height:1.6;white-space:pre-wrap;word-break:break-word;margin:4px 0">'+_hpEsc(r.texto||'')+'</div>';
 h+='<div style="font-size:11.5px;color:var(--mut);line-height:1.6">';
-if(r.melLastQ) h+='<div><strong>Última consulta a Kera:</strong> '+_hpEsc(''+r.melLastQ)+'</div>';
+if(r.melLastQ) h+='<div><strong>Última consulta a Mel:</strong> '+_hpEsc(''+r.melLastQ)+'</div>';
 if(r.email) h+='<div><strong>De:</strong> '+_hpEsc(r.email)+'</div>';
 if(r.vista) h+='<div><strong>Sección:</strong> '+_hpEsc(''+r.vista)+'</div>';
 if(r.build!=null) h+='<div><strong>Versión:</strong> '+_hpEsc(''+r.build)+(r.online===false?' · sin conexión':'')+'</div>';
@@ -10790,7 +10790,7 @@ try{
   catch(e){ fs = getFirestore(fbApp); }  // Firestore (índice de guías/roles/cuentas/reportes)
 }catch(e){ console.warn('[dc] Firebase init', e&&e.message); }
 
-// ── Notificaciones push (FCM) para ADMINISTRADORES (Kera/DermaCand) ──
+// ── Notificaciones push (FCM) para ADMINISTRADORES (Mel/DermaCand) ──
 // NO-BRICKING: solo se activa si hay clave VAPID pública real. Con el placeholder
 // 'PEGA_...' DC_PUSH_READY es false y NUNCA se llama a getMessaging/getToken.
 // Generar la clave en: Consola Firebase (proyecto dermacand2026) → Configuración del
@@ -11658,14 +11658,14 @@ window.hpTogglePw=function(){ const inp=document.getElementById('hp_pw'); inp.ty
       else{queueReport(meta);}
     }catch(e){}
   }
-  // Registra las consultas que Kera no supo responder (tipo 'mel_miss'), para saber qué FAQ añadir.
+  // Registra las consultas que Mel no supo responder (tipo 'mel_miss'), para saber qué FAQ añadir.
   var _missSeen={},_missCount=0;
   window.hpLogMelMiss=function(q){
     try{
       q=(q||'').toString().trim();if(q.length<3)return;
       if(_missCount>=15)return;
       var key=q.toLowerCase().slice(0,80);if(_missSeen[key])return;_missSeen[key]=1;_missCount++;
-      var meta={texto:'🔎 Kera no encontró respuesta para: «'+q.slice(0,200)+'»',tipo:'mel_miss',vista:curViewName(),vistaId:curView(),build:curBuild(),online:navigator.onLine,ua:navigator.userAgent,ts:Date.now()};
+      var meta={texto:'🔎 Mel no encontró respuesta para: «'+q.slice(0,200)+'»',tipo:'mel_miss',vista:curViewName(),vistaId:curView(),build:curBuild(),online:navigator.onLine,ua:navigator.userAgent,ts:Date.now()};
       if(navigator.onLine&&window.hpSubmitReport){window.hpSubmitReport(meta.texto,meta).catch(function(){queueReport(meta);});}
       else{queueReport(meta);}
     }catch(e){}
