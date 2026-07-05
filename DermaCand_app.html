@@ -693,16 +693,16 @@ body{font-size:13px}
 #toTop:active{transform:scale(.9)}
 #toTop svg{width:20px;height:20px}
 [data-t="dark"] #toTop{background:var(--c2l);color:#0d1117}
-#eriWrap{position:fixed;right:16px;bottom:16px;width:64px;height:64px;z-index:1200;touch-action:none}
+#eriWrap{position:fixed;right:16px;bottom:16px;width:76px;height:76px;z-index:1200;touch-action:none}
 #eriWrap.dragging #chatFab{transition:none}
 #eriWrap[hidden]{display:none}
-#chatFab{position:absolute;inset:0;width:64px;height:64px;border:none;padding:0;cursor:pointer;background:transparent;display:flex;align-items:center;justify-content:center;transition:transform .15s ease}
+#chatFab{position:absolute;inset:0;width:76px;height:76px;border:none;padding:0;cursor:pointer;background:transparent;display:flex;align-items:center;justify-content:center;transition:transform .15s ease}
 #eriClose{position:absolute;top:-3px;right:-3px;width:21px;height:21px;border-radius:50%;border:1.5px solid var(--card);background:#5a6e84;color:#fff;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;z-index:1202;box-shadow:0 2px 5px rgba(0,0,0,.3);opacity:0;visibility:hidden;transform:scale(.5);transition:opacity .16s ease,transform .16s ease,background .16s ease}
 #eriWrap:hover #eriClose,#eriWrap.peek #eriClose{opacity:1;visibility:visible;transform:scale(1)}
 #eriClose:hover{background:#0d7d8c}
 #chatFab:hover{transform:scale(1.08)}
 #chatFab:active{transform:scale(.95)}
-#chatFab svg,#chatFab img{width:62px;height:62px;object-fit:contain;filter:drop-shadow(0 4px 5px rgba(0,0,0,.32))}
+#chatFab svg,#chatFab img{width:74px;height:74px;object-fit:contain;filter:drop-shadow(0 4px 5px rgba(0,0,0,.32))}
 #chatFab.pulse svg,#chatFab.pulse img{animation:eriFloat 3.2s ease-in-out infinite}
 @keyframes eriFloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-5px) rotate(-2deg)}}
 #chatPanel{position:fixed;right:16px;bottom:88px;width:min(380px,calc(100vw - 24px));height:min(560px,calc(100vh - 130px));background:var(--bg);border:1px solid var(--bd);border-radius:16px;box-shadow:0 14px 44px rgba(0,0,0,.28);display:none;flex-direction:column;overflow:hidden;z-index:1201}
@@ -10063,7 +10063,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 57;
+  var DC_BUILD = 58;
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
