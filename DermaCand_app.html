@@ -4003,7 +4003,8 @@ return `<div class="card">
 
 <div class="alert ${online?'g':'r'}" style="margin:14px 0">
 <strong>Estado:</strong> ${online?'Online':'Sin Internet'}<br>
-<strong>Última actualización:</strong> ${lastUpd?new Date(lastUpd).toLocaleString('es-ES'):'Nunca'}${version?'<br><strong>Versión:</strong> '+version:''}
+<strong>Versión de la app:</strong> ${window.DC_BUILD||'—'}<br>
+<strong>Última actualización:</strong> ${lastUpd?new Date(lastUpd).toLocaleString('es-ES'):'Nunca'}${version?'<br><strong>Versión de guías:</strong> '+version:''}
 </div>
 
 ${offlineReady}
@@ -4015,7 +4016,7 @@ ${offlineReady}
 <details style="margin-top:18px">
 <summary style="cursor:pointer;color:var(--mut);font-size:14px">¿La app no muestra los últimos cambios?</summary>
 <p class="intro" style="margin-top:10px">Si tras abrir con Internet sigues viendo una versión antigua, pulsa este botón: borra la caché y el service worker y recarga la app con la última versión. No pierdes tus favoritos ni datos.</p>
-<button class="btn" style="width:100%;padding:14px;justify-content:center" onclick="hpForceUpdate()">🔄 Forzar actualización completa</button>
+<button class="btn" style="width:100%;padding:14px;justify-content:center;background:#fff3f3;color:#c41e3a;border:1px solid #f0c0c5" onclick="hpForceUpdate()">🔄 Forzar actualización completa</button>
 </details>
 
 </div>`;
@@ -10063,7 +10064,7 @@ if(document.readyState!=='loading')init();
   // descarga limpia queda SOLO para la actualización manual, bajo control del usuario, para no
   // dejar nunca la app inservible sin conexión.
   // DC_BUILD debe ir SIEMPRE igual que la versión del CACHE en sw.js (dermacand-vN).
-  var DC_BUILD = 59;
+  var DC_BUILD = 60; try{ window.DC_BUILD = DC_BUILD; }catch(e){}
   async function hpVersionGuard(){
     try{
       if(!navigator.onLine) return;
